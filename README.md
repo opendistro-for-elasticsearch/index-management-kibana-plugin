@@ -21,6 +21,7 @@ You can get started by:
 - [Reporting](https://github.com/opendistro-for-elasticsearch/index-management-kibana-plugin/issues) a bug
 - [Proposing](https://github.com/opendistro-for-elasticsearch/index-management-kibana-plugin/issues) new ideas to enhance the plugin
 - [Contribute](https://github.com/opendistro-for-elasticsearch/index-management-kibana-plugin/issues) documentation and sample code
+- Read [CONTRIBUTING.md](./CONTRIBUTING.md) for more details to get involved in the project.
 
 ## Questions
 
