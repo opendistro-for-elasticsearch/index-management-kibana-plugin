@@ -13,14 +13,8 @@
  * permissions and limitations under the License.
  */
 
-export default function (server) {
+import IndexService from "./IndexService";
+import PolicyService from "./PolicyService";
+import ManagedIndexService from "./ManagedIndexService";
 
-  server.route({
-    path: '/api/index-management-kibana/example',
-    method: 'GET',
-    handler() {
-      return { time: (new Date()).toISOString() };
-    }
-  });
-
-}
+export { IndexService, PolicyService, ManagedIndexService };
