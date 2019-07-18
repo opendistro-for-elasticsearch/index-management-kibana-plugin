@@ -3,3 +3,5 @@ node_modules
 /build/
 /public/app.css
 .idea/
+yarn-error.log
+/coverage/
