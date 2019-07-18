@@ -13,13 +13,14 @@
  * permissions and limitations under the License.
  */
 
-import { CLUSTER } from "../utils/constants";
 import { Legacy } from "kibana";
 import { RequestParams } from "@elastic/elasticsearch";
+import { CLUSTER } from "../utils/constants";
+import { CatIndex, GetIndicesResponse, SearchResponse, ServerResponse } from "../models/interfaces";
+
 import Request = Legacy.Request;
 import ElasticsearchPlugin = Legacy.Plugins.elasticsearch.Plugin;
 import ResponseToolkit = Legacy.ResponseToolkit;
-import { CatIndex, GetIndicesResponse, SearchResponse, ServerResponse } from "../models/interfaces";
 
 export default class IndexService {
   esDriver: ElasticsearchPlugin;
