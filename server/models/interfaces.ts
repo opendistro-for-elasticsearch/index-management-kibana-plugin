@@ -13,10 +13,17 @@
  * permissions and limitations under the License.
  */
 
+import { DocumentPolicy, ManagedIndexItem } from "../../models/interfaces";
+
 export interface SearchResponse<T> {
   hits: {
+    total: { value: number };
     hits: { _source: T; _id: string; _seq_no?: number; _primary_term?: number }[];
   };
+}
+
+export interface ExplainResponse {
+  [index: string]: ExplainAPIManagedIndexMetaData | undefined;
 }
 
 export interface ServerResponse<T> {
@@ -24,9 +31,95 @@ export interface ServerResponse<T> {
   error?: string;
 }
 
+export interface GetManagedIndicesResponse {
+  totalManagedIndices: number;
+  managedIndices: ManagedIndexItem[];
+}
+
+export interface GetPoliciesResponse {
+  policies: DocumentPolicy[];
+  totalPolicies: number;
+}
+
+export interface DeletePolicyResponse {
+  result: string;
+}
+
+export interface PutPolicyResponse {
+  _id: string;
+  // TODO: remove _version from IndexPolicyAPI
+  _version: number;
+  _primary_term: number;
+  _seq_no: number;
+  policy: { policy: object };
+}
+
+export interface GetPolicyResponse extends DocumentPolicy {}
+
 export interface GetIndicesResponse {
   indices: CatIndex[];
   totalIndices: number;
+}
+
+export interface RetryParams {
+  index: string;
+  body?: { state: string };
+}
+
+export interface DeletePolicyParams {
+  policyId: string;
+}
+
+export interface PutPolicyParams {
+  policyId: string;
+  ifSeqNo?: string;
+  ifPrimaryTerm?: string;
+  body: string;
+}
+
+// TODO: remove optional failedIndices after fixing retry API to always array
+export interface RetryResponse {
+  failures: boolean;
+  updated_indices: number;
+  failed_indices?: BackendFailedIndex[];
+}
+
+export interface BackendFailedIndex {
+  index_name: string;
+  index_uuid: string;
+  reason: string;
+}
+export interface FailedIndex {
+  indexName: string;
+  indexUuid: string;
+  reason: string;
+}
+
+export interface RetryManagedIndexResponse {
+  failures: boolean;
+  updatedIndices: number;
+  failedIndices: FailedIndex[];
+}
+
+// TODO: rename policy_name to policy_id after backend PR is merged
+export interface ExplainAPIManagedIndexMetaData {
+  "opendistro.index_state_management.policy_name": string | null;
+  index?: string;
+  index_uuid?: string;
+  policy_name?: string;
+  policy_seq_no?: number;
+  policy_primary_term?: number;
+  policy_completed?: boolean;
+  rolled_over?: boolean;
+  transition_to?: string;
+  state?: string;
+  state_start_time?: number;
+  action?: string;
+  action_index?: number;
+  action_start_time?: number;
+  consumed_retries?: number;
+  failed?: boolean;
+  info?: object;
 }
 
 export interface IndexManagementApi {
@@ -39,6 +132,14 @@ export interface IndexManagementApi {
 export interface DefaultHeaders {
   "Content-Type": "application/json";
   Accept: "application/json";
+}
+
+export interface QueryStringQuery<T extends string> {
+  query_string: {
+    default_field: T;
+    default_operator: "AND";
+    query: string;
+  };
 }
 
 // Default _cat index response
