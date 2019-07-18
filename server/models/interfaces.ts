@@ -13,6 +13,22 @@
  * permissions and limitations under the License.
  */
 
+export interface SearchResponse<T> {
+  hits: {
+    hits: { _source: T; _id: string; _seq_no?: number; _primary_term?: number }[];
+  };
+}
+
+export interface ServerResponse<T> {
+  response?: T;
+  error?: string;
+}
+
+export interface GetIndicesResponse {
+  indices: CatIndex[];
+  totalIndices: number;
+}
+
 export interface IndexManagementApi {
   [API_ROUTE: string]: string;
   readonly POLICY_BASE: string;
@@ -23,4 +39,18 @@ export interface IndexManagementApi {
 export interface DefaultHeaders {
   "Content-Type": "application/json";
   Accept: "application/json";
+}
+
+// Default _cat index response
+export interface CatIndex {
+  "docs.count": string;
+  "docs.deleted": string;
+  health: string;
+  index: string;
+  pri: string;
+  "pri.store.size": string;
+  rep: string;
+  status: string;
+  "store.size": string;
+  uuid: string;
 }
