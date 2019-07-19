@@ -39,7 +39,7 @@ interface PolicyModalProps {
 }
 
 const PolicyModal: React.FC<PolicyModalProps> = ({ policyId, policy, errorMessage, onClose, onEdit }) => {
-  let policyString = JSON.stringify(policy, null, 4);
+  const policyString = JSON.stringify(policy, null, 4);
   return (
     <EuiOverlayMask>
       {/*
