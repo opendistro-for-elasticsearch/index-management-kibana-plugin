@@ -26,7 +26,7 @@ interface ContentPanelProps {
   children: React.ReactNode | React.ReactNode[];
 }
 
-const ContentPanel = ({
+const ContentPanel: React.FC<ContentPanelProps> = ({
   title = "",
   titleSize = "l",
   bodyStyles = {},
@@ -34,7 +34,7 @@ const ContentPanel = ({
   horizontalRuleClassName = "",
   actions,
   children,
-}: ContentPanelProps) => (
+}) => (
   <EuiPanel style={{ paddingLeft: "0px", paddingRight: "0px", ...panelStyles }}>
     <EuiFlexGroup style={{ padding: "0px 10px" }} justifyContent="spaceBetween" alignItems="center">
       <EuiFlexItem>
