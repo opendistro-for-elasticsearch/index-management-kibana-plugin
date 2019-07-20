@@ -13,9 +13,9 @@
  * permissions and limitations under the License.
  */
 
-import browserServicesMock from "./browserServicesMock";
-import historyMock from "./historyMock";
+import IndexService from "../../public/services/IndexService";
 import httpClientMock from "./httpClientMock";
-import styleMock from "./styleMock";
 
-export { browserServicesMock, historyMock, httpClientMock, styleMock };
+const indexService = new IndexService(httpClientMock);
+
+export default { indexService };

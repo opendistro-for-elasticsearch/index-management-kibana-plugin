@@ -1,0 +1,174 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`<AddPolicyModal /> spec renders the component 1`] = `
+<div
+  class="euiOverlayMask"
+>
+  <div
+    data-focus-guard="true"
+    style="width: 1px; height: 0px; padding: 0px; overflow: hidden; position: fixed; top: 1px; left: 1px;"
+    tabindex="0"
+  />
+  <div
+    data-focus-guard="true"
+    style="width: 1px; height: 0px; padding: 0px; overflow: hidden; position: fixed; top: 1px; left: 1px;"
+    tabindex="1"
+  />
+  <div
+    data-focus-lock-disabled="false"
+  >
+    <div
+      class="euiModal euiModal--maxWidth-default"
+      tabindex="0"
+    >
+      <button
+        aria-label="Closes this modal window"
+        class="euiButtonIcon euiButtonIcon--text euiModal__closeIcon"
+        type="button"
+      >
+        <svg
+          aria-hidden="true"
+          class="euiIcon euiIcon--medium euiButtonIcon__icon"
+          focusable="false"
+          height="16"
+          viewBox="0 0 16 16"
+          width="16"
+          xmlns="http://www.w3.org/2000/svg"
+        >
+          <path
+            d="M7.293 8L3.146 3.854a.5.5 0 1 1 .708-.708L8 7.293l4.146-4.147a.5.5 0 0 1 .708.708L8.707 8l4.147 4.146a.5.5 0 0 1-.708.708L8 8.707l-4.146 4.147a.5.5 0 0 1-.708-.708L7.293 8z"
+          />
+        </svg>
+      </button>
+      <div
+        class="euiModal__flex"
+      >
+        <div
+          class="euiModalHeader"
+        >
+          <div
+            class="euiModalHeader__title"
+          >
+            Add policy
+          </div>
+        </div>
+        <div
+          class="euiModalBody"
+        >
+          <div
+            aria-expanded="false"
+            aria-haspopup="listbox"
+            class="euiComboBox"
+            role="combobox"
+          >
+            <div
+              class="euiFormControlLayout"
+            >
+              <div
+                class="euiFormControlLayout__childrenWrapper"
+              >
+                <div
+                  class="euiComboBox__inputWrap euiComboBox__inputWrap--noWrap euiComboBox__inputWrap-isClearable"
+                  data-test-subj="comboBoxInput"
+                  tabindex="-1"
+                >
+                  <p
+                    class="euiComboBoxPlaceholder"
+                  >
+                    Search policies
+                  </p>
+                  <div
+                    class="euiComboBox__input"
+                    style="font-size: 14px; display: inline-block;"
+                  >
+                    <input
+                      data-test-subj="comboBoxSearchInput"
+                      role="textbox"
+                      style="box-sizing: content-box; width: 2px;"
+                      value=""
+                    />
+                    <div
+                      style="position: absolute; top: 0px; left: 0px; visibility: hidden; height: 0px; overflow: scroll; white-space: pre; font-family: -webkit-small-control; letter-spacing: normal; text-transform: none;"
+                    />
+                  </div>
+                </div>
+                <div
+                  class="euiFormControlLayoutIcons euiFormControlLayoutIcons--right"
+                >
+                  <button
+                    aria-label="Open list of options"
+                    class="euiFormControlLayoutCustomIcon euiFormControlLayoutCustomIcon--clickable"
+                    data-test-subj="comboBoxToggleListButton"
+                  >
+                    <svg
+                      aria-hidden="true"
+                      class="euiIcon euiIcon--medium euiFormControlLayoutCustomIcon__icon"
+                      focusable="false"
+                      height="16"
+                      viewBox="0 0 16 16"
+                      width="16"
+                      xmlns="http://www.w3.org/2000/svg"
+                      xmlns:xlink="http://www.w3.org/1999/xlink"
+                    >
+                      <defs>
+                        <path
+                          d="M13.069 5.157L8.384 9.768a.546.546 0 0 1-.768 0L2.93 5.158a.552.552 0 0 0-.771 0 .53.53 0 0 0 0 .759l4.684 4.61c.641.631 1.672.63 2.312 0l4.684-4.61a.53.53 0 0 0 0-.76.552.552 0 0 0-.771 0z"
+                          id="arrow_down-a"
+                        />
+                      </defs>
+                      <use
+                        fill-rule="nonzero"
+                        xlink:href="#arrow_down-a"
+                      />
+                    </svg>
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div
+          class="euiModalFooter"
+        >
+          <button
+            class="euiButtonEmpty euiButtonEmpty--primary"
+            data-test-subj="addPolicyModalCloseButton"
+            type="button"
+          >
+            <span
+              class="euiButtonEmpty__content"
+            >
+              <span
+                class="euiButtonEmpty__text"
+              >
+                Close
+              </span>
+            </span>
+          </button>
+          <button
+            class="euiButton euiButton--primary euiButton--fill"
+            data-test-subj="addPolicyModalEditButton"
+            disabled=""
+            type="button"
+          >
+            <span
+              class="euiButton__content"
+            >
+              <span
+                class="euiButton__text"
+              >
+                Add
+              </span>
+            </span>
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div
+    data-focus-guard="true"
+    style="width: 1px; height: 0px; padding: 0px; overflow: hidden; position: fixed; top: 1px; left: 1px;"
+    tabindex="0"
+  />
+</div>
+`;
