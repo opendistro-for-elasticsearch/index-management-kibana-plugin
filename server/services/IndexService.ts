@@ -16,7 +16,7 @@
 import { Legacy } from "kibana";
 import { RequestParams } from "@elastic/elasticsearch";
 import { CLUSTER } from "../utils/constants";
-import { CatIndex, GetIndicesResponse, SearchResponse, ServerResponse } from "../models/interfaces";
+import { AddPolicyResponse, CatIndex, GetIndicesResponse, SearchResponse, ServerResponse } from "../models/interfaces";
 
 import Request = Legacy.Request;
 import ElasticsearchPlugin = Legacy.Plugins.elasticsearch.Plugin;
@@ -75,8 +75,7 @@ export default class IndexService {
   };
 
   // TODO: This is temporary until backend addPolicy is implemented
-  //  Will have failures: boolean, failed_indices: List<string>, updatedIndices: number
-  addPolicy = async (req: Request, h: ResponseToolkit): Promise<ServerResponse<any>> => {
+  addPolicy = async (req: Request, h: ResponseToolkit): Promise<ServerResponse<AddPolicyResponse>> => {
     try {
       const { indices, policyId } = req.payload as { indices: string[]; policyId: string };
       const { callWithRequest } = this.esDriver.getCluster(CLUSTER.DATA);
@@ -84,8 +83,10 @@ export default class IndexService {
         index: indices.join(","),
         body: { "opendistro.index_state_management.policy_name": policyId },
       });
+
+      // temporary
       if (response.acknowledged) {
-        return { response: indices };
+        return { response: { failures: false, updatedIndices: indices.length, failedIndices: [] } };
       }
       return { error: "Adding policy was not acknowledged" };
     } catch (err) {

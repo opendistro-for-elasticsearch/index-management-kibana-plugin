@@ -61,6 +61,12 @@ export interface GetIndicesResponse {
   totalIndices: number;
 }
 
+export interface AddPolicyResponse {
+  updatedIndices: number;
+  failures: boolean;
+  failedIndices: string[];
+}
+
 export interface RetryParams {
   index: string;
   body?: { state: string };
