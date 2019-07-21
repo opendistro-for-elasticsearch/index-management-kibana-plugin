@@ -1,0 +1,27 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`<IndexActions /> spec renders the component 1`] = `
+<div
+  class="euiFlexGroup euiFlexGroup--gutterLarge euiFlexGroup--alignItemsCenter euiFlexGroup--justifyContentSpaceBetween euiFlexGroup--directionRow euiFlexGroup--responsive"
+>
+  <div
+    class="euiFlexItem euiFlexItem--flexGrowZero"
+  >
+    <button
+      class="euiButton euiButton--primary"
+      data-test-subj="indexActionsAddPolicy"
+      type="button"
+    >
+      <span
+        class="euiButton__content"
+      >
+        <span
+          class="euiButton__text"
+        >
+          Add policy
+        </span>
+      </span>
+    </button>
+  </div>
+</div>
+`;
