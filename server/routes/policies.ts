@@ -23,25 +23,25 @@ export default function(server: Server, services: NodeServices) {
   const { policyService } = services;
 
   server.route({
-    path: NODE_API.GET_POLICIES,
+    path: NODE_API.POLICIES,
     method: REQUEST.GET,
     handler: policyService.getPolicies,
   });
 
   server.route({
-    path: `${NODE_API.PUT_POLICY}/{id}`,
+    path: `${NODE_API.POLICIES}/{id}`,
     method: REQUEST.PUT,
     handler: policyService.putPolicy,
   });
 
   server.route({
-    path: `${NODE_API.GET_POLICY}/{id}`,
+    path: `${NODE_API.POLICIES}/{id}`,
     method: REQUEST.GET,
     handler: policyService.getPolicy,
   });
 
   server.route({
-    path: `${NODE_API.DELETE_POLICY}/{id}`,
+    path: `${NODE_API.POLICIES}/{id}`,
     method: REQUEST.DELETE,
     handler: policyService.deletePolicy,
   });

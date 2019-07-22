@@ -23,13 +23,13 @@ export default function(server: Server, services: NodeServices) {
   const { managedIndexService } = services;
 
   server.route({
-    path: NODE_API.GET_MANAGED_INDICES,
+    path: NODE_API.MANAGED_INDICES,
     method: REQUEST.GET,
     handler: managedIndexService.getManagedIndices,
   });
 
   server.route({
-    path: `${NODE_API.GET_MANAGED_INDEX}/{id}`,
+    path: `${NODE_API.MANAGED_INDICES}/{id}`,
     method: REQUEST.GET,
     handler: managedIndexService.getManagedIndex,
   });

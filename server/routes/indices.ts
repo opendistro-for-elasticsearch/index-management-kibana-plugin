@@ -23,13 +23,13 @@ export default function(server: Server, services: NodeServices) {
   const { indexService } = services;
 
   server.route({
-    path: NODE_API.SEARCH,
+    path: NODE_API._SEARCH,
     method: REQUEST.POST,
     handler: indexService.search,
   });
 
   server.route({
-    path: NODE_API.GET_INDICES,
+    path: NODE_API._INDICES,
     method: REQUEST.GET,
     handler: indexService.getIndices,
   });

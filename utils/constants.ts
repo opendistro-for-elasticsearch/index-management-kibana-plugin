@@ -15,15 +15,11 @@
 
 export const BASE_API_PATH = "/api/ism";
 export const NODE_API = Object.freeze({
-  SEARCH: `${BASE_API_PATH}/_search`,
-  GET_INDICES: `${BASE_API_PATH}/_indices`,
+  _SEARCH: `${BASE_API_PATH}/_search`,
+  _INDICES: `${BASE_API_PATH}/_indices`,
   ADD_POLICY: `${BASE_API_PATH}/addPolicy`,
-  GET_POLICIES: `${BASE_API_PATH}/policies`,
-  PUT_POLICY: `${BASE_API_PATH}/policies`,
-  GET_POLICY: `${BASE_API_PATH}/policies`,
-  DELETE_POLICY: `${BASE_API_PATH}/policies`,
-  GET_MANAGED_INDICES: `${BASE_API_PATH}/managedIndices`,
-  GET_MANAGED_INDEX: `${BASE_API_PATH}/managedIndices`,
+  POLICIES: `${BASE_API_PATH}/policies`,
+  MANAGED_INDICES: `${BASE_API_PATH}/managedIndices`,
   RETRY: `${BASE_API_PATH}/retry`,
   CHANGE_POLICY: `${BASE_API_PATH}/changePolicy`,
   REMOVE_POLICY: `${BASE_API_PATH}/removePolicy`,
