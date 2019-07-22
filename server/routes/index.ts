@@ -13,10 +13,8 @@
  * permissions and limitations under the License.
  */
 
-import expect from '@kbn/expect';
+import indices from "./indices";
+import policies from "./policies";
+import managedIndices from "./managedIndices";
 
-describe('suite', () => {
-  it('is a test', () => {
-    expect(true).to.equal(true);
-  });
-});
+export { indices, policies, managedIndices };
