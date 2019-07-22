@@ -13,14 +13,30 @@
  * permissions and limitations under the License.
  */
 
-export default function (server) {
+import { Legacy } from "kibana";
+import { NodeServices } from "../models/interfaces";
+import { NODE_API, REQUEST } from "../../utils/constants";
+
+import Server = Legacy.Server;
+
+export default function(server: Server, services: NodeServices) {
+  const { indexService } = services;
 
   server.route({
-    path: '/api/index-management-kibana/example',
-    method: 'GET',
-    handler() {
-      return { time: (new Date()).toISOString() };
-    }
+    path: NODE_API._SEARCH,
+    method: REQUEST.POST,
+    handler: indexService.search,
   });
 
+  server.route({
+    path: NODE_API._INDICES,
+    method: REQUEST.GET,
+    handler: indexService.getIndices,
+  });
+
+  server.route({
+    path: NODE_API.ADD_POLICY,
+    method: REQUEST.POST,
+    handler: indexService.addPolicy,
+  });
 }

@@ -13,7 +13,14 @@
  * permissions and limitations under the License.
  */
 
+import { IndexService, ManagedIndexService, PolicyService } from "../services";
 import { DocumentPolicy, ManagedIndexItem } from "../../models/interfaces";
+
+export interface NodeServices {
+  indexService: IndexService;
+  managedIndexService: ManagedIndexService;
+  policyService: PolicyService;
+}
 
 export interface SearchResponse<T> {
   hits: {
