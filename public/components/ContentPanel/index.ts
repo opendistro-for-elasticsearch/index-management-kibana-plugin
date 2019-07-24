@@ -14,5 +14,6 @@
  */
 
 import ContentPanel from "./ContentPanel";
+import ContentPanelActions from "./ContentPanelActions";
 
-export default ContentPanel;
+export { ContentPanel, ContentPanelActions };

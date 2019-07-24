@@ -33,11 +33,6 @@ export interface ExplainResponse {
   [index: string]: ExplainAPIManagedIndexMetaData | undefined;
 }
 
-export interface ServerResponse<T> {
-  response?: T;
-  error?: string;
-}
-
 export interface GetManagedIndicesResponse {
   totalManagedIndices: number;
   managedIndices: ManagedIndexItem[];
