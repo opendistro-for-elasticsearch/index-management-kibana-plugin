@@ -39,6 +39,7 @@ jest.mock("ui/notify", () => ({
 jest.mock("ui/chrome", () => ({
   breadcrumbs: (() => {
     const breadcrumbs = () => {};
+    // @ts-ignore
     breadcrumbs.set = jest.fn();
     return breadcrumbs;
   })(),

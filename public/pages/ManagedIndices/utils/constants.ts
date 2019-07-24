@@ -13,10 +13,21 @@
  * permissions and limitations under the License.
  */
 
-import $ from 'jquery';
+import { Actions, ManagedIndicesQueryParams } from "../models/interfaces";
 
-$(document.body).on('keypress', function (event) {
-  if (event.which === 58) {
-    alert('boo!');
-  }
-});
+export const DEFAULT_PAGE_SIZE_OPTIONS = [5, 10, 20, 50];
+export const DEFAULT_QUERY_PARAMS: ManagedIndicesQueryParams = {
+  from: 0,
+  size: 20,
+  search: "",
+  sortField: "name",
+  sortDirection: "desc",
+};
+
+export const ACTIONS: Actions = {
+  rollover: "Rollover",
+  delete: "Delete",
+  transition: "Transition",
+  open: "Open",
+  close: "Close",
+};

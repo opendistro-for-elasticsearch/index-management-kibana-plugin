@@ -26,7 +26,7 @@ interface ContentPanelProps {
   children: React.ReactNode | React.ReactNode[];
 }
 
-const ContentPanel: React.FC<ContentPanelProps> = ({
+const ContentPanel: React.SFC<ContentPanelProps> = ({
   title = "",
   titleSize = "l",
   bodyStyles = {},
@@ -46,7 +46,9 @@ const ContentPanel: React.FC<ContentPanelProps> = ({
         <EuiFlexItem grow={false}>
           <EuiFlexGroup justifyContent="spaceBetween" alignItems="center">
             {Array.isArray(actions) ? (
-              actions.map((action, idx) => <EuiFlexItem key={idx}>{action}</EuiFlexItem>)
+              (actions as React.ReactNode[]).map(
+                (action: React.ReactNode, idx: number): React.ReactNode => <EuiFlexItem key={idx}>{action}</EuiFlexItem>
+              )
             ) : (
               <EuiFlexItem>{actions}</EuiFlexItem>
             )}

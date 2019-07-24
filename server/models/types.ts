@@ -23,7 +23,7 @@ export type ManagedIndicesSort = {
 
 export type PoliciesSort = {
   [sortField: string]: string;
-  name: "policy.name.keyword";
+  description: "policy.description.keyword";
 };
 
 export type ServerResponse<T> = { ok: false; error: string } | { ok: true; response: T };

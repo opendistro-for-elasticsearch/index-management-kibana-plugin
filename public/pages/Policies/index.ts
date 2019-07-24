@@ -13,10 +13,6 @@
  * permissions and limitations under the License.
  */
 
-import expect from '@kbn/expect';
+import Policies from "./containers/Policies";
 
-describe('suite', () => {
-  it('is a test', () => {
-    expect(true).to.equal(true);
-  });
-});
+export default Policies;

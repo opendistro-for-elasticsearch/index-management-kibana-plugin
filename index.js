@@ -13,25 +13,25 @@
  * permissions and limitations under the License.
  */
 
-import { resolve } from 'path';
-import { existsSync } from 'fs';
+import { resolve } from "path";
+import { existsSync } from "fs";
 
-import exampleRoute from './server/routes/example';
+import { createISMCluster } from "./server/clusters";
+import { PolicyService, ManagedIndexService, IndexService } from "./server/services";
+import { indices, policies, managedIndices } from "./server/routes";
 
-export default function (kibana) {
+export default function(kibana) {
   return new kibana.Plugin({
-    require: ['elasticsearch'],
-    name: 'index_management_kibana',
+    require: ["elasticsearch"],
+    name: "opendistro_index_management_kibana",
     uiExports: {
       app: {
-        title: 'Index Management Kibana',
-        description: 'Kibana plugin for Index Management',
-        main: 'plugins/index_management_kibana/app',
+        title: "Index Management Kibana",
+        description: "Kibana plugin for Index Management",
+        main: "plugins/opendistro_index_management_kibana/app",
       },
-      hacks: [
-        'plugins/index_management_kibana/hack'
-      ],
-      styleSheetPaths: [resolve(__dirname, 'public/app.scss'), resolve(__dirname, 'public/app.css')].find(p => existsSync(p)),
+      hacks: [],
+      styleSheetPaths: [resolve(__dirname, "public/app.scss"), resolve(__dirname, "public/app.css")].find(p => existsSync(p)),
     },
 
     config(Joi) {
@@ -40,9 +40,21 @@ export default function (kibana) {
       }).default();
     },
 
-    init(server, options) { // eslint-disable-line no-unused-vars
-      // Add server routes and initialize the plugin here
-      exampleRoute(server);
-    }
+    init(server, options) {
+      // Create clusters
+      createISMCluster(server);
+
+      // Initialize services
+      const esDriver = server.plugins.elasticsearch;
+      const indexService = new IndexService(esDriver);
+      const policyService = new PolicyService(esDriver);
+      const managedIndexService = new ManagedIndexService(esDriver);
+      const services = { indexService, policyService, managedIndexService };
+
+      // Add server routes
+      indices(server, services);
+      policies(server, services);
+      managedIndices(server, services);
+    },
   });
 }

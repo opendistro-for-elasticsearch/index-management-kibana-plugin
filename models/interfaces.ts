@@ -17,19 +17,15 @@
 export interface ManagedIndexMetaData {
   index: string;
   indexUuid: string;
-  policyName: string;
+  policyId: string;
   policySeqNo?: number;
   policyPrimaryTerm?: number;
   policyCompleted?: boolean;
   rolledOver?: boolean;
   transitionTo?: string;
-  state?: string;
-  stateStartTime?: number;
-  action?: string;
-  actionIndex?: number;
-  actionStartTime?: number;
-  consumedRetries?: number;
-  failed?: boolean;
+  state?: { name: string; startTime: number };
+  action?: { name: string; startTime: number; index: number; failed: boolean; consumedRetries: number };
+  retryInfo?: { failed: boolean; consumedRetries: number };
   info?: object;
 }
 

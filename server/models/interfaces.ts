@@ -56,8 +56,6 @@ export interface PutPolicyResponse {
   policy: { policy: object };
 }
 
-export interface GetPolicyResponse extends DocumentPolicy {}
-
 export interface GetIndicesResponse {
   indices: CatIndex[];
   totalIndices: number;
@@ -109,24 +107,19 @@ export interface RetryManagedIndexResponse {
   failedIndices: FailedIndex[];
 }
 
-// TODO: rename policy_name to policy_id after backend PR is merged
 export interface ExplainAPIManagedIndexMetaData {
-  "opendistro.index_state_management.policy_name": string | null;
+  "opendistro.index_state_management.policy_id": string | null;
   index?: string;
   index_uuid?: string;
-  policy_name?: string;
+  policy_id?: string;
   policy_seq_no?: number;
   policy_primary_term?: number;
   policy_completed?: boolean;
   rolled_over?: boolean;
   transition_to?: string;
-  state?: string;
-  state_start_time?: number;
-  action?: string;
-  action_index?: number;
-  action_start_time?: number;
-  consumed_retries?: number;
-  failed?: boolean;
+  state?: { name: string; start_time: number };
+  action?: { name: string; start_time: number; index: number; failed: boolean; consumed_retries: number };
+  retry_info?: { failed: boolean; consumed_retries: number };
   info?: object;
 }
 

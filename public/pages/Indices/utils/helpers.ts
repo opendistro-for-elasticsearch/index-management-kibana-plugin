@@ -13,25 +13,20 @@
  * permissions and limitations under the License.
  */
 
-// @ts-ignore
 import queryString from "query-string";
 import { DEFAULT_QUERY_PARAMS } from "./constants";
 import { PoliciesQueryParams } from "../models/interfaces";
 
 export function getURLQueryParams(location: { search: string }): PoliciesQueryParams {
-  const {
-    from = DEFAULT_QUERY_PARAMS.from,
-    size = DEFAULT_QUERY_PARAMS.size,
-    search = DEFAULT_QUERY_PARAMS.search,
-    sortField = "index",
-    sortDirection = DEFAULT_QUERY_PARAMS.sortDirection,
-  } = queryString.parse(location.search);
+  const { from, size, search, sortField, sortDirection } = queryString.parse(location.search);
 
   return {
+    // @ts-ignore
     from: isNaN(parseInt(from, 10)) ? DEFAULT_QUERY_PARAMS.from : parseInt(from, 10),
+    // @ts-ignore
     size: isNaN(parseInt(size, 10)) ? DEFAULT_QUERY_PARAMS.size : parseInt(size, 10),
-    search,
-    sortField,
-    sortDirection,
+    search: typeof search !== "string" ? DEFAULT_QUERY_PARAMS.search : search,
+    sortField: typeof sortField !== "string" ? "index" : sortField,
+    sortDirection: typeof sortDirection !== "string" ? DEFAULT_QUERY_PARAMS.sortDirection : sortDirection,
   };
 }

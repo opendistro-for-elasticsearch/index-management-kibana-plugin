@@ -89,7 +89,7 @@ export default class AddPolicyModal extends Component<AddPolicyModalProps, AddPo
         this.setState({ policyOptions: policies.map((policyId: string) => ({ label: policyId })) });
       } else {
         if (searchPoliciesResponse.error.startsWith("[index_not_found_exception]")) {
-          toastNotifications.addDanger("You have no created a policy yet");
+          toastNotifications.addDanger("You have not created a policy yet");
         } else {
           toastNotifications.addDanger(searchPoliciesResponse.error);
         }

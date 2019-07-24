@@ -13,16 +13,17 @@
  * permissions and limitations under the License.
  */
 
-import React from 'react';
-import { uiModules } from 'ui/modules';
-import chrome from 'ui/chrome';
-import { render, unmountComponentAtNode } from 'react-dom';
-import { I18nProvider } from '@kbn/i18n/react';
+import React from "react";
+import { uiModules } from "ui/modules";
+import chrome from "ui/chrome";
+import { render, unmountComponentAtNode } from "react-dom";
+import { HashRouter as Router, Route } from "react-router-dom";
 
-import 'ui/autoload/styles';
-import { Main } from './components/main';
+import "ui/autoload/styles";
+import Main from "./pages/Main";
+import { ServicesContext, IndexService } from "./services";
 
-const app = uiModules.get('apps/indexManagementKibana');
+const app = uiModules.get("apps/indexManagementKibana");
 
 app.config($locationProvider => {
   $locationProvider.html5Mode({
@@ -31,25 +32,33 @@ app.config($locationProvider => {
     rewriteLinks: false,
   });
 });
-app.config(stateManagementConfigProvider =>
-  stateManagementConfigProvider.disable()
-);
+app.config(stateManagementConfigProvider => stateManagementConfigProvider.disable());
 
 function RootController($scope, $element, $http) {
   const domNode = $element[0];
 
+  // set up services
+  const indexService = new IndexService($http);
+  const services = { indexService };
+
   // render react to DOM
   render(
-    <I18nProvider>
-      <Main title="index-management-kibana" httpClient={$http} />
-    </I18nProvider>,
+    <Router>
+      <Route
+        render={props => (
+          <ServicesContext.Provider value={services}>
+            <Main httpClient={$http} {...props} />
+          </ServicesContext.Provider>
+        )}
+      />
+    </Router>,
     domNode
   );
 
   // unmount react on controller destroy
-  $scope.$on('$destroy', () => {
+  $scope.$on("$destroy", () => {
     unmountComponentAtNode(domNode);
   });
 }
 
-chrome.setRootController('indexManagementKibana', RootController);
+chrome.setRootController("indexManagementKibana", RootController);
