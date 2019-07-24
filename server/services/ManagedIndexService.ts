@@ -25,9 +25,8 @@ import {
   RetryParams,
   RetryResponse,
   SearchResponse,
-  ServerResponse,
 } from "../models/interfaces";
-import { ManagedIndicesSort } from "../models/types";
+import { ManagedIndicesSort, ServerResponse } from "../models/types";
 
 import Request = Legacy.Request;
 import ElasticsearchPlugin = Legacy.Plugins.elasticsearch.Plugin;
@@ -47,10 +46,10 @@ export default class ManagedIndexService {
       const params: RequestParams.Get = { id, index: INDEX.OPENDISTRO_ISM_CONFIG };
       const { callWithRequest } = this.esDriver.getCluster(CLUSTER.DATA);
       const results: SearchResponse<any> = await callWithRequest(req, "search", params);
-      return { response: results };
+      return { ok: true, response: results };
     } catch (err) {
       console.error("Index Management - ManagedIndexService - getManagedIndex:", err);
-      return { error: err.message };
+      return { ok: false, error: err.message };
     }
   };
 
@@ -89,7 +88,7 @@ export default class ManagedIndexService {
       const totalManagedIndices = _.get(searchResponse, "hits.total.value", 0);
 
       if (!indices.length) {
-        return { response: { managedIndices: [], totalManagedIndices: 0 } };
+        return { ok: true, response: { managedIndices: [], totalManagedIndices: 0 } };
       }
 
       const explainParams = { index: indices.join(",") };
@@ -110,13 +109,13 @@ export default class ManagedIndexService {
         };
       });
 
-      return { response: { managedIndices, totalManagedIndices } };
+      return { ok: true, response: { managedIndices, totalManagedIndices } };
     } catch (err) {
       if (err.statusCode === 404 && err.body.error.type === "index_not_found_exception") {
-        return { response: { managedIndices: [], totalManagedIndices: 0 } };
+        return { ok: true, response: { managedIndices: [], totalManagedIndices: 0 } };
       }
       console.error("Index Management - ManagedIndexService - getManagedIndices", err);
-      return { error: err.message };
+      return { ok: false, error: err.message };
     }
   };
 
@@ -129,6 +128,7 @@ export default class ManagedIndexService {
       const retryResponse: RetryResponse = await callWithRequest(req, "ism.retry", params);
 
       return {
+        ok: true,
         response: {
           failures: retryResponse.failures,
           updatedIndices: retryResponse.updated_indices,
@@ -144,7 +144,7 @@ export default class ManagedIndexService {
       };
     } catch (err) {
       console.error("Index Management - ManagedIndexService - retryManagedIndexPolicy:", err);
-      return { error: err.message };
+      return { ok: false, error: err.message };
     }
   };
 }

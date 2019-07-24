@@ -28,7 +28,6 @@ import {
 } from "@elastic/eui";
 import { BrowserServices } from "../../../../models/interfaces";
 import { PolicyOption } from "../../models/interfaces";
-import { AddPolicyResponse, SearchResponse } from "../../../../../server/models/interfaces";
 
 interface AddPolicyModalProps {
   onClose: () => void;
@@ -62,16 +61,16 @@ export default class AddPolicyModal extends Component<AddPolicyModalProps, AddPo
         services: { indexService },
       } = this.props;
       const policyId = selectedPolicies[0].label;
-      const { response, error } = await indexService.addPolicy(indices, policyId);
-      if (error) {
-        toastNotifications.addDanger(error);
-      } else {
-        const { updatedIndices, failedIndices, failures } = response as AddPolicyResponse;
+      const addPolicyResponse = await indexService.addPolicy(indices, policyId);
+      if (addPolicyResponse.ok) {
+        const { updatedIndices, failedIndices, failures } = addPolicyResponse.response;
         toastNotifications.addSuccess(`Added policy to ${updatedIndices} indices`);
         if (failures) {
           toastNotifications.addDanger(`Failed to add policy to ${failedIndices}`);
         }
         onClose();
+      } else {
+        toastNotifications.addDanger(addPolicyResponse.error);
       }
     } catch (err) {
       toastNotifications.addDanger(err.message);
@@ -84,14 +83,16 @@ export default class AddPolicyModal extends Component<AddPolicyModalProps, AddPo
     } = this.props;
     this.setState({ isLoading: true, policyOptions: [] });
     try {
-      const { response, error } = await indexService.searchPolicies(searchValue);
-      if (error) {
-        toastNotifications.addDanger(error);
+      const searchPoliciesResponse = await indexService.searchPolicies(searchValue);
+      if (searchPoliciesResponse.ok) {
+        const policies = searchPoliciesResponse.response.hits.hits.map((hit: { _id: string }) => hit._id);
+        this.setState({ policyOptions: policies.map((policyId: string) => ({ label: policyId })) });
       } else {
-        const policies = (response as SearchResponse<any>).hits.hits.map(hit => hit._id);
-        this.setState({
-          policyOptions: policies.map(policyId => ({ label: policyId })),
-        });
+        if (searchPoliciesResponse.error.startsWith("[index_not_found_exception]")) {
+          toastNotifications.addDanger("You have no created a policy yet");
+        } else {
+          toastNotifications.addDanger(searchPoliciesResponse.error);
+        }
       }
     } catch (err) {
       toastNotifications.addDanger(err.message);

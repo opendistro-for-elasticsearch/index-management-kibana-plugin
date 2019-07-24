@@ -24,10 +24,9 @@ import {
   PutPolicyParams,
   PutPolicyResponse,
   SearchResponse,
-  ServerResponse,
 } from "../models/interfaces";
 import { getMustQuery } from "../utils/helpers";
-import { PoliciesSort } from "../models/types";
+import { PoliciesSort, ServerResponse } from "../models/types";
 
 import Request = Legacy.Request;
 import ElasticsearchPlugin = Legacy.Plugins.elasticsearch.Plugin;
@@ -55,10 +54,10 @@ export default class PolicyService {
       }
       const { callWithRequest } = await this.esDriver.getCluster(CLUSTER.ISM);
       const response = await callWithRequest(req, method, params);
-      return { response: response };
+      return { ok: true, response: response };
     } catch (err) {
       console.error("Index Management - PolicyService - putPolicy:", err);
-      return { error: err.message };
+      return { ok: false, error: err.message };
     }
   };
 
@@ -72,12 +71,12 @@ export default class PolicyService {
       const { callWithRequest } = await this.esDriver.getCluster(CLUSTER.ISM);
       const response: DeletePolicyResponse = await callWithRequest(req, "ism.deletePolicy", params);
       if (response.result !== "deleted") {
-        return { error: response.result };
+        return { ok: false, error: response.result };
       }
-      return { response: true };
+      return { ok: true, response: true };
     } catch (err) {
       console.error("Index Management - PolicyService - deletePolicy:", err);
-      return { error: err.message };
+      return { ok: false, error: err.message };
     }
   };
 
@@ -94,13 +93,13 @@ export default class PolicyService {
       const seqNo = _.get(getResponse, "_seq_no", null);
       const primaryTerm = _.get(getResponse, "_primary_term", null);
       if (policy) {
-        return { response: { id, seqNo, primaryTerm, policy } };
+        return { ok: true, response: { id, seqNo, primaryTerm, policy } };
       } else {
-        return { error: "Failed to load policy" };
+        return { ok: false, error: "Failed to load policy" };
       }
     } catch (err) {
       console.error("Index Management - PolicyService - getPolicy:", err);
-      return { error: err.message };
+      return { ok: false, error: err.message };
     }
   };
 
@@ -147,13 +146,13 @@ export default class PolicyService {
         policy: hit._source,
       }));
 
-      return { response: { policies: policies, totalPolicies } };
+      return { ok: true, response: { policies: policies, totalPolicies } };
     } catch (err) {
       if (err.statusCode === 404 && err.body.error.type === "index_not_found_exception") {
-        return { response: { policies: [], totalPolicies: 0 } };
+        return { ok: true, response: { policies: [], totalPolicies: 0 } };
       }
       console.error("Index Management - PolicyService - getPolicies", err);
-      return { error: err.message };
+      return { ok: false, error: err.message };
     }
   };
 }

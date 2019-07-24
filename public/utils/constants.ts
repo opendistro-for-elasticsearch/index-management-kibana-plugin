@@ -13,4 +13,11 @@
  * permissions and limitations under the License.
  */
 
-export { Main } from './main';
+export const PLUGIN_NAME = "index_management_kibana";
+
+export const DEFAULT_EMPTY_DATA = "-";
+
+export const BREADCRUMBS = {
+  INDEX_MANAGEMENT: { text: "Index Management", href: "#/" },
+  INDICES: { text: "Indices", href: "#/indices" },
+};

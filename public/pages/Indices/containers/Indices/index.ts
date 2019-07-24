@@ -13,6 +13,6 @@
  * permissions and limitations under the License.
  */
 
-import IndexActions from "./IndexActions";
+import Indices from "./Indices";
 
-export default IndexActions;
+export default Indices;

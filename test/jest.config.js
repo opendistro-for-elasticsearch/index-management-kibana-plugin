@@ -41,4 +41,5 @@ module.exports = {
     "!**/vendor/**",
   ],
   clearMocks: true,
+  testPathIgnorePatterns: ["<rootDir>/build/", "<rootDir>/node_modules/"],
 };
