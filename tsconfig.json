@@ -3,6 +3,9 @@
   "extends": "../../kibana/tsconfig.json",
 
   // tell the TypeScript compiler where to find your source files
-  "include": ["server/**/*", "public/**/*"],
-  "exclude": ["node_modules", "*/node_modules/"]
+  "include": ["server/**/*", "public/**/*", "utils/**/*", "models/**/*", "test/**/*"],
+  "exclude": ["node_modules", "*/node_modules/"],
+  "compilerOptions": {
+    "skipLibCheck": true
+  }
 }
