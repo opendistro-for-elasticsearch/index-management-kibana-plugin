@@ -18,12 +18,17 @@ import { EuiHealth } from "@elastic/eui";
 
 export const DEFAULT_PAGE_SIZE_OPTIONS = [5, 10, 20, 50];
 
+export enum SortDirection {
+  ASC = "asc",
+  DESC = "desc",
+}
+
 export const DEFAULT_QUERY_PARAMS = {
   from: 0,
   size: 20,
   search: "",
   sortField: "name",
-  sortDirection: "desc",
+  sortDirection: SortDirection.DESC,
 };
 
 const HEALTH_TO_COLOR: {

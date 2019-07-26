@@ -60,6 +60,10 @@ export default class AddPolicyModal extends Component<AddPolicyModalProps, AddPo
         indices,
         services: { indexService },
       } = this.props;
+      if (selectedPolicies.length !== 1) {
+        toastNotifications.addDanger(`There are no selected indices`);
+        return;
+      }
       const policyId = selectedPolicies[0].label;
       const addPolicyResponse = await indexService.addPolicy(indices, policyId);
       if (addPolicyResponse.ok) {

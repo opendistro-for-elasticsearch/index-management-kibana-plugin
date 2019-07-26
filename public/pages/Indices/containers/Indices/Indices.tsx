@@ -26,7 +26,7 @@ import { ContentPanel, ContentPanelActions } from "../../../../components/Conten
 import IndexControls from "../../components/IndexControls";
 import AddPolicyModal from "../../components/AddPolicyModal";
 import IndexEmptyPrompt from "../../components/IndexEmptyPrompt";
-import { DEFAULT_PAGE_SIZE_OPTIONS, DEFAULT_QUERY_PARAMS, indicesColumns } from "../../utils/constants";
+import { DEFAULT_PAGE_SIZE_OPTIONS, DEFAULT_QUERY_PARAMS, indicesColumns, SortDirection } from "../../utils/constants";
 import { ModalConsumer } from "../../../../components/Modal";
 import IndexService from "../../../../services/IndexService";
 import { TableParams } from "../../../../models/interfaces";
@@ -34,6 +34,7 @@ import { CatIndex } from "../../../../../server/models/interfaces";
 import { getURLQueryParams } from "../../utils/helpers";
 import { PoliciesQueryParams } from "../../models/interfaces";
 import { BREADCRUMBS } from "../../../../utils/constants";
+import { getErrorMessage } from "../../../../utils/helpers";
 
 interface IndicesProps extends RouteComponentProps {
   indexService: IndexService;
@@ -45,7 +46,7 @@ interface IndicesState {
   size: number;
   search: string;
   sortField: string;
-  sortDirection: string;
+  sortDirection: SortDirection;
   selectedItems: CatIndex[];
   indices: CatIndex[];
   loadingIndices: boolean;
@@ -93,9 +94,7 @@ export default class Indices extends Component<IndicesProps, IndicesState> {
     this.setState({ loadingIndices: true });
     try {
       const { indexService, history } = this.props;
-      const { from, size, search, sortField, sortDirection } = this.state;
-      const params = { from, size, search, sortField, sortDirection };
-      const queryParamsString = queryString.stringify(params);
+      const queryParamsString = queryString.stringify(Indices.getQueryObjectFromState(this.state));
       history.replace({ ...this.props.location, search: queryParamsString });
       const getIndicesResponse = await indexService.getIndices(queryParamsString);
       if (getIndicesResponse.ok) {
@@ -105,7 +104,7 @@ export default class Indices extends Component<IndicesProps, IndicesState> {
         toastNotifications.addDanger(getIndicesResponse.error);
       }
     } catch (err) {
-      toastNotifications.addDanger(err.message || err.data.message || "There was a problem LOADING the indices, please try again.");
+      toastNotifications.addDanger(getErrorMessage(err, "There was a problem loading the indices"));
     }
     this.setState({ loadingIndices: false });
   };

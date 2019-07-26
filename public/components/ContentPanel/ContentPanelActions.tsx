@@ -17,14 +17,14 @@ import React from "react";
 import { EuiButton, EuiFlexGroup, EuiFlexItem } from "@elastic/eui";
 
 interface ContentPanelActionsProps {
-  actions: { text: string; [rest: string]: any }[];
+  actions: { text: string; buttonProps?: object; flexItemProps?: object }[];
 }
 
 const ContentPanelActions: React.FC<ContentPanelActionsProps> = ({ actions }) => (
   <EuiFlexGroup justifyContent="spaceBetween" alignItems="center">
-    {actions.map(({ text, ...rest }, index) => (
-      <EuiFlexItem grow={false} key={index}>
-        <EuiButton {...rest} data-test-subj={`${text}Button`}>
+    {actions.map(({ text, buttonProps = {}, flexItemProps = {} }, index) => (
+      <EuiFlexItem {...flexItemProps} grow={false} key={index}>
+        <EuiButton {...buttonProps} data-test-subj={`${text}Button`}>
           {text}
         </EuiButton>
       </EuiFlexItem>

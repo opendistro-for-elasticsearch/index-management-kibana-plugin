@@ -39,6 +39,7 @@ jest.mock("ui/notify", () => ({
 jest.mock("ui/chrome", () => ({
   breadcrumbs: (() => {
     const breadcrumbs = () => {};
+    // @ts-ignore
     breadcrumbs.set = jest.fn();
     return breadcrumbs;
   })(),
@@ -106,10 +107,8 @@ describe("<Indices /> spec", () => {
       },
     ];
     browserServicesMock.indexService.getIndices = jest.fn().mockResolvedValue({ ok: true, response: { indices, totalIndices: 1 } });
-    const { debug, getByText } = renderWithRouter(Indices);
+    const { getByText } = renderWithRouter(Indices);
     await wait();
-
-    debug();
 
     await wait(() => getByText("index_1"));
   });

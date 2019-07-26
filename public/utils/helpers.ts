@@ -13,14 +13,10 @@
  * permissions and limitations under the License.
  */
 
-import IndexService from "../services/IndexService";
-import { SortDirection } from "../pages/Indices/utils/constants";
+import { isAngularHttpError } from "ui/notify/lib/format_angular_http_error";
 
-export interface BrowserServices {
-  indexService: IndexService;
-}
-
-export interface TableParams {
-  page: { index: number; size: number };
-  sort: { field: string; direction: SortDirection };
+export function getErrorMessage(err: any, defaultMessage: string) {
+  if (err && err.message) return err.message;
+  if (isAngularHttpError(err)) return err.data.message;
+  return defaultMessage;
 }
