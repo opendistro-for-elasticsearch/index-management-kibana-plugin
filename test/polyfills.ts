@@ -13,6 +13,7 @@
  * permissions and limitations under the License.
  */
 
+// @ts-ignore
 import { MutationObserver } from "./polyfills/mutationObserver";
 
 Object.defineProperty(window, "MutationObserver", { value: MutationObserver });
