@@ -20,13 +20,13 @@ import {
   DeletePolicyParams,
   DeletePolicyResponse,
   GetPoliciesResponse,
-  GetPolicyResponse,
   PutPolicyParams,
   PutPolicyResponse,
   SearchResponse,
 } from "../models/interfaces";
 import { getMustQuery } from "../utils/helpers";
 import { PoliciesSort, ServerResponse } from "../models/types";
+import { DocumentPolicy, Policy } from "../../models/interfaces";
 
 import Request = Legacy.Request;
 import ElasticsearchPlugin = Legacy.Plugins.elasticsearch.Plugin;
@@ -83,17 +83,17 @@ export default class PolicyService {
   /**
    * Calls backend Get Policy API
    */
-  getPolicy = async (req: Request, h: ResponseToolkit): Promise<ServerResponse<GetPolicyResponse>> => {
+  getPolicy = async (req: Request, h: ResponseToolkit): Promise<ServerResponse<DocumentPolicy>> => {
     try {
       const { id } = req.params;
       const params = { policyId: id };
       const { callWithRequest } = await this.esDriver.getCluster(CLUSTER.ISM);
       const getResponse = await callWithRequest(req, "ism.getPolicy", params);
       const policy = _.get(getResponse, "policy", null);
-      const seqNo = _.get(getResponse, "_seq_no", null);
-      const primaryTerm = _.get(getResponse, "_primary_term", null);
+      const seqNo = _.get(getResponse, "_seq_no");
+      const primaryTerm = _.get(getResponse, "_primary_term");
       if (policy) {
-        return { ok: true, response: { id, seqNo, primaryTerm, policy } };
+        return { ok: true, response: { id, seqNo: seqNo as number, primaryTerm: primaryTerm as number, policy: policy as Policy } };
       } else {
         return { ok: false, error: "Failed to load policy" };
       }
@@ -116,8 +116,7 @@ export default class PolicyService {
         sortField: string;
       };
 
-      // TODO change policy.name to policy.policy_id when it's available from backend fix
-      const policySorts: PoliciesSort = { name: "policy.name.keyword" };
+      const policySorts: PoliciesSort = { policy: "policy.policy_id.keyword", description: "policy.description.keyword" };
       const params = {
         index: INDEX.OPENDISTRO_ISM_CONFIG,
         seq_no_primary_term: true,
@@ -128,8 +127,7 @@ export default class PolicyService {
           query: {
             bool: {
               filter: [{ exists: { field: "policy" } }],
-              // TODO change policy.name to policy.policy_id when it's available from backend fix
-              must: getMustQuery("policy.name", search),
+              must: getMustQuery("policy.policy_id", search),
             },
           },
         },

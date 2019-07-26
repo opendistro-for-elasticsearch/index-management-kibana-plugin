@@ -13,9 +13,11 @@
  * permissions and limitations under the License.
  */
 
-import IndexService from "../../public/services/IndexService";
+import { IndexService, ManagedIndexService, PolicyService } from "../../public/services";
 import httpClientMock from "./httpClientMock";
 
 const indexService = new IndexService(httpClientMock);
+const managedIndexService = new ManagedIndexService(httpClientMock);
+const policyService = new PolicyService(httpClientMock);
 
-export default { indexService };
+export default { indexService, managedIndexService, policyService };

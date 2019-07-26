@@ -17,6 +17,7 @@ import { IHttpResponse, IHttpService } from "angular";
 import { INDEX } from "../../server/utils/constants";
 import { AddPolicyResponse, GetIndicesResponse, SearchResponse } from "../../server/models/interfaces";
 import { ServerResponse } from "../../server/models/types";
+import { NODE_API } from "../../utils/constants";
 
 export default class IndexService {
   httpClient: IHttpService;
@@ -26,25 +27,25 @@ export default class IndexService {
   }
 
   getIndices = async (queryParamsString: string): Promise<ServerResponse<GetIndicesResponse>> => {
-    const response: IHttpResponse<ServerResponse<GetIndicesResponse>> = await this.httpClient.get(
-      `../api/ism/_indices?${queryParamsString}`
-    );
+    const url = `..${NODE_API._INDICES}?${queryParamsString}`;
+    const response = (await this.httpClient.get(url)) as IHttpResponse<ServerResponse<GetIndicesResponse>>;
     return response.data;
   };
 
   addPolicy = async (indices: string[], policyId: string): Promise<ServerResponse<AddPolicyResponse>> => {
     const body = { indices, policyId };
-    const response: IHttpResponse<ServerResponse<AddPolicyResponse>> = await this.httpClient.post("../api/ism/addPolicy", body);
+    const url = `..${NODE_API.ADD_POLICY}`;
+    const response = (await this.httpClient.post(url, body)) as IHttpResponse<ServerResponse<AddPolicyResponse>>;
     return response.data;
   };
 
   searchPolicies = async (searchValue: string): Promise<ServerResponse<SearchResponse<any>>> => {
     // TODO: We want want to search the policy_id, but _id does not allow
     //  fuzzy matching so we need to store the policy_id in the document,
-    //  as temporary placeholder we will search policy.name for development
+    //  as temporary placeholder we will search policy.description for development
     const mustQuery = {
       query_string: {
-        default_field: "policy.name",
+        default_field: "policy.description",
         default_operator: "AND",
         query: `*${searchValue
           .trim()
@@ -57,7 +58,8 @@ export default class IndexService {
       size: 10,
       query: { _source: false, query: { bool: { must: [mustQuery, { exists: { field: "policy" } }] } } },
     };
-    const response: IHttpResponse<ServerResponse<any>> = await this.httpClient.post("../api/ism/_search", body);
+    const url = `..${NODE_API._SEARCH}`;
+    const response = (await this.httpClient.post(url, body)) as IHttpResponse<ServerResponse<any>>;
     return response.data;
   };
 }

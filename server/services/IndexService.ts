@@ -82,7 +82,7 @@ export default class IndexService {
       const { callWithRequest } = this.esDriver.getCluster(CLUSTER.DATA);
       const response = await callWithRequest(req, "indices.putSettings", {
         index: indices.join(","),
-        body: { "opendistro.index_state_management.policy_name": policyId },
+        body: { "opendistro.index_state_management.policy_id": policyId },
       });
 
       // temporary
