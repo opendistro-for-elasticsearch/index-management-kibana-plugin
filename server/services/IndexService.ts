@@ -16,7 +16,8 @@
 import { Legacy } from "kibana";
 import { RequestParams } from "@elastic/elasticsearch";
 import { CLUSTER } from "../utils/constants";
-import { AddPolicyResponse, CatIndex, GetIndicesResponse, SearchResponse, ServerResponse } from "../models/interfaces";
+import { AddPolicyResponse, CatIndex, GetIndicesResponse, SearchResponse } from "../models/interfaces";
+import { ServerResponse } from "../models/types";
 
 import Request = Legacy.Request;
 import ElasticsearchPlugin = Legacy.Plugins.elasticsearch.Plugin;
@@ -35,10 +36,10 @@ export default class IndexService {
       const params: RequestParams.Search = { index, size, body: query };
       const { callWithRequest } = this.esDriver.getCluster(CLUSTER.DATA);
       const results: SearchResponse<any> = await callWithRequest(req, "search", params);
-      return { response: results };
+      return { ok: true, response: results };
     } catch (err) {
       console.error("Index Management - IndexService - search", err);
-      return { error: err.message };
+      return { ok: false, error: err.message };
     }
   };
 
@@ -63,14 +64,14 @@ export default class IndexService {
       };
       const { callWithRequest } = this.esDriver.getCluster(CLUSTER.DATA);
       const indicesResponse: CatIndex[] = await callWithRequest(req, "cat.indices", params);
-      return { response: { indices: indicesResponse, totalIndices: indicesResponse.length } };
+      return { ok: true, response: { indices: indicesResponse, totalIndices: indicesResponse.length } };
     } catch (err) {
       // Throws an error if there is no index matching pattern
       if (err.statusCode === 404 && err.body.error.type === "index_not_found_exception") {
-        return { response: { indices: [], totalIndices: 0 } };
+        return { ok: true, response: { indices: [], totalIndices: 0 } };
       }
       console.error("Index Management - IndexService - getIndices:", err);
-      return { error: err.message };
+      return { ok: false, error: err.message };
     }
   };
 
@@ -86,12 +87,12 @@ export default class IndexService {
 
       // temporary
       if (response.acknowledged) {
-        return { response: { failures: false, updatedIndices: indices.length, failedIndices: [] } };
+        return { ok: true, response: { failures: false, updatedIndices: indices.length, failedIndices: [] } };
       }
-      return { error: "Adding policy was not acknowledged" };
+      return { ok: false, error: "Adding policy was not acknowledged" };
     } catch (err) {
       console.error("Index Management - IndexService - addPolicy:", err);
-      return { error: err.message };
+      return { ok: false, error: err.message };
     }
   };
 }

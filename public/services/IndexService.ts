@@ -15,7 +15,8 @@
 
 import { IHttpResponse, IHttpService } from "angular";
 import { INDEX } from "../../server/utils/constants";
-import { AddPolicyResponse, GetIndicesResponse, SearchResponse, ServerResponse } from "../../server/models/interfaces";
+import { AddPolicyResponse, GetIndicesResponse, SearchResponse } from "../../server/models/interfaces";
+import { ServerResponse } from "../../server/models/types";
 
 export default class IndexService {
   httpClient: IHttpService;
@@ -33,7 +34,7 @@ export default class IndexService {
 
   addPolicy = async (indices: string[], policyId: string): Promise<ServerResponse<AddPolicyResponse>> => {
     const body = { indices, policyId };
-    const response = await this.httpClient.post("../api/ism/addPolicy", body);
+    const response: IHttpResponse<ServerResponse<AddPolicyResponse>> = await this.httpClient.post("../api/ism/addPolicy", body);
     return response.data;
   };
 
@@ -56,7 +57,7 @@ export default class IndexService {
       size: 10,
       query: { _source: false, query: { bool: { must: [mustQuery, { exists: { field: "policy" } }] } } },
     };
-    const response = await this.httpClient.post("../api/ism/_search", body);
+    const response: IHttpResponse<ServerResponse<any>> = await this.httpClient.post("../api/ism/_search", body);
     return response.data;
   };
 }

@@ -1,6 +1,6 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`<IndexActions /> spec renders the component 1`] = `
+exports[`<ContentPanelActions /> spec renders the component 1`] = `
 <div
   class="euiFlexGroup euiFlexGroup--gutterLarge euiFlexGroup--alignItemsCenter euiFlexGroup--justifyContentSpaceBetween euiFlexGroup--directionRow euiFlexGroup--responsive"
 >
@@ -9,7 +9,7 @@ exports[`<IndexActions /> spec renders the component 1`] = `
   >
     <button
       class="euiButton euiButton--primary"
-      data-test-subj="indexActionsAddPolicy"
+      data-test-subj="ContentPanelActionsButton"
       type="button"
     >
       <span
@@ -18,7 +18,7 @@ exports[`<IndexActions /> spec renders the component 1`] = `
         <span
           class="euiButton__text"
         >
-          Add policy
+          ContentPanelActions
         </span>
       </span>
     </button>

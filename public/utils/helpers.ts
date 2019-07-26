@@ -13,6 +13,10 @@
  * permissions and limitations under the License.
  */
 
-import IndexActions from "./IndexActions";
+import { isAngularHttpError } from "ui/notify/lib/format_angular_http_error";
 
-export default IndexActions;
+export function getErrorMessage(err: any, defaultMessage: string) {
+  if (err && err.message) return err.message;
+  if (isAngularHttpError(err)) return err.data.message;
+  return defaultMessage;
+}

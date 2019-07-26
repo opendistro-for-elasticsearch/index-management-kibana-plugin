@@ -25,3 +25,5 @@ export type PoliciesSort = {
   [sortField: string]: string;
   name: "policy.name.keyword";
 };
+
+export type ServerResponse<T> = { ok: false; error: string } | { ok: true; response: T };
