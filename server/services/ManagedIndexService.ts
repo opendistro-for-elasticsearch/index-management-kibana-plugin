@@ -63,8 +63,7 @@ export default class ManagedIndexService {
         sortField: string;
       };
 
-      // TODO: change policy_name to policy_id on backend
-      const managedIndexSorts: ManagedIndicesSort = { name: "managed_index.name.keyword", policyId: "policy_name" };
+      const managedIndexSorts: ManagedIndicesSort = { name: "managed_index.name.keyword", policyId: "managed_index.policy_id" };
       const searchParams: RequestParams.Search = {
         index: INDEX.OPENDISTRO_ISM_CONFIG,
         seq_no_primary_term: true,
@@ -94,13 +93,12 @@ export default class ManagedIndexService {
       const explainParams = { index: indices.join(",") };
       const { callWithRequest: ismCallWithRequest } = await this.esDriver.getCluster(CLUSTER.ISM);
       const explainResponse: ExplainResponse = await ismCallWithRequest(req, "ism.explain", explainParams);
-
       const managedIndices = searchResponse.hits.hits.map(hit => {
         const index = hit._source.managed_index.index;
         return {
           index,
           indexUuid: hit._source.managed_index.index_uuid,
-          policyId: hit._source.managed_index.policy_name, // TODO: rename policy_name to policy_id to be more clear
+          policyId: hit._source.managed_index.policy_id,
           policySeqNo: hit._source.managed_index.policy_seq_no,
           policyPrimaryTerm: hit._source.managed_index.policy_primary_term,
           policy: hit._source.managed_index.policy,
@@ -126,7 +124,6 @@ export default class ManagedIndexService {
       const params: RetryParams = { index: index.join(",") };
       if (state) params.body = { state };
       const retryResponse: RetryResponse = await callWithRequest(req, "ism.retry", params);
-
       return {
         ok: true,
         response: {

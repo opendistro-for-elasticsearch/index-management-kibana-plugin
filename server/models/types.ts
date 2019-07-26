@@ -18,12 +18,13 @@ export type MatchAllQuery = { match_all: {} };
 export type ManagedIndicesSort = {
   [sortField: string]: string;
   name: "managed_index.name.keyword";
-  policyId: "policy_name";
+  policyId: "managed_index.policy_id";
 };
 
 export type PoliciesSort = {
   [sortField: string]: string;
-  name: "policy.name.keyword";
+  policy: "policy.policy_id.keyword";
+  description: "policy.description.keyword";
 };
 
 export type ServerResponse<T> = { ok: false; error: string } | { ok: true; response: T };
