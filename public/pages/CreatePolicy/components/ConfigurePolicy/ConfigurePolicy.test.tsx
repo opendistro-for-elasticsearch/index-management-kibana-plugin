@@ -13,19 +13,15 @@
  * permissions and limitations under the License.
  */
 
-export type MatchAllQuery = { match_all: {} };
+import React from "react";
+import { render } from "@testing-library/react";
+import ConfigurePolicy from "./ConfigurePolicy";
 
-export type ManagedIndicesSort = {
-  [sortField: string]: string;
-  name: "managed_index.name.keyword";
-  policyId: "managed_index.policy_id";
-};
-
-export type PoliciesSort = {
-  [sortField: string]: string;
-  id: "policy.policy_id.keyword";
-  "policy.policy.description": "policy.description.keyword";
-  "policy.policy.last_updated_time": "policy.last_updated_time";
-};
-
-export type ServerResponse<T> = { ok: false; error: string } | { ok: true; response: T };
+describe("<ConfigurePolicy /> spec", () => {
+  it("renders the component", () => {
+    const { container } = render(
+      <ConfigurePolicy policyId="some_id" policyIdError="" isEdit={false} onChange={() => {}} onBlur={() => {}} onFocus={() => {}} />
+    );
+    expect(container.firstChild).toMatchSnapshot();
+  });
+});

@@ -31,8 +31,7 @@ describe("<PolicyModal /> spec", () => {
     // EuiOverlayMask appends an element to the body so we should have two, an empty div from react-test-library
     // and our EuiOverlayMask element
     expect(document.body.children).toHaveLength(2);
-    // TODO: aria-describedby is generating a unique id and breaking snapshot, look into mocking id generator
-    // expect(document.body.children[1]).toMatchSnapshot();
+    expect(document.body.children[1]).toMatchSnapshot();
   });
 
   it("disables edit button", () => {

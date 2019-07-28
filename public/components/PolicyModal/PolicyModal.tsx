@@ -38,7 +38,7 @@ interface PolicyModalProps {
   onEdit: () => void;
 }
 
-const PolicyModal: React.FC<PolicyModalProps> = ({ policyId, policy, errorMessage, onClose, onEdit }) => {
+const PolicyModal: React.SFC<PolicyModalProps> = ({ policyId, policy, errorMessage, onClose, onEdit }) => {
   const policyString = JSON.stringify(policy, null, 4);
   return (
     <EuiOverlayMask>
@@ -60,7 +60,7 @@ const PolicyModal: React.FC<PolicyModalProps> = ({ policyId, policy, errorMessag
             <EuiFlexItem grow={false} style={{ marginRight: "auto" }}>
               <EuiCopy textToCopy={policyString}>
                 {(copy: () => void) => (
-                  <EuiButtonEmpty iconType="copyClipboard" onClick={copy} disabled={!policy}>
+                  <EuiButtonEmpty iconType="copyClipboard" onClick={copy} disabled={!policy} data-test-subj="policyModalCopyButton">
                     Copy
                   </EuiButtonEmpty>
                 )}

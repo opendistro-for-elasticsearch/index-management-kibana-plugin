@@ -13,11 +13,13 @@
  * permissions and limitations under the License.
  */
 
-import IndexService from "../services/IndexService";
-import { SortDirection } from "../pages/Indices/utils/constants";
+import { IndexService, ManagedIndexService, PolicyService } from "../services";
+import { SortDirection } from "../utils/constants";
 
 export interface BrowserServices {
   indexService: IndexService;
+  managedIndexService: ManagedIndexService;
+  policyService: PolicyService;
 }
 
 export interface TableParams {

@@ -1,0 +1,78 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`<ConfigurePolicy /> spec renders the component 1`] = `
+<div
+  class="euiPanel euiPanel--paddingMedium"
+  style="padding-left: 0px; padding-right: 0px;"
+>
+  <div
+    class="euiFlexGroup euiFlexGroup--gutterLarge euiFlexGroup--alignItemsCenter euiFlexGroup--justifyContentSpaceBetween euiFlexGroup--directionRow euiFlexGroup--responsive"
+    style="padding: 0px 10px;"
+  >
+    <div
+      class="euiFlexItem"
+    >
+      <h3
+        class="euiTitle euiTitle--small"
+      >
+        Policy
+      </h3>
+    </div>
+  </div>
+  <hr
+    class="euiHorizontalRule euiHorizontalRule--full euiHorizontalRule--marginXSmall"
+  />
+  <div
+    style="padding: initial;"
+  >
+    <div
+      style="padding-left: 10px;"
+    >
+      <div
+        class="euiText euiText--extraSmall"
+      >
+        <p>
+          Specify a unique ID that helps you identify this policy
+        </p>
+      </div>
+      <div
+        class="euiSpacer euiSpacer--s"
+      />
+      <div
+        class="euiFormRow"
+        id="some_make_id-row"
+      >
+        <label
+          aria-invalid="false"
+          class="euiFormLabel"
+          for="some_make_id"
+        >
+          Policy ID
+        </label>
+        <div
+          class="euiFormControlLayout"
+        >
+          <div
+            class="euiFormControlLayout__childrenWrapper"
+          >
+            <input
+              aria-describedby="some_make_id-help"
+              class="euiFieldText"
+              id="some_make_id"
+              placeholder="Policy ID"
+              type="text"
+              value="some_id"
+            />
+          </div>
+        </div>
+        <div
+          class="euiFormHelpText euiFormRow__text"
+          id="some_make_id-help"
+        >
+          Use something easy to remember
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+`;

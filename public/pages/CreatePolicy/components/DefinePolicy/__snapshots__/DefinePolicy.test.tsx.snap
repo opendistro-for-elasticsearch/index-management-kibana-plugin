@@ -1,0 +1,243 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`<DefinePolicy /> spec renders the component 1`] = `
+<div
+  class="euiPanel euiPanel--paddingMedium"
+  style="padding-left: 0px; padding-right: 0px;"
+>
+  <div
+    class="euiFlexGroup euiFlexGroup--gutterLarge euiFlexGroup--alignItemsCenter euiFlexGroup--justifyContentSpaceBetween euiFlexGroup--directionRow euiFlexGroup--responsive"
+    style="padding: 0px 10px;"
+  >
+    <div
+      class="euiFlexItem"
+    >
+      <h3
+        class="euiTitle euiTitle--small"
+      >
+        Define policy
+      </h3>
+    </div>
+    <div
+      class="euiFlexItem euiFlexItem--flexGrowZero"
+    >
+      <div
+        class="euiFlexGroup euiFlexGroup--gutterLarge euiFlexGroup--alignItemsCenter euiFlexGroup--justifyContentSpaceBetween euiFlexGroup--directionRow euiFlexGroup--responsive"
+      >
+        <div
+          class="euiFlexItem"
+        >
+          <span
+            class="euiToolTipAnchor"
+          >
+            <button
+              aria-describedby="some_make_id"
+              class="euiButton euiButton--primary"
+              type="button"
+            >
+              <span
+                class="euiButton__content"
+              >
+                <svg
+                  aria-hidden="true"
+                  class="euiIcon euiIcon--medium euiButton__icon"
+                  focusable="false"
+                  height="16"
+                  viewBox="0 0 16 16"
+                  width="16"
+                  xmlns="http://www.w3.org/2000/svg"
+                >
+                  <path
+                    d="M0 2.729V2a1 1 0 0 1 1-1h2v1H1v12h4v1H1a1 1 0 0 1-1-1V2.729zM12 5V2a1 1 0 0 0-1-1H9v1h2v3h1zm-1 1h2v9H6V6h5V5H6a1 1 0 0 0-1 1v9a1 1 0 0 0 1 1h7a1 1 0 0 0 1-1V6a1 1 0 0 0-1-1h-2v1z"
+                  />
+                  <path
+                    d="M7 10h5V9H7zM7 8h5V7H7zM7 12h5v-1H7zM7 14h5v-1H7zM9 2V1a1 1 0 0 0-1-1H4a1 1 0 0 0-1 1v1h1V1h4v1h1zM3 3h6V2H3z"
+                  />
+                </svg>
+                <span
+                  class="euiButton__text"
+                >
+                  Copy
+                </span>
+              </span>
+            </button>
+          </span>
+        </div>
+        <div
+          class="euiFlexItem"
+        >
+          <button
+            class="euiButton euiButton--primary"
+            type="button"
+          >
+            <span
+              class="euiButton__content"
+            >
+              <svg
+                aria-hidden="true"
+                class="euiIcon euiIcon--medium euiButton__icon"
+                focusable="false"
+                height="16"
+                viewBox="0 0 16 16"
+                width="16"
+                xmlns="http://www.w3.org/2000/svg"
+                xmlns:xlink="http://www.w3.org/1999/xlink"
+              >
+                <defs>
+                  <path
+                    d="M2 4V3h6v1H2zm0 3V6h10v1H2zm0 3V9h6v1H2zm0 3v-1h10v1H2z"
+                    id="editor_align_left-a"
+                  />
+                </defs>
+                <use
+                  xlink:href="#editor_align_left-a"
+                />
+              </svg>
+              <span
+                class="euiButton__text"
+              >
+                Auto Indent
+              </span>
+            </span>
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+  <hr
+    class="euiHorizontalRule euiHorizontalRule--full euiHorizontalRule--marginXSmall"
+  />
+  <div
+    style="padding: initial;"
+  >
+    <div
+      style="padding-left: 10px;"
+    >
+      <div
+        class="euiText euiText--extraSmall"
+      >
+        <p>
+          Create a policy with a JSON configuration file. This can be added directly in the code editor below.
+        </p>
+      </div>
+    </div>
+    <div
+      class="euiSpacer euiSpacer--s"
+    />
+    <div
+      class="euiCodeEditorWrapper"
+      data-test-subj="codeEditorContainer"
+      style="width: 100%;"
+    >
+      <div
+        class="euiCodeEditorKeyboardHint"
+        data-test-subj="codeEditorHint"
+        id="some_html_id"
+        role="button"
+        tabindex="0"
+      >
+        <p
+          class="euiText"
+        >
+          Press Enter to start editing.
+        </p>
+        <p
+          class="euiText"
+        >
+          When you're done, press Escape to stop editing.
+        </p>
+      </div>
+      <div
+        class=" ace_editor ace-github"
+        id="brace-editor"
+        style="width: 100%; height: 500px; font-size: 14px;"
+      >
+        <textarea
+          aria-label="Code Editor"
+          autocapitalize="off"
+          autocorrect="off"
+          class="ace_text-input"
+          spellcheck="false"
+          style="opacity: 0;"
+          tabindex="-1"
+          wrap="off"
+        />
+        <div
+          aria-hidden="true"
+          class="ace_gutter"
+        >
+          <div
+            class="ace_layer ace_gutter-layer ace_folding-enabled"
+          />
+          <div
+            class="ace_gutter-active-line"
+          />
+        </div>
+        <div
+          class="ace_scroller"
+        >
+          <div
+            class="ace_content"
+          >
+            <div
+              class="ace_layer ace_print-margin-layer"
+            >
+              <div
+                class="ace_print-margin"
+                style="left: 4px; visibility: visible;"
+              />
+            </div>
+            <div
+              class="ace_layer ace_marker-layer"
+            />
+            <div
+              class="ace_layer ace_text-layer"
+              style="padding: 0px 4px;"
+            />
+            <div
+              class="ace_layer ace_marker-layer"
+            />
+            <div
+              class="ace_layer ace_cursor-layer ace_hidden-cursors"
+            >
+              <div
+                class="ace_cursor"
+              />
+            </div>
+          </div>
+        </div>
+        <div
+          class="ace_scrollbar ace_scrollbar-v"
+          style="display: none; width: 20px;"
+        >
+          <div
+            class="ace_scrollbar-inner"
+            style="width: 20px;"
+          />
+        </div>
+        <div
+          class="ace_scrollbar ace_scrollbar-h"
+          style="display: none; height: 20px;"
+        >
+          <div
+            class="ace_scrollbar-inner"
+            style="height: 20px;"
+          />
+        </div>
+        <div
+          style="height: auto; width: auto; top: 0px; left: 0px; visibility: hidden; position: absolute; white-space: pre; overflow: hidden;"
+        >
+          <div
+            style="height: auto; width: auto; top: 0px; left: 0px; visibility: hidden; position: absolute; white-space: pre; overflow: visible;"
+          />
+          <div
+            style="height: auto; width: auto; top: 0px; left: 0px; visibility: hidden; position: absolute; white-space: pre; overflow: visible;"
+          >
+            XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+`;

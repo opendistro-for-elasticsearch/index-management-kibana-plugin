@@ -1,0 +1,631 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`<CreatePolicy /> spec renders the create component 1`] = `
+<div
+  style="padding: 25px 50px;"
+>
+  <h1
+    class="euiTitle euiTitle--large"
+  >
+    Create
+     policy
+  </h1>
+  <div
+    class="euiSpacer euiSpacer--l"
+  />
+  <div
+    class="euiPanel euiPanel--paddingMedium"
+    style="padding-left: 0px; padding-right: 0px;"
+  >
+    <div
+      class="euiFlexGroup euiFlexGroup--gutterLarge euiFlexGroup--alignItemsCenter euiFlexGroup--justifyContentSpaceBetween euiFlexGroup--directionRow euiFlexGroup--responsive"
+      style="padding: 0px 10px;"
+    >
+      <div
+        class="euiFlexItem"
+      >
+        <h3
+          class="euiTitle euiTitle--small"
+        >
+          Policy
+        </h3>
+      </div>
+    </div>
+    <hr
+      class="euiHorizontalRule euiHorizontalRule--full euiHorizontalRule--marginXSmall"
+    />
+    <div
+      style="padding: initial;"
+    >
+      <div
+        style="padding-left: 10px;"
+      >
+        <div
+          class="euiText euiText--extraSmall"
+        >
+          <p>
+            Specify a unique ID that helps you identify this policy
+          </p>
+        </div>
+        <div
+          class="euiSpacer euiSpacer--s"
+        />
+        <div
+          class="euiFormRow"
+          id="some_make_id-row"
+        >
+          <label
+            aria-invalid="false"
+            class="euiFormLabel"
+            for="some_make_id"
+          >
+            Policy ID
+          </label>
+          <div
+            class="euiFormControlLayout"
+          >
+            <div
+              class="euiFormControlLayout__childrenWrapper"
+            >
+              <input
+                aria-describedby="some_make_id-help"
+                class="euiFieldText"
+                id="some_make_id"
+                placeholder="Policy ID"
+                type="text"
+                value=""
+              />
+            </div>
+          </div>
+          <div
+            class="euiFormHelpText euiFormRow__text"
+            id="some_make_id-help"
+          >
+            Use something easy to remember
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div
+    class="euiSpacer euiSpacer--l"
+  />
+  <div
+    class="euiPanel euiPanel--paddingMedium"
+    style="padding-left: 0px; padding-right: 0px;"
+  >
+    <div
+      class="euiFlexGroup euiFlexGroup--gutterLarge euiFlexGroup--alignItemsCenter euiFlexGroup--justifyContentSpaceBetween euiFlexGroup--directionRow euiFlexGroup--responsive"
+      style="padding: 0px 10px;"
+    >
+      <div
+        class="euiFlexItem"
+      >
+        <h3
+          class="euiTitle euiTitle--small"
+        >
+          Define policy
+        </h3>
+      </div>
+      <div
+        class="euiFlexItem euiFlexItem--flexGrowZero"
+      >
+        <div
+          class="euiFlexGroup euiFlexGroup--gutterLarge euiFlexGroup--alignItemsCenter euiFlexGroup--justifyContentSpaceBetween euiFlexGroup--directionRow euiFlexGroup--responsive"
+        >
+          <div
+            class="euiFlexItem"
+          >
+            <span
+              class="euiToolTipAnchor"
+            >
+              <button
+                aria-describedby="some_make_id"
+                class="euiButton euiButton--primary"
+                type="button"
+              >
+                <span
+                  class="euiButton__content"
+                >
+                  <svg
+                    aria-hidden="true"
+                    class="euiIcon euiIcon--medium euiButton__icon"
+                    focusable="false"
+                    height="16"
+                    viewBox="0 0 16 16"
+                    width="16"
+                    xmlns="http://www.w3.org/2000/svg"
+                  >
+                    <path
+                      d="M0 2.729V2a1 1 0 0 1 1-1h2v1H1v12h4v1H1a1 1 0 0 1-1-1V2.729zM12 5V2a1 1 0 0 0-1-1H9v1h2v3h1zm-1 1h2v9H6V6h5V5H6a1 1 0 0 0-1 1v9a1 1 0 0 0 1 1h7a1 1 0 0 0 1-1V6a1 1 0 0 0-1-1h-2v1z"
+                    />
+                    <path
+                      d="M7 10h5V9H7zM7 8h5V7H7zM7 12h5v-1H7zM7 14h5v-1H7zM9 2V1a1 1 0 0 0-1-1H4a1 1 0 0 0-1 1v1h1V1h4v1h1zM3 3h6V2H3z"
+                    />
+                  </svg>
+                  <span
+                    class="euiButton__text"
+                  >
+                    Copy
+                  </span>
+                </span>
+              </button>
+            </span>
+          </div>
+          <div
+            class="euiFlexItem"
+          >
+            <button
+              class="euiButton euiButton--primary"
+              type="button"
+            >
+              <span
+                class="euiButton__content"
+              >
+                <svg
+                  aria-hidden="true"
+                  class="euiIcon euiIcon--medium euiButton__icon"
+                  focusable="false"
+                  height="16"
+                  viewBox="0 0 16 16"
+                  width="16"
+                  xmlns="http://www.w3.org/2000/svg"
+                  xmlns:xlink="http://www.w3.org/1999/xlink"
+                >
+                  <defs>
+                    <path
+                      d="M2 4V3h6v1H2zm0 3V6h10v1H2zm0 3V9h6v1H2zm0 3v-1h10v1H2z"
+                      id="editor_align_left-a"
+                    />
+                  </defs>
+                  <use
+                    xlink:href="#editor_align_left-a"
+                  />
+                </svg>
+                <span
+                  class="euiButton__text"
+                >
+                  Auto Indent
+                </span>
+              </span>
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+    <hr
+      class="euiHorizontalRule euiHorizontalRule--full euiHorizontalRule--marginXSmall"
+    />
+    <div
+      style="padding: initial;"
+    >
+      <div
+        style="padding-left: 10px;"
+      >
+        <div
+          class="euiText euiText--extraSmall"
+        >
+          <p>
+            Create a policy with a JSON configuration file. This can be added directly in the code editor below.
+          </p>
+        </div>
+      </div>
+      <div
+        class="euiSpacer euiSpacer--s"
+      />
+      <textarea
+        aria-label="Code Editor"
+        class="euiTextArea euiTextArea--resizeVertical"
+        rows="6"
+      >
+        {
+    "policy": {
+        "description": "Default policy",
+        "default_state": "Ingest",
+        "states": [
+            {
+                "name": "Ingest",
+                "actions": [
+                    {
+                        "rollover": {
+                            "min_doc_count": 10000000
+                        }
+                    }
+                ],
+                "transitions": [
+                    {
+                        "state_name": "Search"
+                    }
+                ]
+            },
+            {
+                "name": "Search",
+                "actions": [],
+                "transitions": [
+                    {
+                        "state_name": "Delete",
+                        "conditions": {
+                            "index_age": "30d"
+                        }
+                    }
+                ]
+            },
+            {
+                "name": "Delete",
+                "actions": [
+                    {
+                        "delete": {}
+                    }
+                ],
+                "transitions": []
+            }
+        ]
+    }
+}
+      </textarea>
+    </div>
+  </div>
+  <div
+    class="euiSpacer euiSpacer--l"
+  />
+  <div
+    class="euiFlexGroup euiFlexGroup--gutterLarge euiFlexGroup--alignItemsCenter euiFlexGroup--justifyContentFlexEnd euiFlexGroup--directionRow euiFlexGroup--responsive"
+  >
+    <div
+      class="euiFlexItem euiFlexItem--flexGrowZero"
+    >
+      <button
+        class="euiButtonEmpty euiButtonEmpty--primary"
+        data-test-subj="createPolicyCancelButton"
+        type="button"
+      >
+        <span
+          class="euiButtonEmpty__content"
+        >
+          <span
+            class="euiButtonEmpty__text"
+          >
+            Cancel
+          </span>
+        </span>
+      </button>
+    </div>
+    <div
+      class="euiFlexItem euiFlexItem--flexGrowZero"
+    >
+      <button
+        class="euiButton euiButton--primary euiButton--fill"
+        data-test-subj="createPolicyCreateButton"
+        disabled=""
+        type="button"
+      >
+        <span
+          class="euiButton__content"
+        >
+          <span
+            class="euiButton__text"
+          >
+            Create
+          </span>
+        </span>
+      </button>
+    </div>
+  </div>
+</div>
+`;
+
+exports[`<CreatePolicy /> spec renders the edit component 1`] = `
+<div
+  style="padding: 25px 50px;"
+>
+  <h1
+    class="euiTitle euiTitle--large"
+  >
+    Edit
+     policy
+  </h1>
+  <div
+    class="euiSpacer euiSpacer--l"
+  />
+  <div
+    class="euiPanel euiPanel--paddingMedium"
+    style="padding-left: 0px; padding-right: 0px;"
+  >
+    <div
+      class="euiFlexGroup euiFlexGroup--gutterLarge euiFlexGroup--alignItemsCenter euiFlexGroup--justifyContentSpaceBetween euiFlexGroup--directionRow euiFlexGroup--responsive"
+      style="padding: 0px 10px;"
+    >
+      <div
+        class="euiFlexItem"
+      >
+        <h3
+          class="euiTitle euiTitle--small"
+        >
+          Policy
+        </h3>
+      </div>
+    </div>
+    <hr
+      class="euiHorizontalRule euiHorizontalRule--full euiHorizontalRule--marginXSmall"
+    />
+    <div
+      style="padding: initial;"
+    >
+      <div
+        style="padding-left: 10px;"
+      >
+        <div
+          class="euiText euiText--extraSmall"
+        >
+          <p>
+            Specify a unique ID that helps you identify this policy
+          </p>
+        </div>
+        <div
+          class="euiSpacer euiSpacer--s"
+        />
+        <div
+          class="euiFormRow"
+          id="some_make_id-row"
+        >
+          <label
+            aria-invalid="false"
+            class="euiFormLabel"
+            for="some_make_id"
+          >
+            Policy ID
+          </label>
+          <div
+            class="euiFormControlLayout"
+          >
+            <div
+              class="euiFormControlLayout__childrenWrapper"
+            >
+              <input
+                aria-describedby="some_make_id-help"
+                class="euiFieldText"
+                id="some_make_id"
+                placeholder="Policy ID"
+                readonly=""
+                type="text"
+                value="some_policy"
+              />
+            </div>
+          </div>
+          <div
+            class="euiFormHelpText euiFormRow__text"
+            id="some_make_id-help"
+          >
+            Use something easy to remember
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div
+    class="euiSpacer euiSpacer--l"
+  />
+  <div
+    class="euiPanel euiPanel--paddingMedium"
+    style="padding-left: 0px; padding-right: 0px;"
+  >
+    <div
+      class="euiFlexGroup euiFlexGroup--gutterLarge euiFlexGroup--alignItemsCenter euiFlexGroup--justifyContentSpaceBetween euiFlexGroup--directionRow euiFlexGroup--responsive"
+      style="padding: 0px 10px;"
+    >
+      <div
+        class="euiFlexItem"
+      >
+        <h3
+          class="euiTitle euiTitle--small"
+        >
+          Define policy
+        </h3>
+      </div>
+      <div
+        class="euiFlexItem euiFlexItem--flexGrowZero"
+      >
+        <div
+          class="euiFlexGroup euiFlexGroup--gutterLarge euiFlexGroup--alignItemsCenter euiFlexGroup--justifyContentSpaceBetween euiFlexGroup--directionRow euiFlexGroup--responsive"
+        >
+          <div
+            class="euiFlexItem"
+          >
+            <span
+              class="euiToolTipAnchor"
+            >
+              <button
+                aria-describedby="some_make_id"
+                class="euiButton euiButton--primary"
+                type="button"
+              >
+                <span
+                  class="euiButton__content"
+                >
+                  <svg
+                    aria-hidden="true"
+                    class="euiIcon euiIcon--medium euiButton__icon"
+                    focusable="false"
+                    height="16"
+                    viewBox="0 0 16 16"
+                    width="16"
+                    xmlns="http://www.w3.org/2000/svg"
+                  >
+                    <path
+                      d="M0 2.729V2a1 1 0 0 1 1-1h2v1H1v12h4v1H1a1 1 0 0 1-1-1V2.729zM12 5V2a1 1 0 0 0-1-1H9v1h2v3h1zm-1 1h2v9H6V6h5V5H6a1 1 0 0 0-1 1v9a1 1 0 0 0 1 1h7a1 1 0 0 0 1-1V6a1 1 0 0 0-1-1h-2v1z"
+                    />
+                    <path
+                      d="M7 10h5V9H7zM7 8h5V7H7zM7 12h5v-1H7zM7 14h5v-1H7zM9 2V1a1 1 0 0 0-1-1H4a1 1 0 0 0-1 1v1h1V1h4v1h1zM3 3h6V2H3z"
+                    />
+                  </svg>
+                  <span
+                    class="euiButton__text"
+                  >
+                    Copy
+                  </span>
+                </span>
+              </button>
+            </span>
+          </div>
+          <div
+            class="euiFlexItem"
+          >
+            <button
+              class="euiButton euiButton--primary"
+              type="button"
+            >
+              <span
+                class="euiButton__content"
+              >
+                <svg
+                  aria-hidden="true"
+                  class="euiIcon euiIcon--medium euiButton__icon"
+                  focusable="false"
+                  height="16"
+                  viewBox="0 0 16 16"
+                  width="16"
+                  xmlns="http://www.w3.org/2000/svg"
+                  xmlns:xlink="http://www.w3.org/1999/xlink"
+                >
+                  <defs>
+                    <path
+                      d="M2 4V3h6v1H2zm0 3V6h10v1H2zm0 3V9h6v1H2zm0 3v-1h10v1H2z"
+                      id="editor_align_left-a"
+                    />
+                  </defs>
+                  <use
+                    xlink:href="#editor_align_left-a"
+                  />
+                </svg>
+                <span
+                  class="euiButton__text"
+                >
+                  Auto Indent
+                </span>
+              </span>
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+    <hr
+      class="euiHorizontalRule euiHorizontalRule--full euiHorizontalRule--marginXSmall"
+    />
+    <div
+      style="padding: initial;"
+    >
+      <div
+        style="padding-left: 10px;"
+      >
+        <div
+          class="euiText euiText--extraSmall"
+        >
+          <p>
+            Create a policy with a JSON configuration file. This can be added directly in the code editor below.
+          </p>
+        </div>
+      </div>
+      <div
+        class="euiSpacer euiSpacer--s"
+      />
+      <textarea
+        aria-label="Code Editor"
+        class="euiTextArea euiTextArea--resizeVertical"
+        rows="6"
+      >
+        {
+    "policy": {
+        "policy": {
+            "description": "Default policy",
+            "default_state": "Ingest",
+            "states": [
+                {
+                    "name": "Ingest",
+                    "actions": [
+                        {
+                            "rollover": {
+                                "min_doc_count": 10000000
+                            }
+                        }
+                    ],
+                    "transitions": [
+                        {
+                            "state_name": "Search"
+                        }
+                    ]
+                },
+                {
+                    "name": "Search",
+                    "actions": [],
+                    "transitions": [
+                        {
+                            "state_name": "Delete",
+                            "conditions": {
+                                "index_age": "30d"
+                            }
+                        }
+                    ]
+                },
+                {
+                    "name": "Delete",
+                    "actions": [
+                        {
+                            "delete": {}
+                        }
+                    ],
+                    "transitions": []
+                }
+            ]
+        }
+    }
+}
+      </textarea>
+    </div>
+  </div>
+  <div
+    class="euiSpacer euiSpacer--l"
+  />
+  <div
+    class="euiFlexGroup euiFlexGroup--gutterLarge euiFlexGroup--alignItemsCenter euiFlexGroup--justifyContentFlexEnd euiFlexGroup--directionRow euiFlexGroup--responsive"
+  >
+    <div
+      class="euiFlexItem euiFlexItem--flexGrowZero"
+    >
+      <button
+        class="euiButtonEmpty euiButtonEmpty--primary"
+        data-test-subj="createPolicyCancelButton"
+        type="button"
+      >
+        <span
+          class="euiButtonEmpty__content"
+        >
+          <span
+            class="euiButtonEmpty__text"
+          >
+            Cancel
+          </span>
+        </span>
+      </button>
+    </div>
+    <div
+      class="euiFlexItem euiFlexItem--flexGrowZero"
+    >
+      <button
+        class="euiButton euiButton--primary euiButton--fill"
+        data-test-subj="createPolicyCreateButton"
+        type="button"
+      >
+        <span
+          class="euiButton__content"
+        >
+          <span
+            class="euiButton__text"
+          >
+            Update
+          </span>
+        </span>
+      </button>
+    </div>
+  </div>
+</div>
+`;

@@ -116,7 +116,11 @@ export default class PolicyService {
         sortField: string;
       };
 
-      const policySorts: PoliciesSort = { policy: "policy.policy_id.keyword", description: "policy.description.keyword" };
+      const policySorts: PoliciesSort = {
+        id: "policy.policy_id.keyword",
+        "policy.policy.description": "policy.description.keyword",
+        "policy.policy.last_updated_time": "policy.last_updated_time",
+      };
       const params = {
         index: INDEX.OPENDISTRO_ISM_CONFIG,
         seq_no_primary_term: true,

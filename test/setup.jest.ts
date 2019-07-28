@@ -18,3 +18,42 @@ import "@testing-library/jest-dom/extend-expect";
 import { configure } from "@testing-library/react";
 
 configure({ testIdAttribute: "data-test-subj" });
+
+jest.mock("@elastic/eui/lib/components/form/form_row/make_id", () => () => "some_make_id");
+
+jest.mock("@elastic/eui/lib/services/accessibility/html_id_generator", () => ({
+  htmlIdGenerator: () => {
+    return () => "some_html_id";
+  },
+}));
+
+// @ts-ignore
+window.Worker = function() {
+  this.postMessage = () => {};
+  this.terminate = () => {};
+};
+
+// @ts-ignore
+window.URL = {
+  createObjectURL: () => {
+    return "";
+  },
+};
+
+jest.mock("ui/notify", () => ({
+  toastNotifications: {
+    addDanger: jest.fn().mockName("addDanger"),
+    addSuccess: jest.fn().mockName("addSuccess"),
+  },
+}));
+
+jest.mock("ui/chrome", () => ({
+  breadcrumbs: (() => {
+    const breadcrumbs = () => {};
+    // @ts-ignore
+    breadcrumbs.set = jest.fn();
+    // @ts-ignore
+    breadcrumbs.push = jest.fn();
+    return breadcrumbs;
+  })(),
+}));

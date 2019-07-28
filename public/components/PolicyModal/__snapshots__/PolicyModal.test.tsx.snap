@@ -1,0 +1,190 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`<PolicyModal /> spec renders the component 1`] = `
+<div
+  class="euiOverlayMask"
+>
+  <div
+    data-focus-guard="true"
+    style="width: 1px; height: 0px; padding: 0px; overflow: hidden; position: fixed; top: 1px; left: 1px;"
+    tabindex="0"
+  />
+  <div
+    data-focus-guard="true"
+    style="width: 1px; height: 0px; padding: 0px; overflow: hidden; position: fixed; top: 1px; left: 1px;"
+    tabindex="1"
+  />
+  <div
+    data-focus-lock-disabled="false"
+  >
+    <div
+      class="euiModal euiModal--maxWidth-default"
+      tabindex="0"
+    >
+      <button
+        aria-label="Closes this modal window"
+        class="euiButtonIcon euiButtonIcon--text euiModal__closeIcon"
+        type="button"
+      >
+        <svg
+          aria-hidden="true"
+          class="euiIcon euiIcon--medium euiButtonIcon__icon"
+          focusable="false"
+          height="16"
+          viewBox="0 0 16 16"
+          width="16"
+          xmlns="http://www.w3.org/2000/svg"
+        >
+          <path
+            d="M7.293 8L3.146 3.854a.5.5 0 1 1 .708-.708L8 7.293l4.146-4.147a.5.5 0 0 1 .708.708L8.707 8l4.147 4.146a.5.5 0 0 1-.708.708L8 8.707l-4.146 4.147a.5.5 0 0 1-.708-.708L7.293 8z"
+          />
+        </svg>
+      </button>
+      <div
+        class="euiModal__flex"
+      >
+        <div
+          class="euiModalHeader"
+        >
+          <div
+            class="euiModalHeader__title"
+          >
+            some-id
+          </div>
+        </div>
+        <div
+          class="euiModalBody"
+        >
+          <div
+            class="euiCodeBlock euiCodeBlock--fontMedium euiCodeBlock--paddingLarge"
+          >
+            <pre
+              class="euiCodeBlock__pre"
+            >
+              <code
+                class="euiCodeBlock__code json hljs"
+              >
+                {
+    
+                <span
+                  class="hljs-attr"
+                >
+                  "policy"
+                </span>
+                : {
+        
+                <span
+                  class="hljs-attr"
+                >
+                  "name"
+                </span>
+                : 
+                <span
+                  class="hljs-string"
+                >
+                  "policy"
+                </span>
+                
+    }
+}
+              </code>
+            </pre>
+          </div>
+        </div>
+        <div
+          class="euiModalFooter"
+        >
+          <div
+            class="euiFlexGroup euiFlexGroup--gutterLarge euiFlexGroup--directionRow euiFlexGroup--responsive"
+          >
+            <div
+              class="euiFlexItem euiFlexItem--flexGrowZero"
+              style="margin-right: auto;"
+            >
+              <span
+                class="euiToolTipAnchor"
+              >
+                <button
+                  aria-describedby="some_make_id"
+                  class="euiButtonEmpty euiButtonEmpty--primary"
+                  data-test-subj="policyModalCopyButton"
+                  type="button"
+                >
+                  <span
+                    class="euiButtonEmpty__content"
+                  >
+                    <svg
+                      aria-hidden="true"
+                      class="euiIcon euiIcon--medium euiButtonEmpty__icon"
+                      focusable="false"
+                      height="16"
+                      viewBox="0 0 16 16"
+                      width="16"
+                      xmlns="http://www.w3.org/2000/svg"
+                    >
+                      <path
+                        d="M0 2.729V2a1 1 0 0 1 1-1h2v1H1v12h4v1H1a1 1 0 0 1-1-1V2.729zM12 5V2a1 1 0 0 0-1-1H9v1h2v3h1zm-1 1h2v9H6V6h5V5H6a1 1 0 0 0-1 1v9a1 1 0 0 0 1 1h7a1 1 0 0 0 1-1V6a1 1 0 0 0-1-1h-2v1z"
+                      />
+                      <path
+                        d="M7 10h5V9H7zM7 8h5V7H7zM7 12h5v-1H7zM7 14h5v-1H7zM9 2V1a1 1 0 0 0-1-1H4a1 1 0 0 0-1 1v1h1V1h4v1h1zM3 3h6V2H3z"
+                      />
+                    </svg>
+                    <span
+                      class="euiButtonEmpty__text"
+                    >
+                      Copy
+                    </span>
+                  </span>
+                </button>
+              </span>
+            </div>
+            <div
+              class="euiFlexItem euiFlexItem--flexGrowZero"
+            >
+              <button
+                class="euiButtonEmpty euiButtonEmpty--primary"
+                data-test-subj="policyModalCloseButton"
+                type="button"
+              >
+                <span
+                  class="euiButtonEmpty__content"
+                >
+                  <span
+                    class="euiButtonEmpty__text"
+                  >
+                    Close
+                  </span>
+                </span>
+              </button>
+            </div>
+            <div
+              class="euiFlexItem euiFlexItem--flexGrowZero"
+            >
+              <button
+                class="euiButton euiButton--primary euiButton--fill"
+                data-test-subj="policyModalEditButton"
+                type="button"
+              >
+                <span
+                  class="euiButton__content"
+                >
+                  <span
+                    class="euiButton__text"
+                  >
+                    Edit
+                  </span>
+                </span>
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div
+    data-focus-guard="true"
+    style="width: 1px; height: 0px; padding: 0px; overflow: hidden; position: fixed; top: 1px; left: 1px;"
+    tabindex="0"
+  />
+</div>
+`;
