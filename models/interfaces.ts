@@ -55,7 +55,7 @@ export interface DocumentPolicy {
 
 // TODO: Fill out when needed
 export interface Policy {
-  name: string;
+  description: string;
   states: State[];
 }
 
