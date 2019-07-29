@@ -26,7 +26,7 @@ describe("<ContentPanelActions /> spec", () => {
 
   it("renders a button to click", () => {
     const spy = jest.fn();
-    const actions = [{ text: "ContentPanelActions", onClick: spy }];
+    const actions = [{ text: "ContentPanelActions", buttonProps: { onClick: spy } }];
     const { getByTestId } = render(<ContentPanelActions actions={actions} />);
     fireEvent.click(getByTestId("ContentPanelActionsButton"));
     expect(spy).toHaveBeenCalledTimes(1);
@@ -34,7 +34,7 @@ describe("<ContentPanelActions /> spec", () => {
 
   it("passes rest of props to button", () => {
     const spy = jest.fn();
-    const actions = [{ text: "ContentPanelActions", onClick: spy, disabled: true }];
+    const actions = [{ text: "ContentPanelActions", buttonProps: { onClick: spy, disabled: true } }];
     const { getByTestId } = render(<ContentPanelActions actions={actions} />);
     fireEvent.click(getByTestId("ContentPanelActionsButton"));
     expect(spy).toHaveBeenCalledTimes(0);

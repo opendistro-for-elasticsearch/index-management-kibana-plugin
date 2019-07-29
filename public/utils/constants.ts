@@ -13,11 +13,28 @@
  * permissions and limitations under the License.
  */
 
-export const PLUGIN_NAME = "index_management_kibana";
+export const PLUGIN_NAME = "opendistro_index_management_kibana";
 
 export const DEFAULT_EMPTY_DATA = "-";
 
-export const BREADCRUMBS = {
+export const BREADCRUMBS = Object.freeze({
   INDEX_MANAGEMENT: { text: "Index Management", href: "#/" },
   INDICES: { text: "Indices", href: "#/indices" },
-};
+  POLICIES: { text: "Policies", href: "#/policies" },
+  MANAGED_INDICES: { text: "Managed Indices", href: "#/managed-indices" },
+  EDIT_POLICY: { text: "Edit policy" },
+  CREATE_POLICY: { text: "Create policy" },
+});
+
+export enum SortDirection {
+  ASC = "asc",
+  DESC = "desc",
+}
+
+export const ROUTES = Object.freeze({
+  CREATE_POLICY: "/create-policy",
+  EDIT_POLICY: "/edit-policy",
+  MANAGED_INDICES: "/managed-indices",
+  POLICIES: "/policies",
+  INDICES: "/indices",
+});

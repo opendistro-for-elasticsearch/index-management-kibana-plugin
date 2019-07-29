@@ -20,7 +20,7 @@ interface ContentPanelActionsProps {
   actions: { text: string; buttonProps?: object; flexItemProps?: object }[];
 }
 
-const ContentPanelActions: React.FC<ContentPanelActionsProps> = ({ actions }) => (
+const ContentPanelActions: React.SFC<ContentPanelActionsProps> = ({ actions }) => (
   <EuiFlexGroup justifyContent="spaceBetween" alignItems="center">
     {actions.map(({ text, buttonProps = {}, flexItemProps = {} }, index) => (
       <EuiFlexItem {...flexItemProps} grow={false} key={index}>
