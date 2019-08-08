@@ -40,12 +40,9 @@ export default class IndexService {
   };
 
   searchPolicies = async (searchValue: string): Promise<ServerResponse<SearchResponse<any>>> => {
-    // TODO: We want want to search the policy_id, but _id does not allow
-    //  fuzzy matching so we need to store the policy_id in the document,
-    //  as temporary placeholder we will search policy.description for development
     const mustQuery = {
       query_string: {
-        default_field: "policy.description",
+        default_field: "policy.policy_id",
         default_operator: "AND",
         query: `*${searchValue
           .trim()

@@ -23,27 +23,11 @@ import { HashRouter as Router } from "react-router-dom";
 import { toastNotifications } from "ui/notify";
 import chrome from "ui/chrome";
 import { browserServicesMock } from "../../../../../test/mocks";
-import Indices from "../../index";
+import Indices from "./Indices";
 import { TEXT } from "../../components/IndexEmptyPrompt/IndexEmptyPrompt";
 import { ModalProvider, ModalRoot } from "../../../../components/Modal";
-import { ServicesConsumer, ServicesContext } from "../../../../services/Services";
-import { BREADCRUMBS } from "../../../../utils/constants";
-
-jest.mock("ui/notify", () => ({
-  toastNotifications: {
-    addDanger: jest.fn().mockName("addDanger"),
-    addSuccess: jest.fn().mockName("addSuccess"),
-  },
-}));
-
-jest.mock("ui/chrome", () => ({
-  breadcrumbs: (() => {
-    const breadcrumbs = () => {};
-    // @ts-ignore
-    breadcrumbs.set = jest.fn();
-    return breadcrumbs;
-  })(),
-}));
+import { ServicesConsumer, ServicesContext } from "../../../../services";
+import { BREADCRUMBS, ROUTES } from "../../../../utils/constants";
 
 function renderWithRouter(Component: React.ComponentType<any>) {
   return {
@@ -51,7 +35,7 @@ function renderWithRouter(Component: React.ComponentType<any>) {
       <Router>
         <Switch>
           <Route
-            path="/indices"
+            path={ROUTES.INDICES}
             render={props => (
               <ServicesContext.Provider value={browserServicesMock}>
                 <ModalProvider>
@@ -61,7 +45,7 @@ function renderWithRouter(Component: React.ComponentType<any>) {
               </ServicesContext.Provider>
             )}
           />
-          <Redirect from="/" to="/indices" />
+          <Redirect from="/" to={ROUTES.INDICES} />
         </Switch>
       </Router>
     ),

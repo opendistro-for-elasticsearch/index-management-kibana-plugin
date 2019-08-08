@@ -18,7 +18,6 @@ import chrome from "ui/chrome";
 import { toastNotifications } from "ui/notify";
 import _ from "lodash";
 import { RouteComponentProps } from "react-router";
-// @ts-ignore
 import queryString from "query-string";
 // @ts-ignore
 import { EuiBasicTable, EuiHorizontalRule } from "@elastic/eui";
@@ -26,14 +25,14 @@ import { ContentPanel, ContentPanelActions } from "../../../../components/Conten
 import IndexControls from "../../components/IndexControls";
 import AddPolicyModal from "../../components/AddPolicyModal";
 import IndexEmptyPrompt from "../../components/IndexEmptyPrompt";
-import { DEFAULT_PAGE_SIZE_OPTIONS, DEFAULT_QUERY_PARAMS, indicesColumns, SortDirection } from "../../utils/constants";
+import { DEFAULT_PAGE_SIZE_OPTIONS, DEFAULT_QUERY_PARAMS, indicesColumns } from "../../utils/constants";
 import { ModalConsumer } from "../../../../components/Modal";
 import IndexService from "../../../../services/IndexService";
 import { TableParams } from "../../../../models/interfaces";
 import { CatIndex } from "../../../../../server/models/interfaces";
 import { getURLQueryParams } from "../../utils/helpers";
-import { PoliciesQueryParams } from "../../models/interfaces";
-import { BREADCRUMBS } from "../../../../utils/constants";
+import { IndicesQueryParams } from "../../models/interfaces";
+import { BREADCRUMBS, SortDirection } from "../../../../utils/constants";
 import { getErrorMessage } from "../../../../utils/helpers";
 
 interface IndicesProps extends RouteComponentProps {
@@ -86,7 +85,7 @@ export default class Indices extends Component<IndicesProps, IndicesState> {
     }
   }
 
-  static getQueryObjectFromState({ from, size, search, sortField, sortDirection }: IndicesState): PoliciesQueryParams {
+  static getQueryObjectFromState({ from, size, search, sortField, sortDirection }: IndicesState): IndicesQueryParams {
     return { from, size, search, sortField, sortDirection };
   }
 
@@ -166,8 +165,10 @@ export default class Indices extends Component<IndicesProps, IndicesState> {
                 actions={[
                   {
                     text: "Add policy",
-                    disabled: !selectedItems.length,
-                    onClick: () => onShow(AddPolicyModal, { indices: selectedItems.map((item: CatIndex) => item.index) }),
+                    buttonProps: {
+                      disabled: !selectedItems.length,
+                      onClick: () => onShow(AddPolicyModal, { indices: selectedItems.map((item: CatIndex) => item.index) }),
+                    },
                   },
                 ]}
               />

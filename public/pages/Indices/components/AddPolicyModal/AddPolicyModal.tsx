@@ -68,9 +68,13 @@ export default class AddPolicyModal extends Component<AddPolicyModalProps, AddPo
       const addPolicyResponse = await indexService.addPolicy(indices, policyId);
       if (addPolicyResponse.ok) {
         const { updatedIndices, failedIndices, failures } = addPolicyResponse.response;
-        toastNotifications.addSuccess(`Added policy to ${updatedIndices} indices`);
+        if (updatedIndices) {
+          toastNotifications.addSuccess(`Added policy to ${updatedIndices} indices`);
+        }
         if (failures) {
-          toastNotifications.addDanger(`Failed to add policy to ${failedIndices}`);
+          toastNotifications.addDanger(
+            `Failed to add policy to ${failedIndices.map(failedIndex => `[${failedIndex.indexName}, ${failedIndex.reason}]`).join(", ")}`
+          );
         }
         onClose();
       } else {
@@ -93,7 +97,7 @@ export default class AddPolicyModal extends Component<AddPolicyModalProps, AddPo
         this.setState({ policyOptions: policies.map((policyId: string) => ({ label: policyId })) });
       } else {
         if (searchPoliciesResponse.error.startsWith("[index_not_found_exception]")) {
-          toastNotifications.addDanger("You have no created a policy yet");
+          toastNotifications.addDanger("You have not created a policy yet");
         } else {
           toastNotifications.addDanger(searchPoliciesResponse.error);
         }

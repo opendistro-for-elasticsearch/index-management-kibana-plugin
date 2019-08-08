@@ -29,14 +29,14 @@ describe("<IndexEmptyPrompt /> spec", () => {
     const { getByText, queryByTestId } = render(<IndexEmptyPrompt filterIsApplied={false} loading={false} resetFilters={() => {}} />);
 
     getByText(TEXT.NO_INDICES);
-    expect(queryByTestId("indexEmptyPromptRestFilters")).toBeNull();
+    expect(queryByTestId("indexEmptyPromptResetFilters")).toBeNull();
   });
 
   it("shows LOADING", async () => {
     const { getByText, queryByTestId } = render(<IndexEmptyPrompt filterIsApplied={true} loading={true} resetFilters={() => {}} />);
 
     getByText(TEXT.LOADING);
-    expect(queryByTestId("indexEmptyPromptRestFilters")).toBeNull();
+    expect(queryByTestId("indexEmptyPromptResetFilters")).toBeNull();
   });
 
   it("shows reset filters", async () => {
@@ -44,7 +44,7 @@ describe("<IndexEmptyPrompt /> spec", () => {
     const { getByText, getByTestId } = render(<IndexEmptyPrompt filterIsApplied={true} loading={false} resetFilters={resetFilters} />);
 
     getByText(TEXT.RESET_FILTERS);
-    fireEvent.click(getByTestId("indexEmptyPromptRestFilters"));
+    fireEvent.click(getByTestId("indexEmptyPromptResetFilters"));
     expect(resetFilters).toHaveBeenCalledTimes(1);
   });
 });
