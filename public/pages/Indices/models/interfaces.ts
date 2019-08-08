@@ -13,13 +13,13 @@
  * permissions and limitations under the License.
  */
 
-import { SortDirection } from "../utils/constants";
+import { SortDirection } from "../../../utils/constants";
 
 export interface PolicyOption {
   label: string;
 }
 
-export interface PoliciesQueryParams {
+export interface IndicesQueryParams {
   from: number;
   size: number;
   search: string;

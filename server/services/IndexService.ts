@@ -16,7 +16,7 @@
 import { Legacy } from "kibana";
 import { RequestParams } from "@elastic/elasticsearch";
 import { CLUSTER } from "../utils/constants";
-import { AddPolicyResponse, CatIndex, GetIndicesResponse, SearchResponse } from "../models/interfaces";
+import { AddPolicyResponse, AddResponse, CatIndex, GetIndicesResponse, SearchResponse } from "../models/interfaces";
 import { ServerResponse } from "../models/types";
 
 import Request = Legacy.Request;
@@ -44,6 +44,7 @@ export default class IndexService {
   };
 
   // TODO: Create a new API on backend that supports from/size _cat pagination
+  // TODO: show which indices are being managed by doing a second request to our ism config index
   getIndices = async (req: Request, h: ResponseToolkit): Promise<ServerResponse<GetIndicesResponse>> => {
     try {
       // @ts-ignore
@@ -75,21 +76,24 @@ export default class IndexService {
     }
   };
 
-  // TODO: This is temporary until backend addPolicy is implemented
   addPolicy = async (req: Request, h: ResponseToolkit): Promise<ServerResponse<AddPolicyResponse>> => {
     try {
       const { indices, policyId } = req.payload as { indices: string[]; policyId: string };
-      const { callWithRequest } = this.esDriver.getCluster(CLUSTER.DATA);
-      const response = await callWithRequest(req, "indices.putSettings", {
-        index: indices.join(","),
-        body: { "opendistro.index_state_management.policy_id": policyId },
-      });
-
-      // temporary
-      if (response.acknowledged) {
-        return { ok: true, response: { failures: false, updatedIndices: indices.length, failedIndices: [] } };
-      }
-      return { ok: false, error: "Adding policy was not acknowledged" };
+      const { callWithRequest } = await this.esDriver.getCluster(CLUSTER.ISM);
+      const params = { index: indices.join(","), body: { policy_id: policyId } };
+      const addResponse: AddResponse = await callWithRequest(req, "ism.add", params);
+      return {
+        ok: true,
+        response: {
+          failures: addResponse.failures,
+          updatedIndices: addResponse.updated_indices,
+          failedIndices: addResponse.failed_indices.map(failedIndex => ({
+            indexName: failedIndex.index_name,
+            indexUuid: failedIndex.index_uuid,
+            reason: failedIndex.reason,
+          })),
+        },
+      };
     } catch (err) {
       console.error("Index Management - IndexService - addPolicy:", err);
       return { ok: false, error: err.message };

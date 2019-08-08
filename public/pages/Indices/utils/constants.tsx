@@ -15,13 +15,10 @@
 
 import React from "react";
 import { EuiHealth } from "@elastic/eui";
+import { CatIndex } from "../../../../server/models/interfaces";
+import { SortDirection } from "../../../utils/constants";
 
 export const DEFAULT_PAGE_SIZE_OPTIONS = [5, 10, 20, 50];
-
-export enum SortDirection {
-  ASC = "asc",
-  DESC = "desc",
-}
 
 export const DEFAULT_QUERY_PARAMS = {
   from: 0,
@@ -36,12 +33,10 @@ const HEALTH_TO_COLOR: {
   green: string;
   yellow: string;
   red: string;
-  undefined: string;
 } = {
   green: "success",
   yellow: "warning",
   red: "danger",
-  undefined: "subdued",
 };
 
 export const indicesColumns = [
@@ -60,7 +55,11 @@ export const indicesColumns = [
     truncateText: true,
     textOnly: true,
     align: "right",
-    render: (health: string) => <EuiHealth color={HEALTH_TO_COLOR[health]}>{health}</EuiHealth>,
+    render: (health: string, item: CatIndex) => {
+      const color = health ? HEALTH_TO_COLOR[health] : "subdued";
+      const text = health || item.status;
+      return <EuiHealth color={color}>{text}</EuiHealth>;
+    },
   },
   {
     field: "status",
