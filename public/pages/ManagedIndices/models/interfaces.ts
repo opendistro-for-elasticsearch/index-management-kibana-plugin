@@ -29,4 +29,6 @@ export interface Actions {
   open: string;
   close: string;
   transition: string;
+  read_only: string;
+  read_write: string;
 }

@@ -30,4 +30,6 @@ export const ACTIONS: Actions = {
   transition: "Transition",
   open: "Open",
   close: "Close",
+  read_only: "Read Only",
+  read_write: "Read Write",
 };

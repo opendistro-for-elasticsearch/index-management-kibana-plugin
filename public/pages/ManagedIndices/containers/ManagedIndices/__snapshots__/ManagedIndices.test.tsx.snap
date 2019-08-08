@@ -495,7 +495,7 @@ exports[`<ManagedIndices /> spec renders the component 1`] = `
                             class="euiText euiText--medium"
                           >
                             <p>
-                              Loading policies...
+                              Loading managed indices...
                             </p>
                           </div>
                         </div>

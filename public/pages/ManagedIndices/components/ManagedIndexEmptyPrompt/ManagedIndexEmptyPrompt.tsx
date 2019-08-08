@@ -20,7 +20,7 @@ import { PLUGIN_NAME, ROUTES } from "../../../../utils/constants";
 export const TEXT = {
   RESET_FILTERS: "There are no managed indices matching your applied filters. Reset your filters to view your managed indices.",
   NO_MANAGED_INDICES: "There are no existing managed indices. Create a policy to add to an index.",
-  LOADING: "Loading policies...",
+  LOADING: "Loading managed indices...",
 };
 
 const getMessagePrompt = ({ filterIsApplied, loading }: ManagedIndexEmptyPromptProps): string => {
