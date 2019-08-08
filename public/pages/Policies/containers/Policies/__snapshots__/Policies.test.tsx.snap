@@ -400,27 +400,10 @@ exports[`<Policies /> spec renders the component 1`] = `
                   </button>
                 </th>
                 <th
-                  class="euiTableHeaderCell"
-                  data-test-subj="tableHeaderCell_affectedIndices_2"
-                  role="columnheader"
-                  scope="col"
-                  width="100px"
-                >
-                  <div
-                    class="euiTableCellContent"
-                  >
-                    <span
-                      class="euiTableCellContent__text"
-                    >
-                      Number of affected indices
-                    </span>
-                  </div>
-                </th>
-                <th
                   aria-live="true"
                   aria-sort="none"
                   class="euiTableHeaderCell"
-                  data-test-subj="tableHeaderCell_policy.policy.last_updated_time_3"
+                  data-test-subj="tableHeaderCell_policy.policy.last_updated_time_2"
                   role="columnheader"
                   scope="col"
                   width="150px"
@@ -454,7 +437,7 @@ exports[`<Policies /> spec renders the component 1`] = `
               >
                 <td
                   class="euiTableRowCell euiTableRowCell--isMobileFullWidth"
-                  colspan="5"
+                  colspan="4"
                 >
                   <div
                     class="euiTableCellContent euiTableCellContent--alignCenter"
