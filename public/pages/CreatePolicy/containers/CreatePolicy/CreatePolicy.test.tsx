@@ -24,6 +24,7 @@ import { ModalProvider, ModalRoot } from "../../../../components/Modal";
 import { DEFAULT_POLICY } from "../../utils/constants";
 import userEvent from "@testing-library/user-event";
 import { toastNotifications } from "ui/notify";
+import { ROUTES } from "../../../../utils/constants";
 
 jest.mock("../../components/DefinePolicy", () => require("../../components/DefinePolicy/__mocks__/DefinePolicyMock"));
 
@@ -39,19 +40,19 @@ function renderCreatePolicyWithRouter(initialEntries = ["/"]) {
                   <ModalRoot services={services} />
                   <Switch>
                     <Route
-                      path="/create-policy"
+                      path={ROUTES.CREATE_POLICY}
                       render={(props: RouteComponentProps) => (
                         <CreatePolicy {...props} isEdit={false} policyService={services.policyService} />
                       )}
                     />
                     <Route
-                      path="/edit-policy"
+                      path={ROUTES.EDIT_POLICY}
                       render={(props: RouteComponentProps) => (
                         <CreatePolicy {...props} isEdit={true} policyService={services.policyService} />
                       )}
                     />
-                    <Route path="/policies" render={(props: RouteComponentProps) => <div>Testing Policies</div>} />
-                    <Redirect from="/" to="/create-policy" />
+                    <Route path={ROUTES.POLICIES} render={(props: RouteComponentProps) => <div>Testing Policies</div>} />
+                    <Redirect from="/" to={ROUTES.CREATE_POLICY} />
                   </Switch>
                 </ModalProvider>
               )
@@ -74,7 +75,7 @@ describe("<CreatePolicy /> spec", () => {
     browserServicesMock.policyService.getPolicy = jest
       .fn()
       .mockResolvedValue({ ok: true, response: { seqNo: 1, primaryTerm: 5, id: "some_policy", policy: JSON.parse(DEFAULT_POLICY) } });
-    const { container } = renderCreatePolicyWithRouter(["/edit-policy?id=some_policy"]);
+    const { container } = renderCreatePolicyWithRouter([`${ROUTES.EDIT_POLICY}?id=some_policy`]);
 
     await wait();
 
@@ -82,7 +83,7 @@ describe("<CreatePolicy /> spec", () => {
   });
 
   it("routes back to policies if given bad id", async () => {
-    const { getByText } = renderCreatePolicyWithRouter(["/edit-policy?id=one&id=two"]);
+    const { getByText } = renderCreatePolicyWithRouter([`${ROUTES.EDIT_POLICY}?id=one&id=two`]);
 
     await wait(() => getByText("Testing Policies"));
     expect(toastNotifications.addDanger).toHaveBeenCalledTimes(1);
@@ -91,7 +92,7 @@ describe("<CreatePolicy /> spec", () => {
 
   it("routes back to policies if getPolicy gracefully fails", async () => {
     browserServicesMock.policyService.getPolicy = jest.fn().mockResolvedValue({ ok: false, error: "some error" });
-    const { getByText } = renderCreatePolicyWithRouter(["/edit-policy?id=some_id"]);
+    const { getByText } = renderCreatePolicyWithRouter([`${ROUTES.EDIT_POLICY}?id=some_id`]);
 
     await wait(() => getByText("Testing Policies"));
     expect(toastNotifications.addDanger).toHaveBeenCalledTimes(1);
@@ -100,7 +101,7 @@ describe("<CreatePolicy /> spec", () => {
 
   it("routes back to policies if getPolicy gracefully fails", async () => {
     browserServicesMock.policyService.getPolicy = jest.fn().mockRejectedValue(new Error("another error"));
-    const { getByText } = renderCreatePolicyWithRouter(["/edit-policy?id=some_id"]);
+    const { getByText } = renderCreatePolicyWithRouter([`${ROUTES.EDIT_POLICY}?id=some_id`]);
 
     await wait(() => getByText("Testing Policies"));
     expect(toastNotifications.addDanger).toHaveBeenCalledTimes(1);
@@ -138,7 +139,7 @@ describe("<CreatePolicy /> spec", () => {
     browserServicesMock.policyService.getPolicy = jest
       .fn()
       .mockResolvedValue({ ok: true, response: { seqNo: 1, primaryTerm: 5, id: "some_id", policy: JSON.parse(DEFAULT_POLICY) } });
-    const { getByDisplayValue, getByPlaceholderText } = renderCreatePolicyWithRouter(["/edit-policy?id=some_id"]);
+    const { getByDisplayValue, getByPlaceholderText } = renderCreatePolicyWithRouter([`${ROUTES.EDIT_POLICY}?id=some_id`]);
 
     await wait(() => getByDisplayValue("some_id"));
 
@@ -212,7 +213,7 @@ describe("<CreatePolicy /> spec", () => {
     browserServicesMock.policyService.getPolicy = jest
       .fn()
       .mockResolvedValue({ ok: true, response: { seqNo: 1, primaryTerm: 5, id: "some_policy_id", policy: JSON.parse(DEFAULT_POLICY) } });
-    const { getByText, getByTestId, getByDisplayValue } = renderCreatePolicyWithRouter(["/edit-policy?id=some_policy_id"]);
+    const { getByText, getByTestId, getByDisplayValue } = renderCreatePolicyWithRouter([`${ROUTES.EDIT_POLICY}?id=some_policy_id`]);
 
     await wait(() => getByDisplayValue("some_policy_id"));
 
@@ -227,7 +228,7 @@ describe("<CreatePolicy /> spec", () => {
     browserServicesMock.policyService.getPolicy = jest
       .fn()
       .mockResolvedValue({ ok: true, response: { seqNo: 1, primaryTerm: 5, id: "some_policy_id", policy: JSON.parse(DEFAULT_POLICY) } });
-    const { getByTestId, getByDisplayValue } = renderCreatePolicyWithRouter(["/edit-policy?id=some_policy_id"]);
+    const { getByTestId, getByDisplayValue } = renderCreatePolicyWithRouter([`${ROUTES.EDIT_POLICY}?id=some_policy_id`]);
 
     await wait(() => getByDisplayValue("some_policy_id"));
 
@@ -242,7 +243,7 @@ describe("<CreatePolicy /> spec", () => {
     browserServicesMock.policyService.getPolicy = jest
       .fn()
       .mockResolvedValue({ ok: true, response: { seqNo: 1, primaryTerm: 5, id: "some_policy_id", policy: JSON.parse(DEFAULT_POLICY) } });
-    const { getByTestId, getByDisplayValue } = renderCreatePolicyWithRouter(["/edit-policy?id=some_policy_id"]);
+    const { getByTestId, getByDisplayValue } = renderCreatePolicyWithRouter([`${ROUTES.EDIT_POLICY}?id=some_policy_id`]);
 
     await wait(() => getByDisplayValue("some_policy_id"));
 
