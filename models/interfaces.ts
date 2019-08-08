@@ -38,7 +38,7 @@ export interface ManagedIndexItem {
   policyId: string;
   policySeqNo: number;
   policyPrimaryTerm: number;
-  policy: Policy;
+  policy: Policy | null;
   enabled: boolean;
   managedIndexMetaData: ManagedIndexMetaData | null;
 }
@@ -54,8 +54,10 @@ export interface DocumentPolicy {
 }
 
 // TODO: Fill out when needed
+// TODO: separate a frontend Policy from backendPolicy
 export interface Policy {
   description: string;
+  default_state: string;
   states: State[];
 }
 

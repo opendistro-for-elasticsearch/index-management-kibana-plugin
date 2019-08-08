@@ -21,6 +21,9 @@ export const API: IndexManagementApi = {
   POLICY_BASE: `${API_ROUTE_PREFIX}/policies`,
   EXPLAIN_BASE: `${API_ROUTE_PREFIX}/explain`,
   RETRY_BASE: `${API_ROUTE_PREFIX}/retry`,
+  ADD_POLICY_BASE: `${API_ROUTE_PREFIX}/add`,
+  REMOVE_POLICY_BASE: `${API_ROUTE_PREFIX}/remove`,
+  CHANGE_POLICY_BASE: `${API_ROUTE_PREFIX}/change_policy`,
 };
 
 export const DEFAULT_HEADERS: DefaultHeaders = {
