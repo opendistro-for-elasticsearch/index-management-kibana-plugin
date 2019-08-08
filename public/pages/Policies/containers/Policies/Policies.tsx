@@ -103,14 +103,6 @@ export default class Policies extends Component<PoliciesProps, PoliciesState> {
         width: "150px",
       },
       {
-        field: "affectedIndices",
-        name: "Number of affected indices",
-        sortable: false,
-        truncateText: false,
-        width: "100px",
-        render: () => "#",
-      },
-      {
         field: "policy.policy.last_updated_time",
         name: "Last updated time",
         sortable: true,

@@ -27,24 +27,8 @@ import Policies from "./Policies";
 import { TEXT } from "../../components/PolicyEmptyPrompt/PolicyEmptyPrompt";
 import { ModalProvider, ModalRoot } from "../../../../components/Modal";
 import { ServicesConsumer, ServicesContext } from "../../../../services";
-import { BREADCRUMBS } from "../../../../utils/constants";
+import { BREADCRUMBS, ROUTES } from "../../../../utils/constants";
 import { BrowserServices } from "../../../../models/interfaces";
-
-jest.mock("ui/notify", () => ({
-  toastNotifications: {
-    addDanger: jest.fn().mockName("addDanger"),
-    addSuccess: jest.fn().mockName("addSuccess"),
-  },
-}));
-
-jest.mock("ui/chrome", () => ({
-  breadcrumbs: (() => {
-    const breadcrumbs = () => {};
-    // @ts-ignore
-    breadcrumbs.set = jest.fn();
-    return breadcrumbs;
-  })(),
-}));
 
 // TODO: Move common renderWith or with___ helpers into top level tests directory
 function renderPoliciesWithRouter() {
@@ -59,16 +43,16 @@ function renderPoliciesWithRouter() {
                   <ModalRoot services={services} />
                   <Switch>
                     <Route
-                      path="/policies"
+                      path={ROUTES.POLICIES}
                       render={(props: RouteComponentProps) => (
                         <div style={{ padding: "25px 25px" }}>
                           <Policies {...props} policyService={services.policyService} />
                         </div>
                       )}
                     />
-                    <Route path="/create-policy" render={props => <div>Testing create policy</div>} />
-                    <Route path="/edit-policy" render={props => <div>Testing edit policy: {props.location.search}</div>} />
-                    <Redirect from="/" to="/policies" />
+                    <Route path={ROUTES.CREATE_POLICY} render={props => <div>Testing create policy</div>} />
+                    <Route path={ROUTES.EDIT_POLICY} render={props => <div>Testing edit policy: {props.location.search}</div>} />
+                    <Redirect from="/" to={ROUTES.POLICIES} />
                   </Switch>
                 </ModalProvider>
               )
@@ -274,7 +258,7 @@ describe("<Policies /> spec", () => {
     expect(queryByText("some_policy_id_0")).toBeNull();
 
     // @ts-ignore
-    userEvent.click(getByTestId("tableHeaderCell_policy.policy.last_updated_time_3").firstChild);
+    userEvent.click(getByTestId("tableHeaderCell_policy.policy.last_updated_time_2").firstChild);
 
     // should load policies 0-19  after clicking sort (defaults to asc) on last_updated_time
     await wait(() => getByText("some_policy_id_0"));

@@ -15,7 +15,7 @@
 
 import React from "react";
 import { EuiButton, EuiEmptyPrompt, EuiText } from "@elastic/eui";
-import { PLUGIN_NAME } from "../../../../utils/constants";
+import { PLUGIN_NAME, ROUTES } from "../../../../utils/constants";
 
 export const TEXT = {
   RESET_FILTERS: "There are no policies matching your applied filters. Reset your filters to view your policies.",
@@ -42,7 +42,7 @@ const getActions: React.SFC<PolicyEmptyPromptProps> = ({ filterIsApplied, loadin
   }
 
   return (
-    <EuiButton fill href={`${PLUGIN_NAME}#/create-policy`}>
+    <EuiButton fill href={`${PLUGIN_NAME}#${ROUTES.CREATE_POLICY}`}>
       Create policy
     </EuiButton>
   );
