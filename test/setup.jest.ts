@@ -30,6 +30,7 @@ jest.mock("@elastic/eui/lib/services/accessibility/html_id_generator", () => ({
 // @ts-ignore
 window.Worker = function() {
   this.postMessage = () => {};
+  // @ts-ignore
   this.terminate = () => {};
 };
 

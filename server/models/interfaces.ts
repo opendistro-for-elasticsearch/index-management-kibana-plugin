@@ -61,11 +61,19 @@ export interface GetIndicesResponse {
   totalIndices: number;
 }
 
-export interface AddPolicyResponse {
+export interface IndexUpdateResponse {
   updatedIndices: number;
   failures: boolean;
-  failedIndices: string[];
+  failedIndices: FailedIndex[];
 }
+
+export interface AddPolicyResponse extends IndexUpdateResponse {}
+
+export interface RemovePolicyResponse extends IndexUpdateResponse {}
+
+export interface ChangePolicyResponse extends IndexUpdateResponse {}
+
+export interface RetryManagedIndexResponse extends IndexUpdateResponse {}
 
 export interface RetryParams {
   index: string;
@@ -90,6 +98,18 @@ export interface RetryResponse {
   failed_indices?: BackendFailedIndex[];
 }
 
+export interface AddResponse {
+  failures: boolean;
+  updated_indices: number;
+  failed_indices: BackendFailedIndex[];
+}
+
+export interface RemoveResponse {
+  failures: boolean;
+  updated_indices: number;
+  failed_indices: BackendFailedIndex[];
+}
+
 export interface BackendFailedIndex {
   index_name: string;
   index_uuid: string;
@@ -99,12 +119,6 @@ export interface FailedIndex {
   indexName: string;
   indexUuid: string;
   reason: string;
-}
-
-export interface RetryManagedIndexResponse {
-  failures: boolean;
-  updatedIndices: number;
-  failedIndices: FailedIndex[];
 }
 
 export interface ExplainAPIManagedIndexMetaData {
@@ -128,6 +142,9 @@ export interface IndexManagementApi {
   readonly POLICY_BASE: string;
   readonly EXPLAIN_BASE: string;
   readonly RETRY_BASE: string;
+  readonly ADD_POLICY_BASE: string;
+  readonly REMOVE_POLICY_BASE: string;
+  readonly CHANGE_POLICY_BASE: string;
 }
 
 export interface DefaultHeaders {

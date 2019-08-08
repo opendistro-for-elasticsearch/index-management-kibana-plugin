@@ -17,20 +17,6 @@ export const PLUGIN_NAME = "opendistro_index_management_kibana";
 
 export const DEFAULT_EMPTY_DATA = "-";
 
-export const BREADCRUMBS = Object.freeze({
-  INDEX_MANAGEMENT: { text: "Index Management", href: "#/" },
-  INDICES: { text: "Indices", href: "#/indices" },
-  POLICIES: { text: "Policies", href: "#/policies" },
-  MANAGED_INDICES: { text: "Managed Indices", href: "#/managed-indices" },
-  EDIT_POLICY: { text: "Edit policy" },
-  CREATE_POLICY: { text: "Create policy" },
-});
-
-export enum SortDirection {
-  ASC = "asc",
-  DESC = "desc",
-}
-
 export const ROUTES = Object.freeze({
   CREATE_POLICY: "/create-policy",
   EDIT_POLICY: "/edit-policy",
@@ -38,3 +24,18 @@ export const ROUTES = Object.freeze({
   POLICIES: "/policies",
   INDICES: "/indices",
 });
+
+export const BREADCRUMBS = Object.freeze({
+  INDEX_MANAGEMENT: { text: "Index Management", href: "#/" },
+  INDICES: { text: "Indices", href: `#${ROUTES.INDICES}` },
+  POLICIES: { text: "Policies", href: `#${ROUTES.POLICIES}` },
+  MANAGED_INDICES: { text: "Managed Indices", href: `#${ROUTES.MANAGED_INDICES}` },
+  EDIT_POLICY: { text: "Edit policy" },
+  CREATE_POLICY: { text: "Create policy" },
+});
+
+// TODO: Kibana EUI has a SortDirection already
+export enum SortDirection {
+  ASC = "asc",
+  DESC = "desc",
+}

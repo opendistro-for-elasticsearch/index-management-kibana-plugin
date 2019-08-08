@@ -14,7 +14,12 @@
  */
 
 import { IHttpResponse, IHttpService } from "angular";
-import { GetManagedIndicesResponse, RetryManagedIndexResponse } from "../../server/models/interfaces";
+import {
+  ChangePolicyResponse,
+  GetManagedIndicesResponse,
+  RemovePolicyResponse,
+  RetryManagedIndexResponse,
+} from "../../server/models/interfaces";
 import { ServerResponse } from "../../server/models/types";
 import { NODE_API } from "../../utils/constants";
 
@@ -40,6 +45,27 @@ export default class ManagedIndexService {
   retryManagedIndexPolicy = async (index: string[], state: string | null): Promise<ServerResponse<RetryManagedIndexResponse>> => {
     const body = { index, state };
     const response = (await this.httpClient.post(`..${NODE_API.RETRY}`, body)) as IHttpResponse<ServerResponse<RetryManagedIndexResponse>>;
+    return response.data;
+  };
+
+  removePolicy = async (indices: string[]): Promise<ServerResponse<RemovePolicyResponse>> => {
+    const body = { indices };
+    const response = (await this.httpClient.post(`..${NODE_API.REMOVE_POLICY}`, body)) as IHttpResponse<
+      ServerResponse<RemovePolicyResponse>
+    >;
+    return response.data;
+  };
+
+  changePolicy = async (
+    indices: string[],
+    policyId: string,
+    state: string | null,
+    include: object[]
+  ): Promise<ServerResponse<ChangePolicyResponse>> => {
+    const body = { indices, policyId, state, include };
+    const response = (await this.httpClient.post(`..${NODE_API.CHANGE_POLICY}`, body)) as IHttpResponse<
+      ServerResponse<ChangePolicyResponse>
+    >;
     return response.data;
   };
 }

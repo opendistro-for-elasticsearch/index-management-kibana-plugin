@@ -114,5 +114,47 @@ export default function ismPlugin(Client: any, config: any, components: any) {
     method: "POST",
   });
 
-  // TODO add new APIs as they are being implemented: add, remove, change, status, stop, start
+  ism.add = ca({
+    url: {
+      fmt: `${API.ADD_POLICY_BASE}/<%=index%>`,
+      req: {
+        index: {
+          type: "string",
+          required: true,
+        },
+      },
+    },
+    needBody: true,
+    method: "POST",
+  });
+
+  ism.remove = ca({
+    url: {
+      fmt: `${API.REMOVE_POLICY_BASE}/<%=index%>`,
+      req: {
+        index: {
+          type: "string",
+          required: true,
+        },
+      },
+    },
+    needBody: false,
+    method: "POST",
+  });
+
+  ism.change = ca({
+    url: {
+      fmt: `${API.CHANGE_POLICY_BASE}/<%=index%>`,
+      req: {
+        index: {
+          type: "string",
+          required: true,
+        },
+      },
+    },
+    needBody: true,
+    method: "POST",
+  });
+
+  // TODO add new APIs as they are being implemented: status, stop, start
 }

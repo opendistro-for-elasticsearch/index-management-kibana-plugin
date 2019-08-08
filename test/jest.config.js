@@ -33,6 +33,8 @@ module.exports = {
     "!**/models/**",
     "!**/node_modules/**",
     "!**/index.ts",
+    "!<rootDir>/index.js",
+    "!<rootDir>/public/app.js",
     "!<rootDir>/babel.config.js",
     "!<rootDir>/test/**",
     "!<rootDir>/server/**",

@@ -21,6 +21,8 @@ import { getMustQuery, transformManagedIndexMetaData } from "../utils/helpers";
 import {
   ExplainResponse,
   GetManagedIndicesResponse,
+  RemovePolicyResponse,
+  RemoveResponse,
   RetryManagedIndexResponse,
   RetryParams,
   RetryResponse,
@@ -63,7 +65,7 @@ export default class ManagedIndexService {
         sortField: string;
       };
 
-      const managedIndexSorts: ManagedIndicesSort = { name: "managed_index.name.keyword", policyId: "managed_index.policy_id" };
+      const managedIndexSorts: ManagedIndicesSort = { index: "managed_index.index", policyId: "managed_index.policy_id" };
       const searchParams: RequestParams.Search = {
         index: INDEX.OPENDISTRO_ISM_CONFIG,
         seq_no_primary_term: true,
@@ -141,6 +143,30 @@ export default class ManagedIndexService {
       };
     } catch (err) {
       console.error("Index Management - ManagedIndexService - retryManagedIndexPolicy:", err);
+      return { ok: false, error: err.message };
+    }
+  };
+
+  removePolicy = async (req: Request, h: ResponseToolkit): Promise<ServerResponse<RemovePolicyResponse>> => {
+    try {
+      const { indices } = req.payload as { indices: string[] };
+      const { callWithRequest } = await this.esDriver.getCluster(CLUSTER.ISM);
+      const params = { index: indices.join(",") };
+      const addResponse: RemoveResponse = await callWithRequest(req, "ism.remove", params);
+      return {
+        ok: true,
+        response: {
+          failures: addResponse.failures,
+          updatedIndices: addResponse.updated_indices,
+          failedIndices: addResponse.failed_indices.map(failedIndex => ({
+            indexName: failedIndex.index_name,
+            indexUuid: failedIndex.index_uuid,
+            reason: failedIndex.reason,
+          })),
+        },
+      };
+    } catch (err) {
+      console.error("Index Management - ManagedIndexService - removePolicy:", err);
       return { ok: false, error: err.message };
     }
   };

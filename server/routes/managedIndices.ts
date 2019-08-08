@@ -49,6 +49,6 @@ export default function(server: Server, services: NodeServices) {
   server.route({
     path: NODE_API.REMOVE_POLICY,
     method: REQUEST.POST,
-    handler: () => {}, // TODO
+    handler: managedIndexService.removePolicy,
   });
 }
