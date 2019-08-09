@@ -17,7 +17,7 @@ export type MatchAllQuery = { match_all: {} };
 
 export type ManagedIndicesSort = {
   [sortField: string]: string;
-  name: "managed_index.name.keyword";
+  index: "managed_index.index";
   policyId: "managed_index.policy_id";
 };
 

@@ -35,6 +35,7 @@ module.exports = {
     "!**/index.ts",
     "!<rootDir>/index.js",
     "!<rootDir>/public/app.js",
+    "!<rootDir>/public/temporary/**",
     "!<rootDir>/babel.config.js",
     "!<rootDir>/test/**",
     "!<rootDir>/server/**",
