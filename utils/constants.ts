@@ -18,6 +18,7 @@ export const NODE_API = Object.freeze({
   _SEARCH: `${BASE_API_PATH}/_search`,
   _INDICES: `${BASE_API_PATH}/_indices`,
   ADD_POLICY: `${BASE_API_PATH}/addPolicy`,
+  ADD_ROLLOVER_ALIAS: `${BASE_API_PATH}/addRolloverAlias`,
   POLICIES: `${BASE_API_PATH}/policies`,
   MANAGED_INDICES: `${BASE_API_PATH}/managedIndices`,
   RETRY: `${BASE_API_PATH}/retry`,

@@ -39,4 +39,10 @@ export default function(server: Server, services: NodeServices) {
     method: REQUEST.POST,
     handler: indexService.addPolicy,
   });
+
+  server.route({
+    path: NODE_API.ADD_ROLLOVER_ALIAS,
+    method: REQUEST.POST,
+    handler: indexService.addRolloverAlias,
+  });
 }

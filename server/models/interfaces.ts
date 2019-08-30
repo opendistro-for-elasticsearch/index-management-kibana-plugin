@@ -110,6 +110,10 @@ export interface RemoveResponse {
   failed_indices: BackendFailedIndex[];
 }
 
+export interface AcknowledgedResponse {
+  acknowledged: boolean;
+}
+
 export interface BackendFailedIndex {
   index_name: string;
   index_uuid: string;
