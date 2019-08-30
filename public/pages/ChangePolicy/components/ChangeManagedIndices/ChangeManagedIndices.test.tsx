@@ -1,0 +1,100 @@
+/*
+ * Copyright 2019 Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License").
+ * You may not use this file except in compliance with the License.
+ * A copy of the License is located at
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * or in the "license" file accompanying this file. This file is distributed
+ * on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
+ * express or implied. See the License for the specific language governing
+ * permissions and limitations under the License.
+ */
+
+import React from "react";
+import "@testing-library/jest-dom/extend-expect";
+import { render, wait } from "@testing-library/react";
+import { toastNotifications } from "ui/notify";
+import ChangeManagedIndices from "./ChangeManagedIndices";
+import { browserServicesMock } from "../../../../../test/mocks";
+
+describe("<ChangeManagedIndices /> spec", () => {
+  it("renders the component", async () => {
+    browserServicesMock.managedIndexService.getManagedIndices = jest.fn().mockResolvedValue({ ok: true, response: { hits: { hits: [] } } });
+    const { container } = render(
+      <ChangeManagedIndices
+        managedIndexService={browserServicesMock.managedIndexService}
+        selectedManagedIndices={[]}
+        selectedStateFilters={[]}
+        onChangeManagedIndices={() => {}}
+        onChangeStateFilters={() => {}}
+        managedIndicesError=""
+      />
+    );
+
+    await wait();
+
+    expect(container.firstChild).toMatchSnapshot();
+  });
+
+  it("shows danger toaster when search fails", async () => {
+    browserServicesMock.managedIndexService.getManagedIndices = jest.fn().mockRejectedValue(new Error("this is an error"));
+    render(
+      <ChangeManagedIndices
+        managedIndexService={browserServicesMock.managedIndexService}
+        selectedManagedIndices={[]}
+        selectedStateFilters={[]}
+        onChangeManagedIndices={() => {}}
+        onChangeStateFilters={() => {}}
+        managedIndicesError=""
+      />
+    );
+
+    await wait();
+
+    expect(toastNotifications.addDanger).toHaveBeenCalledTimes(1);
+    expect(toastNotifications.addDanger).toHaveBeenCalledWith("this is an error");
+  });
+
+  it("shows danger toaster when search gracefully fails", async () => {
+    browserServicesMock.managedIndexService.getManagedIndices = jest.fn().mockResolvedValue({ ok: false, error: "some error" });
+    render(
+      <ChangeManagedIndices
+        managedIndexService={browserServicesMock.managedIndexService}
+        selectedManagedIndices={[]}
+        selectedStateFilters={[]}
+        onChangeManagedIndices={() => {}}
+        onChangeStateFilters={() => {}}
+        managedIndicesError=""
+      />
+    );
+
+    await wait();
+
+    expect(toastNotifications.addDanger).toHaveBeenCalledTimes(1);
+    expect(toastNotifications.addDanger).toHaveBeenCalledWith("some error");
+  });
+
+  it("shows danger toaster when search fails because of no config index", async () => {
+    browserServicesMock.managedIndexService.getManagedIndices = jest
+      .fn()
+      .mockResolvedValue({ ok: false, error: "[index_not_found_exception]and other stuff" });
+    render(
+      <ChangeManagedIndices
+        managedIndexService={browserServicesMock.managedIndexService}
+        selectedManagedIndices={[]}
+        selectedStateFilters={[]}
+        onChangeManagedIndices={() => {}}
+        onChangeStateFilters={() => {}}
+        managedIndicesError=""
+      />
+    );
+
+    await wait();
+
+    expect(toastNotifications.addDanger).toHaveBeenCalledTimes(1);
+    expect(toastNotifications.addDanger).toHaveBeenCalledWith("You have not created a managed index yet");
+  });
+});
