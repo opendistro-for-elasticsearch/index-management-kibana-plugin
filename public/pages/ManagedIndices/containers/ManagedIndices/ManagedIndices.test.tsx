@@ -149,14 +149,14 @@ describe("<ManagedIndices /> spec", () => {
 
     await wait(() => getByText("index_1"));
 
-    expect(getByTestId("removePolicyButton")).toBeDisabled();
+    expect(getByTestId("Remove policyButton")).toBeDisabled();
 
     userEvent.click(getByTestId("checkboxSelectRow-index_1"));
 
-    expect(getByTestId("removePolicyButton")).toBeEnabled();
+    expect(getByTestId("Remove policyButton")).toBeEnabled();
 
-    userEvent.click(getByTestId("removePolicyButton"));
-
+    userEvent.click(getByTestId("Remove policyButton"));
+    userEvent.click(getByTestId("confirmationModalActionButton"));
     await wait();
 
     expect(toastNotifications.addSuccess).toHaveBeenCalledTimes(1);
@@ -267,14 +267,14 @@ describe("<ManagedIndices /> spec", () => {
 
     await wait(() => getByText("index_1"));
 
-    expect(getByTestId("retryPolicyButton")).toBeDisabled();
+    expect(getByTestId("Retry policyButton")).toBeDisabled();
 
     userEvent.click(getByTestId("checkboxSelectRow-index_2"));
 
-    expect(getByTestId("retryPolicyButton")).toBeEnabled();
+    expect(getByTestId("Retry policyButton")).toBeEnabled();
 
     userEvent.click(getByTestId("checkboxSelectRow-index_1"));
 
-    expect(getByTestId("retryPolicyButton")).toBeDisabled();
+    expect(getByTestId("Retry policyButton")).toBeDisabled();
   });
 });
