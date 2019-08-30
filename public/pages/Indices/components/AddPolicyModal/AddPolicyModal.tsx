@@ -15,6 +15,7 @@
 
 import React, { Component } from "react";
 import { toastNotifications } from "ui/notify";
+import _ from "lodash";
 import {
   EuiButton,
   EuiButtonEmpty,
@@ -31,7 +32,7 @@ import {
 } from "@elastic/eui";
 import { BrowserServices } from "../../../../models/interfaces";
 import { PolicyOption } from "../../models/interfaces";
-import { Policy } from "../../../../../models/interfaces";
+import { Policy, State } from "../../../../../models/interfaces";
 import { getErrorMessage } from "../../../../utils/helpers";
 
 interface AddPolicyModalProps {
@@ -151,10 +152,9 @@ export default class AddPolicyModal extends Component<AddPolicyModalProps, AddPo
 
   onChangeSelectedPolicy = (selectedPolicies: PolicyOption[]): void => {
     const selectedPolicy = selectedPolicies.length ? selectedPolicies[0] : null;
-    const hasRolloverAction =
-      !!selectedPolicy &&
-      !!selectedPolicy.policy &&
-      selectedPolicy.policy.states.some(state => state.actions.some(action => action.hasOwnProperty("rollover")));
+    const hasRolloverAction = _.get(selectedPolicy, "policy.states", []).some((state: State) =>
+      state.actions.some(action => action.hasOwnProperty("rollover"))
+    );
     this.setState({ selectedPolicy, hasRolloverAction });
   };
 
