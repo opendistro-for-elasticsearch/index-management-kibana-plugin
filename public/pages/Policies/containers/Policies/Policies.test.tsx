@@ -142,7 +142,7 @@ describe("<Policies /> spec", () => {
       .mockResolvedValueOnce({ ok: true, response: { policies, totalPolicies: 1 } })
       .mockResolvedValueOnce({ ok: true, response: { policies: [], totalPolicies: 0 } });
     browserServicesMock.policyService.deletePolicy = jest.fn().mockResolvedValue({ ok: true, response: true });
-    const { debug, queryByText, getByText, getByTestId } = renderPoliciesWithRouter();
+    const { queryByText, getByText, getByTestId } = renderPoliciesWithRouter();
 
     await wait(() => getByText(testPolicy.id));
 
