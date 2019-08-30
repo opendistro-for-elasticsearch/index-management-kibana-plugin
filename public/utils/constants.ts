@@ -18,6 +18,7 @@ export const PLUGIN_NAME = "opendistro_index_management_kibana";
 export const DEFAULT_EMPTY_DATA = "-";
 
 export const ROUTES = Object.freeze({
+  CHANGE_POLICY: "/change-policy",
   CREATE_POLICY: "/create-policy",
   EDIT_POLICY: "/edit-policy",
   MANAGED_INDICES: "/managed-indices",
@@ -32,6 +33,7 @@ export const BREADCRUMBS = Object.freeze({
   MANAGED_INDICES: { text: "Managed Indices", href: `#${ROUTES.MANAGED_INDICES}` },
   EDIT_POLICY: { text: "Edit policy" },
   CREATE_POLICY: { text: "Create policy" },
+  CHANGE_POLICY: { text: "Change policy" },
 });
 
 // TODO: Kibana EUI has a SortDirection already
