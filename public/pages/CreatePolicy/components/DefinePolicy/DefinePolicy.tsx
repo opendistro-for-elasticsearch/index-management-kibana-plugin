@@ -26,6 +26,7 @@ import {
 import { ContentPanel } from "../../../../components/ContentPanel";
 import "brace/theme/github";
 import "brace/mode/json";
+import { DarkModeConsumer } from "../../../../components/DarkMode";
 
 interface DefinePolicyProps {
   jsonString: string;
@@ -59,15 +60,19 @@ const DefinePolicy = ({ jsonString, onChange, onAutoIndent, hasJSONError }: Defi
       </EuiText>
     </div>
     <EuiSpacer size="s" />
-    <EuiCodeEditor
-      mode="json"
-      theme="github"
-      width="100%"
-      value={jsonString}
-      onChange={onChange}
-      setOptions={{ fontSize: "14px" }}
-      aria-label="Code Editor"
-    />
+    <DarkModeConsumer>
+      {isDarkMode => (
+        <EuiCodeEditor
+          mode="json"
+          theme={isDarkMode ? "sense-dark" : "github"}
+          width="100%"
+          value={jsonString}
+          onChange={onChange}
+          setOptions={{ fontSize: "14px" }}
+          aria-label="Code Editor"
+        />
+      )}
+    </DarkModeConsumer>
   </ContentPanel>
 );
 
