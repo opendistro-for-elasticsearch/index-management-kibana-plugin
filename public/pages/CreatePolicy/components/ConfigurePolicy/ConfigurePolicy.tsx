@@ -22,11 +22,9 @@ interface ConfigurePolicyProps {
   policyIdError: string;
   isEdit: boolean;
   onChange: (value: ChangeEvent<HTMLInputElement>) => void;
-  onBlur: () => void;
-  onFocus: () => void;
 }
 
-const ConfigurePolicy = ({ isEdit, policyId, policyIdError, onChange, onBlur, onFocus }: ConfigurePolicyProps) => (
+const ConfigurePolicy = ({ isEdit, policyId, policyIdError, onChange }: ConfigurePolicyProps) => (
   <ContentPanel bodyStyles={{ padding: "initial" }} title="Policy" titleSize="s">
     <div style={{ paddingLeft: "10px" }}>
       <EuiText size="xs">
@@ -34,15 +32,7 @@ const ConfigurePolicy = ({ isEdit, policyId, policyIdError, onChange, onBlur, on
       </EuiText>
       <EuiSpacer size="s" />
       <EuiFormRow label="Policy ID" helpText="Use something easy to remember" isInvalid={!!policyIdError} error={policyIdError}>
-        <EuiFieldText
-          isInvalid={!!policyIdError}
-          placeholder="Policy ID"
-          readOnly={isEdit}
-          value={policyId}
-          onChange={onChange}
-          onBlur={onBlur}
-          onFocus={onFocus}
-        />
+        <EuiFieldText isInvalid={!!policyIdError} placeholder="Policy ID" readOnly={isEdit} value={policyId} onChange={onChange} />
       </EuiFormRow>
     </div>
   </ContentPanel>

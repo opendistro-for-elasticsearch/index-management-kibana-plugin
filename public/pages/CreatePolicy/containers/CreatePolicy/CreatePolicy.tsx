@@ -14,7 +14,7 @@
  */
 
 import React, { ChangeEvent, Component } from "react";
-import { EuiSpacer, EuiTitle, EuiFlexGroup, EuiFlexItem, EuiButton, EuiButtonEmpty } from "@elastic/eui";
+import { EuiSpacer, EuiTitle, EuiFlexGroup, EuiFlexItem, EuiButton, EuiButtonEmpty, EuiCallOut } from "@elastic/eui";
 import chrome from "ui/chrome";
 import { toastNotifications } from "ui/notify";
 import queryString from "query-string";
@@ -38,6 +38,9 @@ interface CreatePolicyState {
   jsonString: string;
   policySeqNo: number | null;
   policyPrimaryTerm: number | null;
+  submitError: string;
+  isSubmitting: boolean;
+  hasSubmitted: boolean;
 }
 
 export default class CreatePolicy extends Component<CreatePolicyProps, CreatePolicyState> {
@@ -49,7 +52,10 @@ export default class CreatePolicy extends Component<CreatePolicyProps, CreatePol
       policyPrimaryTerm: null,
       policyId: "",
       policyIdError: "",
+      submitError: "",
       jsonString: "",
+      isSubmitting: false,
+      hasSubmitted: false,
     };
   }
 
@@ -100,10 +106,10 @@ export default class CreatePolicy extends Component<CreatePolicyProps, CreatePol
         toastNotifications.addSuccess(`Created policy: ${response.response._id}`);
         this.props.history.push(ROUTES.POLICIES);
       } else {
-        toastNotifications.addDanger(`Failed to create policy: ${response.error}`);
+        this.setState({ submitError: response.error });
       }
     } catch (err) {
-      toastNotifications.addDanger(getErrorMessage(err, "There was a problem creating the policy"));
+      this.setState({ submitError: getErrorMessage(err, "There was a problem creating the policy") });
     }
   };
 
@@ -120,10 +126,10 @@ export default class CreatePolicy extends Component<CreatePolicyProps, CreatePol
         toastNotifications.addSuccess(`Updated policy: ${response.response._id}`);
         this.props.history.push(ROUTES.POLICIES);
       } else {
-        toastNotifications.addDanger(`Failed to update policy: ${response.error}`);
+        this.setState({ submitError: response.error });
       }
     } catch (err) {
-      toastNotifications.addDanger(getErrorMessage(err, "There was a problem updating the policy"));
+      this.setState({ submitError: getErrorMessage(err, "There was a problem updating the policy") });
     }
   };
 
@@ -133,16 +139,10 @@ export default class CreatePolicy extends Component<CreatePolicyProps, CreatePol
   };
 
   onChange = (e: ChangeEvent<HTMLInputElement>): void => {
-    this.setState({ policyId: e.target.value });
-  };
-
-  onBlur = (): void => {
-    const { policyId } = this.state;
-    this.setState({ policyIdError: policyId ? "" : "Required" });
-  };
-
-  onFocus = (): void => {
-    this.setState({ policyIdError: "" });
+    const { hasSubmitted } = this.state;
+    const policyId = e.target.value;
+    if (hasSubmitted) this.setState({ policyId, policyIdError: policyId ? "" : "Required" });
+    else this.setState({ policyId });
   };
 
   onChangeJSON = (value: string): void => {
@@ -161,20 +161,26 @@ export default class CreatePolicy extends Component<CreatePolicyProps, CreatePol
   onSubmit = async (): Promise<void> => {
     const { isEdit } = this.props;
     const { policyId, jsonString } = this.state;
-    if (!policyId) return;
+    this.setState({ submitError: "", isSubmitting: true, hasSubmitted: true });
     try {
-      const policy = JSON.parse(jsonString);
-      if (isEdit) await this.onUpdate(policyId, policy);
-      else await this.onCreate(policyId, policy);
+      if (!policyId) {
+        this.setState({ policyIdError: "Required" });
+      } else {
+        const policy = JSON.parse(jsonString);
+        if (isEdit) await this.onUpdate(policyId, policy);
+        else await this.onCreate(policyId, policy);
+      }
     } catch (err) {
       toastNotifications.addDanger("Invalid Policy JSON");
       console.error(err);
     }
+
+    this.setState({ isSubmitting: false });
   };
 
   render() {
     const { isEdit } = this.props;
-    const { policyId, policyIdError, jsonString } = this.state;
+    const { policyId, policyIdError, jsonString, submitError, isSubmitting } = this.state;
 
     let hasJSONError = false;
     try {
@@ -189,16 +195,15 @@ export default class CreatePolicy extends Component<CreatePolicyProps, CreatePol
           <h1>{isEdit ? "Edit" : "Create"} policy</h1>
         </EuiTitle>
         <EuiSpacer />
-        <ConfigurePolicy
-          policyId={policyId}
-          policyIdError={policyIdError}
-          isEdit={isEdit}
-          onChange={this.onChange}
-          onBlur={this.onBlur}
-          onFocus={this.onFocus}
-        />
+        <ConfigurePolicy policyId={policyId} policyIdError={policyIdError} isEdit={isEdit} onChange={this.onChange} />
         <EuiSpacer />
         <DefinePolicy jsonString={jsonString} onChange={this.onChangeJSON} onAutoIndent={this.onAutoIndent} hasJSONError={hasJSONError} />
+        <EuiSpacer />
+        {submitError && (
+          <EuiCallOut title="Sorry, there was an error" color="danger" iconType="alert">
+            <p>{submitError}</p>
+          </EuiCallOut>
+        )}
         <EuiSpacer />
         <EuiFlexGroup alignItems="center" justifyContent="flexEnd">
           <EuiFlexItem grow={false}>
@@ -207,13 +212,7 @@ export default class CreatePolicy extends Component<CreatePolicyProps, CreatePol
             </EuiButtonEmpty>
           </EuiFlexItem>
           <EuiFlexItem grow={false}>
-            <EuiButton
-              fill
-              onClick={this.onSubmit}
-              isLoading={false}
-              disabled={hasJSONError || !policyId}
-              data-test-subj="createPolicyCreateButton"
-            >
+            <EuiButton fill onClick={this.onSubmit} isLoading={isSubmitting} data-test-subj="createPolicyCreateButton">
               {isEdit ? "Update" : "Create"}
             </EuiButton>
           </EuiFlexItem>
