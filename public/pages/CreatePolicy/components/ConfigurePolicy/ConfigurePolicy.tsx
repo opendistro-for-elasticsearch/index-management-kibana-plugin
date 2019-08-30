@@ -48,4 +48,5 @@ const ConfigurePolicy = ({ isEdit, policyId, policyIdError, onChange, onBlur, on
   </ContentPanel>
 );
 
+// @ts-ignore
 export default ConfigurePolicy;

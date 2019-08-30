@@ -13,6 +13,6 @@
  * permissions and limitations under the License.
  */
 
-import ManagedIndexActions from "./ManagedIndexActions";
+import ChangeManagedIndices from "./ChangeManagedIndices";
 
-export default ManagedIndexActions;
+export default ChangeManagedIndices;
