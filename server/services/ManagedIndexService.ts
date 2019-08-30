@@ -19,6 +19,7 @@ import { RequestParams } from "@elastic/elasticsearch";
 import { CLUSTER, INDEX } from "../utils/constants";
 import { getMustQuery, transformManagedIndexMetaData } from "../utils/helpers";
 import {
+  ChangePolicyResponse,
   ExplainResponse,
   GetManagedIndicesResponse,
   RemovePolicyResponse,
@@ -143,6 +144,35 @@ export default class ManagedIndexService {
       };
     } catch (err) {
       console.error("Index Management - ManagedIndexService - retryManagedIndexPolicy:", err);
+      return { ok: false, error: err.message };
+    }
+  };
+
+  changePolicy = async (req: Request, h: ResponseToolkit): Promise<ServerResponse<ChangePolicyResponse>> => {
+    try {
+      const { indices, policyId, include, state } = req.payload as {
+        indices: string[];
+        policyId: string;
+        state: string | null;
+        include: { state: string }[];
+      };
+      const { callWithRequest } = await this.esDriver.getCluster(CLUSTER.ISM);
+      const params = { index: indices.join(","), body: { policy_id: policyId, include, state } };
+      const changeResponse: RemoveResponse = await callWithRequest(req, "ism.change", params);
+      return {
+        ok: true,
+        response: {
+          failures: changeResponse.failures,
+          updatedIndices: changeResponse.updated_indices,
+          failedIndices: changeResponse.failed_indices.map(failedIndex => ({
+            indexName: failedIndex.index_name,
+            indexUuid: failedIndex.index_uuid,
+            reason: failedIndex.reason,
+          })),
+        },
+      };
+    } catch (err) {
+      console.error("Index Management - ManagedIndexService - changePolicy:", err);
       return { ok: false, error: err.message };
     }
   };
