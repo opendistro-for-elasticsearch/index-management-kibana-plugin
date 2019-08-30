@@ -29,6 +29,7 @@ interface NewPolicyProps {
   selectedPolicies: PolicyOption[];
   stateRadioIdSelected: string;
   stateSelected: string;
+  selectedPoliciesError: string;
   onChangePolicy: (selectedPolicies: PolicyOption[]) => void;
   onChangeStateRadio: (optionId: string) => void;
   onStateSelectChange: (e: React.ChangeEvent<HTMLSelectElement>) => void;
@@ -77,7 +78,7 @@ export default class NewPolicy extends React.Component<NewPolicyProps, NewPolicy
   };
 
   render() {
-    const { selectedPolicies, stateRadioIdSelected, stateSelected } = this.props;
+    const { selectedPolicies, stateRadioIdSelected, stateSelected, selectedPoliciesError } = this.props;
     const { policies, policiesIsLoading } = this.state;
 
     const hasSelectedPolicy = !!selectedPolicies.length;
@@ -88,7 +89,11 @@ export default class NewPolicy extends React.Component<NewPolicyProps, NewPolicy
     );
 
     const currentRadio = { id: Radio.Current, label: "Continue from current state" };
-    const stateRadio = { id: Radio.State, label: "Start from a chosen state after changing policies", disabled: !hasSelectedPolicy };
+    const stateRadio = {
+      id: Radio.State,
+      label: "Start from a chosen state after changing policies",
+      disabled: !hasSelectedPolicy || !stateOptions.length,
+    };
     const radioOptions = [currentRadio, stateRadio];
     return (
       <ContentPanel bodyStyles={{ padding: "initial" }} title="New policy" titleSize="s">
@@ -99,11 +104,12 @@ export default class NewPolicy extends React.Component<NewPolicyProps, NewPolicy
 
           <EuiSpacer size="s" />
 
-          <EuiFormRow label="Policy">
+          <EuiFormRow label="Policy" isInvalid={!!selectedPoliciesError} error={selectedPoliciesError}>
             <EuiComboBox
               placeholder="Choose a policy"
               async
               options={policies}
+              isInvalid={!!selectedPoliciesError}
               singleSelection={{ asPlainText: true }}
               selectedOptions={selectedPolicies}
               isLoading={policiesIsLoading}
