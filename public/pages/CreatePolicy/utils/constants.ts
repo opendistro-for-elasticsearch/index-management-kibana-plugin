@@ -30,7 +30,7 @@ export const DEFAULT_POLICY = JSON.stringify(
           transitions: [
             {
               state_name: "Delete",
-              conditions: { index_age: "30d" },
+              conditions: { min_index_age: "30d" },
             },
           ],
         },

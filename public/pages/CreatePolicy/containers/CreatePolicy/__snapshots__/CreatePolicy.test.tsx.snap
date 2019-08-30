@@ -245,7 +245,7 @@ exports[`<CreatePolicy /> spec renders the create component 1`] = `
                     {
                         "state_name": "Delete",
                         "conditions": {
-                            "index_age": "30d"
+                            "min_index_age": "30d"
                         }
                     }
                 ]
@@ -561,7 +561,7 @@ exports[`<CreatePolicy /> spec renders the edit component 1`] = `
                         {
                             "state_name": "Delete",
                             "conditions": {
-                                "index_age": "30d"
+                                "min_index_age": "30d"
                             }
                         }
                     ]
