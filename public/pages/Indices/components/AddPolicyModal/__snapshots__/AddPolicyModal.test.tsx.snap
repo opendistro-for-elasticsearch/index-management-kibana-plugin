@@ -60,6 +60,7 @@ exports[`<AddPolicyModal /> spec renders the component 1`] = `
             id="some_make_id-row"
           >
             <label
+              aria-invalid="false"
               class="euiFormLabel"
               for="some_make_id"
             >
@@ -167,7 +168,6 @@ exports[`<AddPolicyModal /> spec renders the component 1`] = `
           <button
             class="euiButton euiButton--primary euiButton--fill"
             data-test-subj="addPolicyModalEditButton"
-            disabled=""
             type="button"
           >
             <span
