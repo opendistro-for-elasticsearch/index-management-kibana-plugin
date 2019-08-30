@@ -43,6 +43,7 @@ exports[`<NewPolicy /> spec renders the component 1`] = `
         id="some_make_id-row"
       >
         <label
+          aria-invalid="false"
           class="euiFormLabel"
           for="some_make_id"
         >
