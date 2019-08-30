@@ -19,9 +19,7 @@ import ConfigurePolicy from "./ConfigurePolicy";
 
 describe("<ConfigurePolicy /> spec", () => {
   it("renders the component", () => {
-    const { container } = render(
-      <ConfigurePolicy policyId="some_id" policyIdError="" isEdit={false} onChange={() => {}} onBlur={() => {}} onFocus={() => {}} />
-    );
+    const { container } = render(<ConfigurePolicy policyId="some_id" policyIdError="" isEdit={false} onChange={() => {}} />);
     expect(container.firstChild).toMatchSnapshot();
   });
 });
