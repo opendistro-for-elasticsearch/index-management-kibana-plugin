@@ -33,6 +33,7 @@ import { BREADCRUMBS, ROUTES, SortDirection } from "../../../../utils/constants"
 import { PolicyService } from "../../../../services";
 import { getErrorMessage } from "../../../../utils/helpers";
 import { TableParams } from "../../../../models/interfaces";
+import ConfirmationModal from "../../../../components/ConfirmationModal";
 
 interface PoliciesProps extends RouteComponentProps {
   policyService: PolicyService;
@@ -152,13 +153,12 @@ export default class Policies extends Component<PoliciesProps, PoliciesState> {
     this.setState({ loadingPolicies: false });
   };
 
-  deletePolicy = async (item: PolicyItem): Promise<boolean> => {
+  deletePolicy = async (policyId: string): Promise<boolean> => {
     const { policyService } = this.props;
     try {
-      const { id } = item;
-      const deletePolicyResponse = await policyService.deletePolicy(id);
+      const deletePolicyResponse = await policyService.deletePolicy(policyId);
       if (deletePolicyResponse.ok) {
-        toastNotifications.addSuccess(`Deleted the policy: ${item.id}`);
+        toastNotifications.addSuccess(`Deleted the policy: ${policyId}`);
         return true;
       } else {
         toastNotifications.addDanger(`Failed to delete the policy, ${deletePolicyResponse.error}`);
@@ -203,10 +203,12 @@ export default class Policies extends Component<PoliciesProps, PoliciesState> {
     this.props.history.push(ROUTES.CREATE_POLICY);
   };
 
-  onClickDelete = async (): Promise<void> => {
-    const { selectedItems } = this.state;
-    if (selectedItems.length !== 1) return;
-    const deleted = await this.deletePolicy(selectedItems[0]);
+  onClickDelete = async (policyIds: string[]): Promise<void> => {
+    if (!policyIds.length) return;
+
+    const deletePromises = policyIds.map(policyId => this.deletePolicy(policyId));
+
+    const deleted = (await Promise.all(deletePromises)).reduce((deleted: boolean, result: boolean) => deleted && result);
     if (deleted) await this.getPolicies();
   };
 
@@ -244,9 +246,17 @@ export default class Policies extends Component<PoliciesProps, PoliciesState> {
     const actions = [
       {
         text: "Delete",
-        buttonProps: {
-          disabled: selectedItems.length !== 1,
-          onClick: this.onClickDelete,
+        buttonProps: { disabled: !selectedItems.length },
+        modal: {
+          onClickModal: (onShow: (component: any, props: object) => void) => () =>
+            onShow(ConfirmationModal, {
+              title: `Delete ${selectedItems.length === 1 ? selectedItems[0].id : `${selectedItems.length} policies`}`,
+              bodyMessage: `Delete ${
+                selectedItems.length === 1 ? selectedItems[0].id : `${selectedItems.length} policies`
+              } permanently? This action cannot be undone.`,
+              actionMessage: "Delete",
+              onAction: () => this.onClickDelete(selectedItems.map(item => item.id)),
+            }),
         },
       },
       {

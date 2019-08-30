@@ -44,7 +44,7 @@ const PolicyModal: React.SFC<PolicyModalProps> = ({ policyId, policy, errorMessa
     <EuiOverlayMask>
       {/*
       // @ts-ignore */}
-      <EuiModal onCancel={onClose} onClose={onClose}>
+      <EuiModal onCancel={onClose} onClose={onClose} maxWidth={1000}>
         <EuiModalHeader>
           <EuiModalHeaderTitle>{policyId}</EuiModalHeaderTitle>
         </EuiModalHeader>

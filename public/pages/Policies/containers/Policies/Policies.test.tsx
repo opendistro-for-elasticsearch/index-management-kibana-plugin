@@ -142,7 +142,7 @@ describe("<Policies /> spec", () => {
       .mockResolvedValueOnce({ ok: true, response: { policies, totalPolicies: 1 } })
       .mockResolvedValueOnce({ ok: true, response: { policies: [], totalPolicies: 0 } });
     browserServicesMock.policyService.deletePolicy = jest.fn().mockResolvedValue({ ok: true, response: true });
-    const { queryByText, getByText, getByTestId } = renderPoliciesWithRouter();
+    const { debug, queryByText, getByText, getByTestId } = renderPoliciesWithRouter();
 
     await wait(() => getByText(testPolicy.id));
 
@@ -153,6 +153,8 @@ describe("<Policies /> spec", () => {
     expect(getByTestId("DeleteButton")).toBeEnabled();
 
     userEvent.click(getByTestId("DeleteButton"));
+
+    userEvent.click(getByTestId("confirmationModalActionButton"));
 
     await wait();
 
