@@ -47,7 +47,7 @@ describe("<AddPolicyModal /> spec", () => {
     render(<AddPolicyModal onClose={() => {}} services={browserServicesMock} indices={[]} />);
 
     expect(spy).toHaveBeenCalledTimes(1);
-    expect(spy).toHaveBeenCalledWith("");
+    expect(spy).toHaveBeenCalledWith("", true);
     expect(toastNotifications.addDanger).not.toHaveBeenCalled();
   });
 
@@ -60,7 +60,7 @@ describe("<AddPolicyModal /> spec", () => {
     await wait();
 
     expect(spy).toHaveBeenCalledTimes(1);
-    expect(spy).toHaveBeenCalledWith("");
+    expect(spy).toHaveBeenCalledWith("", true);
     expect(toastNotifications.addDanger).toHaveBeenCalledTimes(1);
     expect(toastNotifications.addDanger).toHaveBeenCalledWith("some error");
   });
@@ -74,7 +74,7 @@ describe("<AddPolicyModal /> spec", () => {
     await wait();
 
     expect(spy).toHaveBeenCalledTimes(1);
-    expect(spy).toHaveBeenCalledWith("");
+    expect(spy).toHaveBeenCalledWith("", true);
     expect(toastNotifications.addDanger).toHaveBeenCalledTimes(1);
     expect(toastNotifications.addDanger).toHaveBeenCalledWith("testing error");
   });
