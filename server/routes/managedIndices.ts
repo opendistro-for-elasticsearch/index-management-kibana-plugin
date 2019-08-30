@@ -43,7 +43,7 @@ export default function(server: Server, services: NodeServices) {
   server.route({
     path: NODE_API.CHANGE_POLICY,
     method: REQUEST.POST,
-    handler: () => {}, // TODO
+    handler: managedIndexService.changePolicy,
   });
 
   server.route({
