@@ -34,7 +34,7 @@ const InfoModal = ({ info, onClose }: InfoModalProps) => (
   <EuiOverlayMask>
     {/*
       // @ts-ignore */}
-    <EuiModal onCancel={onClose} onClose={onClose}>
+    <EuiModal onCancel={onClose} onClose={onClose} maxWidth={1000}>
       <EuiModalHeader>
         <EuiModalHeaderTitle>Managed Index Info</EuiModalHeaderTitle>
       </EuiModalHeader>

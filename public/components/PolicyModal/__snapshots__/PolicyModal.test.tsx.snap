@@ -18,7 +18,8 @@ exports[`<PolicyModal /> spec renders the component 1`] = `
     data-focus-lock-disabled="false"
   >
     <div
-      class="euiModal euiModal--maxWidth-default"
+      class="euiModal"
+      style="max-width: 1000px;"
       tabindex="0"
     >
       <button
