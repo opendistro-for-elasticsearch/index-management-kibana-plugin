@@ -35,7 +35,8 @@
     "**/@types/angular": "1.6.50",
     "**/@types/jest": "^24.0.9",
     "**/@types/react-dom": "^16.0.5",
-    "**/@types/react-router-dom": "^4.3.1"
+    "**/@types/react-router-dom": "^4.3.1",
+    "eslint-utils": "^1.4.2"
   },
   "dependencies": {
     "@elastic/eui": "7.3.0",
