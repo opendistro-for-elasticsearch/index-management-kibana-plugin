@@ -44,41 +44,37 @@ interface AddPolicyModalProps {
 interface AddPolicyModalState {
   isLoading: boolean;
   selectedPolicy: PolicyOption | null;
+  selectedPolicyError: string;
   hasRolloverAction: boolean;
   policyOptions: PolicyOption[];
   rolloverAlias: string;
+  rolloverAliasError: string;
+  hasSubmitted: boolean;
 }
 
 export default class AddPolicyModal extends Component<AddPolicyModalProps, AddPolicyModalState> {
   state: AddPolicyModalState = {
     isLoading: false,
     selectedPolicy: null,
+    selectedPolicyError: "",
     hasRolloverAction: false,
     policyOptions: [],
     rolloverAlias: "",
+    rolloverAliasError: "",
+    hasSubmitted: false,
   };
 
   async componentDidMount(): Promise<void> {
     await this.onPolicySearchChange("");
   }
 
-  onAddPolicy = async (): Promise<void> => {
+  onAddPolicy = async (selectedPolicy: PolicyOption, hasRolloverAction: boolean, rolloverAlias: string): Promise<void> => {
     try {
-      const { selectedPolicy, hasRolloverAction, rolloverAlias } = this.state;
       const {
         onClose,
         indices,
         services: { indexService },
       } = this.props;
-      if (!indices) {
-        toastNotifications.addDanger("There are no selected indices");
-        return;
-      }
-      if (!selectedPolicy) {
-        toastNotifications.addDanger("There is no selected policy");
-        return;
-      }
-
       const policyId = selectedPolicy.label;
       const addPolicyResponse = await indexService.addPolicy(indices, policyId);
       if (addPolicyResponse.ok) {
@@ -152,18 +148,51 @@ export default class AddPolicyModal extends Component<AddPolicyModalProps, AddPo
 
   onChangeSelectedPolicy = (selectedPolicies: PolicyOption[]): void => {
     const selectedPolicy = selectedPolicies.length ? selectedPolicies[0] : null;
-    const hasRolloverAction = _.get(selectedPolicy, "policy.states", []).some((state: State) =>
-      state.actions.some(action => action.hasOwnProperty("rollover"))
-    );
-    this.setState({ selectedPolicy, hasRolloverAction });
+    const hasRolloverAction = this.hasRolloverAction(selectedPolicy);
+    this.setState({
+      selectedPolicy,
+      hasRolloverAction,
+      selectedPolicyError: this.getSelectedPolicyError(selectedPolicy),
+    });
   };
 
   onChangeRolloverAlias = (e: React.ChangeEvent<HTMLInputElement>): void => {
-    this.setState({ rolloverAlias: e.target.value });
+    const rolloverAlias = e.target.value;
+    this.setState({
+      rolloverAlias,
+      rolloverAliasError: this.getRolloverAliasError(rolloverAlias),
+    });
   };
 
-  renderRollover = () => {
-    const { rolloverAlias, hasRolloverAction } = this.state;
+  onSubmit = async (): Promise<void> => {
+    const { selectedPolicy, rolloverAlias } = this.state;
+    const selectedPolicyError = this.getSelectedPolicyError(selectedPolicy);
+    const rolloverAliasError = this.getRolloverAliasError(rolloverAlias);
+    const hasSubmitError = !!selectedPolicyError || !!rolloverAliasError;
+    if (hasSubmitError) {
+      this.setState({ selectedPolicyError, rolloverAliasError, hasSubmitted: true });
+    } else {
+      // @ts-ignore
+      await this.onAddPolicy(selectedPolicy, this.hasRolloverAction(), rolloverAlias);
+    }
+  };
+
+  getRolloverAliasError = (rolloverAlias: string): string => {
+    const { hasRolloverAction } = this.state;
+    const { indices } = this.props;
+    const hasSingleIndexSelected = indices.length === 1;
+    const requiresAlias = hasRolloverAction && hasSingleIndexSelected;
+    const hasAliasError = requiresAlias && !rolloverAlias;
+    return hasAliasError ? "Required" : "";
+  };
+
+  getSelectedPolicyError = (selectedPolicy: PolicyOption | null): string => (selectedPolicy ? "" : "You must select a policy");
+
+  hasRolloverAction = (selectedPolicy: PolicyOption | null): boolean =>
+    _.get(selectedPolicy, "policy.states", []).some((state: State) => state.actions.some(action => action.hasOwnProperty("rollover")));
+
+  renderRollover = (): React.ReactNode | null => {
+    const { rolloverAlias, hasRolloverAction, rolloverAliasError, hasSubmitted } = this.state;
     const { indices } = this.props;
     const hasSingleIndexSelected = indices.length === 1;
 
@@ -171,8 +200,18 @@ export default class AddPolicyModal extends Component<AddPolicyModalProps, AddPo
 
     if (hasSingleIndexSelected) {
       return (
-        <EuiFormRow label="Rollover alias" helpText="A rollover alias is required when using the rollover action">
-          <EuiFieldText placeholder="Rollover alias" value={rolloverAlias} onChange={this.onChangeRolloverAlias} />
+        <EuiFormRow
+          label="Rollover alias"
+          helpText="A rollover alias is required when using the rollover action"
+          isInvalid={hasSubmitted && !!rolloverAliasError}
+          error={rolloverAliasError}
+        >
+          <EuiFieldText
+            isInvalid={hasSubmitted && !!rolloverAliasError}
+            placeholder="Rollover alias"
+            value={rolloverAlias}
+            onChange={this.onChangeRolloverAlias}
+          />
         </EuiFormRow>
       );
     }
@@ -193,11 +232,9 @@ export default class AddPolicyModal extends Component<AddPolicyModalProps, AddPo
   };
 
   render() {
-    const { policyOptions, selectedPolicy, isLoading, rolloverAlias, hasRolloverAction } = this.state;
-    const { onClose, indices } = this.props;
+    const { policyOptions, selectedPolicy, selectedPolicyError, isLoading, hasSubmitted } = this.state;
+    const { onClose } = this.props;
     const selectedOptions = selectedPolicy ? [selectedPolicy] : [];
-    const hasSingleIndexSelected = indices.length === 1;
-    const isAddDisabled = !selectedPolicy || (hasSingleIndexSelected && hasRolloverAction && !rolloverAlias);
     return (
       <EuiOverlayMask>
         {/*
@@ -208,7 +245,12 @@ export default class AddPolicyModal extends Component<AddPolicyModalProps, AddPo
           </EuiModalHeader>
 
           <EuiModalBody>
-            <EuiFormRow label="Policy" helpText="Select the policy you want to add to the indices">
+            <EuiFormRow
+              label="Policy"
+              helpText="Select the policy you want to add to the indices"
+              isInvalid={hasSubmitted && !!selectedPolicyError}
+              error={selectedPolicyError}
+            >
               <EuiComboBox
                 placeholder="Search policies"
                 async
@@ -216,6 +258,7 @@ export default class AddPolicyModal extends Component<AddPolicyModalProps, AddPo
                 singleSelection={{ asPlainText: true }}
                 selectedOptions={selectedOptions}
                 isLoading={isLoading}
+                isInvalid={hasSubmitted && !!selectedPolicyError}
                 onChange={this.onChangeSelectedPolicy}
                 onSearchChange={this.onPolicySearchChange}
               />
@@ -228,7 +271,7 @@ export default class AddPolicyModal extends Component<AddPolicyModalProps, AddPo
               Close
             </EuiButtonEmpty>
 
-            <EuiButton disabled={isAddDisabled} onClick={this.onAddPolicy} fill data-test-subj="addPolicyModalEditButton">
+            <EuiButton onClick={this.onSubmit} fill data-test-subj="addPolicyModalEditButton">
               Add
             </EuiButton>
           </EuiModalFooter>
