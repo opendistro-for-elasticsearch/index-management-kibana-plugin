@@ -23,6 +23,7 @@ import "ui/autoload/styles";
 import Main from "./pages/Main";
 import { ServicesContext, IndexService, ManagedIndexService } from "./services";
 import PolicyService from "./services/PolicyService";
+import { DarkModeContext } from "./components/DarkMode";
 
 const app = uiModules.get("apps/indexManagementKibana");
 
@@ -43,15 +44,18 @@ function RootController($scope, $element, $http) {
   const managedIndexService = new ManagedIndexService($http);
   const policyService = new PolicyService($http);
   const services = { indexService, managedIndexService, policyService };
+  const isDarkMode = chrome.getUiSettingsClient().get("theme:darkMode") || false;
 
   // render react to DOM
   render(
     <Router>
       <Route
         render={props => (
-          <ServicesContext.Provider value={services}>
-            <Main {...props} />
-          </ServicesContext.Provider>
+          <DarkModeContext.Provider value={isDarkMode}>
+            <ServicesContext.Provider value={services}>
+              <Main {...props} />
+            </ServicesContext.Provider>
+          </DarkModeContext.Provider>
         )}
       />
     </Router>,
