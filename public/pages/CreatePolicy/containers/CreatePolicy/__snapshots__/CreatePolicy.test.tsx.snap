@@ -268,6 +268,10 @@ exports[`<CreatePolicy /> spec renders the create component 1`] = `
   <div
     class="euiSpacer euiSpacer--l"
   />
+  
+  <div
+    class="euiSpacer euiSpacer--l"
+  />
   <div
     class="euiFlexGroup euiFlexGroup--gutterLarge euiFlexGroup--alignItemsCenter euiFlexGroup--justifyContentFlexEnd euiFlexGroup--directionRow euiFlexGroup--responsive"
   >
@@ -296,7 +300,6 @@ exports[`<CreatePolicy /> spec renders the create component 1`] = `
       <button
         class="euiButton euiButton--primary euiButton--fill"
         data-test-subj="createPolicyCreateButton"
-        disabled=""
         type="button"
       >
         <span
@@ -582,6 +585,10 @@ exports[`<CreatePolicy /> spec renders the edit component 1`] = `
       </textarea>
     </div>
   </div>
+  <div
+    class="euiSpacer euiSpacer--l"
+  />
+  
   <div
     class="euiSpacer euiSpacer--l"
   />

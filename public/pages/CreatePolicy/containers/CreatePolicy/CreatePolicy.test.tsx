@@ -108,33 +108,6 @@ describe("<CreatePolicy /> spec", () => {
     expect(toastNotifications.addDanger).toHaveBeenCalledWith("another error");
   });
 
-  it("disables create/update when no policy id", async () => {
-    const { getByTestId, getByPlaceholderText } = renderCreatePolicyWithRouter();
-
-    expect(getByTestId("createPolicyCreateButton")).toBeDisabled();
-
-    userEvent.type(getByPlaceholderText("Policy ID"), `some_policy_id`);
-
-    expect(getByTestId("createPolicyCreateButton")).toBeEnabled();
-
-    userEvent.type(getByPlaceholderText("Policy ID"), ``, { allAtOnce: true });
-
-    expect(getByTestId("createPolicyCreateButton")).toBeDisabled();
-  });
-
-  it("disables create/update when invalid JSON", async () => {
-    const { getByTestId, getByPlaceholderText, getByLabelText } = renderCreatePolicyWithRouter();
-
-    userEvent.type(getByPlaceholderText("Policy ID"), `some_policy_id`);
-
-    // The initial DEFAULT_POLICY is valid, and we now have a valid policy id
-    expect(getByTestId("createPolicyCreateButton")).toBeEnabled();
-
-    userEvent.type(getByLabelText("Code Editor"), `{ "bad_json": { }`);
-
-    expect(getByTestId("createPolicyCreateButton")).toBeDisabled();
-  });
-
   it("disallows editing policy ID when in edit", async () => {
     browserServicesMock.policyService.getPolicy = jest
       .fn()
@@ -146,20 +119,16 @@ describe("<CreatePolicy /> spec", () => {
     expect(getByPlaceholderText("Policy ID")).toHaveAttribute("readonly");
   });
 
-  it("shows error for policyId input when toggling focus/bur", async () => {
-    const { queryByText, getByPlaceholderText } = renderCreatePolicyWithRouter();
+  it("shows error for policyId input when clicking create", async () => {
+    const { getByTestId, queryByText, getByPlaceholderText } = renderCreatePolicyWithRouter();
 
     expect(queryByText("Required")).toBeNull();
-    fireEvent.focus(getByPlaceholderText("Policy ID"));
 
-    fireEvent.blur(getByPlaceholderText("Policy ID"));
+    userEvent.click(getByTestId("createPolicyCreateButton"));
 
     expect(queryByText("Required")).not.toBeNull();
 
     fireEvent.focus(getByPlaceholderText("Policy ID"));
-
-    expect(queryByText("Required")).toBeNull();
-
     userEvent.type(getByPlaceholderText("Policy ID"), `some_policy_id`);
     fireEvent.blur(getByPlaceholderText("Policy ID"));
 
@@ -182,7 +151,7 @@ describe("<CreatePolicy /> spec", () => {
 
   it("shows a danger toaster when getting graceful error from create policy", async () => {
     browserServicesMock.policyService.putPolicy = jest.fn().mockResolvedValue({ ok: false, error: "bad policy" });
-    const { getByTestId, getByPlaceholderText } = renderCreatePolicyWithRouter();
+    const { getByText, getByTestId, getByPlaceholderText } = renderCreatePolicyWithRouter();
 
     fireEvent.focus(getByPlaceholderText("Policy ID"));
     userEvent.type(getByPlaceholderText("Policy ID"), `some_policy_id`);
@@ -190,13 +159,12 @@ describe("<CreatePolicy /> spec", () => {
 
     userEvent.click(getByTestId("createPolicyCreateButton"));
 
-    await wait();
-    expect(toastNotifications.addDanger).toHaveBeenCalledWith("Failed to create policy: bad policy");
+    await wait(() => getByText("bad policy"));
   });
 
   it("shows a danger toaster when getting error from create policy", async () => {
     browserServicesMock.policyService.putPolicy = jest.fn().mockRejectedValue(new Error("this is an error"));
-    const { getByTestId, getByPlaceholderText } = renderCreatePolicyWithRouter();
+    const { getByText, getByTestId, getByPlaceholderText } = renderCreatePolicyWithRouter();
 
     fireEvent.focus(getByPlaceholderText("Policy ID"));
     userEvent.type(getByPlaceholderText("Policy ID"), `some_policy_id`);
@@ -204,8 +172,7 @@ describe("<CreatePolicy /> spec", () => {
 
     userEvent.click(getByTestId("createPolicyCreateButton"));
 
-    await wait();
-    expect(toastNotifications.addDanger).toHaveBeenCalledWith("this is an error");
+    await wait(() => getByText("this is an error"));
   });
 
   it("routes you back to policies and shows a success toaster when successfully updating a policy", async () => {
@@ -223,19 +190,18 @@ describe("<CreatePolicy /> spec", () => {
     expect(toastNotifications.addSuccess).toHaveBeenCalledWith("Updated policy: some_policy_id");
   });
 
-  it("shows a danger toaster when getting graceful error from create policy", async () => {
+  it("shows error when getting graceful error from create policy", async () => {
     browserServicesMock.policyService.putPolicy = jest.fn().mockResolvedValue({ ok: false, error: "bad policy" });
     browserServicesMock.policyService.getPolicy = jest
       .fn()
       .mockResolvedValue({ ok: true, response: { seqNo: 1, primaryTerm: 5, id: "some_policy_id", policy: JSON.parse(DEFAULT_POLICY) } });
-    const { getByTestId, getByDisplayValue } = renderCreatePolicyWithRouter([`${ROUTES.EDIT_POLICY}?id=some_policy_id`]);
+    const { getByTestId, getByDisplayValue, getByText } = renderCreatePolicyWithRouter([`${ROUTES.EDIT_POLICY}?id=some_policy_id`]);
 
     await wait(() => getByDisplayValue("some_policy_id"));
 
     userEvent.click(getByTestId("createPolicyCreateButton"));
 
-    await wait();
-    expect(toastNotifications.addDanger).toHaveBeenCalledWith("Failed to update policy: bad policy");
+    await wait(() => getByText("bad policy"));
   });
 
   it("shows a danger toaster when getting error from create policy", async () => {
@@ -243,14 +209,13 @@ describe("<CreatePolicy /> spec", () => {
     browserServicesMock.policyService.getPolicy = jest
       .fn()
       .mockResolvedValue({ ok: true, response: { seqNo: 1, primaryTerm: 5, id: "some_policy_id", policy: JSON.parse(DEFAULT_POLICY) } });
-    const { getByTestId, getByDisplayValue } = renderCreatePolicyWithRouter([`${ROUTES.EDIT_POLICY}?id=some_policy_id`]);
+    const { getByText, getByTestId, getByDisplayValue } = renderCreatePolicyWithRouter([`${ROUTES.EDIT_POLICY}?id=some_policy_id`]);
 
     await wait(() => getByDisplayValue("some_policy_id"));
 
     userEvent.click(getByTestId("createPolicyCreateButton"));
 
-    await wait();
-    expect(toastNotifications.addDanger).toHaveBeenCalledWith("this is an error");
+    await wait(() => getByText("this is an error"));
   });
 
   it("brings you back to policies when clicking cancel", async () => {
