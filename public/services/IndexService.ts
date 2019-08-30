@@ -15,7 +15,7 @@
 
 import { IHttpResponse, IHttpService } from "angular";
 import { INDEX } from "../../server/utils/constants";
-import { AddPolicyResponse, GetIndicesResponse, SearchResponse } from "../../server/models/interfaces";
+import { AcknowledgedResponse, AddPolicyResponse, GetIndicesResponse, SearchResponse } from "../../server/models/interfaces";
 import { ServerResponse } from "../../server/models/types";
 import { NODE_API } from "../../utils/constants";
 
@@ -39,7 +39,14 @@ export default class IndexService {
     return response.data;
   };
 
-  searchPolicies = async (searchValue: string): Promise<ServerResponse<SearchResponse<any>>> => {
+  addRolloverAlias = async (index: string, alias: string): Promise<ServerResponse<AcknowledgedResponse>> => {
+    const body = { index, alias };
+    const url = `..${NODE_API.ADD_ROLLOVER_ALIAS}`;
+    const response = (await this.httpClient.post(url, body)) as IHttpResponse<ServerResponse<AcknowledgedResponse>>;
+    return response.data;
+  };
+
+  searchPolicies = async (searchValue: string, source: boolean = false): Promise<ServerResponse<SearchResponse<any>>> => {
     const mustQuery = {
       query_string: {
         default_field: "policy.policy_id",
@@ -53,7 +60,7 @@ export default class IndexService {
     const body = {
       index: INDEX.OPENDISTRO_ISM_CONFIG,
       size: 10,
-      query: { _source: false, query: { bool: { must: [mustQuery, { exists: { field: "policy" } }] } } },
+      query: { _source: source, query: { bool: { must: [mustQuery, { exists: { field: "policy" } }] } } },
     };
     const url = `..${NODE_API._SEARCH}`;
     const response = (await this.httpClient.post(url, body)) as IHttpResponse<ServerResponse<any>>;

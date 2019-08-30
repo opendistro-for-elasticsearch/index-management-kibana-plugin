@@ -40,3 +40,7 @@ export enum CLUSTER {
 export enum INDEX {
   OPENDISTRO_ISM_CONFIG = ".opendistro-ism-config",
 }
+
+export enum Setting {
+  RolloverAlias = "opendistro.index_state_management.rollover_alias",
+}

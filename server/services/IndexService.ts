@@ -15,8 +15,8 @@
 
 import { Legacy } from "kibana";
 import { RequestParams } from "@elastic/elasticsearch";
-import { CLUSTER } from "../utils/constants";
-import { AddPolicyResponse, AddResponse, CatIndex, GetIndicesResponse, SearchResponse } from "../models/interfaces";
+import { CLUSTER, INDEX, Setting } from "../utils/constants";
+import { AcknowledgedResponse, AddPolicyResponse, AddResponse, CatIndex, GetIndicesResponse, SearchResponse } from "../models/interfaces";
 import { ServerResponse } from "../models/types";
 
 import Request = Legacy.Request;
@@ -96,6 +96,19 @@ export default class IndexService {
       };
     } catch (err) {
       console.error("Index Management - IndexService - addPolicy:", err);
+      return { ok: false, error: err.message };
+    }
+  };
+
+  addRolloverAlias = async (req: Request, h: ResponseToolkit): Promise<ServerResponse<AcknowledgedResponse>> => {
+    try {
+      const { alias, index } = req.payload as { alias: string; index: string };
+      const { callWithRequest } = await this.esDriver.getCluster(CLUSTER.DATA);
+      const params = { index, body: { [Setting.RolloverAlias]: alias } };
+      const response = await callWithRequest(req, "indices.putSettings", params);
+      return { ok: true, response };
+    } catch (err) {
+      console.error("Index Management - IndexService - addRolloverAlias", err);
       return { ok: false, error: err.message };
     }
   };
