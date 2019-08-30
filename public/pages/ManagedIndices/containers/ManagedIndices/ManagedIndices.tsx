@@ -17,16 +17,24 @@ import React, { Component } from "react";
 import { toastNotifications } from "ui/notify";
 import chrome from "ui/chrome";
 import { RouteComponentProps } from "react-router";
-// @ts-ignore
-import { EuiBasicTable, EuiHorizontalRule, EuiLink } from "@elastic/eui";
+import {
+  // @ts-ignore
+  EuiBasicTable,
+  EuiHorizontalRule,
+  EuiLink,
+  EuiFlexGroup,
+  EuiFlexItem,
+  EuiButton,
+  EuiTitle,
+  EuiSpacer,
+} from "@elastic/eui";
 import queryString from "query-string";
 import _ from "lodash";
-import { ContentPanel } from "../../../../components/ContentPanel";
-import ManagedIndexActions from "../../components/ManagedIndexActions";
+import { ContentPanel, ContentPanelActions } from "../../../../components/ContentPanel";
 import ManagedIndexControls from "../../components/ManagedIndexControls";
 import ManagedIndexEmptyPrompt from "../../components/ManagedIndexEmptyPrompt";
 import { ACTIONS, DEFAULT_PAGE_SIZE_OPTIONS, DEFAULT_QUERY_PARAMS } from "../../utils/constants";
-import { BREADCRUMBS, DEFAULT_EMPTY_DATA, ROUTES } from "../../../../utils/constants";
+import { BREADCRUMBS, DEFAULT_EMPTY_DATA, PLUGIN_NAME, ROUTES } from "../../../../utils/constants";
 import InfoModal from "../../components/InfoModal";
 import PolicyModal from "../../../../components/PolicyModal";
 import { ModalConsumer } from "../../../../components/Modal";
@@ -35,6 +43,9 @@ import { ManagedIndexItem } from "../../../../../models/interfaces";
 import { ManagedIndexService } from "../../../../services";
 import { getErrorMessage } from "../../../../utils/helpers";
 import { TableParams } from "../../../../models/interfaces";
+import ConfirmationModal from "../../../../components/ConfirmationModal";
+import RetryModal from "../../components/RetryModal";
+import RolloverAliasModal from "../../components/RolloverAliasModal";
 
 interface ManagedIndicesProps extends RouteComponentProps {
   managedIndexService: ManagedIndexService;
@@ -207,11 +218,9 @@ export default class ManagedIndices extends Component<ManagedIndicesProps, Manag
     this.setState({ loadingManagedIndices: false });
   };
 
-  removePolicy = async (): Promise<void> => {
+  onClickRemovePolicy = async (indices: string[]): Promise<void> => {
     try {
-      const { selectedItems } = this.state;
-      if (!selectedItems.length) return;
-      const indices = selectedItems.map(item => item.index);
+      if (!indices.length) return;
       const { managedIndexService } = this.props;
       const removePolicyResponse = await managedIndexService.removePolicy(indices);
       if (removePolicyResponse.ok) {
@@ -308,47 +317,90 @@ export default class ManagedIndices extends Component<ManagedIndicesProps, Manag
         }
       );
 
+    const actions = [
+      {
+        text: "Add rollover alias",
+        buttonProps: { disabled: selectedItems.length !== 1 },
+        modal: {
+          onClickModal: (onShow: (component: any, props: object) => void) => () =>
+            onShow(RolloverAliasModal, {
+              index: selectedItems[0].index,
+            }),
+        },
+      },
+      {
+        text: "Remove policy",
+        buttonProps: { disabled: !selectedItems.length },
+        modal: {
+          onClickModal: (onShow: (component: any, props: object) => void) => () =>
+            onShow(ConfirmationModal, {
+              title: `Remove ${
+                selectedItems.length === 1 ? `policy from ${selectedItems[0].index}` : `policies from ${selectedItems.length} indices`
+              }`,
+              bodyMessage: `Remove ${
+                selectedItems.length === 1 ? `policy from ${selectedItems[0].index}` : `policies from ${selectedItems.length} indices`
+              } permanently? This action cannot be undone.`,
+              actionMessage: "Remove",
+              onAction: () => this.onClickRemovePolicy(selectedItems.map(item => item.index)),
+            }),
+        },
+      },
+      {
+        text: "Retry policy",
+        buttonProps: { disabled: isRetryDisabled },
+        modal: {
+          onClickModal: (onShow: (component: any, props: object) => void) => () =>
+            onShow(RetryModal, {
+              retryItems: _.cloneDeep(selectedItems),
+            }),
+        },
+      },
+    ];
+
     return (
-      <ContentPanel
-        actions={
-          <ManagedIndexActions
-            isRemoveDisabled={!selectedItems.length}
-            onClickRemove={this.removePolicy}
-            isRetryDisabled={isRetryDisabled}
-            isChangeDisabled={true}
-            // TODO: change policy UI
-            onClickChange={() => {}}
-            selectedItems={selectedItems}
+      <div style={{ padding: "0px 25px" }}>
+        <EuiFlexGroup alignItems="center">
+          <EuiFlexItem>
+            <EuiTitle size="l">
+              <h1>Managed Indices</h1>
+            </EuiTitle>
+          </EuiFlexItem>
+          <EuiFlexItem grow={false}>
+            <EuiButton href={`${PLUGIN_NAME}#/change-policy`} data-test-subj="changePolicyButton">
+              Change policy
+            </EuiButton>
+          </EuiFlexItem>
+        </EuiFlexGroup>
+
+        <EuiSpacer />
+
+        <ContentPanel actions={<ContentPanelActions actions={actions} />} bodyStyles={{ padding: "initial" }} title="Indices">
+          <ManagedIndexControls
+            activePage={page}
+            pageCount={Math.ceil(totalManagedIndices / size) || 1}
+            search={search}
+            onSearchChange={this.onSearchChange}
+            onPageClick={this.onPageClick}
+            onRefresh={this.getManagedIndices}
           />
-        }
-        bodyStyles={{ padding: "initial" }}
-        title="Managed Indices"
-      >
-        <ManagedIndexControls
-          activePage={page}
-          pageCount={Math.ceil(totalManagedIndices / size) || 1}
-          search={search}
-          onSearchChange={this.onSearchChange}
-          onPageClick={this.onPageClick}
-          onRefresh={this.getManagedIndices}
-        />
 
-        <EuiHorizontalRule margin="xs" />
+          <EuiHorizontalRule margin="xs" />
 
-        <EuiBasicTable
-          columns={this.columns}
-          isSelectable={true}
-          itemId="index"
-          items={managedIndices}
-          noItemsMessage={
-            <ManagedIndexEmptyPrompt filterIsApplied={filterIsApplied} loading={loadingManagedIndices} resetFilters={this.resetFilters} />
-          }
-          onChange={this.onTableChange}
-          pagination={pagination}
-          selection={selection}
-          sorting={sorting}
-        />
-      </ContentPanel>
+          <EuiBasicTable
+            columns={this.columns}
+            isSelectable={true}
+            itemId="index"
+            items={managedIndices}
+            noItemsMessage={
+              <ManagedIndexEmptyPrompt filterIsApplied={filterIsApplied} loading={loadingManagedIndices} resetFilters={this.resetFilters} />
+            }
+            onChange={this.onTableChange}
+            pagination={pagination}
+            selection={selection}
+            sorting={sorting}
+          />
+        </ContentPanel>
+      </div>
     );
   }
 }
