@@ -51,15 +51,11 @@ enum Radio {
 }
 
 export default class RetryModal extends Component<RetryModalProps, RetryModalState> {
-  constructor(props: RetryModalProps) {
-    super(props);
-
-    this.state = {
-      radioIdSelected: Radio.Current,
-      stateSelected: "",
-      stateOptions: [],
-    };
-  }
+  state = {
+    radioIdSelected: Radio.Current,
+    stateSelected: "",
+    stateOptions: [],
+  };
 
   componentDidMount(): void {
     this.initOptions();

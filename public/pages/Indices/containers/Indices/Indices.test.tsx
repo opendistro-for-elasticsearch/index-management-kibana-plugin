@@ -205,7 +205,7 @@ describe("<Indices /> spec", () => {
     expect(queryByText("index_0")).toBeNull();
 
     // @ts-ignore
-    fireEvent.click(getByTestId("tableHeaderCell_docs.count_5").firstChild);
+    fireEvent.click(getByTestId("tableHeaderCell_docs.count_6").firstChild);
 
     // should load indices 0-19 after clicking sort (defaults to asc) on docs.count
     await wait(() => getByText("index_0"));

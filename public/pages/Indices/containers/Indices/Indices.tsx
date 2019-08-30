@@ -29,7 +29,7 @@ import { DEFAULT_PAGE_SIZE_OPTIONS, DEFAULT_QUERY_PARAMS, indicesColumns } from 
 import { ModalConsumer } from "../../../../components/Modal";
 import IndexService from "../../../../services/IndexService";
 import { TableParams } from "../../../../models/interfaces";
-import { CatIndex } from "../../../../../server/models/interfaces";
+import { ManagedCatIndex } from "../../../../../server/models/interfaces";
 import { getURLQueryParams } from "../../utils/helpers";
 import { IndicesQueryParams } from "../../models/interfaces";
 import { BREADCRUMBS, SortDirection } from "../../../../utils/constants";
@@ -46,8 +46,8 @@ interface IndicesState {
   search: string;
   sortField: string;
   sortDirection: SortDirection;
-  selectedItems: CatIndex[];
-  indices: CatIndex[];
+  selectedItems: ManagedCatIndex[];
+  indices: ManagedCatIndex[];
   loadingIndices: boolean;
 }
 
@@ -114,7 +114,7 @@ export default class Indices extends Component<IndicesProps, IndicesState> {
     this.setState({ from: page * size, size, sortField, sortDirection });
   };
 
-  onSelectionChange = (selectedItems: CatIndex[]): void => {
+  onSelectionChange = (selectedItems: ManagedCatIndex[]): void => {
     this.setState({ selectedItems });
   };
 
@@ -167,7 +167,7 @@ export default class Indices extends Component<IndicesProps, IndicesState> {
                     text: "Add policy",
                     buttonProps: {
                       disabled: !selectedItems.length,
-                      onClick: () => onShow(AddPolicyModal, { indices: selectedItems.map((item: CatIndex) => item.index) }),
+                      onClick: () => onShow(AddPolicyModal, { indices: selectedItems.map((item: ManagedCatIndex) => item.index) }),
                     },
                   },
                 ]}

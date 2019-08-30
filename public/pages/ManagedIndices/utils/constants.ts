@@ -32,4 +32,6 @@ export const ACTIONS: Actions = {
   close: "Close",
   read_only: "Read Only",
   read_write: "Read Write",
+  replica_count: "Replica Count",
+  notification: "Notification",
 };

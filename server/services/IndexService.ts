@@ -43,8 +43,6 @@ export default class IndexService {
     }
   };
 
-  // TODO: Create a new API on backend that supports from/size _cat pagination
-  // TODO: show which indices are being managed by doing a second request to our ism config index
   getIndices = async (req: Request, h: ResponseToolkit): Promise<ServerResponse<GetIndicesResponse>> => {
     try {
       // @ts-ignore
@@ -65,7 +63,22 @@ export default class IndexService {
       };
       const { callWithRequest } = this.esDriver.getCluster(CLUSTER.DATA);
       const indicesResponse: CatIndex[] = await callWithRequest(req, "cat.indices", params);
-      return { ok: true, response: { indices: indicesResponse, totalIndices: indicesResponse.length } };
+
+      // _cat doesn't support pagination, do our own in server pagination to at least reduce network bandwidth
+      const fromNumber = parseInt(from, 10);
+      const sizeNumber = parseInt(size, 10);
+      const paginatedIndices = indicesResponse.slice(fromNumber, fromNumber + sizeNumber);
+      const indexUuids = paginatedIndices.map((value: CatIndex) => value.uuid);
+
+      const managedStatus = await this._getManagedStatus(req, indexUuids);
+
+      return {
+        ok: true,
+        response: {
+          indices: paginatedIndices.map((catIndex: CatIndex) => ({ ...catIndex, managed: managedStatus[catIndex.uuid] || "N/A" })),
+          totalIndices: indicesResponse.length,
+        },
+      };
     } catch (err) {
       // Throws an error if there is no index matching pattern
       if (err.statusCode === 404 && err.body.error.type === "index_not_found_exception") {
@@ -73,6 +86,33 @@ export default class IndexService {
       }
       console.error("Index Management - IndexService - getIndices:", err);
       return { ok: false, error: err.message };
+    }
+  };
+
+  // given a list of indexUuids return the managed status of each (true, false, N/A)
+  _getManagedStatus = async (req: Request, indexUuids: string[]): Promise<{ [indexUuid: string]: string }> => {
+    try {
+      const searchParams: RequestParams.Search = {
+        index: INDEX.OPENDISTRO_ISM_CONFIG,
+        size: indexUuids.length,
+        body: { _source: "_id", query: { ids: { values: indexUuids } } },
+      };
+      const { callWithRequest: searchCallWithRequest } = this.esDriver.getCluster(CLUSTER.DATA);
+      const results: SearchResponse<any> = await searchCallWithRequest(req, "search", searchParams);
+      const managed: { [indexUuid: string]: string } = results.hits.hits.reduce(
+        (accu: object, hit: { _id: string }) => ({ ...accu, [hit._id]: "Yes" }),
+        {}
+      );
+      return indexUuids.reduce((accu: object, value: string) => ({ ...accu, [value]: managed[value] || "No" }), {});
+    } catch (err) {
+      // If the config index does not exist then nothing is being managed
+      if (err.statusCode === 404 && err.body.error.type === "index_not_found_exception") {
+        return indexUuids.reduce((accu, value) => ({ ...accu, [value]: "No" }), {});
+      }
+      // otherwise it could be an unauthorized access error to config index or some other error
+      // in which case we will return managed status N/A
+      console.error("Index Management - IndexService - _getManagedStatus:", err);
+      return indexUuids.reduce((accu, value) => ({ ...accu, [value]: "N/A" }), {});
     }
   };
 

@@ -35,7 +35,7 @@ export function getURLQueryParams(location: { search: string }): PoliciesQueryPa
 }
 
 export const renderTime = (time: number): string => {
-  const momentTime = moment(time);
+  const momentTime = moment(time).local();
   if (time && momentTime.isValid()) return momentTime.format("MM/DD/YY h:mm a");
   return "-";
 };
