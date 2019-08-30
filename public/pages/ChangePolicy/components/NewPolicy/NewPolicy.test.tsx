@@ -33,6 +33,7 @@ describe("<NewPolicy /> spec", () => {
         onChangePolicy={() => {}}
         onChangeStateRadio={() => {}}
         onStateSelectChange={() => {}}
+        selectedPoliciesError=""
       />
     );
 
@@ -52,6 +53,7 @@ describe("<NewPolicy /> spec", () => {
         onChangePolicy={() => {}}
         onChangeStateRadio={() => {}}
         onStateSelectChange={() => {}}
+        selectedPoliciesError=""
       />
     );
 
@@ -72,6 +74,7 @@ describe("<NewPolicy /> spec", () => {
         onChangePolicy={() => {}}
         onChangeStateRadio={() => {}}
         onStateSelectChange={() => {}}
+        selectedPoliciesError=""
       />
     );
 
@@ -94,6 +97,7 @@ describe("<NewPolicy /> spec", () => {
         onChangePolicy={() => {}}
         onChangeStateRadio={() => {}}
         onStateSelectChange={() => {}}
+        selectedPoliciesError=""
       />
     );
 
