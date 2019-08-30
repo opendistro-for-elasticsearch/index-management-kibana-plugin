@@ -21,6 +21,7 @@ import Policies from "../Policies";
 import ManagedIndices from "../ManagedIndices";
 import Indices from "../Indices";
 import CreatePolicy from "../CreatePolicy";
+import ChangePolicy from "../ChangePolicy";
 import { ModalProvider, ModalRoot } from "../../components/Modal";
 import { ServicesConsumer } from "../../services";
 import { BrowserServices } from "../../models/interfaces";
@@ -86,6 +87,12 @@ export default class Main extends Component<MainProps, object> {
                 <EuiPageBody>
                   <Switch>
                     <Route
+                      path={ROUTES.CHANGE_POLICY}
+                      render={(props: RouteComponentProps) => (
+                        <ChangePolicy {...props} managedIndexService={services.managedIndexService} indexService={services.indexService} />
+                      )}
+                    />
+                    <Route
                       path={ROUTES.CREATE_POLICY}
                       render={(props: RouteComponentProps) => (
                         <CreatePolicy {...props} isEdit={false} policyService={services.policyService} />
@@ -108,7 +115,7 @@ export default class Main extends Component<MainProps, object> {
                     <Route
                       path={ROUTES.MANAGED_INDICES}
                       render={(props: RouteComponentProps) => (
-                        <div style={{ padding: "25px 25px" }}>
+                        <div>
                           <ManagedIndices {...props} managedIndexService={services.managedIndexService} />
                         </div>
                       )}
