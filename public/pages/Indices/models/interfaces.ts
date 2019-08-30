@@ -14,9 +14,11 @@
  */
 
 import { SortDirection } from "../../../utils/constants";
+import { Policy } from "../../../../models/interfaces";
 
 export interface PolicyOption {
   label: string;
+  policy?: Policy;
 }
 
 export interface IndicesQueryParams {
