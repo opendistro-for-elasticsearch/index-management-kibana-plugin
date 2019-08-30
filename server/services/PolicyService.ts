@@ -45,10 +45,10 @@ export default class PolicyService {
   putPolicy = async (req: Request, h: ResponseToolkit): Promise<ServerResponse<PutPolicyResponse>> => {
     try {
       const { id } = req.params;
-      const { ifSeqNo, ifPrimaryTerm } = req.query as { ifSeqNo?: string; ifPrimaryTerm?: string };
+      const { seqNo, primaryTerm } = req.query as { seqNo?: string; primaryTerm?: string };
       let method = "ism.putPolicy";
-      let params: PutPolicyParams = { policyId: id, ifSeqNo: ifSeqNo, ifPrimaryTerm: ifPrimaryTerm, body: JSON.stringify(req.payload) };
-      if (ifSeqNo === undefined || ifPrimaryTerm === undefined) {
+      let params: PutPolicyParams = { policyId: id, ifSeqNo: seqNo, ifPrimaryTerm: primaryTerm, body: JSON.stringify(req.payload) };
+      if (seqNo === undefined || primaryTerm === undefined) {
         method = "ism.createPolicy";
         params = { policyId: id, body: JSON.stringify(req.payload) };
       }

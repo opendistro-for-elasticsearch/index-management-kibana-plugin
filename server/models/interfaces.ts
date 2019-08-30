@@ -57,7 +57,7 @@ export interface PutPolicyResponse {
 }
 
 export interface GetIndicesResponse {
-  indices: CatIndex[];
+  indices: ManagedCatIndex[];
   totalIndices: number;
 }
 
@@ -176,4 +176,8 @@ export interface CatIndex {
   status: string;
   "store.size": string;
   uuid: string;
+}
+
+export interface ManagedCatIndex extends CatIndex {
+  managed: string;
 }

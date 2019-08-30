@@ -15,7 +15,7 @@
 
 import React from "react";
 import { EuiHealth } from "@elastic/eui";
-import { CatIndex } from "../../../../server/models/interfaces";
+import { ManagedCatIndex } from "../../../../server/models/interfaces";
 import { SortDirection } from "../../../utils/constants";
 
 export const DEFAULT_PAGE_SIZE_OPTIONS = [5, 10, 20, 50];
@@ -55,11 +55,19 @@ export const indicesColumns = [
     truncateText: true,
     textOnly: true,
     align: "right",
-    render: (health: string, item: CatIndex) => {
+    render: (health: string, item: ManagedCatIndex) => {
       const color = health ? HEALTH_TO_COLOR[health] : "subdued";
       const text = health || item.status;
       return <EuiHealth color={color}>{text}</EuiHealth>;
     },
+  },
+  {
+    field: "managed",
+    name: "Managed",
+    sortable: false,
+    truncateText: true,
+    textOnly: true,
+    align: "right",
   },
   {
     field: "status",
