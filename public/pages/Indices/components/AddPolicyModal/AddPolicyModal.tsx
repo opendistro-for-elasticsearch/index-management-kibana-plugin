@@ -173,7 +173,7 @@ export default class AddPolicyModal extends Component<AddPolicyModalProps, AddPo
       this.setState({ selectedPolicyError, rolloverAliasError, hasSubmitted: true });
     } else {
       // @ts-ignore
-      await this.onAddPolicy(selectedPolicy, this.hasRolloverAction(), rolloverAlias);
+      await this.onAddPolicy(selectedPolicy, this.hasRolloverAction(selectedPolicy), rolloverAlias);
     }
   };
 
