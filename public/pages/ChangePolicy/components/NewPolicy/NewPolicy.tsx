@@ -15,7 +15,7 @@
 
 import React from "react";
 import _ from "lodash";
-import { EuiSpacer, EuiText, EuiRadioGroup, EuiFormRow, EuiSelect, EuiComboBox } from "@elastic/eui";
+import { EuiSpacer, EuiText, EuiRadioGroup, EuiFormRow, EuiSelect, EuiComboBox, EuiLink, EuiIcon } from "@elastic/eui";
 import { toastNotifications } from "ui/notify";
 import { ContentPanel } from "../../../../components/ContentPanel";
 import { IndexService } from "../../../../services";
@@ -23,6 +23,7 @@ import { Radio } from "../../containers/ChangePolicy/ChangePolicy";
 import { Policy } from "../../../../../models/interfaces";
 import { PolicyOption } from "../../models/interfaces";
 import { getErrorMessage } from "../../../../utils/helpers";
+import { DOCUMENTATION_URL } from "../../../../utils/constants";
 
 interface NewPolicyProps {
   indexService: IndexService;
@@ -88,25 +89,30 @@ export default class NewPolicy extends React.Component<NewPolicyProps, NewPolicy
       )
     );
 
-    const currentRadio = { id: Radio.Current, label: "Continue from current state" };
+    const currentRadio = { id: Radio.Current, label: "Keep indices in their current state after the policy takes effect" };
     const stateRadio = {
       id: Radio.State,
-      label: "Start from a chosen state after changing policies",
+      label: "Switch indices to the following state after the policy takes effect",
       disabled: !hasSelectedPolicy || !stateOptions.length,
     };
     const radioOptions = [currentRadio, stateRadio];
     return (
-      <ContentPanel bodyStyles={{ padding: "initial" }} title="New policy" titleSize="s">
+      <ContentPanel bodyStyles={{ padding: "initial" }} title="Choose new policy" titleSize="s">
         <div style={{ paddingLeft: "10px" }}>
           <EuiText size="xs">
-            <p>Select a new policy. Choose between switching to a new state after changing policies or staying in the current state.</p>
+            <p>
+              When the new policy will take effect depends on the current state of indices and the states of the new policy.{" "}
+              <EuiLink href={DOCUMENTATION_URL} target="_blank">
+                Learn more <EuiIcon type="popout" size="s" />
+              </EuiLink>
+            </p>
           </EuiText>
 
           <EuiSpacer size="s" />
 
-          <EuiFormRow label="Policy" isInvalid={!!selectedPoliciesError} error={selectedPoliciesError}>
+          <EuiFormRow label="New policy" isInvalid={!!selectedPoliciesError} error={selectedPoliciesError}>
             <EuiComboBox
-              placeholder="Choose a policy"
+              placeholder=""
               async
               options={policies}
               isInvalid={!!selectedPoliciesError}
@@ -123,7 +129,7 @@ export default class NewPolicy extends React.Component<NewPolicyProps, NewPolicy
 
           <EuiSpacer size="s" />
 
-          <EuiFormRow label="Start state" helpText="Select a state to start from after changing policies">
+          <EuiFormRow>
             <EuiSelect
               disabled={stateRadioIdSelected !== Radio.State}
               options={stateOptions}
