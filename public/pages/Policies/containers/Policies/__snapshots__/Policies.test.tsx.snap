@@ -1,6 +1,6 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`<Policies /> spec renders the component 1`] = `
+exports[`<IndexPolicies /> spec renders the component 1`] = `
 <div
   style="padding: 25px 25px;"
 >
@@ -18,7 +18,7 @@ exports[`<Policies /> spec renders the component 1`] = `
         <h3
           class="euiTitle euiTitle--large"
         >
-          Policies
+          Index policies
         </h3>
       </div>
       <div

@@ -96,7 +96,7 @@ exports[`<DefinePolicy /> spec renders the component 1`] = `
               <span
                 class="euiButton__text"
               >
-                Auto Indent
+                Auto indent
               </span>
             </span>
           </button>
@@ -117,12 +117,34 @@ exports[`<DefinePolicy /> spec renders the component 1`] = `
         class="euiText euiText--extraSmall"
       >
         <p>
-          Create a policy with a JSON configuration file. This can be added directly in the code editor below.
+          You can think of policies as state machines. "Actions" are the operations ISM performs when an index is in a certain state. "Transitions" define when to move from one state to another.
+           
+          <a
+            class="euiLink euiLink--primary"
+            href="https://opendistro.github.io/for-elasticsearch-docs/docs/ism/"
+            rel="noopener noreferrer"
+            target="_blank"
+          >
+            Learn more 
+            <svg
+              class="euiIcon euiIcon--small"
+              focusable="false"
+              height="16"
+              viewBox="0 0 16 16"
+              width="16"
+              xmlns="http://www.w3.org/2000/svg"
+            >
+              <path
+                d="M2 14.01h12.49a.5.5 0 1 1 0 1h-13a.5.5 0 0 1-.49-.597V1.5a.5.5 0 0 1 1 0v12.51zm2.354-1.656a.5.5 0 0 1-.708-.708l8-8a.5.5 0 0 1 .708.708l-8 8zM15 5.5a.5.5 0 1 1-1 0v-3a.5.5 0 0 0-.5-.5h-3a.5.5 0 1 1 0-1h3A1.5 1.5 0 0 1 15 2.5v3z"
+                fill-rule="evenodd"
+              />
+            </svg>
+          </a>
         </p>
       </div>
     </div>
     <div
-      class="euiSpacer euiSpacer--s"
+      class="euiSpacer euiSpacer--m"
     />
     <div
       class="euiCodeEditorWrapper"

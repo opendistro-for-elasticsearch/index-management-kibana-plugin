@@ -13,6 +13,6 @@
  * permissions and limitations under the License.
  */
 
-import AddPolicyModal from "./AddPolicyModal";
+import ApplyPolicyModal from "./ApplyPolicyModal";
 
-export default AddPolicyModal;
+export default ApplyPolicyModal;

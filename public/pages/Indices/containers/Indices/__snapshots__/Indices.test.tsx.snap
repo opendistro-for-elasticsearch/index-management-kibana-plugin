@@ -35,7 +35,7 @@ exports[`<Indices /> spec renders the component 1`] = `
             >
               <button
                 class="euiButton euiButton--primary"
-                data-test-subj="Add policyButton"
+                data-test-subj="Apply policyButton"
                 disabled=""
                 type="button"
               >
@@ -45,7 +45,7 @@ exports[`<Indices /> spec renders the component 1`] = `
                   <span
                     class="euiButton__text"
                   >
-                    Add policy
+                    Apply policy
                   </span>
                 </span>
               </button>
@@ -374,6 +374,7 @@ exports[`<Indices /> spec renders the component 1`] = `
                 data-test-subj="tableHeaderCell_managed_2"
                 role="columnheader"
                 scope="col"
+                width="150px"
               >
                 <div
                   class="euiTableCellContent euiTableCellContent--alignRight"
@@ -381,7 +382,7 @@ exports[`<Indices /> spec renders the component 1`] = `
                   <span
                     class="euiTableCellContent__text"
                   >
-                    Managed
+                    Managed by Policy
                   </span>
                 </div>
               </th>

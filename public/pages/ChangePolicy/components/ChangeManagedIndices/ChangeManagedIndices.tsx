@@ -14,7 +14,7 @@
  */
 
 import React, { Component } from "react";
-import { EuiSpacer, EuiText, EuiComboBox, EuiFormRow } from "@elastic/eui";
+import { EuiSpacer, EuiComboBox, EuiFormRow } from "@elastic/eui";
 import { toastNotifications } from "ui/notify";
 import { ContentPanel } from "../../../../components/ContentPanel";
 import { ManagedIndexService } from "../../../../services";
@@ -99,23 +99,17 @@ export default class ChangeManagedIndices extends Component<ChangeManagedIndices
     const stateOptions = options.concat([...uniqueStates].map((stateName: string) => ({ label: stateName })));
 
     return (
-      <ContentPanel bodyStyles={{ padding: "initial" }} title="Managed indices" titleSize="s">
+      <ContentPanel bodyStyles={{ padding: "initial" }} title="Choose managed indices" titleSize="s">
         <div style={{ paddingLeft: "10px" }}>
-          <EuiText size="xs">
-            <p>
-              When a managed index changes policy, the new policy will take affect after the managed index is finished running the current
-              state or the new policy has the same structure as the current one.
-            </p>
-          </EuiText>
           <EuiSpacer size="m" />
           <EuiFormRow
             label="Managed indices"
-            helpText="You can use a * as a wildcard in your index pattern"
+            helpText="You can use * as wildcards to form index patterns."
             isInvalid={!!managedIndicesError}
             error={managedIndicesError}
           >
             <EuiComboBox
-              placeholder="Choose managed indices"
+              placeholder=""
               async
               options={managedIndices}
               isInvalid={!!managedIndicesError}
@@ -129,6 +123,7 @@ export default class ChangeManagedIndices extends Component<ChangeManagedIndices
 
           <EuiFormRow label="State filters" helpText="Apply new policy only on managed indices in these states.">
             <EuiComboBox
+              isDisabled={!selectedManagedIndices.length}
               placeholder="Choose state filters"
               options={stateOptions}
               selectedOptions={selectedStateFilters}

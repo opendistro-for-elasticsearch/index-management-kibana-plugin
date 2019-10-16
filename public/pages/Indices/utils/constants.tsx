@@ -63,11 +63,12 @@ export const indicesColumns = [
   },
   {
     field: "managed",
-    name: "Managed",
+    name: "Managed by Policy",
     sortable: false,
     truncateText: true,
     textOnly: true,
     align: "right",
+    width: "150px",
   },
   {
     field: "status",

@@ -29,13 +29,13 @@ import { ROUTES } from "../../utils/constants";
 
 enum Navigation {
   IndexManagement = "Index Management",
-  Policies = "Policies",
+  IndexPolicies = "Index Policies",
   ManagedIndices = "Managed Indices",
   Indices = "Indices",
 }
 
 enum Pathname {
-  Policies = "/policies",
+  IndexPolicies = "/index-policies",
   ManagedIndices = "/managed-indices",
   Indices = "/indices",
 }
@@ -51,13 +51,13 @@ export default class Main extends Component<MainProps, object> {
       {
         name: Navigation.IndexManagement,
         id: 0,
-        href: `#${Pathname.Policies}`,
+        href: `#${Pathname.IndexPolicies}`,
         items: [
           {
-            name: Navigation.Policies,
+            name: Navigation.IndexPolicies,
             id: 1,
-            href: `#${Pathname.Policies}`,
-            isSelected: pathname === Pathname.Policies,
+            href: `#${Pathname.IndexPolicies}`,
+            isSelected: pathname === Pathname.IndexPolicies,
           },
           {
             name: Navigation.ManagedIndices,
@@ -105,7 +105,7 @@ export default class Main extends Component<MainProps, object> {
                       )}
                     />
                     <Route
-                      path={ROUTES.POLICIES}
+                      path={ROUTES.INDEX_POLICIES}
                       render={(props: RouteComponentProps) => (
                         <div style={{ padding: "25px 25px" }}>
                           <Policies {...props} policyService={services.policyService} />
@@ -128,7 +128,7 @@ export default class Main extends Component<MainProps, object> {
                         </div>
                       )}
                     />
-                    <Redirect from="/" to={ROUTES.POLICIES} />
+                    <Redirect from="/" to={ROUTES.INDEX_POLICIES} />
                   </Switch>
                 </EuiPageBody>
               </EuiPage>

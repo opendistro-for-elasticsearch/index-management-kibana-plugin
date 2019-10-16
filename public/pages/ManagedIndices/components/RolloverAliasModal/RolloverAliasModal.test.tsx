@@ -34,7 +34,7 @@ describe("<RolloverAliasModal /> spec", () => {
     const onClose = jest.fn();
     const { getByTestId } = render(<RolloverAliasModal services={browserServicesMock} index="some_index" onClose={onClose} />);
 
-    fireEvent.click(getByTestId("addRolloverAliasModalCloseButton"));
+    fireEvent.click(getByTestId("editRolloverAliasModalCloseButton"));
     expect(onClose).toHaveBeenCalled();
   });
 
@@ -43,38 +43,38 @@ describe("<RolloverAliasModal /> spec", () => {
       <RolloverAliasModal services={browserServicesMock} index="some_index" onClose={() => {}} />
     );
 
-    expect(getByTestId("addRolloverAliasModalAddButton")).toBeDisabled();
+    expect(getByTestId("editRolloverAliasModalAddButton")).toBeDisabled();
 
     await userEvent.type(getByPlaceholderText("Rollover alias"), "some_alias");
 
-    expect(getByTestId("addRolloverAliasModalAddButton")).not.toBeDisabled();
+    expect(getByTestId("editRolloverAliasModalAddButton")).not.toBeDisabled();
   });
 
   it("shows success toaster when successful", async () => {
-    browserServicesMock.indexService.addRolloverAlias = jest.fn().mockResolvedValue({ ok: true, response: { acknowledged: true } });
+    browserServicesMock.indexService.editRolloverAlias = jest.fn().mockResolvedValue({ ok: true, response: { acknowledged: true } });
     const { getByTestId, getByPlaceholderText } = render(
       <RolloverAliasModal services={browserServicesMock} index="some_index" onClose={() => {}} />
     );
 
     await userEvent.type(getByPlaceholderText("Rollover alias"), "some_alias");
 
-    fireEvent.click(getByTestId("addRolloverAliasModalAddButton"));
+    fireEvent.click(getByTestId("editRolloverAliasModalAddButton"));
 
     await wait();
 
     expect(toastNotifications.addSuccess).toHaveBeenCalledTimes(1);
-    expect(toastNotifications.addSuccess).toHaveBeenCalledWith("Added rollover alias to some_index");
+    expect(toastNotifications.addSuccess).toHaveBeenCalledWith("Edited rollover alias on some_index");
   });
 
   it("shows error toaster when error is thrown", async () => {
-    browserServicesMock.indexService.addRolloverAlias = jest.fn().mockRejectedValue(new Error("this is an error"));
+    browserServicesMock.indexService.editRolloverAlias = jest.fn().mockRejectedValue(new Error("this is an error"));
     const { getByTestId, getByPlaceholderText } = render(
       <RolloverAliasModal services={browserServicesMock} index="some_index" onClose={() => {}} />
     );
 
     await userEvent.type(getByPlaceholderText("Rollover alias"), "some_alias");
 
-    fireEvent.click(getByTestId("addRolloverAliasModalAddButton"));
+    fireEvent.click(getByTestId("editRolloverAliasModalAddButton"));
 
     await wait();
 
@@ -83,14 +83,14 @@ describe("<RolloverAliasModal /> spec", () => {
   });
 
   it("shows error toaster when error is returned", async () => {
-    browserServicesMock.indexService.addRolloverAlias = jest.fn().mockResolvedValue({ ok: false, error: "some error" });
+    browserServicesMock.indexService.editRolloverAlias = jest.fn().mockResolvedValue({ ok: false, error: "some error" });
     const { getByTestId, getByPlaceholderText } = render(
       <RolloverAliasModal services={browserServicesMock} index="some_index" onClose={() => {}} />
     );
 
     await userEvent.type(getByPlaceholderText("Rollover alias"), "some_alias");
 
-    fireEvent.click(getByTestId("addRolloverAliasModalAddButton"));
+    fireEvent.click(getByTestId("editRolloverAliasModalAddButton"));
 
     await wait();
 
@@ -99,7 +99,7 @@ describe("<RolloverAliasModal /> spec", () => {
   });
 
   it("shows error toaster when call is not acknowledged", async () => {
-    browserServicesMock.indexService.addRolloverAlias = jest.fn().mockResolvedValue({
+    browserServicesMock.indexService.editRolloverAlias = jest.fn().mockResolvedValue({
       ok: true,
       response: { acknowledged: false },
     });
@@ -109,11 +109,11 @@ describe("<RolloverAliasModal /> spec", () => {
 
     await userEvent.type(getByPlaceholderText("Rollover alias"), "some_alias");
 
-    fireEvent.click(getByTestId("addRolloverAliasModalAddButton"));
+    fireEvent.click(getByTestId("editRolloverAliasModalAddButton"));
 
     await wait();
 
     expect(toastNotifications.addDanger).toHaveBeenCalledTimes(1);
-    expect(toastNotifications.addDanger).toHaveBeenCalledWith("Failed to add rollover alias to some_index");
+    expect(toastNotifications.addDanger).toHaveBeenCalledWith("Failed to edit rollover alias on some_index");
   });
 });

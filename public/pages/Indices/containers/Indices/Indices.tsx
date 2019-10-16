@@ -23,7 +23,7 @@ import queryString from "query-string";
 import { EuiBasicTable, EuiHorizontalRule } from "@elastic/eui";
 import { ContentPanel, ContentPanelActions } from "../../../../components/ContentPanel";
 import IndexControls from "../../components/IndexControls";
-import AddPolicyModal from "../../components/AddPolicyModal";
+import ApplyPolicyModal from "../../components/ApplyPolicyModal";
 import IndexEmptyPrompt from "../../components/IndexEmptyPrompt";
 import { DEFAULT_PAGE_SIZE_OPTIONS, DEFAULT_QUERY_PARAMS, indicesColumns } from "../../utils/constants";
 import { ModalConsumer } from "../../../../components/Modal";
@@ -164,10 +164,10 @@ export default class Indices extends Component<IndicesProps, IndicesState> {
               <ContentPanelActions
                 actions={[
                   {
-                    text: "Add policy",
+                    text: "Apply policy",
                     buttonProps: {
                       disabled: !selectedItems.length,
-                      onClick: () => onShow(AddPolicyModal, { indices: selectedItems.map((item: ManagedCatIndex) => item.index) }),
+                      onClick: () => onShow(ApplyPolicyModal, { indices: selectedItems.map((item: ManagedCatIndex) => item.index) }),
                     },
                   },
                 ]}

@@ -319,7 +319,7 @@ export default class ManagedIndices extends Component<ManagedIndicesProps, Manag
 
     const actions = [
       {
-        text: "Add rollover alias",
+        text: "Edit rollover alias",
         buttonProps: { disabled: selectedItems.length !== 1 },
         modal: {
           onClickModal: (onShow: (component: any, props: object) => void) => () =>
