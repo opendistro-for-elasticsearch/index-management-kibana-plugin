@@ -138,13 +138,13 @@ describe("<Indices /> spec", () => {
 
     await wait(() => getByText("index_1"));
 
-    expect(getByTestId("Add policyButton")).toBeDisabled();
+    expect(getByTestId("Apply policyButton")).toBeDisabled();
 
     userEvent.click(getByTestId("checkboxSelectRow-index_1"));
 
-    expect(getByTestId("Add policyButton")).toBeEnabled();
+    expect(getByTestId("Apply policyButton")).toBeEnabled();
 
-    userEvent.click(getByTestId("Add policyButton"));
+    userEvent.click(getByTestId("Apply policyButton"));
 
     await wait();
 

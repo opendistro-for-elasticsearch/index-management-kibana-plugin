@@ -16,27 +16,17 @@
 export const DEFAULT_POLICY = JSON.stringify(
   {
     policy: {
-      description: "Default policy",
-      default_state: "Ingest",
+      description: "A simple default policy that changes the replica count between hot and cold states.",
+      default_state: "hot",
       states: [
         {
-          name: "Ingest",
-          actions: [{ rollover: { min_doc_count: 10000000 } }],
-          transitions: [{ state_name: "Search" }],
+          name: "hot",
+          actions: [{ replica_count: { number_of_replicas: 5 } }],
+          transitions: [{ state_name: "cold", conditions: { min_index_age: "30d" } }],
         },
         {
-          name: "Search",
-          actions: [],
-          transitions: [
-            {
-              state_name: "Delete",
-              conditions: { min_index_age: "30d" },
-            },
-          ],
-        },
-        {
-          name: "Delete",
-          actions: [{ delete: {} }],
+          name: "cold",
+          actions: [{ replica_count: { number_of_replicas: 2 } }],
           transitions: [],
         },
       ],

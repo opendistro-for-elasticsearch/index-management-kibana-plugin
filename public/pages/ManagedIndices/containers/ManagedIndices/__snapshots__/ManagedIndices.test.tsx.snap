@@ -73,7 +73,7 @@ exports[`<ManagedIndices /> spec renders the component 1`] = `
               >
                 <button
                   class="euiButton euiButton--primary"
-                  data-test-subj="Add rollover aliasButton"
+                  data-test-subj="Edit rollover aliasButton"
                   disabled=""
                   type="button"
                 >
@@ -83,7 +83,7 @@ exports[`<ManagedIndices /> spec renders the component 1`] = `
                     <span
                       class="euiButton__text"
                     >
-                      Add rollover alias
+                      Edit rollover alias
                     </span>
                   </span>
                 </button>

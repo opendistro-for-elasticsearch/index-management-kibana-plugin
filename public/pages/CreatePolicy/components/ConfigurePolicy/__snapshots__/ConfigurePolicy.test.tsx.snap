@@ -15,7 +15,7 @@ exports[`<ConfigurePolicy /> spec renders the component 1`] = `
       <h3
         class="euiTitle euiTitle--small"
       >
-        Policy
+        Name policy
       </h3>
     </div>
   </div>
@@ -32,7 +32,7 @@ exports[`<ConfigurePolicy /> spec renders the component 1`] = `
         class="euiText euiText--extraSmall"
       >
         <p>
-          Specify a unique ID that helps you identify this policy
+          Policies let you automatically perform administrative operations on indices.
         </p>
       </div>
       <div
@@ -59,7 +59,7 @@ exports[`<ConfigurePolicy /> spec renders the component 1`] = `
               aria-describedby="some_make_id-help"
               class="euiFieldText"
               id="some_make_id"
-              placeholder="Policy ID"
+              placeholder="hot_cold_workflow"
               type="text"
               value="some_id"
             />
@@ -69,7 +69,7 @@ exports[`<ConfigurePolicy /> spec renders the component 1`] = `
           class="euiFormHelpText euiFormRow__text"
           id="some_make_id-help"
         >
-          Use something easy to remember
+          Specify a unique ID that is easy to recognize and remember.
         </div>
       </div>
     </div>
