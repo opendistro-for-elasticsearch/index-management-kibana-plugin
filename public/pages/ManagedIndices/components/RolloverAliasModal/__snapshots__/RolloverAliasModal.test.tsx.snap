@@ -49,7 +49,7 @@ exports[`<RolloverAliasModal /> spec renders the component 1`] = `
           <div
             class="euiModalHeader__title"
           >
-            Add rollover alias
+            Edit rollover alias
           </div>
         </div>
         <div
@@ -85,7 +85,7 @@ exports[`<RolloverAliasModal /> spec renders the component 1`] = `
               class="euiFormHelpText euiFormRow__text"
               id="some_make_id-help"
             >
-              A rollover alias is required when using the rollover action
+              A rollover alias is required when using the rollover action.
             </div>
           </div>
         </div>
@@ -94,7 +94,7 @@ exports[`<RolloverAliasModal /> spec renders the component 1`] = `
         >
           <button
             class="euiButtonEmpty euiButtonEmpty--primary"
-            data-test-subj="addRolloverAliasModalCloseButton"
+            data-test-subj="editRolloverAliasModalCloseButton"
             type="button"
           >
             <span
@@ -109,7 +109,7 @@ exports[`<RolloverAliasModal /> spec renders the component 1`] = `
           </button>
           <button
             class="euiButton euiButton--primary euiButton--fill"
-            data-test-subj="addRolloverAliasModalAddButton"
+            data-test-subj="editRolloverAliasModalAddButton"
             disabled=""
             type="button"
           >
@@ -119,7 +119,7 @@ exports[`<RolloverAliasModal /> spec renders the component 1`] = `
               <span
                 class="euiButton__text"
               >
-                Add
+                Edit
               </span>
             </span>
           </button>

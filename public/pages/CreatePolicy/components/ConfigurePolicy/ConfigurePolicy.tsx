@@ -25,14 +25,19 @@ interface ConfigurePolicyProps {
 }
 
 const ConfigurePolicy = ({ isEdit, policyId, policyIdError, onChange }: ConfigurePolicyProps) => (
-  <ContentPanel bodyStyles={{ padding: "initial" }} title="Policy" titleSize="s">
+  <ContentPanel bodyStyles={{ padding: "initial" }} title="Name policy" titleSize="s">
     <div style={{ paddingLeft: "10px" }}>
       <EuiText size="xs">
-        <p>Specify a unique ID that helps you identify this policy</p>
+        <p>Policies let you automatically perform administrative operations on indices.</p>
       </EuiText>
       <EuiSpacer size="s" />
-      <EuiFormRow label="Policy ID" helpText="Use something easy to remember" isInvalid={!!policyIdError} error={policyIdError}>
-        <EuiFieldText isInvalid={!!policyIdError} placeholder="Policy ID" readOnly={isEdit} value={policyId} onChange={onChange} />
+      <EuiFormRow
+        label="Policy ID"
+        helpText="Specify a unique ID that is easy to recognize and remember."
+        isInvalid={!!policyIdError}
+        error={policyIdError}
+      >
+        <EuiFieldText isInvalid={!!policyIdError} placeholder="hot_cold_workflow" readOnly={isEdit} value={policyId} onChange={onChange} />
       </EuiFormRow>
     </div>
   </ContentPanel>

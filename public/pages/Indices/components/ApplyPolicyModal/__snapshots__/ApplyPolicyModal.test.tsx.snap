@@ -1,6 +1,6 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`<AddPolicyModal /> spec renders the component 1`] = `
+exports[`<ApplyPolicyModal /> spec renders the component 1`] = `
 <div
   class="euiOverlayMask"
 >
@@ -49,14 +49,24 @@ exports[`<AddPolicyModal /> spec renders the component 1`] = `
           <div
             class="euiModalHeader__title"
           >
-            Add policy
+            Apply policy
           </div>
         </div>
         <div
           class="euiModalBody"
         >
           <div
-            class="euiFormRow"
+            class="euiText euiText--extraSmall euiText--constrainedWidth"
+          >
+            <p>
+              Choose the policy you want to use for the selected indices. A copy of the policy will be created and applied to the indices.
+            </p>
+          </div>
+          <div
+            class="euiSpacer euiSpacer--m"
+          />
+          <div
+            class="euiFormRow euiFormRow--fullWidth"
             id="some_make_id-row"
           >
             <label
@@ -64,23 +74,22 @@ exports[`<AddPolicyModal /> spec renders the component 1`] = `
               class="euiFormLabel"
               for="some_make_id"
             >
-              Policy
+              Policy ID
             </label>
             <div
-              aria-describedby="some_make_id-help"
               aria-expanded="false"
               aria-haspopup="listbox"
-              class="euiComboBox"
+              class="euiComboBox euiComboBox--fullWidth"
               role="combobox"
             >
               <div
-                class="euiFormControlLayout"
+                class="euiFormControlLayout euiFormControlLayout--fullWidth"
               >
                 <div
                   class="euiFormControlLayout__childrenWrapper"
                 >
                   <div
-                    class="euiComboBox__inputWrap euiComboBox__inputWrap--noWrap euiComboBox__inputWrap-isClearable"
+                    class="euiComboBox__inputWrap euiComboBox__inputWrap--fullWidth euiComboBox__inputWrap--noWrap euiComboBox__inputWrap-isClearable"
                     data-test-subj="comboBoxInput"
                     tabindex="-1"
                   >
@@ -139,12 +148,6 @@ exports[`<AddPolicyModal /> spec renders the component 1`] = `
                 </div>
               </div>
             </div>
-            <div
-              class="euiFormHelpText euiFormRow__text"
-              id="some_make_id-help"
-            >
-              Select the policy you want to add to the indices
-            </div>
           </div>
         </div>
         <div
@@ -152,7 +155,7 @@ exports[`<AddPolicyModal /> spec renders the component 1`] = `
         >
           <button
             class="euiButtonEmpty euiButtonEmpty--primary"
-            data-test-subj="addPolicyModalCloseButton"
+            data-test-subj="applyPolicyModalCloseButton"
             type="button"
           >
             <span
@@ -161,13 +164,13 @@ exports[`<AddPolicyModal /> spec renders the component 1`] = `
               <span
                 class="euiButtonEmpty__text"
               >
-                Close
+                Cancel
               </span>
             </span>
           </button>
           <button
             class="euiButton euiButton--primary euiButton--fill"
-            data-test-subj="addPolicyModalEditButton"
+            data-test-subj="applyPolicyModalEditButton"
             type="button"
           >
             <span
@@ -176,7 +179,7 @@ exports[`<AddPolicyModal /> spec renders the component 1`] = `
               <span
                 class="euiButton__text"
               >
-                Add
+                Apply
               </span>
             </span>
           </button>

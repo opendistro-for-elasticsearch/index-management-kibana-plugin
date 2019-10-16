@@ -27,7 +27,7 @@ exports[`<CreatePolicy /> spec renders the create component 1`] = `
         <h3
           class="euiTitle euiTitle--small"
         >
-          Policy
+          Name policy
         </h3>
       </div>
     </div>
@@ -44,7 +44,7 @@ exports[`<CreatePolicy /> spec renders the create component 1`] = `
           class="euiText euiText--extraSmall"
         >
           <p>
-            Specify a unique ID that helps you identify this policy
+            Policies let you automatically perform administrative operations on indices.
           </p>
         </div>
         <div
@@ -71,7 +71,7 @@ exports[`<CreatePolicy /> spec renders the create component 1`] = `
                 aria-describedby="some_make_id-help"
                 class="euiFieldText"
                 id="some_make_id"
-                placeholder="Policy ID"
+                placeholder="hot_cold_workflow"
                 type="text"
                 value=""
               />
@@ -81,7 +81,7 @@ exports[`<CreatePolicy /> spec renders the create component 1`] = `
             class="euiFormHelpText euiFormRow__text"
             id="some_make_id-help"
           >
-            Use something easy to remember
+            Specify a unique ID that is easy to recognize and remember.
           </div>
         </div>
       </div>
@@ -220,30 +220,21 @@ exports[`<CreatePolicy /> spec renders the create component 1`] = `
       >
         {
     "policy": {
-        "description": "Default policy",
-        "default_state": "Ingest",
+        "description": "A simple default policy that changes the replica count between hot and cold states.",
+        "default_state": "hot",
         "states": [
             {
-                "name": "Ingest",
+                "name": "hot",
                 "actions": [
                     {
-                        "rollover": {
-                            "min_doc_count": 10000000
+                        "replica_count": {
+                            "number_of_replicas": 5
                         }
                     }
                 ],
                 "transitions": [
                     {
-                        "state_name": "Search"
-                    }
-                ]
-            },
-            {
-                "name": "Search",
-                "actions": [],
-                "transitions": [
-                    {
-                        "state_name": "Delete",
+                        "state_name": "cold",
                         "conditions": {
                             "min_index_age": "30d"
                         }
@@ -251,10 +242,12 @@ exports[`<CreatePolicy /> spec renders the create component 1`] = `
                 ]
             },
             {
-                "name": "Delete",
+                "name": "cold",
                 "actions": [
                     {
-                        "delete": {}
+                        "replica_count": {
+                            "number_of_replicas": 2
+                        }
                     }
                 ],
                 "transitions": []
@@ -331,6 +324,64 @@ exports[`<CreatePolicy /> spec renders the edit component 1`] = `
     class="euiSpacer euiSpacer--l"
   />
   <div
+    class="euiCallOut euiCallOut--primary"
+  >
+    <div
+      class="euiCallOutHeader"
+    >
+      <svg
+        aria-hidden="true"
+        class="euiIcon euiIcon--medium euiCallOutHeader__icon"
+        focusable="false"
+        height="16"
+        viewBox="0 0 16 16"
+        width="16"
+        xmlns="http://www.w3.org/2000/svg"
+      >
+        <path
+          d="M8 14A6 6 0 1 1 8 2a6 6 0 0 1 0 12zm0-1A5 5 0 1 0 8 3a5 5 0 0 0 0 10zm-.186-1.065A.785.785 0 0 1 7 11.12c0-.48.34-.82.814-.82.475 0 .809.34.809.82 0 .475-.334.815-.809.815zM5.9 6.317C5.96 5.168 6.755 4.4 8.048 4.4c1.218 0 2.091.759 2.091 1.8 0 .736-.36 1.304-1.03 1.707-.56.33-.717.56-.717 1.022v.305l-.1.1H7.47l-.1-.1v-.431c-.005-.646.302-1.104.987-1.514.527-.322.708-.59.708-1.047 0-.536-.416-.91-1.05-.91-.652 0-1.064.374-1.112.998l-.1.092H6l-.1-.105z"
+        />
+      </svg>
+      <span
+        class="euiCallOutHeader__title"
+      >
+        Edits to the policy are not automatically applied to indices that are already being managed by this policy.
+      </span>
+    </div>
+    <div
+      class="euiText euiText--small"
+    >
+      <p>
+        This ensures that any update to a policy doesn't harm indices that are running under an older version of the policy. To carry over your edits to these indices, please use the "Change Policy" under "Managed Indices" to reapply the policy after submitting your edits.
+         
+        <a
+          class="euiLink euiLink--primary"
+          href="https://opendistro.github.io/for-elasticsearch-docs/docs/ism/"
+          rel="noopener noreferrer"
+          target="_blank"
+        >
+          Learn more 
+          <svg
+            class="euiIcon euiIcon--small"
+            focusable="false"
+            height="16"
+            viewBox="0 0 16 16"
+            width="16"
+            xmlns="http://www.w3.org/2000/svg"
+          >
+            <path
+              d="M2 14.01h12.49a.5.5 0 1 1 0 1h-13a.5.5 0 0 1-.49-.597V1.5a.5.5 0 0 1 1 0v12.51zm2.354-1.656a.5.5 0 0 1-.708-.708l8-8a.5.5 0 0 1 .708.708l-8 8zM15 5.5a.5.5 0 1 1-1 0v-3a.5.5 0 0 0-.5-.5h-3a.5.5 0 1 1 0-1h3A1.5 1.5 0 0 1 15 2.5v3z"
+              fill-rule="evenodd"
+            />
+          </svg>
+        </a>
+      </p>
+    </div>
+  </div>
+  <div
+    class="euiSpacer euiSpacer--l"
+  />
+  <div
     class="euiPanel euiPanel--paddingMedium"
     style="padding-left: 0px; padding-right: 0px;"
   >
@@ -344,7 +395,7 @@ exports[`<CreatePolicy /> spec renders the edit component 1`] = `
         <h3
           class="euiTitle euiTitle--small"
         >
-          Policy
+          Name policy
         </h3>
       </div>
     </div>
@@ -361,7 +412,7 @@ exports[`<CreatePolicy /> spec renders the edit component 1`] = `
           class="euiText euiText--extraSmall"
         >
           <p>
-            Specify a unique ID that helps you identify this policy
+            Policies let you automatically perform administrative operations on indices.
           </p>
         </div>
         <div
@@ -388,7 +439,7 @@ exports[`<CreatePolicy /> spec renders the edit component 1`] = `
                 aria-describedby="some_make_id-help"
                 class="euiFieldText"
                 id="some_make_id"
-                placeholder="Policy ID"
+                placeholder="hot_cold_workflow"
                 readonly=""
                 type="text"
                 value="some_policy"
@@ -399,7 +450,7 @@ exports[`<CreatePolicy /> spec renders the edit component 1`] = `
             class="euiFormHelpText euiFormRow__text"
             id="some_make_id-help"
           >
-            Use something easy to remember
+            Specify a unique ID that is easy to recognize and remember.
           </div>
         </div>
       </div>
@@ -539,30 +590,21 @@ exports[`<CreatePolicy /> spec renders the edit component 1`] = `
         {
     "policy": {
         "policy": {
-            "description": "Default policy",
-            "default_state": "Ingest",
+            "description": "A simple default policy that changes the replica count between hot and cold states.",
+            "default_state": "hot",
             "states": [
                 {
-                    "name": "Ingest",
+                    "name": "hot",
                     "actions": [
                         {
-                            "rollover": {
-                                "min_doc_count": 10000000
+                            "replica_count": {
+                                "number_of_replicas": 5
                             }
                         }
                     ],
                     "transitions": [
                         {
-                            "state_name": "Search"
-                        }
-                    ]
-                },
-                {
-                    "name": "Search",
-                    "actions": [],
-                    "transitions": [
-                        {
-                            "state_name": "Delete",
+                            "state_name": "cold",
                             "conditions": {
                                 "min_index_age": "30d"
                             }
@@ -570,10 +612,12 @@ exports[`<CreatePolicy /> spec renders the edit component 1`] = `
                     ]
                 },
                 {
-                    "name": "Delete",
+                    "name": "cold",
                     "actions": [
                         {
-                            "delete": {}
+                            "replica_count": {
+                                "number_of_replicas": 2
+                            }
                         }
                     ],
                     "transitions": []

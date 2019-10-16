@@ -45,7 +45,7 @@ export default class RolloverAliasModal extends Component<RolloverAliasModalProp
     rolloverAlias: "",
   };
 
-  onAddRolloverAlias = async (): Promise<void> => {
+  onEditRolloverAlias = async (): Promise<void> => {
     const {
       onClose,
       index,
@@ -53,19 +53,19 @@ export default class RolloverAliasModal extends Component<RolloverAliasModalProp
     } = this.props;
     const { rolloverAlias } = this.state;
     try {
-      const response = await indexService.addRolloverAlias(index, rolloverAlias);
+      const response = await indexService.editRolloverAlias(index, rolloverAlias);
       if (response.ok) {
         if (response.response.acknowledged) {
-          toastNotifications.addSuccess(`Added rollover alias to ${index}`);
+          toastNotifications.addSuccess(`Edited rollover alias on ${index}`);
         } else {
-          toastNotifications.addDanger(`Failed to add rollover alias to ${index}`);
+          toastNotifications.addDanger(`Failed to edit rollover alias on ${index}`);
         }
       } else {
         toastNotifications.addDanger(response.error);
       }
       onClose();
     } catch (err) {
-      toastNotifications.addDanger(getErrorMessage(err, `There was a problem adding rollover alias to ${index}`));
+      toastNotifications.addDanger(getErrorMessage(err, `There was a problem editing rollover alias on ${index}`));
     }
   };
 
@@ -82,22 +82,22 @@ export default class RolloverAliasModal extends Component<RolloverAliasModalProp
             // @ts-ignore */}
         <EuiModal onCancel={onClose} onClose={onClose}>
           <EuiModalHeader>
-            <EuiModalHeaderTitle>Add rollover alias</EuiModalHeaderTitle>
+            <EuiModalHeaderTitle>Edit rollover alias</EuiModalHeaderTitle>
           </EuiModalHeader>
 
           <EuiModalBody>
-            <EuiFormRow label="Rollover alias" helpText="A rollover alias is required when using the rollover action">
+            <EuiFormRow label="Rollover alias" helpText="A rollover alias is required when using the rollover action.">
               <EuiFieldText placeholder="Rollover alias" value={rolloverAlias} onChange={this.onChange} />
             </EuiFormRow>
           </EuiModalBody>
 
           <EuiModalFooter>
-            <EuiButtonEmpty onClick={onClose} data-test-subj="addRolloverAliasModalCloseButton">
+            <EuiButtonEmpty onClick={onClose} data-test-subj="editRolloverAliasModalCloseButton">
               Close
             </EuiButtonEmpty>
 
-            <EuiButton onClick={this.onAddRolloverAlias} disabled={!rolloverAlias} fill data-test-subj="addRolloverAliasModalAddButton">
-              Add
+            <EuiButton onClick={this.onEditRolloverAlias} disabled={!rolloverAlias} fill data-test-subj="editRolloverAliasModalAddButton">
+              Edit
             </EuiButton>
           </EuiModalFooter>
         </EuiModal>

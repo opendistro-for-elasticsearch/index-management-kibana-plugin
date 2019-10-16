@@ -116,7 +116,7 @@ export default class Policies extends Component<PoliciesProps, PoliciesState> {
   }
 
   async componentDidMount() {
-    chrome.breadcrumbs.set([BREADCRUMBS.INDEX_MANAGEMENT, BREADCRUMBS.POLICIES]);
+    chrome.breadcrumbs.set([BREADCRUMBS.INDEX_MANAGEMENT, BREADCRUMBS.INDEX_POLICIES]);
     await this.getPolicies();
   }
 
@@ -275,7 +275,7 @@ export default class Policies extends Component<PoliciesProps, PoliciesState> {
     ];
 
     return (
-      <ContentPanel actions={<ContentPanelActions actions={actions} />} bodyStyles={{ padding: "initial" }} title="Policies">
+      <ContentPanel actions={<ContentPanelActions actions={actions} />} bodyStyles={{ padding: "initial" }} title="Index policies">
         <PolicyControls
           activePage={page}
           pageCount={Math.ceil(totalPolicies / size) || 1}
