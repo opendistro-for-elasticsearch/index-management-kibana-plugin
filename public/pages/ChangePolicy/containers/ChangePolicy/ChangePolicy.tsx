@@ -71,6 +71,9 @@ export default class ChangePolicy extends Component<ChangePolicyProps, ChangePol
 
   onChangeManagedIndices = (selectedManagedIndices: { label: string; value?: ManagedIndexItem }[]): void => {
     const managedIndicesError = selectedManagedIndices.length ? "" : "Required";
+    if (!selectedManagedIndices.length) {
+      this.onChangeStateFilters([]);
+    }
     this.setState({ selectedManagedIndices, managedIndicesError });
   };
 

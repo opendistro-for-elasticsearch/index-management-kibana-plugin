@@ -29,14 +29,14 @@ describe("IndexService spec", () => {
     expect(httpClientMock.get).toHaveBeenCalledWith(`..${NODE_API._INDICES}?${queryParamsString}`);
   });
 
-  it("calls add policy nodejs route when calling addPolicy", async () => {
+  it("calls apply policy nodejs route when calling applyPolicy", async () => {
     httpClientMock.post = jest.fn().mockResolvedValue({ data: {} });
     const indices = ["one", "two"];
     const policyId = "test";
-    await indexService.addPolicy(indices, policyId);
+    await indexService.applyPolicy(indices, policyId);
 
     expect(httpClientMock.post).toHaveBeenCalledTimes(1);
-    expect(httpClientMock.post).toHaveBeenCalledWith(`..${NODE_API.ADD_POLICY}`, { indices, policyId });
+    expect(httpClientMock.post).toHaveBeenCalledWith(`..${NODE_API.APPLY_POLICY}`, { indices, policyId });
   });
 
   it("calls search nodejs route when calling searchPolicies", async () => {

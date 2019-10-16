@@ -43,7 +43,7 @@ function renderPoliciesWithRouter() {
                   <ModalRoot services={services} />
                   <Switch>
                     <Route
-                      path={ROUTES.POLICIES}
+                      path={ROUTES.INDEX_POLICIES}
                       render={(props: RouteComponentProps) => (
                         <div style={{ padding: "25px 25px" }}>
                           <Policies {...props} policyService={services.policyService} />
@@ -52,7 +52,7 @@ function renderPoliciesWithRouter() {
                     />
                     <Route path={ROUTES.CREATE_POLICY} render={props => <div>Testing create policy</div>} />
                     <Route path={ROUTES.EDIT_POLICY} render={props => <div>Testing edit policy: {props.location.search}</div>} />
-                    <Redirect from="/" to={ROUTES.POLICIES} />
+                    <Redirect from="/" to={ROUTES.INDEX_POLICIES} />
                   </Switch>
                 </ModalProvider>
               )
@@ -83,7 +83,7 @@ const testPolicy = {
   },
 };
 
-describe("<Policies /> spec", () => {
+describe("<IndexPolicies /> spec", () => {
   it("renders the component", async () => {
     browserServicesMock.policyService.getPolicies = jest.fn().mockResolvedValue({ ok: true, response: { policies: [], totalPolicies: 0 } });
     const { container } = renderPoliciesWithRouter();
@@ -103,7 +103,7 @@ describe("<Policies /> spec", () => {
     renderPoliciesWithRouter();
 
     expect(chrome.breadcrumbs.set).toHaveBeenCalledTimes(1);
-    expect(chrome.breadcrumbs.set).toHaveBeenCalledWith([BREADCRUMBS.INDEX_MANAGEMENT, BREADCRUMBS.POLICIES]);
+    expect(chrome.breadcrumbs.set).toHaveBeenCalledWith([BREADCRUMBS.INDEX_MANAGEMENT, BREADCRUMBS.INDEX_POLICIES]);
   });
 
   it("loads policies", async () => {

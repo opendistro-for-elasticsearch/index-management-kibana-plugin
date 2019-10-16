@@ -15,7 +15,7 @@ exports[`<ChangeManagedIndices /> spec renders the component 1`] = `
       <h3
         class="euiTitle euiTitle--small"
       >
-        Managed indices
+        Choose managed indices
       </h3>
     </div>
   </div>
@@ -28,13 +28,6 @@ exports[`<ChangeManagedIndices /> spec renders the component 1`] = `
     <div
       style="padding-left: 10px;"
     >
-      <div
-        class="euiText euiText--extraSmall"
-      >
-        <p>
-          When a managed index changes policy, the new policy will take affect after the managed index is finished running the current state or the new policy has the same structure as the current one.
-        </p>
-      </div>
       <div
         class="euiSpacer euiSpacer--m"
       />
@@ -67,11 +60,6 @@ exports[`<ChangeManagedIndices /> spec renders the component 1`] = `
                 data-test-subj="comboBoxInput"
                 tabindex="-1"
               >
-                <p
-                  class="euiComboBoxPlaceholder"
-                >
-                  Choose managed indices
-                </p>
                 <div
                   class="euiComboBox__input"
                   style="font-size: 14px; display: inline-block;"
@@ -126,7 +114,7 @@ exports[`<ChangeManagedIndices /> spec renders the component 1`] = `
           class="euiFormHelpText euiFormRow__text"
           id="some_make_id-help"
         >
-          You can use a * as a wildcard in your index pattern
+          You can use * as wildcards to form index patterns.
         </div>
       </div>
       <div
@@ -143,7 +131,7 @@ exports[`<ChangeManagedIndices /> spec renders the component 1`] = `
           aria-describedby="some_make_id-help"
           aria-expanded="false"
           aria-haspopup="listbox"
-          class="euiComboBox"
+          class="euiComboBox euiComboBox-isDisabled"
           role="combobox"
         >
           <div
@@ -153,7 +141,7 @@ exports[`<ChangeManagedIndices /> spec renders the component 1`] = `
               class="euiFormControlLayout__childrenWrapper"
             >
               <div
-                class="euiComboBox__inputWrap euiComboBox__inputWrap-isClearable"
+                class="euiComboBox__inputWrap"
                 data-test-subj="comboBoxInput"
                 tabindex="-1"
               >
@@ -168,6 +156,7 @@ exports[`<ChangeManagedIndices /> spec renders the component 1`] = `
                 >
                   <input
                     data-test-subj="comboBoxSearchInput"
+                    disabled=""
                     id="some_make_id"
                     role="textbox"
                     style="box-sizing: content-box; width: 2px;"
@@ -185,6 +174,7 @@ exports[`<ChangeManagedIndices /> spec renders the component 1`] = `
                   aria-label="Open list of options"
                   class="euiFormControlLayoutCustomIcon euiFormControlLayoutCustomIcon--clickable"
                   data-test-subj="comboBoxToggleListButton"
+                  disabled=""
                 >
                   <svg
                     aria-hidden="true"

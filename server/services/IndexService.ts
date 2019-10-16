@@ -16,7 +16,7 @@
 import { Legacy } from "kibana";
 import { RequestParams } from "@elastic/elasticsearch";
 import { CLUSTER, INDEX, Setting } from "../utils/constants";
-import { AcknowledgedResponse, AddPolicyResponse, AddResponse, CatIndex, GetIndicesResponse, SearchResponse } from "../models/interfaces";
+import { AcknowledgedResponse, ApplyPolicyResponse, AddResponse, CatIndex, GetIndicesResponse, SearchResponse } from "../models/interfaces";
 import { ServerResponse } from "../models/types";
 
 import Request = Legacy.Request;
@@ -116,7 +116,7 @@ export default class IndexService {
     }
   };
 
-  addPolicy = async (req: Request, h: ResponseToolkit): Promise<ServerResponse<AddPolicyResponse>> => {
+  applyPolicy = async (req: Request, h: ResponseToolkit): Promise<ServerResponse<ApplyPolicyResponse>> => {
     try {
       const { indices, policyId } = req.payload as { indices: string[]; policyId: string };
       const { callWithRequest } = await this.esDriver.getCluster(CLUSTER.ISM);
@@ -135,12 +135,12 @@ export default class IndexService {
         },
       };
     } catch (err) {
-      console.error("Index Management - IndexService - addPolicy:", err);
+      console.error("Index Management - IndexService - applyPolicy:", err);
       return { ok: false, error: err.message };
     }
   };
 
-  addRolloverAlias = async (req: Request, h: ResponseToolkit): Promise<ServerResponse<AcknowledgedResponse>> => {
+  editRolloverAlias = async (req: Request, h: ResponseToolkit): Promise<ServerResponse<AcknowledgedResponse>> => {
     try {
       const { alias, index } = req.payload as { alias: string; index: string };
       const { callWithRequest } = await this.esDriver.getCluster(CLUSTER.DATA);
@@ -148,7 +148,7 @@ export default class IndexService {
       const response = await callWithRequest(req, "indices.putSettings", params);
       return { ok: true, response };
     } catch (err) {
-      console.error("Index Management - IndexService - addRolloverAlias", err);
+      console.error("Index Management - IndexService - editRolloverAlias", err);
       return { ok: false, error: err.message };
     }
   };

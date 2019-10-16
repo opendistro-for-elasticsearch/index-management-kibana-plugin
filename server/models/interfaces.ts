@@ -67,7 +67,7 @@ export interface IndexUpdateResponse {
   failedIndices: FailedIndex[];
 }
 
-export interface AddPolicyResponse extends IndexUpdateResponse {}
+export interface ApplyPolicyResponse extends IndexUpdateResponse {}
 
 export interface RemovePolicyResponse extends IndexUpdateResponse {}
 

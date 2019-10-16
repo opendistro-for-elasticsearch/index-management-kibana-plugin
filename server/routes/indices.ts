@@ -35,14 +35,14 @@ export default function(server: Server, services: NodeServices) {
   });
 
   server.route({
-    path: NODE_API.ADD_POLICY,
+    path: NODE_API.APPLY_POLICY,
     method: REQUEST.POST,
-    handler: indexService.addPolicy,
+    handler: indexService.applyPolicy,
   });
 
   server.route({
-    path: NODE_API.ADD_ROLLOVER_ALIAS,
+    path: NODE_API.EDIT_ROLLOVER_ALIAS,
     method: REQUEST.POST,
-    handler: indexService.addRolloverAlias,
+    handler: indexService.editRolloverAlias,
   });
 }
