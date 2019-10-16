@@ -13,8 +13,8 @@
  * permissions and limitations under the License.
  */
 
-import React, { ChangeEvent, Component } from "react";
-import { EuiSpacer, EuiTitle, EuiFlexGroup, EuiFlexItem, EuiButton, EuiButtonEmpty, EuiCallOut } from "@elastic/eui";
+import React, { ChangeEvent, Component, Fragment } from "react";
+import { EuiSpacer, EuiTitle, EuiFlexGroup, EuiFlexItem, EuiButton, EuiButtonEmpty, EuiCallOut, EuiLink, EuiIcon } from "@elastic/eui";
 import chrome from "ui/chrome";
 import { toastNotifications } from "ui/notify";
 import queryString from "query-string";
@@ -24,7 +24,7 @@ import DefinePolicy from "../../components/DefinePolicy";
 import ConfigurePolicy from "../../components/ConfigurePolicy";
 import { Policy } from "../../../../../models/interfaces";
 import { PolicyService } from "../../../../services";
-import { BREADCRUMBS, ROUTES } from "../../../../utils/constants";
+import { BREADCRUMBS, DOCUMENTATION_URL, ROUTES } from "../../../../utils/constants";
 import { getErrorMessage } from "../../../../utils/helpers";
 
 interface CreatePolicyProps extends RouteComponentProps {
@@ -60,7 +60,7 @@ export default class CreatePolicy extends Component<CreatePolicyProps, CreatePol
   }
 
   componentDidMount = async (): Promise<void> => {
-    chrome.breadcrumbs.set([BREADCRUMBS.INDEX_MANAGEMENT, BREADCRUMBS.POLICIES]);
+    chrome.breadcrumbs.set([BREADCRUMBS.INDEX_MANAGEMENT, BREADCRUMBS.INDEX_POLICIES]);
     if (this.props.isEdit) {
       const { id } = queryString.parse(this.props.location.search);
       if (typeof id === "string" && !!id) {
@@ -69,7 +69,7 @@ export default class CreatePolicy extends Component<CreatePolicyProps, CreatePol
         await this.getPolicyToEdit(id);
       } else {
         toastNotifications.addDanger(`Invalid policy id: ${id}`);
-        this.props.history.push(ROUTES.POLICIES);
+        this.props.history.push(ROUTES.INDEX_POLICIES);
       }
     } else {
       chrome.breadcrumbs.push(BREADCRUMBS.CREATE_POLICY);
@@ -90,11 +90,11 @@ export default class CreatePolicy extends Component<CreatePolicyProps, CreatePol
         });
       } else {
         toastNotifications.addDanger(`Could not load the policy: ${response.error}`);
-        this.props.history.push(ROUTES.POLICIES);
+        this.props.history.push(ROUTES.INDEX_POLICIES);
       }
     } catch (err) {
       toastNotifications.addDanger(getErrorMessage(err, "Could not load the policy"));
-      this.props.history.push(ROUTES.POLICIES);
+      this.props.history.push(ROUTES.INDEX_POLICIES);
     }
   };
 
@@ -104,7 +104,7 @@ export default class CreatePolicy extends Component<CreatePolicyProps, CreatePol
       const response = await policyService.putPolicy(policy, policyId);
       if (response.ok) {
         toastNotifications.addSuccess(`Created policy: ${response.response._id}`);
-        this.props.history.push(ROUTES.POLICIES);
+        this.props.history.push(ROUTES.INDEX_POLICIES);
       } else {
         this.setState({ submitError: response.error });
       }
@@ -124,7 +124,7 @@ export default class CreatePolicy extends Component<CreatePolicyProps, CreatePol
       const response = await policyService.putPolicy(policy, policyId, policySeqNo, policyPrimaryTerm);
       if (response.ok) {
         toastNotifications.addSuccess(`Updated policy: ${response.response._id}`);
-        this.props.history.push(ROUTES.POLICIES);
+        this.props.history.push(ROUTES.INDEX_POLICIES);
       } else {
         this.setState({ submitError: response.error });
       }
@@ -135,7 +135,7 @@ export default class CreatePolicy extends Component<CreatePolicyProps, CreatePol
 
   onCancel = (): void => {
     if (this.props.isEdit) this.props.history.goBack();
-    else this.props.history.push(ROUTES.POLICIES);
+    else this.props.history.push(ROUTES.INDEX_POLICIES);
   };
 
   onChange = (e: ChangeEvent<HTMLInputElement>): void => {
@@ -178,6 +178,30 @@ export default class CreatePolicy extends Component<CreatePolicyProps, CreatePol
     this.setState({ isSubmitting: false });
   };
 
+  renderEditCallOut = (): React.ReactNode | null => {
+    const { isEdit } = this.props;
+    if (!isEdit) return null;
+
+    return (
+      <Fragment>
+        <EuiCallOut
+          title="Edits to the policy are not automatically applied to indices that are already being managed by this policy."
+          iconType="questionInCircle"
+        >
+          <p>
+            This ensures that any update to a policy doesn't harm indices that are running under an older version of the policy. To carry
+            over your edits to these indices, please use the "Change Policy" under "Managed Indices" to reapply the policy after submitting
+            your edits.{" "}
+            <EuiLink href={DOCUMENTATION_URL} target="_blank">
+              Learn more <EuiIcon type="popout" size="s" />
+            </EuiLink>
+          </p>
+        </EuiCallOut>
+        <EuiSpacer />
+      </Fragment>
+    );
+  };
+
   render() {
     const { isEdit } = this.props;
     const { policyId, policyIdError, jsonString, submitError, isSubmitting } = this.state;
@@ -195,6 +219,7 @@ export default class CreatePolicy extends Component<CreatePolicyProps, CreatePol
           <h1>{isEdit ? "Edit" : "Create"} policy</h1>
         </EuiTitle>
         <EuiSpacer />
+        {this.renderEditCallOut()}
         <ConfigurePolicy policyId={policyId} policyIdError={policyIdError} isEdit={isEdit} onChange={this.onChange} />
         <EuiSpacer />
         <DefinePolicy jsonString={jsonString} onChange={this.onChangeJSON} onAutoIndent={this.onAutoIndent} hasJSONError={hasJSONError} />

@@ -17,19 +17,21 @@ export const PLUGIN_NAME = "opendistro_index_management_kibana";
 
 export const DEFAULT_EMPTY_DATA = "-";
 
+export const DOCUMENTATION_URL = "https://opendistro.github.io/for-elasticsearch-docs/docs/ism/";
+
 export const ROUTES = Object.freeze({
   CHANGE_POLICY: "/change-policy",
   CREATE_POLICY: "/create-policy",
   EDIT_POLICY: "/edit-policy",
   MANAGED_INDICES: "/managed-indices",
-  POLICIES: "/policies",
+  INDEX_POLICIES: "/index-policies",
   INDICES: "/indices",
 });
 
 export const BREADCRUMBS = Object.freeze({
   INDEX_MANAGEMENT: { text: "Index Management", href: "#/" },
   INDICES: { text: "Indices", href: `#${ROUTES.INDICES}` },
-  POLICIES: { text: "Policies", href: `#${ROUTES.POLICIES}` },
+  INDEX_POLICIES: { text: "Index policies", href: `#${ROUTES.INDEX_POLICIES}` },
   MANAGED_INDICES: { text: "Managed Indices", href: `#${ROUTES.MANAGED_INDICES}` },
   EDIT_POLICY: { text: "Edit policy" },
   CREATE_POLICY: { text: "Create policy" },

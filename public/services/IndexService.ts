@@ -15,7 +15,7 @@
 
 import { IHttpResponse, IHttpService } from "angular";
 import { INDEX } from "../../server/utils/constants";
-import { AcknowledgedResponse, AddPolicyResponse, GetIndicesResponse, SearchResponse } from "../../server/models/interfaces";
+import { AcknowledgedResponse, ApplyPolicyResponse, GetIndicesResponse, SearchResponse } from "../../server/models/interfaces";
 import { ServerResponse } from "../../server/models/types";
 import { NODE_API } from "../../utils/constants";
 
@@ -32,16 +32,16 @@ export default class IndexService {
     return response.data;
   };
 
-  addPolicy = async (indices: string[], policyId: string): Promise<ServerResponse<AddPolicyResponse>> => {
+  applyPolicy = async (indices: string[], policyId: string): Promise<ServerResponse<ApplyPolicyResponse>> => {
     const body = { indices, policyId };
-    const url = `..${NODE_API.ADD_POLICY}`;
-    const response = (await this.httpClient.post(url, body)) as IHttpResponse<ServerResponse<AddPolicyResponse>>;
+    const url = `..${NODE_API.APPLY_POLICY}`;
+    const response = (await this.httpClient.post(url, body)) as IHttpResponse<ServerResponse<ApplyPolicyResponse>>;
     return response.data;
   };
 
-  addRolloverAlias = async (index: string, alias: string): Promise<ServerResponse<AcknowledgedResponse>> => {
+  editRolloverAlias = async (index: string, alias: string): Promise<ServerResponse<AcknowledgedResponse>> => {
     const body = { index, alias };
-    const url = `..${NODE_API.ADD_ROLLOVER_ALIAS}`;
+    const url = `..${NODE_API.EDIT_ROLLOVER_ALIAS}`;
     const response = (await this.httpClient.post(url, body)) as IHttpResponse<ServerResponse<AcknowledgedResponse>>;
     return response.data;
   };

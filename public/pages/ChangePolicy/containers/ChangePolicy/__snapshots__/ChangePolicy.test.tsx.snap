@@ -26,7 +26,7 @@ exports[`<ChangePolicy /> spec renders the component 1`] = `
         <h3
           class="euiTitle euiTitle--small"
         >
-          Managed indices
+          Choose managed indices
         </h3>
       </div>
     </div>
@@ -39,13 +39,6 @@ exports[`<ChangePolicy /> spec renders the component 1`] = `
       <div
         style="padding-left: 10px;"
       >
-        <div
-          class="euiText euiText--extraSmall"
-        >
-          <p>
-            When a managed index changes policy, the new policy will take affect after the managed index is finished running the current state or the new policy has the same structure as the current one.
-          </p>
-        </div>
         <div
           class="euiSpacer euiSpacer--m"
         />
@@ -78,11 +71,6 @@ exports[`<ChangePolicy /> spec renders the component 1`] = `
                   data-test-subj="comboBoxInput"
                   tabindex="-1"
                 >
-                  <p
-                    class="euiComboBoxPlaceholder"
-                  >
-                    Choose managed indices
-                  </p>
                   <div
                     class="euiComboBox__input"
                     style="font-size: 14px; display: inline-block;"
@@ -137,7 +125,7 @@ exports[`<ChangePolicy /> spec renders the component 1`] = `
             class="euiFormHelpText euiFormRow__text"
             id="some_make_id-help"
           >
-            You can use a * as a wildcard in your index pattern
+            You can use * as wildcards to form index patterns.
           </div>
         </div>
         <div
@@ -154,7 +142,7 @@ exports[`<ChangePolicy /> spec renders the component 1`] = `
             aria-describedby="some_make_id-help"
             aria-expanded="false"
             aria-haspopup="listbox"
-            class="euiComboBox"
+            class="euiComboBox euiComboBox-isDisabled"
             role="combobox"
           >
             <div
@@ -164,7 +152,7 @@ exports[`<ChangePolicy /> spec renders the component 1`] = `
                 class="euiFormControlLayout__childrenWrapper"
               >
                 <div
-                  class="euiComboBox__inputWrap euiComboBox__inputWrap-isClearable"
+                  class="euiComboBox__inputWrap"
                   data-test-subj="comboBoxInput"
                   tabindex="-1"
                 >
@@ -179,6 +167,7 @@ exports[`<ChangePolicy /> spec renders the component 1`] = `
                   >
                     <input
                       data-test-subj="comboBoxSearchInput"
+                      disabled=""
                       id="some_make_id"
                       role="textbox"
                       style="box-sizing: content-box; width: 2px;"
@@ -196,6 +185,7 @@ exports[`<ChangePolicy /> spec renders the component 1`] = `
                     aria-label="Open list of options"
                     class="euiFormControlLayoutCustomIcon euiFormControlLayoutCustomIcon--clickable"
                     data-test-subj="comboBoxToggleListButton"
+                    disabled=""
                   >
                     <svg
                       aria-hidden="true"
@@ -250,7 +240,7 @@ exports[`<ChangePolicy /> spec renders the component 1`] = `
         <h3
           class="euiTitle euiTitle--small"
         >
-          New policy
+          Choose new policy
         </h3>
       </div>
     </div>
@@ -267,7 +257,29 @@ exports[`<ChangePolicy /> spec renders the component 1`] = `
           class="euiText euiText--extraSmall"
         >
           <p>
-            Select a new policy. Choose between switching to a new state after changing policies or staying in the current state.
+            When the new policy will take effect depends on the current state of indices and the states of the new policy.
+             
+            <a
+              class="euiLink euiLink--primary"
+              href="https://opendistro.github.io/for-elasticsearch-docs/docs/ism/"
+              rel="noopener noreferrer"
+              target="_blank"
+            >
+              Learn more 
+              <svg
+                class="euiIcon euiIcon--small"
+                focusable="false"
+                height="16"
+                viewBox="0 0 16 16"
+                width="16"
+                xmlns="http://www.w3.org/2000/svg"
+              >
+                <path
+                  d="M2 14.01h12.49a.5.5 0 1 1 0 1h-13a.5.5 0 0 1-.49-.597V1.5a.5.5 0 0 1 1 0v12.51zm2.354-1.656a.5.5 0 0 1-.708-.708l8-8a.5.5 0 0 1 .708.708l-8 8zM15 5.5a.5.5 0 1 1-1 0v-3a.5.5 0 0 0-.5-.5h-3a.5.5 0 1 1 0-1h3A1.5 1.5 0 0 1 15 2.5v3z"
+                  fill-rule="evenodd"
+                />
+              </svg>
+            </a>
           </p>
         </div>
         <div
@@ -282,7 +294,7 @@ exports[`<ChangePolicy /> spec renders the component 1`] = `
             class="euiFormLabel"
             for="some_make_id"
           >
-            Policy
+            New policy
           </label>
           <div
             aria-expanded="false"
@@ -301,11 +313,6 @@ exports[`<ChangePolicy /> spec renders the component 1`] = `
                   data-test-subj="comboBoxInput"
                   tabindex="-1"
                 >
-                  <p
-                    class="euiComboBoxPlaceholder"
-                  >
-                    Choose a policy
-                  </p>
                   <div
                     class="euiComboBox__input"
                     style="font-size: 14px; display: inline-block;"
@@ -375,7 +382,7 @@ exports[`<ChangePolicy /> spec renders the component 1`] = `
               class="euiRadio__label"
               for="current"
             >
-              Continue from current state
+              Keep indices in their current state after the policy takes effect
             </label>
           </div>
           <div
@@ -395,7 +402,7 @@ exports[`<ChangePolicy /> spec renders the component 1`] = `
               class="euiRadio__label"
               for="state"
             >
-              Start from a chosen state after changing policies
+              Switch indices to the following state after the policy takes effect
             </label>
           </div>
         </div>
@@ -406,12 +413,6 @@ exports[`<ChangePolicy /> spec renders the component 1`] = `
           class="euiFormRow"
           id="some_make_id-row"
         >
-          <label
-            class="euiFormLabel"
-            for="some_make_id"
-          >
-            Start state
-          </label>
           <div
             class="euiFormControlLayout"
           >
@@ -419,7 +420,6 @@ exports[`<ChangePolicy /> spec renders the component 1`] = `
               class="euiFormControlLayout__childrenWrapper"
             >
               <select
-                aria-describedby="some_make_id-help"
                 aria-label="Start state for new policy"
                 class="euiSelect"
                 disabled=""
@@ -455,12 +455,6 @@ exports[`<ChangePolicy /> spec renders the component 1`] = `
                 </span>
               </div>
             </div>
-          </div>
-          <div
-            class="euiFormHelpText euiFormRow__text"
-            id="some_make_id-help"
-          >
-            Select a state to start from after changing policies
           </div>
         </div>
       </div>

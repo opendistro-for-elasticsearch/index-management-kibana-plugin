@@ -13,7 +13,7 @@
  * permissions and limitations under the License.
  */
 
-import React, { Component } from "react";
+import React, { Component, Fragment } from "react";
 import { toastNotifications } from "ui/notify";
 import _ from "lodash";
 import {
@@ -29,19 +29,25 @@ import {
   EuiFormRow,
   EuiFieldText,
   EuiCallOut,
+  EuiText,
+  EuiSpacer,
+  EuiCodeBlock,
+  EuiLink,
+  EuiIcon,
 } from "@elastic/eui";
 import { BrowserServices } from "../../../../models/interfaces";
 import { PolicyOption } from "../../models/interfaces";
 import { Policy, State } from "../../../../../models/interfaces";
 import { getErrorMessage } from "../../../../utils/helpers";
+import { DOCUMENTATION_URL } from "../../../../utils/constants";
 
-interface AddPolicyModalProps {
+interface ApplyPolicyModalProps {
   onClose: () => void;
   services: BrowserServices;
   indices: string[];
 }
 
-interface AddPolicyModalState {
+interface ApplyPolicyModalState {
   isLoading: boolean;
   selectedPolicy: PolicyOption | null;
   selectedPolicyError: string;
@@ -52,8 +58,8 @@ interface AddPolicyModalState {
   hasSubmitted: boolean;
 }
 
-export default class AddPolicyModal extends Component<AddPolicyModalProps, AddPolicyModalState> {
-  state: AddPolicyModalState = {
+export default class ApplyPolicyModal extends Component<ApplyPolicyModalProps, ApplyPolicyModalState> {
+  state: ApplyPolicyModalState = {
     isLoading: false,
     selectedPolicy: null,
     selectedPolicyError: "",
@@ -68,7 +74,7 @@ export default class AddPolicyModal extends Component<AddPolicyModalProps, AddPo
     await this.onPolicySearchChange("");
   }
 
-  onAddPolicy = async (selectedPolicy: PolicyOption, hasRolloverAction: boolean, rolloverAlias: string): Promise<void> => {
+  onApplyPolicy = async (selectedPolicy: PolicyOption, hasRolloverAction: boolean, rolloverAlias: string): Promise<void> => {
     try {
       const {
         onClose,
@@ -76,46 +82,46 @@ export default class AddPolicyModal extends Component<AddPolicyModalProps, AddPo
         services: { indexService },
       } = this.props;
       const policyId = selectedPolicy.label;
-      const addPolicyResponse = await indexService.addPolicy(indices, policyId);
-      if (addPolicyResponse.ok) {
-        const { updatedIndices, failedIndices, failures } = addPolicyResponse.response;
+      const applyPolicyResponse = await indexService.applyPolicy(indices, policyId);
+      if (applyPolicyResponse.ok) {
+        const { updatedIndices, failedIndices, failures } = applyPolicyResponse.response;
         if (updatedIndices) {
-          toastNotifications.addSuccess(`Added policy to ${updatedIndices} indices`);
+          toastNotifications.addSuccess(`Applied policy to ${updatedIndices} indices`);
           if (hasRolloverAction && rolloverAlias && indices.length === 1) {
-            await this.onAddRolloverAlias(indices[0], rolloverAlias);
+            await this.onEditRolloverAlias(indices[0], rolloverAlias);
           }
         }
         if (failures) {
           toastNotifications.addDanger(
-            `Failed to add policy to ${failedIndices.map(failedIndex => `[${failedIndex.indexName}, ${failedIndex.reason}]`).join(", ")}`
+            `Failed to apply policy to ${failedIndices.map(failedIndex => `[${failedIndex.indexName}, ${failedIndex.reason}]`).join(", ")}`
           );
         }
         onClose();
       } else {
-        toastNotifications.addDanger(addPolicyResponse.error);
+        toastNotifications.addDanger(applyPolicyResponse.error);
       }
     } catch (err) {
       toastNotifications.addDanger(getErrorMessage(err, "There was a problem adding policy to indices"));
     }
   };
 
-  onAddRolloverAlias = async (index: string, rolloverAlias: string): Promise<void> => {
+  onEditRolloverAlias = async (index: string, rolloverAlias: string): Promise<void> => {
     const {
       services: { indexService },
     } = this.props;
     try {
-      const response = await indexService.addRolloverAlias(index, rolloverAlias);
+      const response = await indexService.editRolloverAlias(index, rolloverAlias);
       if (response.ok) {
         if (response.response.acknowledged) {
-          toastNotifications.addSuccess(`Added rollover alias to ${index}`);
+          toastNotifications.addSuccess(`Edited rollover alias on ${index}`);
         } else {
-          toastNotifications.addDanger(`Failed to add rollover alias to ${index}`);
+          toastNotifications.addDanger(`Failed to edit rollover alias on ${index}`);
         }
       } else {
         toastNotifications.addDanger(response.error);
       }
     } catch (err) {
-      toastNotifications.addDanger(getErrorMessage(err, `There was a problem adding rollover alias to ${index}`));
+      toastNotifications.addDanger(getErrorMessage(err, `There was a problem editing rollover alias on ${index}`));
     }
   };
 
@@ -173,7 +179,7 @@ export default class AddPolicyModal extends Component<AddPolicyModalProps, AddPo
       this.setState({ selectedPolicyError, rolloverAliasError, hasSubmitted: true });
     } else {
       // @ts-ignore
-      await this.onAddPolicy(selectedPolicy, this.hasRolloverAction(selectedPolicy), rolloverAlias);
+      await this.onApplyPolicy(selectedPolicy, this.hasRolloverAction(selectedPolicy), rolloverAlias);
     }
   };
 
@@ -202,15 +208,27 @@ export default class AddPolicyModal extends Component<AddPolicyModalProps, AddPo
       return (
         <EuiFormRow
           label="Rollover alias"
-          helpText="A rollover alias is required when using the rollover action"
+          helpText={
+            <EuiText size="xs" grow={false}>
+              <p>
+                This policy includes a rollover action.
+                Specify a rollover alias.{" "}
+                <EuiLink href={DOCUMENTATION_URL} target="_blank">
+                  Learn more <EuiIcon type="popout" size="s" />
+                </EuiLink>
+              </p>
+            </EuiText>
+          }
           isInvalid={hasSubmitted && !!rolloverAliasError}
           error={rolloverAliasError}
+          fullWidth
         >
           <EuiFieldText
             isInvalid={hasSubmitted && !!rolloverAliasError}
             placeholder="Rollover alias"
             value={rolloverAlias}
             onChange={this.onChangeRolloverAlias}
+            fullWidth
           />
         </EuiFormRow>
       );
@@ -231,6 +249,35 @@ export default class AddPolicyModal extends Component<AddPolicyModalProps, AddPo
     );
   };
 
+  renderPreview = (): React.ReactNode | null => {
+    const { selectedPolicy } = this.state;
+    if (!selectedPolicy) return null;
+
+    let policyString = '';
+    try {
+      policyString = JSON.stringify({ policy: selectedPolicy.policy }, null, 4);
+    } catch (err) {
+      console.error(err);
+    }
+
+    if (!policyString) {
+      return null;
+    }
+
+    return (
+      <Fragment>
+        <EuiText size="xs" grow={false}>
+          <p><strong>Preview</strong></p>
+        </EuiText>
+        <EuiSpacer size="s" />
+        <EuiCodeBlock language="json" fontSize="m" style={{ height: "200px" }}>
+          {policyString}
+        </EuiCodeBlock>
+        <EuiSpacer size="m" />
+      </Fragment>
+    );
+  };
+
   render() {
     const { policyOptions, selectedPolicy, selectedPolicyError, isLoading, hasSubmitted } = this.state;
     const { onClose } = this.props;
@@ -241,15 +288,22 @@ export default class AddPolicyModal extends Component<AddPolicyModalProps, AddPo
             // @ts-ignore */}
         <EuiModal onCancel={onClose} onClose={onClose}>
           <EuiModalHeader>
-            <EuiModalHeaderTitle>Add policy</EuiModalHeaderTitle>
+            <EuiModalHeaderTitle>Apply policy</EuiModalHeaderTitle>
           </EuiModalHeader>
 
           <EuiModalBody>
+            <EuiText size="xs" grow={false}>
+              <p>
+                Choose the policy you want to use for the selected indices.
+                A copy of the policy will be created and applied to the indices.
+              </p>
+            </EuiText>
+            <EuiSpacer size="m" />
             <EuiFormRow
-              label="Policy"
-              helpText="Select the policy you want to add to the indices"
+              label="Policy ID"
               isInvalid={hasSubmitted && !!selectedPolicyError}
               error={selectedPolicyError}
+              fullWidth
             >
               <EuiComboBox
                 placeholder="Search policies"
@@ -261,18 +315,20 @@ export default class AddPolicyModal extends Component<AddPolicyModalProps, AddPo
                 isInvalid={hasSubmitted && !!selectedPolicyError}
                 onChange={this.onChangeSelectedPolicy}
                 onSearchChange={this.onPolicySearchChange}
+                fullWidth
               />
             </EuiFormRow>
+            {this.renderPreview()}
             {this.renderRollover()}
           </EuiModalBody>
 
           <EuiModalFooter>
-            <EuiButtonEmpty onClick={onClose} data-test-subj="addPolicyModalCloseButton">
-              Close
+            <EuiButtonEmpty onClick={onClose} data-test-subj="applyPolicyModalCloseButton">
+              Cancel
             </EuiButtonEmpty>
 
-            <EuiButton onClick={this.onSubmit} fill data-test-subj="addPolicyModalEditButton">
-              Add
+            <EuiButton onClick={this.onSubmit} fill data-test-subj="applyPolicyModalEditButton">
+              Apply
             </EuiButton>
           </EuiModalFooter>
         </EuiModal>
