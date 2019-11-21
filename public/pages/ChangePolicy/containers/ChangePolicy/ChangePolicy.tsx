@@ -14,7 +14,7 @@
  */
 
 import React, { Component } from "react";
-import { RouteComponentProps } from "react-router";
+import { RouteComponentProps } from "react-router-dom";
 import { EuiSpacer, EuiTitle, EuiButton, EuiFlexGroup, EuiFlexItem } from "@elastic/eui";
 import chrome from "ui/chrome";
 import { IndexService, ManagedIndexService } from "../../../../services";

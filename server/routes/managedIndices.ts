@@ -17,7 +17,7 @@ import { Legacy } from "kibana";
 import { NodeServices } from "../models/interfaces";
 import { NODE_API, REQUEST } from "../../utils/constants";
 
-import Server = Legacy.Server;
+type Server = Legacy.Server;
 
 export default function(server: Server, services: NodeServices) {
   const { managedIndexService } = services;

@@ -57,31 +57,35 @@ exports[`<InfoModal /> spec renders the component 1`] = `
           class="euiModalBody"
         >
           <div
-            class="euiCodeBlock euiCodeBlock--fontMedium euiCodeBlock--paddingLarge"
+            class="euiModalBody__overflow"
           >
-            <pre
-              class="euiCodeBlock__pre"
+            <div
+              class="euiCodeBlock euiCodeBlock--fontMedium euiCodeBlock--paddingLarge"
             >
-              <code
-                class="euiCodeBlock__code json hljs"
+              <pre
+                class="euiCodeBlock__pre"
               >
-                {
+                <code
+                  class="euiCodeBlock__code json hljs"
+                >
+                  {
     
-                <span
-                  class="hljs-attr"
-                >
-                  "message"
-                </span>
-                : 
-                <span
-                  class="hljs-string"
-                >
-                  "some info"
-                </span>
-                
+                  <span
+                    class="hljs-attr"
+                  >
+                    "message"
+                  </span>
+                  : 
+                  <span
+                    class="hljs-string"
+                  >
+                    "some info"
+                  </span>
+                  
 }
-              </code>
-            </pre>
+                </code>
+              </pre>
+            </div>
           </div>
         </div>
         <div

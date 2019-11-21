@@ -16,7 +16,7 @@
 import React, { Component } from "react";
 import { toastNotifications } from "ui/notify";
 import chrome from "ui/chrome";
-import { RouteComponentProps } from "react-router";
+import { RouteComponentProps } from "react-router-dom";
 import {
   // @ts-ignore
   EuiBasicTable,

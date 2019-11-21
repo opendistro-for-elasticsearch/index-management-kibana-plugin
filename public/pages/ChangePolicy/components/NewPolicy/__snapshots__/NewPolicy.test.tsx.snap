@@ -64,13 +64,15 @@ exports[`<NewPolicy /> spec renders the component 1`] = `
         class="euiFormRow"
         id="some_make_id-row"
       >
-        <label
-          aria-invalid="false"
-          class="euiFormLabel"
-          for="some_make_id"
-        >
-          New policy
-        </label>
+        <div>
+          <label
+            aria-invalid="false"
+            class="euiFormLabel"
+            for="some_make_id"
+          >
+            New policy
+          </label>
+        </div>
         <div
           aria-expanded="false"
           aria-haspopup="listbox"
@@ -111,6 +113,7 @@ exports[`<NewPolicy /> spec renders the component 1`] = `
                   aria-label="Open list of options"
                   class="euiFormControlLayoutCustomIcon euiFormControlLayoutCustomIcon--clickable"
                   data-test-subj="comboBoxToggleListButton"
+                  type="button"
                 >
                   <svg
                     aria-hidden="true"

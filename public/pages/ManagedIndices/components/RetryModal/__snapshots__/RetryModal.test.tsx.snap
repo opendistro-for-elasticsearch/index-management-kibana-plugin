@@ -55,120 +55,126 @@ exports[`<RetryModal /> spec renders the component 1`] = `
         <div
           class="euiModalBody"
         >
-          <div>
-            <div
-              class="euiRadio euiRadioGroup__item"
-            >
-              <input
-                checked=""
-                class="euiRadio__input"
-                id="current"
-                type="radio"
-                value=""
-              />
-              <div
-                class="euiRadio__circle"
-              />
-              <label
-                class="euiRadio__label"
-                for="current"
-              >
-                Retry policy from current action
-              </label>
-            </div>
-            <div
-              class="euiRadio euiRadioGroup__item"
-            >
-              <input
-                class="euiRadio__input"
-                id="state"
-                type="radio"
-                value=""
-              />
-              <div
-                class="euiRadio__circle"
-              />
-              <label
-                class="euiRadio__label"
-                for="state"
-              >
-                Retry policy from selected state
-              </label>
-            </div>
-          </div>
           <div
-            class="euiSpacer euiSpacer--s"
-          />
-          <div
-            class="euiFormRow"
-            id="some_make_id-row"
+            class="euiModalBody__overflow"
           >
-            <label
-              class="euiFormLabel"
-              for="some_make_id"
-            >
-              Start state
-            </label>
-            <div
-              class="euiFormControlLayout"
-            >
+            <div>
               <div
-                class="euiFormControlLayout__childrenWrapper"
+                class="euiRadio euiRadioGroup__item"
               >
-                <select
-                  aria-describedby="some_make_id-help"
-                  aria-label="Retry failed policy from"
-                  class="euiSelect"
-                  disabled=""
-                  id="some_make_id"
-                >
-                  <option
-                    value="one"
-                  >
-                    one
-                  </option>
-                  <option
-                    value="two"
-                  >
-                    two
-                  </option>
-                </select>
+                <input
+                  checked=""
+                  class="euiRadio__input"
+                  id="current"
+                  type="radio"
+                  value=""
+                />
                 <div
-                  class="euiFormControlLayoutIcons euiFormControlLayoutIcons--right"
+                  class="euiRadio__circle"
+                />
+                <label
+                  class="euiRadio__label"
+                  for="current"
                 >
-                  <span
-                    class="euiFormControlLayoutCustomIcon"
-                  >
-                    <svg
-                      aria-hidden="true"
-                      class="euiIcon euiIcon--medium euiFormControlLayoutCustomIcon__icon"
-                      focusable="false"
-                      height="16"
-                      viewBox="0 0 16 16"
-                      width="16"
-                      xmlns="http://www.w3.org/2000/svg"
-                      xmlns:xlink="http://www.w3.org/1999/xlink"
-                    >
-                      <defs>
-                        <path
-                          d="M13.069 5.157L8.384 9.768a.546.546 0 0 1-.768 0L2.93 5.158a.552.552 0 0 0-.771 0 .53.53 0 0 0 0 .759l4.684 4.61c.641.631 1.672.63 2.312 0l4.684-4.61a.53.53 0 0 0 0-.76.552.552 0 0 0-.771 0z"
-                          id="arrow_down-a"
-                        />
-                      </defs>
-                      <use
-                        fill-rule="nonzero"
-                        xlink:href="#arrow_down-a"
-                      />
-                    </svg>
-                  </span>
-                </div>
+                  Retry policy from current action
+                </label>
+              </div>
+              <div
+                class="euiRadio euiRadioGroup__item"
+              >
+                <input
+                  class="euiRadio__input"
+                  id="state"
+                  type="radio"
+                  value=""
+                />
+                <div
+                  class="euiRadio__circle"
+                />
+                <label
+                  class="euiRadio__label"
+                  for="state"
+                >
+                  Retry policy from selected state
+                </label>
               </div>
             </div>
             <div
-              class="euiFormHelpText euiFormRow__text"
-              id="some_make_id-help"
+              class="euiSpacer euiSpacer--s"
+            />
+            <div
+              class="euiFormRow"
+              id="some_make_id-row"
             >
-              Only common states shared across all selected indices are available
+              <div>
+                <label
+                  class="euiFormLabel"
+                  for="some_make_id"
+                >
+                  Start state
+                </label>
+              </div>
+              <div
+                class="euiFormControlLayout"
+              >
+                <div
+                  class="euiFormControlLayout__childrenWrapper"
+                >
+                  <select
+                    aria-describedby="some_make_id-help"
+                    aria-label="Retry failed policy from"
+                    class="euiSelect"
+                    disabled=""
+                    id="some_make_id"
+                  >
+                    <option
+                      value="one"
+                    >
+                      one
+                    </option>
+                    <option
+                      value="two"
+                    >
+                      two
+                    </option>
+                  </select>
+                  <div
+                    class="euiFormControlLayoutIcons euiFormControlLayoutIcons--right"
+                  >
+                    <span
+                      class="euiFormControlLayoutCustomIcon"
+                    >
+                      <svg
+                        aria-hidden="true"
+                        class="euiIcon euiIcon--medium euiFormControlLayoutCustomIcon__icon"
+                        focusable="false"
+                        height="16"
+                        viewBox="0 0 16 16"
+                        width="16"
+                        xmlns="http://www.w3.org/2000/svg"
+                        xmlns:xlink="http://www.w3.org/1999/xlink"
+                      >
+                        <defs>
+                          <path
+                            d="M13.069 5.157L8.384 9.768a.546.546 0 0 1-.768 0L2.93 5.158a.552.552 0 0 0-.771 0 .53.53 0 0 0 0 .759l4.684 4.61c.641.631 1.672.63 2.312 0l4.684-4.61a.53.53 0 0 0 0-.76.552.552 0 0 0-.771 0z"
+                            id="arrow_down-a"
+                          />
+                        </defs>
+                        <use
+                          fill-rule="nonzero"
+                          xlink:href="#arrow_down-a"
+                        />
+                      </svg>
+                    </span>
+                  </div>
+                </div>
+              </div>
+              <div
+                class="euiFormHelpText euiFormRow__text"
+                id="some_make_id-help"
+              >
+                Only common states shared across all selected indices are available
+              </div>
             </div>
           </div>
         </div>

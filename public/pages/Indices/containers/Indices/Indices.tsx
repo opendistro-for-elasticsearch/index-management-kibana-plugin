@@ -17,7 +17,7 @@ import React, { Component } from "react";
 import chrome from "ui/chrome";
 import { toastNotifications } from "ui/notify";
 import _ from "lodash";
-import { RouteComponentProps } from "react-router";
+import { RouteComponentProps } from "react-router-dom";
 import queryString from "query-string";
 // @ts-ignore
 import { EuiBasicTable, EuiHorizontalRule } from "@elastic/eui";

@@ -17,7 +17,7 @@ import React from "react";
 import { render, wait, fireEvent } from "@testing-library/react";
 import CreatePolicy from "./CreatePolicy";
 import { ServicesConsumer, ServicesContext } from "../../../../services";
-import { MemoryRouter as Router, Redirect, Route, RouteComponentProps, Switch } from "react-router";
+import { MemoryRouter as Router, Redirect, Route, RouteComponentProps, Switch } from "react-router-dom";
 import { browserServicesMock } from "../../../../../test/mocks";
 import { BrowserServices } from "../../../../models/interfaces";
 import { ModalProvider, ModalRoot } from "../../../../components/Modal";

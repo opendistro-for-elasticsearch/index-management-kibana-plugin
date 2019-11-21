@@ -15,7 +15,7 @@
 
 import React, { Component } from "react";
 import chrome from "ui/chrome";
-import { RouteComponentProps } from "react-router";
+import { RouteComponentProps } from "react-router-dom";
 import { toastNotifications } from "ui/notify";
 import queryString from "query-string";
 // @ts-ignore

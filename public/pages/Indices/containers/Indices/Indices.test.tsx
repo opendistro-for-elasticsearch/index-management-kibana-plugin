@@ -18,7 +18,7 @@ import "@testing-library/jest-dom/extend-expect";
 import { render, fireEvent, wait } from "@testing-library/react";
 // @ts-ignore
 import userEvent from "@testing-library/user-event";
-import { Redirect, Route, Switch } from "react-router";
+import { Redirect, Route, Switch } from "react-router-dom";
 import { HashRouter as Router } from "react-router-dom";
 import { toastNotifications } from "ui/notify";
 import chrome from "ui/chrome";

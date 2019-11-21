@@ -57,39 +57,43 @@ exports[`<PolicyModal /> spec renders the component 1`] = `
           class="euiModalBody"
         >
           <div
-            class="euiCodeBlock euiCodeBlock--fontMedium euiCodeBlock--paddingLarge"
+            class="euiModalBody__overflow"
           >
-            <pre
-              class="euiCodeBlock__pre"
+            <div
+              class="euiCodeBlock euiCodeBlock--fontMedium euiCodeBlock--paddingLarge"
             >
-              <code
-                class="euiCodeBlock__code json hljs"
+              <pre
+                class="euiCodeBlock__pre"
               >
-                {
+                <code
+                  class="euiCodeBlock__code json hljs"
+                >
+                  {
     
-                <span
-                  class="hljs-attr"
-                >
-                  "policy"
-                </span>
-                : {
+                  <span
+                    class="hljs-attr"
+                  >
+                    "policy"
+                  </span>
+                  : {
         
-                <span
-                  class="hljs-attr"
-                >
-                  "name"
-                </span>
-                : 
-                <span
-                  class="hljs-string"
-                >
-                  "policy"
-                </span>
-                
+                  <span
+                    class="hljs-attr"
+                  >
+                    "name"
+                  </span>
+                  : 
+                  <span
+                    class="hljs-string"
+                  >
+                    "policy"
+                  </span>
+                  
     }
 }
-              </code>
-            </pre>
+                </code>
+              </pre>
+            </div>
           </div>
         </div>
         <div

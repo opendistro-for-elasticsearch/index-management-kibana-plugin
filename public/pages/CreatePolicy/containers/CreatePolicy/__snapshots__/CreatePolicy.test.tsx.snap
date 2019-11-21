@@ -54,13 +54,15 @@ exports[`<CreatePolicy /> spec renders the create component 1`] = `
           class="euiFormRow"
           id="some_make_id-row"
         >
-          <label
-            aria-invalid="false"
-            class="euiFormLabel"
-            for="some_make_id"
-          >
-            Policy ID
-          </label>
+          <div>
+            <label
+              aria-invalid="false"
+              class="euiFormLabel"
+              for="some_make_id"
+            >
+              Policy ID
+            </label>
+          </div>
           <div
             class="euiFormControlLayout"
           >
@@ -422,13 +424,15 @@ exports[`<CreatePolicy /> spec renders the edit component 1`] = `
           class="euiFormRow"
           id="some_make_id-row"
         >
-          <label
-            aria-invalid="false"
-            class="euiFormLabel"
-            for="some_make_id"
-          >
-            Policy ID
-          </label>
+          <div>
+            <label
+              aria-invalid="false"
+              class="euiFormLabel"
+              for="some_make_id"
+            >
+              Policy ID
+            </label>
+          </div>
           <div
             class="euiFormControlLayout"
           >

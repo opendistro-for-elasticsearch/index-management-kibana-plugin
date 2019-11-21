@@ -28,9 +28,9 @@ import { getMustQuery } from "../utils/helpers";
 import { PoliciesSort, ServerResponse } from "../models/types";
 import { DocumentPolicy, Policy } from "../../models/interfaces";
 
-import Request = Legacy.Request;
-import ElasticsearchPlugin = Legacy.Plugins.elasticsearch.Plugin;
-import ResponseToolkit = Legacy.ResponseToolkit;
+type Request = Legacy.Request;
+type ElasticsearchPlugin = Legacy.Plugins.elasticsearch.Plugin;
+type ResponseToolkit = Legacy.ResponseToolkit;
 
 export default class PolicyService {
   esDriver: ElasticsearchPlugin;

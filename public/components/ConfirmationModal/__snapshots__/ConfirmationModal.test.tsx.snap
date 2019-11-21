@@ -56,7 +56,11 @@ exports[`<ConfirmationModal /> spec renders the component 1`] = `
         <div
           class="euiModalBody"
         >
-          some body message
+          <div
+            class="euiModalBody__overflow"
+          >
+            some body message
+          </div>
         </div>
         <div
           class="euiModalFooter"
