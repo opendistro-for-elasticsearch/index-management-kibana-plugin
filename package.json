@@ -39,7 +39,6 @@
     "eslint-utils": "^1.4.2"
   },
   "dependencies": {
-    "@elastic/eui": "7.3.0",
     "query-string": "^6.8.1"
   },
   "devDependencies": {

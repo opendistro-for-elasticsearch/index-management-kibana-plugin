@@ -31,9 +31,9 @@ import {
 } from "../models/interfaces";
 import { ManagedIndicesSort, ServerResponse } from "../models/types";
 
-import Request = Legacy.Request;
-import ElasticsearchPlugin = Legacy.Plugins.elasticsearch.Plugin;
-import ResponseToolkit = Legacy.ResponseToolkit;
+type Request = Legacy.Request;
+type ElasticsearchPlugin = Legacy.Plugins.elasticsearch.Plugin;
+type ResponseToolkit = Legacy.ResponseToolkit;
 
 export default class ManagedIndexService {
   esDriver: ElasticsearchPlugin;

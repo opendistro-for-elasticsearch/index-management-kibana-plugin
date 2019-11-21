@@ -19,9 +19,10 @@ import { CLUSTER, INDEX, Setting } from "../utils/constants";
 import { AcknowledgedResponse, ApplyPolicyResponse, AddResponse, CatIndex, GetIndicesResponse, SearchResponse } from "../models/interfaces";
 import { ServerResponse } from "../models/types";
 
-import Request = Legacy.Request;
-import ElasticsearchPlugin = Legacy.Plugins.elasticsearch.Plugin;
-import ResponseToolkit = Legacy.ResponseToolkit;
+// import Request = Legacy.Request;
+type Request = Legacy.Request;
+type ElasticsearchPlugin = Legacy.Plugins.elasticsearch.Plugin;
+type ResponseToolkit = Legacy.ResponseToolkit;
 
 export default class IndexService {
   esDriver: ElasticsearchPlugin;

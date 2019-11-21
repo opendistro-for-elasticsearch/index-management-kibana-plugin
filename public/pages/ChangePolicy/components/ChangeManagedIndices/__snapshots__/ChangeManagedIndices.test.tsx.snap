@@ -35,13 +35,15 @@ exports[`<ChangeManagedIndices /> spec renders the component 1`] = `
         class="euiFormRow"
         id="some_make_id-row"
       >
-        <label
-          aria-invalid="false"
-          class="euiFormLabel"
-          for="some_make_id"
-        >
-          Managed indices
-        </label>
+        <div>
+          <label
+            aria-invalid="false"
+            class="euiFormLabel"
+            for="some_make_id"
+          >
+            Managed indices
+          </label>
+        </div>
         <div
           aria-describedby="some_make_id-help"
           aria-expanded="false"
@@ -83,6 +85,7 @@ exports[`<ChangeManagedIndices /> spec renders the component 1`] = `
                   aria-label="Open list of options"
                   class="euiFormControlLayoutCustomIcon euiFormControlLayoutCustomIcon--clickable"
                   data-test-subj="comboBoxToggleListButton"
+                  type="button"
                 >
                   <svg
                     aria-hidden="true"
@@ -121,12 +124,14 @@ exports[`<ChangeManagedIndices /> spec renders the component 1`] = `
         class="euiFormRow"
         id="some_make_id-row"
       >
-        <label
-          class="euiFormLabel"
-          for="some_make_id"
-        >
-          State filters
-        </label>
+        <div>
+          <label
+            class="euiFormLabel"
+            for="some_make_id"
+          >
+            State filters
+          </label>
+        </div>
         <div
           aria-describedby="some_make_id-help"
           aria-expanded="false"
@@ -175,6 +180,7 @@ exports[`<ChangeManagedIndices /> spec renders the component 1`] = `
                   class="euiFormControlLayoutCustomIcon euiFormControlLayoutCustomIcon--clickable"
                   data-test-subj="comboBoxToggleListButton"
                   disabled=""
+                  type="button"
                 >
                   <svg
                     aria-hidden="true"
