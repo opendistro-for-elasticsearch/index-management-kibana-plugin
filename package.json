@@ -39,8 +39,8 @@
     "eslint-utils": "^1.4.2"
   },
   "dependencies": {
-    "query-string": "^6.8.1",
-    "@elastic/eui": "10.4.2"
+    "@elastic/eui": "10.4.2",
+    "query-string": "^6.8.1"
   },
   "devDependencies": {
     "@babel/preset-typescript": "^7.3.3",
