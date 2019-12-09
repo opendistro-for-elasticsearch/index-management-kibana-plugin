@@ -31,7 +31,7 @@ Ultimately, your directory structure should look like this:
 
 ## Build
 
-To build the plugin's distributable zip simply run `NODE_PATH=../../kibana/node_modules yarn build`.
+To build the plugin's distributable zip simply run `yarn build`.
 
 Example output: `./build/opendistro_index_management_kibana-1.3.0.0.zip`
 
