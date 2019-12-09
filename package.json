@@ -43,6 +43,10 @@
     "query-string": "^6.8.1"
   },
   "devDependencies": {
+    "@babel/plugin-proposal-class-properties": "^7.7.4",
+    "@babel/plugin-proposal-object-rest-spread": "^7.7.4",
+    "@babel/preset-env": "^7.7.6",
+    "@babel/preset-react": "^7.7.4",
     "@babel/preset-typescript": "^7.3.3",
     "@elastic/elasticsearch": "^7.2.0",
     "@elastic/eslint-config-kibana": "link:../../kibana/packages/eslint-config-kibana",
