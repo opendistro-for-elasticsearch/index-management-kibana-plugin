@@ -1,4 +1,10 @@
-## Version 1.3.0.0
+## Version 1.3.0.1 (Current)
+
+### Bug fixes
+
+* Fixes broken artifact build - [#69](https://github.com/opendistro-for-elasticsearch/index-management-kibana-plugin/pull/69)
+
+## 2019-11-21, Version 1.3.0.0
 
 ### New Features
 
