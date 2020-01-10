@@ -29,6 +29,7 @@ exports[`<ManagedIndexEmptyPrompt /> spec renders the component 1`] = `
   <a
     class="euiButton euiButton--primary euiButton--fill"
     href="opendistro_index_management_kibana#/create-policy"
+    rel="noreferrer"
   >
     <span
       class="euiButton__content"

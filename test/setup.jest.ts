@@ -13,6 +13,7 @@
  * permissions and limitations under the License.
  */
 
+import React from "react";
 import "@testing-library/react/cleanup-after-each";
 import "@testing-library/jest-dom/extend-expect";
 import { configure } from "@testing-library/react";
@@ -57,4 +58,14 @@ jest.mock("ui/chrome", () => ({
     breadcrumbs.push = jest.fn();
     return breadcrumbs;
   })(),
+}));
+
+// https://github.com/elastic/eui/issues/2530
+jest.mock("@elastic/eui/lib/components/icon", () => ({
+  EuiIcon: () => "EuiIconMock",
+  __esModule: true,
+  IconPropType: require("@elastic/eui/lib/components/icon/icon").IconPropType,
+  ICON_TYPES: require("@elastic/eui/lib/components/icon/icon").TYPES,
+  ICON_SIZES: require("@elastic/eui/lib/components/icon/icon").SIZES,
+  ICON_COLORS: require("@elastic/eui/lib/components/icon/icon").COLORS,
 }));

@@ -39,7 +39,6 @@
     "eslint-utils": "^1.4.2"
   },
   "dependencies": {
-    "@elastic/eui": "10.4.2",
     "core-js": "^3.4.8",
     "query-string": "^6.8.1",
     "regenerator-runtime": "^0.13.3"

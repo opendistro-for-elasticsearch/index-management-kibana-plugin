@@ -23,6 +23,7 @@ exports[`<ManagedIndices /> spec renders the component 1`] = `
         class="euiButton euiButton--primary"
         data-test-subj="changePolicyButton"
         href="opendistro_index_management_kibana#/change-policy"
+        rel="noreferrer"
       >
         <span
           class="euiButton__content"
@@ -164,26 +165,7 @@ exports[`<ManagedIndices /> spec renders the component 1`] = `
                 <span
                   class="euiFormControlLayoutCustomIcon"
                 >
-                  <svg
-                    aria-hidden="true"
-                    class="euiIcon euiIcon--medium euiFormControlLayoutCustomIcon__icon"
-                    focusable="false"
-                    height="16"
-                    viewBox="0 0 16 16"
-                    width="16"
-                    xmlns="http://www.w3.org/2000/svg"
-                    xmlns:xlink="http://www.w3.org/1999/xlink"
-                  >
-                    <defs>
-                      <path
-                        d="M11.271 11.978l3.872 3.873a.502.502 0 0 0 .708 0 .502.502 0 0 0 0-.708l-3.565-3.564c2.38-2.747 2.267-6.923-.342-9.532-2.73-2.73-7.17-2.73-9.898 0-2.728 2.729-2.728 7.17 0 9.9a6.955 6.955 0 0 0 4.949 2.05.5.5 0 0 0 0-1 5.96 5.96 0 0 1-4.242-1.757 6.01 6.01 0 0 1 0-8.486c2.337-2.34 6.143-2.34 8.484 0a6.01 6.01 0 0 1 0 8.486.5.5 0 0 0 .034.738z"
-                        id="search-a"
-                      />
-                    </defs>
-                    <use
-                      xlink:href="#search-a"
-                    />
-                  </svg>
+                  EuiIconMock
                 </span>
               </div>
             </div>
@@ -218,43 +200,11 @@ exports[`<ManagedIndices /> spec renders the component 1`] = `
                       <span
                         class="euiButtonEmpty__content"
                       >
-                        <svg
-                          aria-hidden="true"
-                          class="euiIcon euiIcon--medium euiButtonEmpty__icon"
-                          focusable="false"
-                          height="16"
-                          viewBox="0 0 16 16"
-                          width="16"
-                          xmlns="http://www.w3.org/2000/svg"
-                          xmlns:xlink="http://www.w3.org/1999/xlink"
-                        >
-                          <defs>
-                            <path
-                              d="M13.069 5.157L8.384 9.768a.546.546 0 0 1-.768 0L2.93 5.158a.552.552 0 0 0-.771 0 .53.53 0 0 0 0 .759l4.684 4.61c.641.631 1.672.63 2.312 0l4.684-4.61a.53.53 0 0 0 0-.76.552.552 0 0 0-.771 0z"
-                              id="arrow_down-a"
-                            />
-                          </defs>
-                          <use
-                            fill-rule="nonzero"
-                            xlink:href="#arrow_down-a"
-                          />
-                        </svg>
+                        EuiIconMock
                         <span
                           class="euiButtonEmpty__text euiQuickSelectPopover__buttonText"
                         >
-                          <svg
-                            class="euiIcon euiIcon--medium"
-                            focusable="false"
-                            height="16"
-                            viewBox="0 0 16 16"
-                            width="16"
-                            xmlns="http://www.w3.org/2000/svg"
-                          >
-                            <path
-                              d="M7.5 13A5.506 5.506 0 0 1 2 7.5C2 4.467 4.467 2 7.5 2S13 4.467 13 7.5 10.533 13 7.5 13m0-12a6.5 6.5 0 1 0 0 13 6.5 6.5 0 0 0 0-13m3 6H8V3.5a.5.5 0 0 0-1 0v4a.5.5 0 0 0 .5.5h3a.5.5 0 0 0 0-1"
-                              fill-rule="evenodd"
-                            />
-                          </svg>
+                          EuiIconMock
                         </span>
                       </span>
                     </button>
@@ -335,27 +285,7 @@ exports[`<ManagedIndices /> spec renders the component 1`] = `
                         <span
                           class="euiButtonEmpty__content"
                         >
-                          <svg
-                            aria-hidden="true"
-                            class="euiIcon euiIcon--medium euiButtonEmpty__icon"
-                            focusable="false"
-                            height="16"
-                            viewBox="0 0 16 16"
-                            width="16"
-                            xmlns="http://www.w3.org/2000/svg"
-                            xmlns:xlink="http://www.w3.org/1999/xlink"
-                          >
-                            <defs>
-                              <path
-                                d="M13.069 5.157L8.384 9.768a.546.546 0 0 1-.768 0L2.93 5.158a.552.552 0 0 0-.771 0 .53.53 0 0 0 0 .759l4.684 4.61c.641.631 1.672.63 2.312 0l4.684-4.61a.53.53 0 0 0 0-.76.552.552 0 0 0-.771 0z"
-                                id="arrow_down-a"
-                              />
-                            </defs>
-                            <use
-                              fill-rule="nonzero"
-                              xlink:href="#arrow_down-a"
-                            />
-                          </svg>
+                          EuiIconMock
                           <span
                             class="euiButtonEmpty__text"
                           >
@@ -377,9 +307,7 @@ exports[`<ManagedIndices /> spec renders the component 1`] = `
               aria-relevant="text"
               class="euiScreenReaderOnly"
               role="status"
-            >
-              Below is a table of 0 items.
-            </caption>
+            />
             <thead>
               <tr>
                 <th
@@ -408,7 +336,7 @@ exports[`<ManagedIndices /> spec renders the component 1`] = `
                   </div>
                 </th>
                 <th
-                  aria-live="true"
+                  aria-live="polite"
                   aria-sort="none"
                   class="euiTableHeaderCell"
                   data-test-subj="tableHeaderCell_index_0"
@@ -438,7 +366,7 @@ exports[`<ManagedIndices /> spec renders the component 1`] = `
                   </button>
                 </th>
                 <th
-                  aria-live="true"
+                  aria-live="polite"
                   aria-sort="none"
                   class="euiTableHeaderCell"
                   data-test-subj="tableHeaderCell_policyId_1"
@@ -602,27 +530,7 @@ exports[`<ManagedIndices /> spec renders the component 1`] = `
                     <span
                       class="euiButtonEmpty__content"
                     >
-                      <svg
-                        aria-hidden="true"
-                        class="euiIcon euiIcon--medium euiButtonEmpty__icon"
-                        focusable="false"
-                        height="16"
-                        viewBox="0 0 16 16"
-                        width="16"
-                        xmlns="http://www.w3.org/2000/svg"
-                        xmlns:xlink="http://www.w3.org/1999/xlink"
-                      >
-                        <defs>
-                          <path
-                            d="M13.069 5.157L8.384 9.768a.546.546 0 0 1-.768 0L2.93 5.158a.552.552 0 0 0-.771 0 .53.53 0 0 0 0 .759l4.684 4.61c.641.631 1.672.63 2.312 0l4.684-4.61a.53.53 0 0 0 0-.76.552.552 0 0 0-.771 0z"
-                            id="arrow_down-a"
-                          />
-                        </defs>
-                        <use
-                          fill-rule="nonzero"
-                          xlink:href="#arrow_down-a"
-                        />
-                      </svg>
+                      EuiIconMock
                       <span
                         class="euiButtonEmpty__text"
                       >
