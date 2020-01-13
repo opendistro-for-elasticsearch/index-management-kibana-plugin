@@ -21,7 +21,7 @@ module.exports = {
   coverageDirectory: "./coverage",
   moduleNameMapper: {
     "\\.(css|less|scss)$": "<rootDir>/test/mocks/styleMock.ts",
-    "^ui/(.*)": "<rootDir>/../../kibana/src/legacy/ui/public/$1/",
+    "^ui/(.*)": "<rootDir>/../../src/legacy/ui/public/$1/",
   },
   coverageReporters: ["lcov", "text", "cobertura"],
   testMatch: ["**/*.test.js", "**/*.test.jsx", "**/*.test.ts", "**/*.test.tsx"],

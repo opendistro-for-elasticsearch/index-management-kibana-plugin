@@ -31,29 +31,13 @@ exports[`<DefinePolicy /> spec renders the component 1`] = `
             class="euiToolTipAnchor"
           >
             <button
-              aria-describedby="some_make_id"
               class="euiButton euiButton--primary"
               type="button"
             >
               <span
                 class="euiButton__content"
               >
-                <svg
-                  aria-hidden="true"
-                  class="euiIcon euiIcon--medium euiButton__icon"
-                  focusable="false"
-                  height="16"
-                  viewBox="0 0 16 16"
-                  width="16"
-                  xmlns="http://www.w3.org/2000/svg"
-                >
-                  <path
-                    d="M0 2.729V2a1 1 0 0 1 1-1h2v1H1v12h4v1H1a1 1 0 0 1-1-1V2.729zM12 5V2a1 1 0 0 0-1-1H9v1h2v3h1zm-1 1h2v9H6V6h5V5H6a1 1 0 0 0-1 1v9a1 1 0 0 0 1 1h7a1 1 0 0 0 1-1V6a1 1 0 0 0-1-1h-2v1z"
-                  />
-                  <path
-                    d="M7 10h5V9H7zM7 8h5V7H7zM7 12h5v-1H7zM7 14h5v-1H7zM9 2V1a1 1 0 0 0-1-1H4a1 1 0 0 0-1 1v1h1V1h4v1h1zM3 3h6V2H3z"
-                  />
-                </svg>
+                EuiIconMock
                 <span
                   class="euiButton__text"
                 >
@@ -73,26 +57,7 @@ exports[`<DefinePolicy /> spec renders the component 1`] = `
             <span
               class="euiButton__content"
             >
-              <svg
-                aria-hidden="true"
-                class="euiIcon euiIcon--medium euiButton__icon"
-                focusable="false"
-                height="16"
-                viewBox="0 0 16 16"
-                width="16"
-                xmlns="http://www.w3.org/2000/svg"
-                xmlns:xlink="http://www.w3.org/1999/xlink"
-              >
-                <defs>
-                  <path
-                    d="M2 4V3h6v1H2zm0 3V6h10v1H2zm0 3V9h6v1H2zm0 3v-1h10v1H2z"
-                    id="editor_align_left-a"
-                  />
-                </defs>
-                <use
-                  xlink:href="#editor_align_left-a"
-                />
-              </svg>
+              EuiIconMock
               <span
                 class="euiButton__text"
               >
@@ -126,19 +91,7 @@ exports[`<DefinePolicy /> spec renders the component 1`] = `
             target="_blank"
           >
             Learn more 
-            <svg
-              class="euiIcon euiIcon--small"
-              focusable="false"
-              height="16"
-              viewBox="0 0 16 16"
-              width="16"
-              xmlns="http://www.w3.org/2000/svg"
-            >
-              <path
-                d="M2 14.01h12.49a.5.5 0 1 1 0 1h-13a.5.5 0 0 1-.49-.597V1.5a.5.5 0 0 1 1 0v12.51zm2.354-1.656a.5.5 0 0 1-.708-.708l8-8a.5.5 0 0 1 .708.708l-8 8zM15 5.5a.5.5 0 1 1-1 0v-3a.5.5 0 0 0-.5-.5h-3a.5.5 0 1 1 0-1h3A1.5 1.5 0 0 1 15 2.5v3z"
-                fill-rule="evenodd"
-              />
-            </svg>
+            EuiIconMock
           </a>
         </p>
       </div>

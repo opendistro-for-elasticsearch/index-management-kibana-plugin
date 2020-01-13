@@ -154,7 +154,7 @@ describe("<Indices /> spec", () => {
      *   TypeError: Cannot read property 'position' of null
      *   at Object.updatePosition (node_modules/@elastic/eui/lib/components/combo_box/combo_box.js:123:43)
      *   at node_modules/@elastic/eui/lib/components/combo_box/combo_box_options_list/combo_box_options_list.js:106:21
-     *   at Timeout.callback [as _onTimeout] (../../kibana/node_modules/jsdom/lib/jsdom/browser/Window.js:592:19)
+     *   at Timeout.callback [as _onTimeout] (../../node_modules/jsdom/lib/jsdom/browser/Window.js:592:19)
      * */
 
     // userEvent.click(getByTestId("comboBoxToggleListButton"));
