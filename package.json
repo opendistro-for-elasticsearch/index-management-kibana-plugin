@@ -1,6 +1,6 @@
 {
   "name": "opendistro_index_management_kibana",
-  "version": "1.3.0.0",
+  "version": "1.4.0.0",
   "description": "Kibana plugin for Index Management",
   "main": "index.js",
   "license": "Apache-2.0",
