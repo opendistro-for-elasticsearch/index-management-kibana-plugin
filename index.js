@@ -15,8 +15,6 @@
 
 import { resolve } from "path";
 import { existsSync } from "fs";
-import "core-js/stable";
-import "regenerator-runtime/runtime";
 
 import { createISMCluster } from "./server/clusters";
 import { PolicyService, ManagedIndexService, IndexService } from "./server/services";

@@ -39,13 +39,13 @@
     "eslint-utils": "^1.4.2"
   },
   "dependencies": {
-    "core-js": "^3.4.8",
-    "query-string": "^6.8.1",
-    "regenerator-runtime": "^0.13.3"
+    "@babel/runtime": "^7.8.4",
+    "query-string": "^6.8.1"
   },
   "devDependencies": {
     "@babel/plugin-proposal-class-properties": "^7.7.4",
     "@babel/plugin-proposal-object-rest-spread": "^7.7.4",
+    "@babel/plugin-transform-runtime": "^7.8.3",
     "@babel/preset-env": "^7.7.6",
     "@babel/preset-react": "^7.7.4",
     "@babel/preset-typescript": "^7.3.3",
