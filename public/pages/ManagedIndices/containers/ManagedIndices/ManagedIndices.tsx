@@ -110,7 +110,7 @@ export default class ManagedIndices extends Component<ManagedIndicesProps, Manag
         truncateText: false,
         width: "150px",
         // @ts-ignore
-        render: (state: string) => _.defaultTo(state, DEFAULT_EMPTY_DATA),
+        render: (state: string) => state || DEFAULT_EMPTY_DATA,
       },
       {
         field: "managedIndexMetaData.action.name",
@@ -119,7 +119,7 @@ export default class ManagedIndices extends Component<ManagedIndicesProps, Manag
         truncateText: false,
         width: "150px",
         // @ts-ignore
-        render: (action: string) => _.defaultTo(ACTIONS[action], DEFAULT_EMPTY_DATA),
+        render: (action: string) => ACTIONS[action] || DEFAULT_EMPTY_DATA,
       },
       {
         field: "managedIndexMetaData.info",
@@ -309,13 +309,11 @@ export default class ManagedIndices extends Component<ManagedIndicesProps, Manag
 
     const isRetryDisabled =
       !selectedItems.length ||
-      selectedItems.some(
-        (item): boolean => {
-          if (!item.managedIndexMetaData) return true;
-          const { retryInfo, action } = item.managedIndexMetaData;
-          return !(retryInfo && retryInfo.failed) && !(action && action.failed);
-        }
-      );
+      selectedItems.some((item): boolean => {
+        if (!item.managedIndexMetaData) return true;
+        const { retryInfo, action } = item.managedIndexMetaData;
+        return !(retryInfo && retryInfo.failed) && !(action && action.failed);
+      });
 
     const actions = [
       {
