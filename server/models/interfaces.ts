@@ -24,7 +24,7 @@ export interface NodeServices {
 
 export interface SearchResponse<T> {
   hits: {
-    total: { value: number };
+    total: number;
     hits: { _source: T; _id: string; _seq_no?: number; _primary_term?: number }[];
   };
 }

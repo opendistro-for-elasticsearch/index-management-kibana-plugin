@@ -140,7 +140,7 @@ export default class PolicyService {
       const { callWithRequest } = await this.esDriver.getCluster(CLUSTER.DATA);
       const searchResponse: SearchResponse<any> = await callWithRequest(req, "search", params);
 
-      const totalPolicies = searchResponse.hits.total.value;
+      const totalPolicies = searchResponse.hits.total;
       const policies = searchResponse.hits.hits.map(hit => ({
         seqNo: hit._seq_no as number,
         primaryTerm: hit._primary_term as number,

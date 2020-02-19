@@ -87,7 +87,7 @@ export default class ManagedIndexService {
       const searchResponse: SearchResponse<any> = await callWithRequest(req, "search", searchParams);
 
       const indices = searchResponse.hits.hits.map(hit => hit._source.managed_index.index);
-      const totalManagedIndices = _.get(searchResponse, "hits.total.value", 0);
+      const totalManagedIndices = _.get(searchResponse, "hits.total", 0);
 
       if (!indices.length) {
         return { ok: true, response: { managedIndices: [], totalManagedIndices: 0 } };
