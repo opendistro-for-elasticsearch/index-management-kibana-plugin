@@ -44,6 +44,8 @@ interface CreatePolicyState {
 }
 
 export default class CreatePolicy extends Component<CreatePolicyProps, CreatePolicyState> {
+  _isMounted: boolean = false;
+
   constructor(props: CreatePolicyProps) {
     super(props);
 
@@ -60,6 +62,7 @@ export default class CreatePolicy extends Component<CreatePolicyProps, CreatePol
   }
 
   componentDidMount = async (): Promise<void> => {
+    this._isMounted = true;
     chrome.breadcrumbs.set([BREADCRUMBS.INDEX_MANAGEMENT, BREADCRUMBS.INDEX_POLICIES]);
     if (this.props.isEdit) {
       const { id } = queryString.parse(this.props.location.search);
@@ -76,6 +79,10 @@ export default class CreatePolicy extends Component<CreatePolicyProps, CreatePol
       this.setState({ jsonString: DEFAULT_POLICY });
     }
   };
+
+  componentWillUnmount(): void {
+    this._isMounted = false;
+  }
 
   getPolicyToEdit = async (policyId: string): Promise<void> => {
     try {
@@ -175,7 +182,7 @@ export default class CreatePolicy extends Component<CreatePolicyProps, CreatePol
       console.error(err);
     }
 
-    this.setState({ isSubmitting: false });
+    if (this._isMounted) this.setState({ isSubmitting: false });
   };
 
   renderEditCallOut = (): React.ReactNode | null => {

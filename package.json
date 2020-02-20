@@ -1,12 +1,12 @@
 {
   "name": "opendistro_index_management_kibana",
-  "version": "1.0.0.1",
+  "version": "0.10.0.0",
   "description": "Kibana plugin for Index Management",
   "main": "index.js",
   "license": "Apache-2.0",
   "homepage": "https://github.com/opendistro-for-elasticsearch/index-management-kibana-plugin",
   "kibana": {
-    "version": "7.0.1",
+    "version": "6.8.1",
     "templateVersion": "1.0.0"
   },
   "repository": {
@@ -21,7 +21,7 @@
     "start": "plugin-helpers start",
     "test:server": "plugin-helpers test:server",
     "test:browser": "plugin-helpers test:browser",
-    "test:jest": "NODE_PATH=../../kibana/node_modules ../../kibana/node_modules/.bin/jest --config ./test/jest.config.js",
+    "test:jest": "NODE_PATH=../../kibana/node_modules jest --config ./test/jest.config.js",
     "build": "plugin-helpers build"
   },
   "husky": {
@@ -69,7 +69,9 @@
     "eslint-plugin-prefer-object-spread": "^1.2.1",
     "eslint-plugin-react": "^7.11.1",
     "husky": "^3.0.0",
+    "jest": "^25.1.0",
     "lint-staged": "^9.2.0",
+    "ts-jest": "^25.2.0",
     "typescript": "3.0.3"
   }
 }
