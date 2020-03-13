@@ -26,7 +26,7 @@ export default function(kibana) {
     name: "opendistro_index_management_kibana",
     uiExports: {
       app: {
-        title: "Index Management",
+        title: "Index Management Kibana",
         description: "Kibana plugin for Index Management",
         main: "plugins/opendistro_index_management_kibana/app",
       },
