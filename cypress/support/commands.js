@@ -13,7 +13,7 @@
  * permissions and limitations under the License.
  */
 
-import { API, INDEX } from "../../server/utils/constants";
+const { API, INDEX } = require("./constants");
 
 // ***********************************************
 // This example commands.js shows you how to

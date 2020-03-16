@@ -13,7 +13,7 @@
  * permissions and limitations under the License.
  */
 
-import { PLUGIN_NAME } from "../../public/utils/constants";
+import { PLUGIN_NAME } from "../support/constants";
 import samplePolicy from "../fixtures/sample_policy";
 
 const POLICY_ID = "test_policy_id";
