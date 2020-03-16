@@ -6,3 +6,5 @@ node_modules
 yarn-error.log
 /coverage/
 .DS_Store
+/cypress/screenshots/
+/cypress/videos/

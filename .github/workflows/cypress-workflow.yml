@@ -1,0 +1,89 @@
+name: E2E Cypress tests
+on:
+  # Change to pull_request
+  pull_request:
+    branches:
+      - master
+      - opendistro-*
+
+jobs:
+  tests:
+    name: Run Cypress E2E tests
+    runs-on: ubuntu-latest
+    env:
+      # prevents extra Cypress installation progress messages
+      CI: 1
+      # avoid warnings like "tput: No value for $TERM and no -T specified"
+      TERM: xterm
+    steps:
+      - name: Set up JDK
+        uses: actions/setup-java@v1
+        with:
+          java-version: 12
+      - name: Checkout
+        uses: actions/checkout@v2
+        with:
+          path: index-management
+          repository: opendistro-for-elasticsearch/index-management
+      - name: Run elasticsearch with plugin
+        run: |
+          cd index-management
+          ./gradlew run &
+          timeout 300 bash -c 'while [[ "$(curl -s -o /dev/null -w ''%{http_code}'' localhost:9200)" != "200" ]]; do sleep 5; done'
+      - name: Setup node
+        uses: actions/setup-node@v1
+        with:
+          node-version: '10.15.2'
+          registry-url: 'https://registry.npmjs.org'
+      - name: Install correct yarn version for Kibana
+        run: |
+          npm uninstall -g yarn
+          npm i -g yarn@1.10.1
+      - name: Checkout Kibana
+        uses: actions/checkout@v2
+        with:
+          repository: opendistro-for-elasticsearch/kibana-oss
+          ref: 7.4.2
+          token: ${{ secrets.GITHUB_KIBANA_OSS }}
+          path: kibana
+      - name: Checkout Index Management Kibana plugin
+        uses: actions/checkout@v2
+        with:
+          path: kibana/plugins/index-management-kibana-plugin
+      - name: Bootstrap plugin/kibana
+        env:
+          CYPRESS_INSTALL_BINARY: 0
+        run: |
+          cd kibana/plugins/index-management-kibana-plugin
+          yarn kbn bootstrap
+      - name: Run kibana server
+        run: |
+          cd kibana/plugins/index-management-kibana-plugin
+          yarn start --no-base-path --no-watch &
+          timeout 300 bash -c 'while [[ "$(curl -s -o /dev/null -w ''%{http_code}'' localhost:5601/api/status)" != "200" ]]; do sleep 5; done'
+      - name: Cache Cypress
+        id: cache-cypress
+        uses: actions/cache@v1
+        with:
+          path: ~/.cache/Cypress
+          key: cypress-cache-v2-${{ runner.os }}-${{ hashFiles('**/package.json') }}
+      # now let's install Cypress binary
+      - run: npx cypress install
+      - run: npx cypress cache list
+      # for now just chrome, use matrix to do all browsers later
+      - name: Cypress tests
+        run: |
+          cd kibana/plugins/index-management-kibana-plugin
+          yarn run cypress run --browser chrome
+      # Screenshots are only captured on failure, will change this once we do visual regression tests
+      - uses: actions/upload-artifact@v1
+        if: failure()
+        with:
+          name: cypress-screenshots
+          path: kibana/plugins/index-management-kibana-plugin/cypress/screenshots
+      # Test run video was always captured, so this action uses "always()" condition
+      - uses: actions/upload-artifact@v1
+        if: always()
+        with:
+          name: cypress-videos
+          path: kibana/plugins/index-management-kibana-plugin/cypress/videos
