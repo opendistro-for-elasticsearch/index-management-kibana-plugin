@@ -1,10 +1,8 @@
 name: E2E Cypress tests
 on:
-  # Change to pull_request
   pull_request:
     branches:
       - master
-      - opendistro-*
 
 jobs:
   tests:
