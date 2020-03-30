@@ -20,7 +20,7 @@ import { ManagedIndicesQueryParams } from "../models/interfaces";
 export function getURLQueryParams(location: { search: string }): ManagedIndicesQueryParams {
   const { from, size, search, sortField, sortDirection } = queryString.parse(location.search);
 
-  return {
+  return <ManagedIndicesQueryParams>{
     // @ts-ignore
     from: isNaN(parseInt(from, 10)) ? DEFAULT_QUERY_PARAMS.from : parseInt(from, 10),
     // @ts-ignore

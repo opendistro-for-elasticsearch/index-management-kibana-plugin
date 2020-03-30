@@ -21,6 +21,6 @@ export const DEFAULT_QUERY_PARAMS: PoliciesQueryParams = {
   from: 0,
   size: 20,
   search: "",
-  sortField: "name",
+  sortField: "id",
   sortDirection: SortDirection.DESC,
 };

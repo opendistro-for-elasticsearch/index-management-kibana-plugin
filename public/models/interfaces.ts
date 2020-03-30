@@ -14,15 +14,9 @@
  */
 
 import { IndexService, ManagedIndexService, PolicyService } from "../services";
-import { SortDirection } from "../utils/constants";
 
 export interface BrowserServices {
   indexService: IndexService;
   managedIndexService: ManagedIndexService;
   policyService: PolicyService;
-}
-
-export interface TableParams {
-  page: { index: number; size: number };
-  sort: { field: string; direction: SortDirection };
 }

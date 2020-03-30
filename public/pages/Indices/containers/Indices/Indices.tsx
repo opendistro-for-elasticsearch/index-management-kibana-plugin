@@ -19,8 +19,17 @@ import { toastNotifications } from "ui/notify";
 import _ from "lodash";
 import { RouteComponentProps } from "react-router-dom";
 import queryString from "query-string";
-// @ts-ignore
-import { EuiBasicTable, EuiHorizontalRule } from "@elastic/eui";
+import {
+  EuiBasicTable,
+  EuiHorizontalRule,
+  // @ts-ignore
+  Criteria,
+  EuiTableSortingType,
+  Direction,
+  // @ts-ignore
+  Pagination,
+  EuiTableSelectionType,
+} from "@elastic/eui";
 import { ContentPanel, ContentPanelActions } from "../../../../components/ContentPanel";
 import IndexControls from "../../components/IndexControls";
 import ApplyPolicyModal from "../../components/ApplyPolicyModal";
@@ -28,11 +37,10 @@ import IndexEmptyPrompt from "../../components/IndexEmptyPrompt";
 import { DEFAULT_PAGE_SIZE_OPTIONS, DEFAULT_QUERY_PARAMS, indicesColumns } from "../../utils/constants";
 import { ModalConsumer } from "../../../../components/Modal";
 import IndexService from "../../../../services/IndexService";
-import { TableParams } from "../../../../models/interfaces";
 import { ManagedCatIndex } from "../../../../../server/models/interfaces";
 import { getURLQueryParams } from "../../utils/helpers";
 import { IndicesQueryParams } from "../../models/interfaces";
-import { BREADCRUMBS, SortDirection } from "../../../../utils/constants";
+import { BREADCRUMBS } from "../../../../utils/constants";
 import { getErrorMessage } from "../../../../utils/helpers";
 
 interface IndicesProps extends RouteComponentProps {
@@ -44,8 +52,8 @@ interface IndicesState {
   from: number;
   size: number;
   search: string;
-  sortField: string;
-  sortDirection: SortDirection;
+  sortField: keyof ManagedCatIndex;
+  sortDirection: Direction;
   selectedItems: ManagedCatIndex[];
   indices: ManagedCatIndex[];
   loadingIndices: boolean;
@@ -108,7 +116,7 @@ export default class Indices extends Component<IndicesProps, IndicesState> {
     this.setState({ loadingIndices: false });
   };
 
-  onTableChange = ({ page: tablePage, sort }: TableParams): void => {
+  onTableChange = ({ page: tablePage, sort }: Criteria<ManagedCatIndex>): void => {
     const { index: page, size } = tablePage;
     const { field: sortField, direction: sortDirection } = sort;
     this.setState({ from: page * size, size, sortField, sortDirection });
@@ -137,23 +145,22 @@ export default class Indices extends Component<IndicesProps, IndicesState> {
     const filterIsApplied = !!search;
     const page = Math.floor(from / size);
 
-    const pagination = {
+    const pagination: Pagination = {
       pageIndex: page,
       pageSize: size,
       pageSizeOptions: DEFAULT_PAGE_SIZE_OPTIONS,
       totalItemCount: totalIndices,
     };
 
-    const sorting = {
+    const sorting: EuiTableSortingType<ManagedCatIndex> = {
       sort: {
         direction: sortDirection,
         field: sortField,
       },
     };
 
-    const selection = {
+    const selection: EuiTableSelectionType<ManagedCatIndex> = {
       onSelectionChange: this.onSelectionChange,
-      selectableMessage: (selectable: boolean) => (selectable ? undefined : undefined),
     };
 
     return (

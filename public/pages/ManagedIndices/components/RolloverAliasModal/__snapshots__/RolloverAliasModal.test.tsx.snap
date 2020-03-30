@@ -50,35 +50,41 @@ exports[`<RolloverAliasModal /> spec renders the component 1`] = `
               class="euiFormRow"
               id="some_make_id-row"
             >
-              <div>
+              <div
+                class="euiFormRow__labelWrapper"
+              >
                 <label
-                  class="euiFormLabel"
+                  class="euiFormLabel euiFormRow__label"
                   for="some_make_id"
                 >
                   Rollover alias
                 </label>
               </div>
               <div
-                class="euiFormControlLayout"
+                class="euiFormRow__fieldWrapper"
               >
                 <div
-                  class="euiFormControlLayout__childrenWrapper"
+                  class="euiFormControlLayout"
                 >
-                  <input
-                    aria-describedby="some_make_id-help"
-                    class="euiFieldText"
-                    id="some_make_id"
-                    placeholder="Rollover alias"
-                    type="text"
-                    value=""
-                  />
+                  <div
+                    class="euiFormControlLayout__childrenWrapper"
+                  >
+                    <input
+                      aria-describedby="some_make_id-help"
+                      class="euiFieldText"
+                      id="some_make_id"
+                      placeholder="Rollover alias"
+                      type="text"
+                      value=""
+                    />
+                  </div>
                 </div>
-              </div>
-              <div
-                class="euiFormHelpText euiFormRow__text"
-                id="some_make_id-help"
-              >
-                A rollover alias is required when using the rollover action.
+                <div
+                  class="euiFormHelpText euiFormRow__text"
+                  id="some_make_id-help"
+                >
+                  A rollover alias is required when using the rollover action.
+                </div>
               </div>
             </div>
           </div>

@@ -125,6 +125,8 @@ export default class NewPolicy extends React.Component<NewPolicyProps, NewPolicy
             />
           </EuiFormRow>
 
+          <EuiSpacer size="m" />
+
           <EuiRadioGroup options={radioOptions} idSelected={stateRadioIdSelected} onChange={this.props.onChangeStateRadio} />
 
           <EuiSpacer size="s" />

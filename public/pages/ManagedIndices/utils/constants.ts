@@ -20,7 +20,7 @@ export const DEFAULT_QUERY_PARAMS: ManagedIndicesQueryParams = {
   from: 0,
   size: 20,
   search: "",
-  sortField: "name",
+  sortField: "index",
   sortDirection: "desc",
 };
 

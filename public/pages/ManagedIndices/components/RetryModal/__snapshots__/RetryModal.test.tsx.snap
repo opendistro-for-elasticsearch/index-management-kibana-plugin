@@ -94,54 +94,60 @@ exports[`<RetryModal /> spec renders the component 1`] = `
               class="euiFormRow"
               id="some_make_id-row"
             >
-              <div>
+              <div
+                class="euiFormRow__labelWrapper"
+              >
                 <label
-                  class="euiFormLabel"
+                  class="euiFormLabel euiFormRow__label"
                   for="some_make_id"
                 >
                   Start state
                 </label>
               </div>
               <div
-                class="euiFormControlLayout"
+                class="euiFormRow__fieldWrapper"
               >
                 <div
-                  class="euiFormControlLayout__childrenWrapper"
+                  class="euiFormControlLayout"
                 >
-                  <select
-                    aria-describedby="some_make_id-help"
-                    aria-label="Retry failed policy from"
-                    class="euiSelect"
-                    disabled=""
-                    id="some_make_id"
-                  >
-                    <option
-                      value="one"
-                    >
-                      one
-                    </option>
-                    <option
-                      value="two"
-                    >
-                      two
-                    </option>
-                  </select>
                   <div
-                    class="euiFormControlLayoutIcons euiFormControlLayoutIcons--right"
+                    class="euiFormControlLayout__childrenWrapper"
                   >
-                    <span
-                      class="euiFormControlLayoutCustomIcon"
+                    <select
+                      aria-describedby="some_make_id-help"
+                      aria-label="Retry failed policy from"
+                      class="euiSelect"
+                      disabled=""
+                      id="some_make_id"
                     >
-                      EuiIconMock
-                    </span>
+                      <option
+                        value="one"
+                      >
+                        one
+                      </option>
+                      <option
+                        value="two"
+                      >
+                        two
+                      </option>
+                    </select>
+                    <div
+                      class="euiFormControlLayoutIcons euiFormControlLayoutIcons--right"
+                    >
+                      <span
+                        class="euiFormControlLayoutCustomIcon"
+                      >
+                        EuiIconMock
+                      </span>
+                    </div>
                   </div>
                 </div>
-              </div>
-              <div
-                class="euiFormHelpText euiFormRow__text"
-                id="some_make_id-help"
-              >
-                Only common states shared across all selected indices are available
+                <div
+                  class="euiFormHelpText euiFormRow__text"
+                  id="some_make_id-help"
+                >
+                  Only common states shared across all selected indices are available
+                </div>
               </div>
             </div>
           </div>

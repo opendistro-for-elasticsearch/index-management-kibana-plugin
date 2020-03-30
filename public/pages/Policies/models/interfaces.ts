@@ -13,7 +13,7 @@
  * permissions and limitations under the License.
  */
 
-import { SortDirection } from "../../../utils/constants";
+import { Direction } from "@elastic/eui";
 
 export interface PolicyItem {
   id: string;
@@ -26,6 +26,6 @@ export interface PoliciesQueryParams {
   from: number;
   size: number;
   search: string;
-  sortField: string;
-  sortDirection: SortDirection;
+  sortField: keyof PolicyItem;
+  sortDirection: Direction;
 }

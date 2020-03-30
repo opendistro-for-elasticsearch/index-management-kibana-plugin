@@ -35,144 +35,156 @@ exports[`<ChangeManagedIndices /> spec renders the component 1`] = `
         class="euiFormRow"
         id="some_make_id-row"
       >
-        <div>
+        <div
+          class="euiFormRow__labelWrapper"
+        >
           <label
             aria-invalid="false"
-            class="euiFormLabel"
+            class="euiFormLabel euiFormRow__label"
             for="some_make_id"
           >
             Managed indices
           </label>
         </div>
         <div
-          aria-describedby="some_make_id-help"
-          aria-expanded="false"
-          aria-haspopup="listbox"
-          class="euiComboBox"
-          role="combobox"
+          class="euiFormRow__fieldWrapper"
         >
           <div
-            class="euiFormControlLayout"
+            aria-describedby="some_make_id-help"
+            aria-expanded="false"
+            aria-haspopup="listbox"
+            class="euiComboBox"
+            role="combobox"
           >
             <div
-              class="euiFormControlLayout__childrenWrapper"
+              class="euiFormControlLayout"
             >
               <div
-                class="euiComboBox__inputWrap euiComboBox__inputWrap-isClearable"
-                data-test-subj="comboBoxInput"
-                tabindex="-1"
+                class="euiFormControlLayout__childrenWrapper"
               >
                 <div
-                  class="euiComboBox__input"
-                  style="font-size: 14px; display: inline-block;"
+                  class="euiComboBox__inputWrap euiComboBox__inputWrap-isClearable"
+                  data-test-subj="comboBoxInput"
+                  tabindex="-1"
                 >
-                  <input
-                    data-test-subj="comboBoxSearchInput"
-                    id="some_make_id"
-                    role="textbox"
-                    style="box-sizing: content-box; width: 2px;"
-                    value=""
-                  />
                   <div
-                    style="position: absolute; top: 0px; left: 0px; visibility: hidden; height: 0px; overflow: scroll; white-space: pre; font-family: -webkit-small-control; letter-spacing: normal; text-transform: none;"
-                  />
+                    class="euiComboBox__input"
+                    style="font-size: 14px; display: inline-block;"
+                  >
+                    <input
+                      data-test-subj="comboBoxSearchInput"
+                      id="some_make_id"
+                      role="textbox"
+                      style="box-sizing: content-box; width: 2px;"
+                      value=""
+                    />
+                    <div
+                      style="position: absolute; top: 0px; left: 0px; visibility: hidden; height: 0px; overflow: scroll; white-space: pre; font-family: -webkit-small-control; letter-spacing: normal; text-transform: none;"
+                    />
+                  </div>
                 </div>
-              </div>
-              <div
-                class="euiFormControlLayoutIcons euiFormControlLayoutIcons--right"
-              >
-                <button
-                  aria-label="Open list of options"
-                  class="euiFormControlLayoutCustomIcon euiFormControlLayoutCustomIcon--clickable"
-                  data-test-subj="comboBoxToggleListButton"
-                  type="button"
+                <div
+                  class="euiFormControlLayoutIcons euiFormControlLayoutIcons--right"
                 >
-                  EuiIconMock
-                </button>
+                  <button
+                    aria-label="Open list of options"
+                    class="euiFormControlLayoutCustomIcon euiFormControlLayoutCustomIcon--clickable"
+                    data-test-subj="comboBoxToggleListButton"
+                    type="button"
+                  >
+                    EuiIconMock
+                  </button>
+                </div>
               </div>
             </div>
           </div>
-        </div>
-        <div
-          class="euiFormHelpText euiFormRow__text"
-          id="some_make_id-help"
-        >
-          You can use * as wildcards to form index patterns.
+          <div
+            class="euiFormHelpText euiFormRow__text"
+            id="some_make_id-help"
+          >
+            You can use * as wildcards to form index patterns.
+          </div>
         </div>
       </div>
       <div
         class="euiFormRow"
         id="some_make_id-row"
       >
-        <div>
+        <div
+          class="euiFormRow__labelWrapper"
+        >
           <label
-            class="euiFormLabel"
+            class="euiFormLabel euiFormRow__label"
             for="some_make_id"
           >
             State filters
           </label>
         </div>
         <div
-          aria-describedby="some_make_id-help"
-          aria-expanded="false"
-          aria-haspopup="listbox"
-          class="euiComboBox euiComboBox-isDisabled"
-          role="combobox"
+          class="euiFormRow__fieldWrapper"
         >
           <div
-            class="euiFormControlLayout"
+            aria-describedby="some_make_id-help"
+            aria-expanded="false"
+            aria-haspopup="listbox"
+            class="euiComboBox euiComboBox-isDisabled"
+            role="combobox"
           >
             <div
-              class="euiFormControlLayout__childrenWrapper"
+              class="euiFormControlLayout"
             >
               <div
-                class="euiComboBox__inputWrap"
-                data-test-subj="comboBoxInput"
-                tabindex="-1"
+                class="euiFormControlLayout__childrenWrapper"
               >
-                <p
-                  class="euiComboBoxPlaceholder"
-                >
-                  Choose state filters
-                </p>
                 <div
-                  class="euiComboBox__input"
-                  style="font-size: 14px; display: inline-block;"
+                  class="euiComboBox__inputWrap"
+                  data-test-subj="comboBoxInput"
+                  tabindex="-1"
                 >
-                  <input
-                    data-test-subj="comboBoxSearchInput"
-                    disabled=""
-                    id="some_make_id"
-                    role="textbox"
-                    style="box-sizing: content-box; width: 2px;"
-                    value=""
-                  />
+                  <p
+                    class="euiComboBoxPlaceholder"
+                  >
+                    Choose state filters
+                  </p>
                   <div
-                    style="position: absolute; top: 0px; left: 0px; visibility: hidden; height: 0px; overflow: scroll; white-space: pre; font-family: -webkit-small-control; letter-spacing: normal; text-transform: none;"
-                  />
+                    class="euiComboBox__input"
+                    style="font-size: 14px; display: inline-block;"
+                  >
+                    <input
+                      data-test-subj="comboBoxSearchInput"
+                      disabled=""
+                      id="some_make_id"
+                      role="textbox"
+                      style="box-sizing: content-box; width: 2px;"
+                      value=""
+                    />
+                    <div
+                      style="position: absolute; top: 0px; left: 0px; visibility: hidden; height: 0px; overflow: scroll; white-space: pre; font-family: -webkit-small-control; letter-spacing: normal; text-transform: none;"
+                    />
+                  </div>
                 </div>
-              </div>
-              <div
-                class="euiFormControlLayoutIcons euiFormControlLayoutIcons--right"
-              >
-                <button
-                  aria-label="Open list of options"
-                  class="euiFormControlLayoutCustomIcon euiFormControlLayoutCustomIcon--clickable"
-                  data-test-subj="comboBoxToggleListButton"
-                  disabled=""
-                  type="button"
+                <div
+                  class="euiFormControlLayoutIcons euiFormControlLayoutIcons--right"
                 >
-                  EuiIconMock
-                </button>
+                  <button
+                    aria-label="Open list of options"
+                    class="euiFormControlLayoutCustomIcon euiFormControlLayoutCustomIcon--clickable"
+                    data-test-subj="comboBoxToggleListButton"
+                    disabled=""
+                    type="button"
+                  >
+                    EuiIconMock
+                  </button>
+                </div>
               </div>
             </div>
           </div>
-        </div>
-        <div
-          class="euiFormHelpText euiFormRow__text"
-          id="some_make_id-help"
-        >
-          Apply new policy only on managed indices in these states.
+          <div
+            class="euiFormHelpText euiFormRow__text"
+            id="some_make_id-help"
+          >
+            Apply new policy only on managed indices in these states.
+          </div>
         </div>
       </div>
     </div>
