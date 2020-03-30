@@ -152,7 +152,7 @@ exports[`<IndexPolicies /> spec renders the component 1`] = `
                   id="QuickSelectPopover"
                 >
                   <div
-                    class="euiPopover__anchor"
+                    class="euiPopover__anchor euiQuickSelectPopover__anchor"
                   >
                     <button
                       aria-label="Date quick select"
@@ -177,7 +177,7 @@ exports[`<IndexPolicies /> spec renders the component 1`] = `
                   class="euiFormControlLayout__childrenWrapper"
                 >
                   <div
-                    class="euiDatePickerRange euiDatePickerRange--readOnly euiDatePickerRange--inGroup euiFormControlLayout__child--noStyle"
+                    class="euiDatePickerRange euiDatePickerRange--readOnly euiDatePickerRange--inGroup"
                   >
                     <span
                       class="euiSuperDatePicker__prettyFormat"
@@ -236,7 +236,6 @@ exports[`<IndexPolicies /> spec renders the component 1`] = `
                 >
                   <div
                     class="euiPopover euiPopover--anchorDownRight"
-                    id="sortPopover"
                   >
                     <div
                       class="euiPopover__anchor"
@@ -268,7 +267,7 @@ exports[`<IndexPolicies /> spec renders the component 1`] = `
             <caption
               aria-live="polite"
               aria-relevant="text"
-              class="euiScreenReaderOnly"
+              class="euiScreenReaderOnly euiTableCaption"
               role="status"
             />
             <thead>
@@ -276,7 +275,7 @@ exports[`<IndexPolicies /> spec renders the component 1`] = `
                 <th
                   class="euiTableHeaderCellCheckbox"
                   scope="col"
-                  width="24px"
+                  style="width: 24px;"
                 >
                   <div
                     class="euiTableCellContent"
@@ -300,15 +299,15 @@ exports[`<IndexPolicies /> spec renders the component 1`] = `
                 </th>
                 <th
                   aria-live="polite"
-                  aria-sort="none"
+                  aria-sort="descending"
                   class="euiTableHeaderCell"
                   data-test-subj="tableHeaderCell_id_0"
                   role="columnheader"
                   scope="col"
-                  width="150px"
+                  style="width: 150px;"
                 >
                   <button
-                    class="euiTableHeaderButton"
+                    class="euiTableHeaderButton euiTableHeaderButton-isSorted"
                     data-test-subj="tableHeaderSortButton"
                     type="button"
                   >
@@ -320,6 +319,7 @@ exports[`<IndexPolicies /> spec renders the component 1`] = `
                       >
                         Policy
                       </span>
+                      EuiIconMock
                       <span
                         class="euiScreenReaderOnly"
                       >
@@ -335,7 +335,7 @@ exports[`<IndexPolicies /> spec renders the component 1`] = `
                   data-test-subj="tableHeaderCell_policy.policy.description_1"
                   role="columnheader"
                   scope="col"
-                  width="150px"
+                  style="width: 150px;"
                 >
                   <button
                     class="euiTableHeaderButton"
@@ -365,7 +365,7 @@ exports[`<IndexPolicies /> spec renders the component 1`] = `
                   data-test-subj="tableHeaderCell_policy.policy.last_updated_time_2"
                   role="columnheader"
                   scope="col"
-                  width="150px"
+                  style="width: 150px;"
                 >
                   <button
                     class="euiTableHeaderButton"
@@ -430,50 +430,6 @@ exports[`<IndexPolicies /> spec renders the component 1`] = `
               </tr>
             </tbody>
           </table>
-        </div>
-        <div>
-          <div
-            class="euiSpacer euiSpacer--m"
-          />
-          <div
-            class="euiFlexGroup euiFlexGroup--gutterLarge euiFlexGroup--alignItemsCenter euiFlexGroup--justifyContentSpaceBetween euiFlexGroup--directionRow"
-          >
-            <div
-              class="euiFlexItem euiFlexItem--flexGrowZero"
-            >
-              <div
-                class="euiPopover euiPopover--anchorUpRight euiPopover--withTitle"
-                id="customizablePagination"
-              >
-                <div
-                  class="euiPopover__anchor"
-                >
-                  <button
-                    class="euiButtonEmpty euiButtonEmpty--text euiButtonEmpty--xSmall euiButtonEmpty--iconRight"
-                    type="button"
-                  >
-                    <span
-                      class="euiButtonEmpty__content"
-                    >
-                      EuiIconMock
-                      <span
-                        class="euiButtonEmpty__text"
-                      >
-                        Rows per page
-                        : 
-                        20
-                      </span>
-                    </span>
-                  </button>
-                </div>
-              </div>
-            </div>
-            <div
-              class="euiFlexItem euiFlexItem--flexGrowZero"
-            >
-              <span />
-            </div>
-          </div>
         </div>
       </div>
     </div>

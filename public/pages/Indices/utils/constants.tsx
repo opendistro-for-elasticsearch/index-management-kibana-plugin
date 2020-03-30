@@ -14,7 +14,7 @@
  */
 
 import React from "react";
-import { EuiHealth } from "@elastic/eui";
+import { EuiHealth, EuiTableFieldDataColumnType } from "@elastic/eui";
 import { ManagedCatIndex } from "../../../../server/models/interfaces";
 import { SortDirection } from "../../../utils/constants";
 
@@ -39,7 +39,7 @@ const HEALTH_TO_COLOR: {
   red: "danger",
 };
 
-export const indicesColumns = [
+export const indicesColumns: EuiTableFieldDataColumnType<ManagedCatIndex>[] = [
   {
     field: "index",
     name: "Index",
@@ -47,6 +47,7 @@ export const indicesColumns = [
     truncateText: true,
     textOnly: true,
     width: "250px",
+    render: (index: string) => <span title={index}>{index}</span>,
   },
   {
     field: "health",
@@ -101,6 +102,7 @@ export const indicesColumns = [
     truncateText: true,
     textOnly: true,
     dataType: "number",
+    render: (count: string) => <span title={count}>{count}</span>,
   },
   {
     field: "docs.deleted",
@@ -109,6 +111,7 @@ export const indicesColumns = [
     truncateText: true,
     textOnly: true,
     dataType: "number",
+    render: (deleted: string) => <span title={deleted}>{deleted}</span>,
   },
   {
     field: "pri",

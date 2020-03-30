@@ -124,7 +124,7 @@ exports[`<DefinePolicy /> spec renders the component 1`] = `
       </div>
       <div
         class=" ace_editor ace-tm"
-        id="brace-editor"
+        id="some_html_id"
         style="width: 100%; height: 500px; font-size: 14px;"
       >
         <textarea

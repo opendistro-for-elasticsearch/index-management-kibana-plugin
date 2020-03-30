@@ -18,7 +18,6 @@ import { toastNotifications } from "ui/notify";
 import chrome from "ui/chrome";
 import { RouteComponentProps } from "react-router-dom";
 import {
-  // @ts-ignore
   EuiBasicTable,
   EuiHorizontalRule,
   EuiLink,
@@ -27,6 +26,14 @@ import {
   EuiButton,
   EuiTitle,
   EuiSpacer,
+  EuiTableFieldDataColumnType,
+  // @ts-ignore
+  Criteria,
+  EuiTableSortingType,
+  Direction,
+  // @ts-ignore
+  Pagination,
+  EuiTableSelectionType,
 } from "@elastic/eui";
 import queryString from "query-string";
 import _ from "lodash";
@@ -42,7 +49,6 @@ import { getURLQueryParams } from "../../utils/helpers";
 import { ManagedIndexItem } from "../../../../../models/interfaces";
 import { ManagedIndexService } from "../../../../services";
 import { getErrorMessage } from "../../../../utils/helpers";
-import { TableParams } from "../../../../models/interfaces";
 import ConfirmationModal from "../../../../components/ConfirmationModal";
 import RetryModal from "../../components/RetryModal";
 import RolloverAliasModal from "../../components/RolloverAliasModal";
@@ -56,15 +62,15 @@ interface ManagedIndicesState {
   from: number;
   size: number;
   search: string;
-  sortField: string;
-  sortDirection: string;
+  sortField: keyof ManagedIndexItem;
+  sortDirection: Direction;
   selectedItems: ManagedIndexItem[];
   managedIndices: ManagedIndexItem[];
   loadingManagedIndices: boolean;
 }
 
 export default class ManagedIndices extends Component<ManagedIndicesProps, ManagedIndicesState> {
-  columns: object[];
+  columns: EuiTableFieldDataColumnType<ManagedIndexItem>[];
 
   constructor(props: ManagedIndicesProps) {
     super(props);
@@ -93,6 +99,7 @@ export default class ManagedIndices extends Component<ManagedIndicesProps, Manag
         truncateText: true,
         textOnly: true,
         width: "150px",
+        render: (index: string) => <span title={index}>{index}</span>,
       },
       {
         field: "policyId",
@@ -243,7 +250,7 @@ export default class ManagedIndices extends Component<ManagedIndicesProps, Manag
     }
   };
 
-  onTableChange = ({ page: tablePage, sort }: TableParams): void => {
+  onTableChange = ({ page: tablePage, sort }: Criteria<ManagedIndexItem>): void => {
     const { index: page, size } = tablePage;
     const { field: sortField, direction: sortDirection } = sort;
     this.setState({ from: page * size, size, sortField, sortDirection });
@@ -288,23 +295,22 @@ export default class ManagedIndices extends Component<ManagedIndicesProps, Manag
     const filterIsApplied = !!search;
     const page = Math.floor(from / size);
 
-    const pagination = {
+    const pagination: Pagination = {
       pageIndex: page,
       pageSize: size,
       pageSizeOptions: DEFAULT_PAGE_SIZE_OPTIONS,
       totalItemCount: totalManagedIndices,
     };
 
-    const sorting = {
+    const sorting: EuiTableSortingType<ManagedIndexItem> = {
       sort: {
         direction: sortDirection,
         field: sortField,
       },
     };
 
-    const selection = {
+    const selection: EuiTableSelectionType<ManagedIndexItem> = {
       onSelectionChange: this.onSelectionChange,
-      selectableMessage: (selectable: boolean) => (selectable ? undefined : undefined),
     };
 
     const isRetryDisabled =

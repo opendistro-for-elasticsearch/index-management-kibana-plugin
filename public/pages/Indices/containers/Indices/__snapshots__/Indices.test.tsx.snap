@@ -110,7 +110,7 @@ exports[`<Indices /> spec renders the component 1`] = `
                 id="QuickSelectPopover"
               >
                 <div
-                  class="euiPopover__anchor"
+                  class="euiPopover__anchor euiQuickSelectPopover__anchor"
                 >
                   <button
                     aria-label="Date quick select"
@@ -135,7 +135,7 @@ exports[`<Indices /> spec renders the component 1`] = `
                 class="euiFormControlLayout__childrenWrapper"
               >
                 <div
-                  class="euiDatePickerRange euiDatePickerRange--readOnly euiDatePickerRange--inGroup euiFormControlLayout__child--noStyle"
+                  class="euiDatePickerRange euiDatePickerRange--readOnly euiDatePickerRange--inGroup"
                 >
                   <span
                     class="euiSuperDatePicker__prettyFormat"
@@ -194,7 +194,6 @@ exports[`<Indices /> spec renders the component 1`] = `
               >
                 <div
                   class="euiPopover euiPopover--anchorDownRight"
-                  id="sortPopover"
                 >
                   <div
                     class="euiPopover__anchor"
@@ -226,7 +225,7 @@ exports[`<Indices /> spec renders the component 1`] = `
           <caption
             aria-live="polite"
             aria-relevant="text"
-            class="euiScreenReaderOnly"
+            class="euiScreenReaderOnly euiTableCaption"
             role="status"
           />
           <thead>
@@ -234,7 +233,7 @@ exports[`<Indices /> spec renders the component 1`] = `
               <th
                 class="euiTableHeaderCellCheckbox"
                 scope="col"
-                width="24px"
+                style="width: 24px;"
               >
                 <div
                   class="euiTableCellContent"
@@ -263,7 +262,7 @@ exports[`<Indices /> spec renders the component 1`] = `
                 data-test-subj="tableHeaderCell_index_0"
                 role="columnheader"
                 scope="col"
-                width="250px"
+                style="width: 250px;"
               >
                 <button
                   class="euiTableHeaderButton euiTableHeaderButton-isSorted"
@@ -321,7 +320,7 @@ exports[`<Indices /> spec renders the component 1`] = `
                 data-test-subj="tableHeaderCell_managed_2"
                 role="columnheader"
                 scope="col"
-                width="150px"
+                style="width: 150px;"
               >
                 <div
                   class="euiTableCellContent euiTableCellContent--alignRight"
@@ -578,50 +577,6 @@ exports[`<Indices /> spec renders the component 1`] = `
             </tr>
           </tbody>
         </table>
-      </div>
-      <div>
-        <div
-          class="euiSpacer euiSpacer--m"
-        />
-        <div
-          class="euiFlexGroup euiFlexGroup--gutterLarge euiFlexGroup--alignItemsCenter euiFlexGroup--justifyContentSpaceBetween euiFlexGroup--directionRow"
-        >
-          <div
-            class="euiFlexItem euiFlexItem--flexGrowZero"
-          >
-            <div
-              class="euiPopover euiPopover--anchorUpRight euiPopover--withTitle"
-              id="customizablePagination"
-            >
-              <div
-                class="euiPopover__anchor"
-              >
-                <button
-                  class="euiButtonEmpty euiButtonEmpty--text euiButtonEmpty--xSmall euiButtonEmpty--iconRight"
-                  type="button"
-                >
-                  <span
-                    class="euiButtonEmpty__content"
-                  >
-                    EuiIconMock
-                    <span
-                      class="euiButtonEmpty__text"
-                    >
-                      Rows per page
-                      : 
-                      20
-                    </span>
-                  </span>
-                </button>
-              </div>
-            </div>
-          </div>
-          <div
-            class="euiFlexItem euiFlexItem--flexGrowZero"
-          >
-            <span />
-          </div>
-        </div>
       </div>
     </div>
   </div>

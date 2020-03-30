@@ -13,12 +13,15 @@
  * permissions and limitations under the License.
  */
 
+import { Direction } from "@elastic/eui";
+import { ManagedIndexItem } from "../../../../models/interfaces";
+
 export interface ManagedIndicesQueryParams {
   from: number;
   size: number;
   search: string;
-  sortField: string;
-  sortDirection: string;
+  sortField: keyof ManagedIndexItem;
+  sortDirection: Direction;
 }
 
 export interface Actions {

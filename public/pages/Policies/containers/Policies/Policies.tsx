@@ -18,8 +18,19 @@ import chrome from "ui/chrome";
 import { RouteComponentProps } from "react-router-dom";
 import { toastNotifications } from "ui/notify";
 import queryString from "query-string";
-// @ts-ignore
-import { EuiBasicTable, EuiHorizontalRule, EuiLink } from "@elastic/eui";
+import {
+  EuiBasicTable,
+  EuiHorizontalRule,
+  EuiTableFieldDataColumnType,
+  EuiLink,
+  // @ts-ignore
+  Criteria,
+  EuiTableSortingType,
+  Direction,
+  // @ts-ignore
+  Pagination,
+  EuiTableSelectionType,
+} from "@elastic/eui";
 import _ from "lodash";
 import { ContentPanel, ContentPanelActions } from "../../../../components/ContentPanel";
 import PolicyControls from "../../components/PolicyControls";
@@ -29,10 +40,9 @@ import { ModalConsumer } from "../../../../components/Modal";
 import { DEFAULT_PAGE_SIZE_OPTIONS, DEFAULT_QUERY_PARAMS } from "../../utils/constants";
 import { PoliciesQueryParams, PolicyItem } from "../../models/interfaces";
 import { getURLQueryParams, renderTime } from "../../utils/helpers";
-import { BREADCRUMBS, ROUTES, SortDirection } from "../../../../utils/constants";
+import { BREADCRUMBS, ROUTES } from "../../../../utils/constants";
 import { PolicyService } from "../../../../services";
 import { getErrorMessage } from "../../../../utils/helpers";
-import { TableParams } from "../../../../models/interfaces";
 import ConfirmationModal from "../../../../components/ConfirmationModal";
 
 interface PoliciesProps extends RouteComponentProps {
@@ -44,15 +54,15 @@ interface PoliciesState {
   from: number;
   size: number;
   search: string;
-  sortField: string;
-  sortDirection: SortDirection;
+  sortField: keyof PolicyItem;
+  sortDirection: Direction;
   selectedItems: PolicyItem[];
   policies: PolicyItem[];
   loadingPolicies: boolean;
 }
 
 export default class Policies extends Component<PoliciesProps, PoliciesState> {
-  columns: object[];
+  columns: EuiTableFieldDataColumnType<PolicyItem>[];
 
   constructor(props: PoliciesProps) {
     super(props);
@@ -169,7 +179,7 @@ export default class Policies extends Component<PoliciesProps, PoliciesState> {
     return false;
   };
 
-  onTableChange = ({ page: tablePage, sort }: TableParams): void => {
+  onTableChange = ({ page: tablePage, sort }: Criteria<PolicyItem>): void => {
     const { index: page, size } = tablePage;
     const { field: sortField, direction: sortDirection } = sort;
     this.setState({ from: page * size, size, sortField, sortDirection });
@@ -224,23 +234,22 @@ export default class Policies extends Component<PoliciesProps, PoliciesState> {
     const filterIsApplied = !!search;
     const page = Math.floor(from / size);
 
-    const pagination = {
+    const pagination: Pagination = {
       pageIndex: page,
       pageSize: size,
       pageSizeOptions: DEFAULT_PAGE_SIZE_OPTIONS,
       totalItemCount: totalPolicies,
     };
 
-    const sorting = {
+    const sorting: EuiTableSortingType<PolicyItem> = {
       sort: {
         direction: sortDirection,
         field: sortField,
       },
     };
 
-    const selection = {
+    const selection: EuiTableSelectionType<PolicyItem> = {
       onSelectionChange: this.onSelectionChange,
-      selectableMessage: (selectable: boolean) => (selectable ? undefined : undefined),
     };
 
     const actions = [

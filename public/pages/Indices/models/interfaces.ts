@@ -13,8 +13,9 @@
  * permissions and limitations under the License.
  */
 
-import { SortDirection } from "../../../utils/constants";
+import { Direction } from "@elastic/eui";
 import { Policy } from "../../../../models/interfaces";
+import { ManagedCatIndex } from "../../../../server/models/interfaces";
 
 export interface PolicyOption {
   label: string;
@@ -25,6 +26,6 @@ export interface IndicesQueryParams {
   from: number;
   size: number;
   search: string;
-  sortField: string;
-  sortDirection: SortDirection;
+  sortField: keyof ManagedCatIndex;
+  sortDirection: Direction;
 }

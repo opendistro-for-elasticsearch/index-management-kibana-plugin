@@ -29,6 +29,17 @@ exports[`<ManagedIndexControls /> spec renders the component 1`] = `
             EuiIconMock
           </span>
         </div>
+        <div
+          class="euiFormControlLayoutIcons euiFormControlLayoutIcons--right"
+        >
+          <button
+            aria-label="Clear input"
+            class="euiFormControlLayoutClearButton"
+            type="button"
+          >
+            EuiIconMock
+          </button>
+        </div>
       </div>
     </div>
   </div>
@@ -50,7 +61,7 @@ exports[`<ManagedIndexControls /> spec renders the component 1`] = `
             id="QuickSelectPopover"
           >
             <div
-              class="euiPopover__anchor"
+              class="euiPopover__anchor euiQuickSelectPopover__anchor"
             >
               <button
                 aria-label="Date quick select"
@@ -75,7 +86,7 @@ exports[`<ManagedIndexControls /> spec renders the component 1`] = `
             class="euiFormControlLayout__childrenWrapper"
           >
             <div
-              class="euiDatePickerRange euiDatePickerRange--readOnly euiDatePickerRange--inGroup euiFormControlLayout__child--noStyle"
+              class="euiDatePickerRange euiDatePickerRange--readOnly euiDatePickerRange--inGroup"
             >
               <span
                 class="euiSuperDatePicker__prettyFormat"

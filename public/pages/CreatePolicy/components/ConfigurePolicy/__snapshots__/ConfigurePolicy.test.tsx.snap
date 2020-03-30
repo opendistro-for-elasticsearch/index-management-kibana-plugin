@@ -42,36 +42,42 @@ exports[`<ConfigurePolicy /> spec renders the component 1`] = `
         class="euiFormRow"
         id="some_make_id-row"
       >
-        <div>
+        <div
+          class="euiFormRow__labelWrapper"
+        >
           <label
             aria-invalid="false"
-            class="euiFormLabel"
+            class="euiFormLabel euiFormRow__label"
             for="some_make_id"
           >
             Policy ID
           </label>
         </div>
         <div
-          class="euiFormControlLayout"
+          class="euiFormRow__fieldWrapper"
         >
           <div
-            class="euiFormControlLayout__childrenWrapper"
+            class="euiFormControlLayout"
           >
-            <input
-              aria-describedby="some_make_id-help"
-              class="euiFieldText"
-              id="some_make_id"
-              placeholder="hot_cold_workflow"
-              type="text"
-              value="some_id"
-            />
+            <div
+              class="euiFormControlLayout__childrenWrapper"
+            >
+              <input
+                aria-describedby="some_make_id-help"
+                class="euiFieldText"
+                id="some_make_id"
+                placeholder="hot_cold_workflow"
+                type="text"
+                value="some_id"
+              />
+            </div>
           </div>
-        </div>
-        <div
-          class="euiFormHelpText euiFormRow__text"
-          id="some_make_id-help"
-        >
-          Specify a unique ID that is easy to recognize and remember.
+          <div
+            class="euiFormHelpText euiFormRow__text"
+            id="some_make_id-help"
+          >
+            Specify a unique ID that is easy to recognize and remember.
+          </div>
         </div>
       </div>
     </div>
