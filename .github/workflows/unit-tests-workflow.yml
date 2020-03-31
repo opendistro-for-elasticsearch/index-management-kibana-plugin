@@ -1,0 +1,51 @@
+name: Unit tests workflow
+on:
+  pull_request:
+    branches:
+      - master
+
+jobs:
+  tests:
+    name: Run unit tests
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Index Management Kibana plugin
+        uses: actions/checkout@v2
+        with:
+          path: index-management-kibana-plugin
+      - name: Get Kibana version
+        id: kibana_version
+        run: |
+          echo "::set-output name=kibana_version::$(node -p "(require('./index-management-kibana-plugin/package.json').kibana.version).match(/[.0-9]+/)[0]")"
+      - name: Checkout Kibana
+        uses: actions/checkout@v2
+        with:
+          repository: opendistro-for-elasticsearch/kibana-oss
+          ref: ${{ steps.kibana_version.outputs.kibana_version }}
+          token: ${{ secrets.GITHUB_KIBANA_OSS }}
+          path: kibana
+      - name: Get node and yarn versions
+        id: versions
+        run: |
+          echo "::set-output name=node_version::$(node -p "(require('./kibana/package.json').engines.node).match(/[.0-9]+/)[0]")"
+          echo "::set-output name=yarn_version::$(node -p "(require('./kibana/package.json').engines.yarn).match(/[.0-9]+/)[0]")"
+      - name: Setup node
+        uses: actions/setup-node@v1
+        with:
+          node-version: ${{ steps.versions.outputs.node_version }}
+          registry-url: 'https://registry.npmjs.org'
+      - name: Install correct yarn version for Kibana
+        run: |
+          npm uninstall -g yarn
+          echo "Installing yarn ${{ steps.versions_step.outputs.yarn_version }}"
+          npm i -g yarn@${{ steps.versions.outputs.yarn_version }}
+      - name: Bootstrap plugin/kibana
+        run: |
+          mkdir -p kibana/plugins
+          mv index-management-kibana-plugin kibana/plugins
+          cd kibana/plugins/index-management-kibana-plugin
+          yarn kbn bootstrap
+      - name: Run tests
+        run: |
+          cd kibana/plugins/index-management-kibana-plugin
+          yarn run test:jest
