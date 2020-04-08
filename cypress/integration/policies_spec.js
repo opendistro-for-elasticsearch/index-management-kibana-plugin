@@ -27,7 +27,7 @@ describe("Policies", () => {
     cy.visit(`${Cypress.env("kibana")}/app/${PLUGIN_NAME}`);
 
     // Common text to wait for to confirm page loaded, give up to 20 seconds for initial load
-    cy.contains("Rows per page", { timeout: 20000 });
+    cy.contains("Create policy", { timeout: 20000 });
   });
 
   describe("can be created", () => {
