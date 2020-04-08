@@ -17,11 +17,13 @@ jobs:
       - name: Set up JDK
         uses: actions/setup-java@v1
         with:
-          java-version: 12
+          # TODO: Parse this from index management plugin
+          java-version: 13
       - name: Checkout
         uses: actions/checkout@v2
         with:
           path: index-management
+          # TODO: Move this after Kibana plugin setup so we can pull down the correct branch to support all opendistro branches
           repository: opendistro-for-elasticsearch/index-management
       - name: Run elasticsearch with plugin
         run: |
