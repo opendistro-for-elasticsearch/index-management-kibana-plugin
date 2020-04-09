@@ -72,7 +72,9 @@ jobs:
         run: |
           cd kibana/plugins/index-management-kibana-plugin
           yarn start --no-base-path --no-watch &
-          timeout 300 bash -c 'while [[ "$(curl -s -o /dev/null -w ''%{http_code}'' localhost:5601/api/status)" != "200" ]]; do sleep 5; done'
+          sleep 300
+          curl localhost:5601/api/status
+          # timeout 300 bash -c 'while [[ "$(curl -s -o /dev/null -w ''%{http_code}'' localhost:5601/api/status)" != "200" ]]; do sleep 5; done'
       - name: Cache Cypress
         id: cache-cypress
         uses: actions/cache@v1
