@@ -1,3 +1,7 @@
+## Version 1.7.0.0
+
+patch release to be compatible with other plugins
+
 ## Version 1.6.0.0
 
 ### New Features
