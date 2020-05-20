@@ -302,17 +302,13 @@ exports[`<ManagedIndices /> spec renders the component 1`] = `
             class="euiTable euiTable--responsive"
           >
             <caption
-              aria-live="polite"
-              aria-relevant="text"
               class="euiScreenReaderOnly euiTableCaption"
-              role="status"
             />
             <thead>
               <tr>
                 <th
                   class="euiTableHeaderCellCheckbox"
                   scope="col"
-                  style="width: 24px;"
                 >
                   <div
                     class="euiTableCellContent"

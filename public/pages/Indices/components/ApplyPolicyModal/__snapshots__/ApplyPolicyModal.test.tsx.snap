@@ -101,6 +101,7 @@ exports[`<ApplyPolicyModal /> spec renders the component 1`] = `
                           style="font-size: 14px; display: inline-block;"
                         >
                           <input
+                            aria-controls=""
                             data-test-subj="comboBoxSearchInput"
                             id="some_make_id"
                             role="textbox"

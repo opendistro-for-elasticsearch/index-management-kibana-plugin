@@ -13,7 +13,7 @@
  * permissions and limitations under the License.
  */
 
-import { isAngularHttpError } from "ui/notify/lib/format_angular_http_error";
+import { isAngularHttpError } from "ui2/notify/lib/format_angular_http_error";
 
 export function getErrorMessage(err: any, defaultMessage: string) {
   if (err && err.message) return err.message;
