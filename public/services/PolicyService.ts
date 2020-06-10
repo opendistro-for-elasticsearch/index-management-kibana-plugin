@@ -13,25 +13,26 @@
  * permissions and limitations under the License.
  */
 
-import queryString from "query-string";
+import queryString from "querystring";
 import { IHttpResponse, IHttpService } from "angular";
 import { GetPoliciesResponse, PutPolicyResponse } from "../../server/models/interfaces";
 import { ServerResponse } from "../../server/models/types";
 import { NODE_API } from "../../utils/constants";
 import { DocumentPolicy, Policy } from "../../models/interfaces";
+import { HttpSetup, HttpResponse } from "kibana/public";
 
 export default class PolicyService {
-  httpClient: IHttpService;
+  httpClient: HttpSetup;
 
-  constructor(httpClient: IHttpService) {
+  constructor(httpClient: HttpSetup) {
     this.httpClient = httpClient;
   }
 
   getPolicies = async (queryParamsString: string): Promise<ServerResponse<GetPoliciesResponse>> => {
     let url = `..${NODE_API.POLICIES}`;
     if (queryParamsString) url += `?${queryParamsString}`;
-    const response = (await this.httpClient.get(url)) as IHttpResponse<ServerResponse<GetPoliciesResponse>>;
-    return response.data;
+    const response = (await this.httpClient.get(url)) as HttpResponse<ServerResponse<GetPoliciesResponse>>;
+    return response.body!;
   };
 
   putPolicy = async (
@@ -43,19 +44,19 @@ export default class PolicyService {
     const queryParamsString = queryString.stringify({ seqNo, primaryTerm });
     let url = `..${NODE_API.POLICIES}/${policyId}`;
     if (queryParamsString) url += `?${queryParamsString}`;
-    const response = (await this.httpClient.put(url, policy)) as IHttpResponse<ServerResponse<PutPolicyResponse>>;
-    return response.data;
+    const response = (await this.httpClient.put(url, { body: JSON.stringify(policy) })) as HttpResponse<ServerResponse<PutPolicyResponse>>;
+    return response.body!;
   };
 
   getPolicy = async (policyId: string): Promise<ServerResponse<DocumentPolicy>> => {
     const url = `..${NODE_API.POLICIES}/${policyId}`;
-    const response = (await this.httpClient.get(url)) as IHttpResponse<ServerResponse<DocumentPolicy>>;
-    return response.data;
+    const response = (await this.httpClient.get(url)) as HttpResponse<ServerResponse<DocumentPolicy>>;
+    return response.body!;
   };
 
   deletePolicy = async (policyId: string): Promise<ServerResponse<boolean>> => {
     const url = `..${NODE_API.POLICIES}/${policyId}`;
-    const response = (await this.httpClient.delete(url)) as IHttpResponse<ServerResponse<boolean>>;
-    return response.data;
+    const response = (await this.httpClient.delete(url)) as HttpResponse<ServerResponse<boolean>>;
+    return response.body!;
   };
 }

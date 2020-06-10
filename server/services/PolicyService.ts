@@ -27,88 +27,168 @@ import {
 import { getMustQuery } from "../utils/helpers";
 import { PoliciesSort, ServerResponse } from "../models/types";
 import { DocumentPolicy, Policy } from "../../models/interfaces";
+import { IClusterClient, KibanaRequest, KibanaResponseFactory, IKibanaResponse, ResponseError, RequestHandlerContext } from "kibana/server";
 
-type Request = Legacy.Request;
-type ElasticsearchPlugin = Legacy.Plugins.elasticsearch.Plugin;
-type ResponseToolkit = Legacy.ResponseToolkit;
+// type Request = Legacy.Request;
+// type ElasticsearchPlugin = Legacy.Plugins.elasticsearch.Plugin;
+// type ResponseToolkit = Legacy.ResponseToolkit;
 
 export default class PolicyService {
-  esDriver: ElasticsearchPlugin;
+  esDriver: IClusterClient;
 
-  constructor(esDriver: ElasticsearchPlugin) {
+  constructor(esDriver: IClusterClient) {
     this.esDriver = esDriver;
   }
 
   /**
    * Calls backend Put Policy API
    */
-  putPolicy = async (req: Request, h: ResponseToolkit): Promise<ServerResponse<PutPolicyResponse>> => {
+  putPolicy = async (
+    context: RequestHandlerContext,
+    request: KibanaRequest,
+    response: KibanaResponseFactory
+  ): Promise<IKibanaResponse<ServerResponse<PutPolicyResponse> | ResponseError>> => {
     try {
-      const { id } = req.params;
-      const { seqNo, primaryTerm } = req.query as { seqNo?: string; primaryTerm?: string };
+      // const { id } = req.params;
+      const { id } = request.params as { id: string };
+      const { seqNo, primaryTerm } = request.query as { seqNo?: string; primaryTerm?: string };
       let method = "ism.putPolicy";
-      let params: PutPolicyParams = { policyId: id, ifSeqNo: seqNo, ifPrimaryTerm: primaryTerm, body: JSON.stringify(req.payload) };
+      let params: PutPolicyParams = { policyId: id, ifSeqNo: seqNo, ifPrimaryTerm: primaryTerm, body: JSON.stringify(request.body) };
       if (seqNo === undefined || primaryTerm === undefined) {
         method = "ism.createPolicy";
-        params = { policyId: id, body: JSON.stringify(req.payload) };
+        // params = { policyId: id, body: JSON.stringify(req.payload) };
+        params = { policyId: id, body: JSON.stringify(request.body) };
       }
-      const { callWithRequest } = await this.esDriver.getCluster(CLUSTER.ISM);
-      const response = await callWithRequest(req, method, params);
-      return { ok: true, response: response };
+      // const { callWithRequest } = await this.esDriver.getCluster(CLUSTER.ISM);
+      const { callAsCurrentUser: callWithRequest } = this.esDriver.asScoped(request);
+      const putPolicyResponse: PutPolicyResponse = await callWithRequest(method, params);
+      // return { ok: true, response: response };
+      return response.custom({
+        statusCode: 200,
+        body: {
+          ok: true,
+          response: putPolicyResponse,
+        },
+      });
     } catch (err) {
       console.error("Index Management - PolicyService - putPolicy:", err);
-      return { ok: false, error: err.message };
+      // return { ok: false, error: err.message };
+      return response.custom({
+        statusCode: 200,
+        body: {
+          ok: false,
+          error: err.message,
+        },
+      });
     }
   };
 
   /**
    * Calls backend Delete Policy API
    */
-  deletePolicy = async (req: Request, h: ResponseToolkit): Promise<ServerResponse<boolean>> => {
+  deletePolicy = async (
+    context: RequestHandlerContext,
+    request: KibanaRequest,
+    response: KibanaResponseFactory
+  ): Promise<IKibanaResponse<ServerResponse<boolean> | ResponseError>> => {
     try {
-      const { id } = req.params;
+      // const { id } = req.params;
+      const { id } = request.params as { id: string };
       const params: DeletePolicyParams = { policyId: id };
-      const { callWithRequest } = await this.esDriver.getCluster(CLUSTER.ISM);
-      const response: DeletePolicyResponse = await callWithRequest(req, "ism.deletePolicy", params);
-      if (response.result !== "deleted") {
-        return { ok: false, error: response.result };
+      // const { callWithRequest } = await this.esDriver.getCluster(CLUSTER.ISM);
+      const { callAsCurrentUser: callWithRequest } = this.esDriver.asScoped(request);
+      const deletePolicyResponse: DeletePolicyResponse = await callWithRequest("ism.deletePolicy", params);
+      if (deletePolicyResponse.result !== "deleted") {
+        // return { ok: false, error: response.result };
+        return response.custom({
+          statusCode: 200,
+          body: {
+            ok: false,
+            error: deletePolicyResponse.result,
+          },
+        });
       }
-      return { ok: true, response: true };
+      // return { ok: true, response: true };
+      return response.custom({
+        statusCode: 200,
+        body: {
+          ok: true,
+          response: true,
+        },
+      });
     } catch (err) {
       console.error("Index Management - PolicyService - deletePolicy:", err);
-      return { ok: false, error: err.message };
+      // return { ok: false, error: err.message };
+      return response.custom({
+        statusCode: 200,
+        body: {
+          ok: false,
+          error: err.message,
+        },
+      });
     }
   };
 
   /**
    * Calls backend Get Policy API
    */
-  getPolicy = async (req: Request, h: ResponseToolkit): Promise<ServerResponse<DocumentPolicy>> => {
+  getPolicy = async (
+    context: RequestHandlerContext,
+    request: KibanaRequest,
+    response: KibanaResponseFactory
+  ): Promise<IKibanaResponse<ServerResponse<DocumentPolicy>>> => {
     try {
-      const { id } = req.params;
+      // const { id } = req.params;
+      const { id } = request.params as { id: string };
       const params = { policyId: id };
-      const { callWithRequest } = await this.esDriver.getCluster(CLUSTER.ISM);
-      const getResponse = await callWithRequest(req, "ism.getPolicy", params);
+      // const { callWithRequest } = await this.esDriver.getCluster(CLUSTER.ISM);
+      const { callAsCurrentUser: callWithRequest } = this.esDriver.asScoped(request);
+      const getResponse = await callWithRequest("ism.getPolicy", params);
       const policy = _.get(getResponse, "policy", null);
       const seqNo = _.get(getResponse, "_seq_no");
       const primaryTerm = _.get(getResponse, "_primary_term");
       if (policy) {
-        return { ok: true, response: { id, seqNo: seqNo as number, primaryTerm: primaryTerm as number, policy: policy as Policy } };
+        // return { ok: true, response: { id, seqNo: seqNo as number, primaryTerm: primaryTerm as number, policy: policy as Policy } };
+        return response.custom({
+          statusCode: 200,
+          body: {
+            ok: true,
+            response: { id, seqNo: seqNo as number, primaryTerm: primaryTerm as number, policy: policy as Policy },
+          },
+        });
       } else {
-        return { ok: false, error: "Failed to load policy" };
+        // return { ok: false, error: "Failed to load policy" };
+        return response.custom({
+          statusCode: 200,
+          body: {
+            ok: false,
+            error: "Failed to load policy",
+          },
+        });
       }
     } catch (err) {
       console.error("Index Management - PolicyService - getPolicy:", err);
-      return { ok: false, error: err.message };
+      // return { ok: false, error: err.message };
+      return response.custom({
+        statusCode: 200,
+        body: {
+          ok: false,
+          error: err.message,
+        },
+      });
     }
   };
 
   /**
    * Performs a fuzzy search request on policy id
    */
-  getPolicies = async (req: Request, h: ResponseToolkit): Promise<ServerResponse<GetPoliciesResponse>> => {
+  getPolicies = async (
+    context: RequestHandlerContext,
+    request: KibanaRequest,
+    response: KibanaResponseFactory
+  ): Promise<IKibanaResponse<ServerResponse<GetPoliciesResponse>>> => {
     try {
-      const { from, size, search, sortDirection, sortField } = req.query as {
+      const { from, size, search, sortDirection, sortField } = request.query as {
         from: string;
         size: string;
         search: string;
@@ -137,24 +217,46 @@ export default class PolicyService {
         },
       };
 
-      const { callWithRequest } = await this.esDriver.getCluster(CLUSTER.DATA);
-      const searchResponse: SearchResponse<any> = await callWithRequest(req, "search", params);
+      // const { callWithRequest } = await this.esDriver.getCluster(CLUSTER.DATA);
+      const { callAsCurrentUser: callWithRequest } = this.esDriver.asScoped(request);
+      const searchResponse: SearchResponse<any> = await callWithRequest("search", params);
 
       const totalPolicies = searchResponse.hits.total.value;
-      const policies = searchResponse.hits.hits.map(hit => ({
+      const policies = searchResponse.hits.hits.map((hit) => ({
         seqNo: hit._seq_no as number,
         primaryTerm: hit._primary_term as number,
         id: hit._id,
         policy: hit._source,
       }));
 
-      return { ok: true, response: { policies: policies, totalPolicies } };
+      // return { ok: true, response: { policies: policies, totalPolicies } };
+      return response.custom({
+        statusCode: 200,
+        body: {
+          ok: true,
+          response: { policies: policies, totalPolicies },
+        },
+      });
     } catch (err) {
       if (err.statusCode === 404 && err.body.error.type === "index_not_found_exception") {
-        return { ok: true, response: { policies: [], totalPolicies: 0 } };
+        // return { ok: true, response: { policies: [], totalPolicies: 0 } };
+        return response.custom({
+          statusCode: 200,
+          body: {
+            ok: true,
+            response: { policies: [], totalPolicies: 0 },
+          },
+        });
       }
       console.error("Index Management - PolicyService - getPolicies", err);
-      return { ok: false, error: err.message };
+      // return { ok: false, error: err.message };
+      return response.custom({
+        statusCode: 200,
+        body: {
+          ok: false,
+          error: err.message,
+        },
+      });
     }
   };
 }

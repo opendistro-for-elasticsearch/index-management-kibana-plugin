@@ -13,7 +13,7 @@
  * permissions and limitations under the License.
  */
 
-import { IHttpResponse, IHttpService } from "angular";
+// import { IHttpResponse, IHttpService } from "angular";
 import {
   ChangePolicyResponse,
   GetManagedIndicesResponse,
@@ -22,38 +22,41 @@ import {
 } from "../../server/models/interfaces";
 import { ServerResponse } from "../../server/models/types";
 import { NODE_API } from "../../utils/constants";
+import { HttpSetup, HttpResponse } from "kibana/public";
 
 export default class ManagedIndexService {
-  httpClient: IHttpService;
+  httpClient: HttpSetup;
 
-  constructor(httpClient: IHttpService) {
+  constructor(httpClient: HttpSetup) {
     this.httpClient = httpClient;
   }
 
   getManagedIndex = async (managedIndexUuid: string): Promise<ServerResponse<any>> => {
-    const response = (await this.httpClient.get(`..${NODE_API.MANAGED_INDICES}/${managedIndexUuid}`)) as IHttpResponse<ServerResponse<any>>;
-    return response.data;
+    const response = (await this.httpClient.get(`..${NODE_API.MANAGED_INDICES}/${managedIndexUuid}`)) as HttpResponse<ServerResponse<any>>;
+    return response.body!;
   };
 
   getManagedIndices = async (queryParamsString: string): Promise<ServerResponse<GetManagedIndicesResponse>> => {
     let url = `..${NODE_API.MANAGED_INDICES}`;
     if (queryParamsString) url += `?${queryParamsString}`;
-    const response = (await this.httpClient.get(url)) as IHttpResponse<ServerResponse<GetManagedIndicesResponse>>;
-    return response.data;
+    const response = (await this.httpClient.get(url)) as HttpResponse<ServerResponse<GetManagedIndicesResponse>>;
+    return response.body!;
   };
 
   retryManagedIndexPolicy = async (index: string[], state: string | null): Promise<ServerResponse<RetryManagedIndexResponse>> => {
     const body = { index, state };
-    const response = (await this.httpClient.post(`..${NODE_API.RETRY}`, body)) as IHttpResponse<ServerResponse<RetryManagedIndexResponse>>;
-    return response.data;
+    const response = (await this.httpClient.post(`..${NODE_API.RETRY}`, { body: JSON.stringify(body) })) as HttpResponse<
+      ServerResponse<RetryManagedIndexResponse>
+    >;
+    return response.body!;
   };
 
   removePolicy = async (indices: string[]): Promise<ServerResponse<RemovePolicyResponse>> => {
     const body = { indices };
-    const response = (await this.httpClient.post(`..${NODE_API.REMOVE_POLICY}`, body)) as IHttpResponse<
+    const response = (await this.httpClient.post(`..${NODE_API.REMOVE_POLICY}`, { body: JSON.stringify(body) })) as HttpResponse<
       ServerResponse<RemovePolicyResponse>
     >;
-    return response.data;
+    return response.body!;
   };
 
   changePolicy = async (
@@ -63,9 +66,9 @@ export default class ManagedIndexService {
     include: object[]
   ): Promise<ServerResponse<ChangePolicyResponse>> => {
     const body = { indices, policyId, state, include };
-    const response = (await this.httpClient.post(`..${NODE_API.CHANGE_POLICY}`, body)) as IHttpResponse<
+    const response = (await this.httpClient.post(`..${NODE_API.CHANGE_POLICY}`, { body: JSON.stringify(body) })) as HttpResponse<
       ServerResponse<ChangePolicyResponse>
     >;
-    return response.data;
+    return response.body!;
   };
 }

@@ -30,35 +30,59 @@ import {
   SearchResponse,
 } from "../models/interfaces";
 import { ManagedIndicesSort, ServerResponse } from "../models/types";
+import { RequestHandlerContext, KibanaRequest, KibanaResponseFactory, IKibanaResponse, IClusterClient } from "kibana/server";
 
-type Request = Legacy.Request;
-type ElasticsearchPlugin = Legacy.Plugins.elasticsearch.Plugin;
-type ResponseToolkit = Legacy.ResponseToolkit;
+// type Request = Legacy.Request;
+// type ElasticsearchPlugin = Legacy.Plugins.elasticsearch.Plugin;
+// type ResponseToolkit = Legacy.ResponseToolkit;
 
 export default class ManagedIndexService {
-  esDriver: ElasticsearchPlugin;
+  esDriver: IClusterClient;
 
-  constructor(esDriver: ElasticsearchPlugin) {
+  constructor(esDriver: IClusterClient) {
     this.esDriver = esDriver;
   }
 
   // TODO: Not finished, need UI page that uses this first
-  getManagedIndex = async (req: Request, h: ResponseToolkit): Promise<ServerResponse<any>> => {
+  getManagedIndex = async (
+    context: RequestHandlerContext,
+    request: KibanaRequest,
+    response: KibanaResponseFactory
+  ): Promise<IKibanaResponse<ServerResponse<any>>> => {
     try {
-      const { id } = req.params;
+      const { id } = request.params as { id: string };
       const params: RequestParams.Get = { id, index: INDEX.OPENDISTRO_ISM_CONFIG };
-      const { callWithRequest } = this.esDriver.getCluster(CLUSTER.DATA);
-      const results: SearchResponse<any> = await callWithRequest(req, "search", params);
-      return { ok: true, response: results };
+      // const { callWithRequest } = this.esDriver.getCluster(CLUSTER.DATA);
+      const { callAsCurrentUser: callWithRequest } = this.esDriver.asScoped(request);
+      const results: SearchResponse<any> = await callWithRequest("search", params);
+      // return { ok: true, response: results };
+      return response.custom({
+        statusCode: 200,
+        body: {
+          ok: true,
+          response: results,
+        },
+      });
     } catch (err) {
       console.error("Index Management - ManagedIndexService - getManagedIndex:", err);
-      return { ok: false, error: err.message };
+      // return { ok: false, error: err.message };
+      return response.custom({
+        statusCode: 200,
+        body: {
+          ok: false,
+          error: err.message,
+        },
+      });
     }
   };
 
-  getManagedIndices = async (req: Request, h: ResponseToolkit): Promise<ServerResponse<GetManagedIndicesResponse>> => {
+  getManagedIndices = async (
+    context: RequestHandlerContext,
+    request: KibanaRequest,
+    response: KibanaResponseFactory
+  ): Promise<IKibanaResponse<ServerResponse<GetManagedIndicesResponse>>> => {
     try {
-      const { from, size, search, sortDirection, sortField } = req.query as {
+      const { from, size, search, sortDirection, sortField } = request.query as {
         from: string;
         size: string;
         search: string;
@@ -83,20 +107,28 @@ export default class ManagedIndexService {
         },
       };
 
-      const { callWithRequest } = await this.esDriver.getCluster(CLUSTER.DATA);
-      const searchResponse: SearchResponse<any> = await callWithRequest(req, "search", searchParams);
+      // const { callWithRequest } = await this.esDriver.getCluster(CLUSTER.DATA);
+      const { callAsCurrentUser: callWithRequest } = this.esDriver.asScoped(request);
+      const searchResponse: SearchResponse<any> = await callWithRequest("search", searchParams);
 
-      const indices = searchResponse.hits.hits.map(hit => hit._source.managed_index.index);
+      const indices = searchResponse.hits.hits.map((hit) => hit._source.managed_index.index);
       const totalManagedIndices = _.get(searchResponse, "hits.total.value", 0);
 
       if (!indices.length) {
-        return { ok: true, response: { managedIndices: [], totalManagedIndices: 0 } };
+        // return { ok: true, response: { managedIndices: [], totalManagedIndices: 0 } };
+        return response.custom({
+          statusCode: 200,
+          body: {
+            ok: true,
+            response: { managedIndices: [], totalManagedIndices: 0 },
+          },
+        });
       }
 
       const explainParams = { index: indices.join(",") };
-      const { callWithRequest: ismCallWithRequest } = await this.esDriver.getCluster(CLUSTER.ISM);
-      const explainResponse: ExplainResponse = await ismCallWithRequest(req, "ism.explain", explainParams);
-      const managedIndices = searchResponse.hits.hits.map(hit => {
+      // const { callWithRequest: ismCallWithRequest } = await this.esDriver.getCluster(CLUSTER.ISM);
+      const explainResponse: ExplainResponse = await callWithRequest("ism.explain", explainParams);
+      const managedIndices = searchResponse.hits.hits.map((hit) => {
         const index = hit._source.managed_index.index;
         return {
           index,
@@ -110,94 +142,160 @@ export default class ManagedIndexService {
         };
       });
 
-      return { ok: true, response: { managedIndices, totalManagedIndices } };
+      // return { ok: true, response: { managedIndices, totalManagedIndices } };
+      return response.custom({
+        statusCode: 200,
+        body: {
+          ok: true,
+          response: { managedIndices, totalManagedIndices },
+        },
+      });
     } catch (err) {
       if (err.statusCode === 404 && err.body.error.type === "index_not_found_exception") {
-        return { ok: true, response: { managedIndices: [], totalManagedIndices: 0 } };
+        // return { ok: true, response: { managedIndices: [], totalManagedIndices: 0 } };
+        return response.custom({
+          statusCode: 200,
+          body: {
+            ok: true,
+            response: { managedIndices: [], totalManagedIndices: 0 },
+          },
+        });
       }
       console.error("Index Management - ManagedIndexService - getManagedIndices", err);
-      return { ok: false, error: err.message };
+      // return { ok: false, error: err.message };
+      return response.custom({
+        statusCode: 200,
+        body: {
+          ok: false,
+          error: err.message,
+        },
+      });
     }
   };
 
-  retryManagedIndexPolicy = async (req: Request, h: ResponseToolkit): Promise<ServerResponse<RetryManagedIndexResponse>> => {
+  retryManagedIndexPolicy = async (
+    context: RequestHandlerContext,
+    request: KibanaRequest,
+    response: KibanaResponseFactory
+  ): Promise<IKibanaResponse<ServerResponse<RetryManagedIndexResponse>>> => {
     try {
-      const { index, state = null } = req.payload as { index: string[]; state?: string };
-      const { callWithRequest } = await this.esDriver.getCluster(CLUSTER.ISM);
+      const { index, state = null } = request.body as { index: string[]; state?: string };
+      // const { callWithRequest } = await this.esDriver.getCluster(CLUSTER.ISM);
+      const { callAsCurrentUser: callWithRequest } = this.esDriver.asScoped(request);
       const params: RetryParams = { index: index.join(",") };
       if (state) params.body = { state };
-      const retryResponse: RetryResponse = await callWithRequest(req, "ism.retry", params);
-      return {
-        ok: true,
-        response: {
-          failures: retryResponse.failures,
-          updatedIndices: retryResponse.updated_indices,
-          // TODO: remove ternary after fixing retry API to return empty array even if no failures
-          failedIndices: retryResponse.failed_indices
-            ? retryResponse.failed_indices.map(failedIndex => ({
-                indexName: failedIndex.index_name,
-                indexUuid: failedIndex.index_uuid,
-                reason: failedIndex.reason,
-              }))
-            : [],
+      const retryResponse: RetryResponse = await callWithRequest("ism.retry", params);
+      return response.custom({
+        statusCode: 200,
+        body: {
+          ok: true,
+          response: {
+            failures: retryResponse.failures,
+            updatedIndices: retryResponse.updated_indices,
+            // TODO: remove ternary after fixing retry API to return empty array even if no failures
+            failedIndices: retryResponse.failed_indices
+              ? retryResponse.failed_indices.map((failedIndex) => ({
+                  indexName: failedIndex.index_name,
+                  indexUuid: failedIndex.index_uuid,
+                  reason: failedIndex.reason,
+                }))
+              : [],
+          },
         },
-      };
+      });
     } catch (err) {
       console.error("Index Management - ManagedIndexService - retryManagedIndexPolicy:", err);
-      return { ok: false, error: err.message };
+      // return { ok: false, error: err.message };
+      return response.custom({
+        statusCode: 200,
+        body: {
+          ok: false,
+          error: err.message,
+        },
+      });
     }
   };
 
-  changePolicy = async (req: Request, h: ResponseToolkit): Promise<ServerResponse<ChangePolicyResponse>> => {
+  changePolicy = async (
+    context: RequestHandlerContext,
+    request: KibanaRequest,
+    response: KibanaResponseFactory
+  ): Promise<IKibanaResponse<ServerResponse<ChangePolicyResponse>>> => {
     try {
-      const { indices, policyId, include, state } = req.payload as {
+      const { indices, policyId, include, state } = request.body as {
         indices: string[];
         policyId: string;
         state: string | null;
         include: { state: string }[];
       };
-      const { callWithRequest } = await this.esDriver.getCluster(CLUSTER.ISM);
+      // const { callWithRequest } = await this.esDriver.getCluster(CLUSTER.ISM);
+      const { callAsCurrentUser: callWithRequest } = this.esDriver.asScoped(request);
       const params = { index: indices.join(","), body: { policy_id: policyId, include, state } };
-      const changeResponse: RemoveResponse = await callWithRequest(req, "ism.change", params);
-      return {
-        ok: true,
-        response: {
-          failures: changeResponse.failures,
-          updatedIndices: changeResponse.updated_indices,
-          failedIndices: changeResponse.failed_indices.map(failedIndex => ({
-            indexName: failedIndex.index_name,
-            indexUuid: failedIndex.index_uuid,
-            reason: failedIndex.reason,
-          })),
+      const changeResponse: RemoveResponse = await callWithRequest("ism.change", params);
+      return response.custom({
+        statusCode: 200,
+        body: {
+          ok: true,
+          response: {
+            failures: changeResponse.failures,
+            updatedIndices: changeResponse.updated_indices,
+            failedIndices: changeResponse.failed_indices.map((failedIndex) => ({
+              indexName: failedIndex.index_name,
+              indexUuid: failedIndex.index_uuid,
+              reason: failedIndex.reason,
+            })),
+          },
         },
-      };
+      });
     } catch (err) {
       console.error("Index Management - ManagedIndexService - changePolicy:", err);
-      return { ok: false, error: err.message };
+      // return { ok: false, error: err.message };
+      return response.custom({
+        statusCode: 200,
+        body: {
+          ok: false,
+          error: err.message,
+        },
+      });
     }
   };
 
-  removePolicy = async (req: Request, h: ResponseToolkit): Promise<ServerResponse<RemovePolicyResponse>> => {
+  removePolicy = async (
+    context: RequestHandlerContext,
+    request: KibanaRequest,
+    response: KibanaResponseFactory
+  ): Promise<IKibanaResponse<ServerResponse<RemovePolicyResponse>>> => {
     try {
-      const { indices } = req.payload as { indices: string[] };
-      const { callWithRequest } = await this.esDriver.getCluster(CLUSTER.ISM);
+      const { indices } = request.body as { indices: string[] };
+      // const { callWithRequest } = await this.esDriver.getCluster(CLUSTER.ISM);
+      const { callAsCurrentUser: callWithRequest } = this.esDriver.asScoped(request);
       const params = { index: indices.join(",") };
-      const addResponse: RemoveResponse = await callWithRequest(req, "ism.remove", params);
-      return {
-        ok: true,
-        response: {
-          failures: addResponse.failures,
-          updatedIndices: addResponse.updated_indices,
-          failedIndices: addResponse.failed_indices.map(failedIndex => ({
-            indexName: failedIndex.index_name,
-            indexUuid: failedIndex.index_uuid,
-            reason: failedIndex.reason,
-          })),
+      const addResponse: RemoveResponse = await callWithRequest("ism.remove", params);
+      return response.custom({
+        statusCode: 200,
+        body: {
+          ok: true,
+          response: {
+            failures: addResponse.failures,
+            updatedIndices: addResponse.updated_indices,
+            failedIndices: addResponse.failed_indices.map((failedIndex) => ({
+              indexName: failedIndex.index_name,
+              indexUuid: failedIndex.index_uuid,
+              reason: failedIndex.reason,
+            })),
+          },
         },
-      };
+      });
     } catch (err) {
       console.error("Index Management - ManagedIndexService - removePolicy:", err);
-      return { ok: false, error: err.message };
+      // return { ok: false, error: err.message };
+      return response.custom({
+        statusCode: 200,
+        body: {
+          ok: false,
+          error: err.message,
+        },
+      });
     }
   };
 }

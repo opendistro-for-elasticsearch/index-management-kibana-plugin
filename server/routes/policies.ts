@@ -16,33 +16,80 @@
 import { Legacy } from "kibana";
 import { NodeServices } from "../models/interfaces";
 import { NODE_API, REQUEST } from "../../utils/constants";
+import { IRouter } from "kibana/server";
+import { schema } from "@kbn/config-schema";
 
-type Server = Legacy.Server;
+// type Server = Legacy.Server;
 
-export default function(server: Server, services: NodeServices) {
+export default function (services: NodeServices, router: IRouter) {
   const { policyService } = services;
 
-  server.route({
-    path: NODE_API.POLICIES,
-    method: REQUEST.GET,
-    handler: policyService.getPolicies,
-  });
+  // server.route({
+  //   path: NODE_API.POLICIES,
+  //   method: REQUEST.GET,
+  //   handler: policyService.getPolicies,
+  // });
 
-  server.route({
-    path: `${NODE_API.POLICIES}/{id}`,
-    method: REQUEST.PUT,
-    handler: policyService.putPolicy,
-  });
+  router.get(
+    {
+      path: NODE_API.POLICIES,
+      validate: false,
+    },
+    policyService.getPolicies
+  );
 
-  server.route({
-    path: `${NODE_API.POLICIES}/{id}`,
-    method: REQUEST.GET,
-    handler: policyService.getPolicy,
-  });
+  // server.route({
+  //   path: `${NODE_API.POLICIES}/{id}`,
+  //   method: REQUEST.PUT,
+  //   handler: policyService.putPolicy,
+  // });
 
-  server.route({
-    path: `${NODE_API.POLICIES}/{id}`,
-    method: REQUEST.DELETE,
-    handler: policyService.deletePolicy,
-  });
+  router.put(
+    {
+      path: `${NODE_API.POLICIES}/{id}`,
+      validate: {
+        params: schema.object({
+          id: schema.string(),
+        }),
+        body: schema.any(),
+      },
+    },
+    policyService.putPolicy
+  );
+
+  // server.route({
+  //   path: `${NODE_API.POLICIES}/{id}`,
+  //   method: REQUEST.GET,
+  //   handler: policyService.getPolicy,
+  // });
+
+  router.get(
+    {
+      path: `${NODE_API.POLICIES}/{id}`,
+      validate: {
+        params: schema.object({
+          id: schema.string(),
+        }),
+      },
+    },
+    policyService.getPolicy
+  );
+
+  // server.route({
+  //   path: `${NODE_API.POLICIES}/{id}`,
+  //   method: REQUEST.DELETE,
+  //   handler: policyService.deletePolicy,
+  // });
+
+  router.delete(
+    {
+      path: `${NODE_API.POLICIES}/{id}`,
+      validate: {
+        params: schema.object({
+          id: schema.string(),
+        }),
+      },
+    },
+    policyService.deletePolicy
+  );
 }

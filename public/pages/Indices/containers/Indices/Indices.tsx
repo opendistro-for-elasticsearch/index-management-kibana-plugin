@@ -14,11 +14,11 @@
  */
 
 import React, { Component } from "react";
-import chrome from "ui/chrome";
-import { toastNotifications } from "ui/notify";
+// import chrome from "ui/chrome";
+// import { toastNotifications } from "ui/notify";
 import _ from "lodash";
 import { RouteComponentProps } from "react-router-dom";
-import queryString from "query-string";
+import queryString from "querystring";
 import {
   EuiBasicTable,
   EuiHorizontalRule,
@@ -42,9 +42,11 @@ import { getURLQueryParams } from "../../utils/helpers";
 import { IndicesQueryParams } from "../../models/interfaces";
 import { BREADCRUMBS } from "../../../../utils/constants";
 import { getErrorMessage } from "../../../../utils/helpers";
+import { CoreStart } from "kibana/public";
 
 interface IndicesProps extends RouteComponentProps {
   indexService: IndexService;
+  core: CoreStart;
 }
 
 interface IndicesState {
@@ -81,7 +83,8 @@ export default class Indices extends Component<IndicesProps, IndicesState> {
   }
 
   async componentDidMount() {
-    chrome.breadcrumbs.set([BREADCRUMBS.INDEX_MANAGEMENT, BREADCRUMBS.INDICES]);
+    // chrome.breadcrumbs.set([BREADCRUMBS.INDEX_MANAGEMENT, BREADCRUMBS.INDICES]);
+    this.props.core.chrome.setBreadcrumbs([BREADCRUMBS.INDEX_MANAGEMENT, BREADCRUMBS.INDICES]);
     await this.getIndices();
   }
 
@@ -108,10 +111,12 @@ export default class Indices extends Component<IndicesProps, IndicesState> {
         const { indices, totalIndices } = getIndicesResponse.response;
         this.setState({ indices, totalIndices });
       } else {
-        toastNotifications.addDanger(getIndicesResponse.error);
+        // toastNotifications.addDanger(getIndicesResponse.error);
+        this.props.core.notifications.toasts.addDanger(getIndicesResponse.error);
       }
     } catch (err) {
-      toastNotifications.addDanger(getErrorMessage(err, "There was a problem loading the indices"));
+      // toastNotifications.addDanger(getErrorMessage(err, "There was a problem loading the indices"));
+      this.props.core.notifications.toasts.addDanger(getErrorMessage(err, "There was a problem loading the indices"));
     }
     this.setState({ loadingIndices: false });
   };

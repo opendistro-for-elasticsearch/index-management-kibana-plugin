@@ -14,10 +14,8 @@
  */
 
 import React, { Component } from "react";
-import chrome from "ui/chrome";
 import { RouteComponentProps } from "react-router-dom";
-import { toastNotifications } from "ui/notify";
-import queryString from "query-string";
+import queryString from "querystring";
 import {
   EuiBasicTable,
   EuiHorizontalRule,
@@ -44,9 +42,11 @@ import { BREADCRUMBS, ROUTES } from "../../../../utils/constants";
 import { PolicyService } from "../../../../services";
 import { getErrorMessage } from "../../../../utils/helpers";
 import ConfirmationModal from "../../../../components/ConfirmationModal";
+import { CoreStart } from "kibana/public";
 
 interface PoliciesProps extends RouteComponentProps {
   policyService: PolicyService;
+  core: CoreStart;
 }
 
 interface PoliciesState {
@@ -126,7 +126,8 @@ export default class Policies extends Component<PoliciesProps, PoliciesState> {
   }
 
   async componentDidMount() {
-    chrome.breadcrumbs.set([BREADCRUMBS.INDEX_MANAGEMENT, BREADCRUMBS.INDEX_POLICIES]);
+    // chrome.breadcrumbs.set([BREADCRUMBS.INDEX_MANAGEMENT, BREADCRUMBS.INDEX_POLICIES]);
+    this.props.core.chrome.setBreadcrumbs([BREADCRUMBS.INDEX_MANAGEMENT, BREADCRUMBS.INDEX_POLICIES]);
     await this.getPolicies();
   }
 
@@ -155,10 +156,10 @@ export default class Policies extends Component<PoliciesProps, PoliciesState> {
         } = getPoliciesResponse;
         this.setState({ policies, totalPolicies });
       } else {
-        toastNotifications.addDanger(getPoliciesResponse.error);
+        this.props.core.notifications.toasts.addDanger(getPoliciesResponse.error);
       }
     } catch (err) {
-      toastNotifications.addDanger(getErrorMessage(err, "There was a problem loading the policies"));
+      this.props.core.notifications.toasts.addDanger(getErrorMessage(err, "There was a problem loading the policies"));
     }
     this.setState({ loadingPolicies: false });
   };
@@ -168,13 +169,13 @@ export default class Policies extends Component<PoliciesProps, PoliciesState> {
     try {
       const deletePolicyResponse = await policyService.deletePolicy(policyId);
       if (deletePolicyResponse.ok) {
-        toastNotifications.addSuccess(`Deleted the policy: ${policyId}`);
+        this.props.core.notifications.toasts.addSuccess(`Deleted the policy: ${policyId}`);
         return true;
       } else {
-        toastNotifications.addDanger(`Failed to delete the policy, ${deletePolicyResponse.error}`);
+        this.props.core.notifications.toasts.addDanger(`Failed to delete the policy, ${deletePolicyResponse.error}`);
       }
     } catch (err) {
-      toastNotifications.addDanger(getErrorMessage(err, "There was a problem deleting the policy"));
+      this.props.core.notifications.toasts.addDanger(getErrorMessage(err, "There was a problem deleting the policy"));
     }
     return false;
   };
@@ -216,7 +217,7 @@ export default class Policies extends Component<PoliciesProps, PoliciesState> {
   onClickDelete = async (policyIds: string[]): Promise<void> => {
     if (!policyIds.length) return;
 
-    const deletePromises = policyIds.map(policyId => this.deletePolicy(policyId));
+    const deletePromises = policyIds.map((policyId) => this.deletePolicy(policyId));
 
     const deleted = (await Promise.all(deletePromises)).reduce((deleted: boolean, result: boolean) => deleted && result);
     if (deleted) await this.getPolicies();
@@ -264,7 +265,7 @@ export default class Policies extends Component<PoliciesProps, PoliciesState> {
                 selectedItems.length === 1 ? selectedItems[0].id : `${selectedItems.length} policies`
               } permanently? This action cannot be undone.`,
               actionMessage: "Delete",
-              onAction: () => this.onClickDelete(selectedItems.map(item => item.id)),
+              onAction: () => this.onClickDelete(selectedItems.map((item) => item.id)),
             }),
         },
       },

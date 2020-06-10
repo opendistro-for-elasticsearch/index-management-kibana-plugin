@@ -6,6 +6,8 @@
   "include": ["server/**/*", "public/**/*", "utils/**/*", "models/**/*", "test/**/*"],
   "exclude": ["node_modules", "*/node_modules/"],
   "compilerOptions": {
-    "skipLibCheck": true
+    "skipLibCheck": true,
+    "esModuleInterop": true,
+    "outDir": "./target"
   }
 }

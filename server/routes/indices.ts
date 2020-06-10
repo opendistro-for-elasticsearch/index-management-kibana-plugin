@@ -16,33 +16,62 @@
 import { Legacy } from "kibana";
 import { NodeServices } from "../models/interfaces";
 import { NODE_API, REQUEST } from "../../utils/constants";
+import { IRouter } from "../../../../src/core/server";
 
-type Server = Legacy.Server;
+// type Server = Legacy.Server;
 
-export default function(server: Server, services: NodeServices) {
+export default function (services: NodeServices, router: IRouter) {
   const { indexService } = services;
 
-  server.route({
-    path: NODE_API._SEARCH,
-    method: REQUEST.POST,
-    handler: indexService.search,
-  });
+  // server.route({
+  //   path: NODE_API._SEARCH,
+  //   method: REQUEST.POST,
+  //   handler: indexService.search,
+  // });
+  router.post(
+    {
+      path: NODE_API._SEARCH,
+      validate: false,
+    },
+    indexService.search
+  );
 
-  server.route({
-    path: NODE_API._INDICES,
-    method: REQUEST.GET,
-    handler: indexService.getIndices,
-  });
+  // server.route({
+  //   path: NODE_API._INDICES,
+  //   method: REQUEST.GET,
+  //   handler: indexService.getIndices,
+  // });
+  router.get(
+    {
+      path: NODE_API._INDICES,
+      validate: false,
+    },
+    indexService.getIndices
+  );
 
-  server.route({
-    path: NODE_API.APPLY_POLICY,
-    method: REQUEST.POST,
-    handler: indexService.applyPolicy,
-  });
+  // server.route({
+  //   path: NODE_API.APPLY_POLICY,
+  //   method: REQUEST.POST,
+  //   handler: indexService.applyPolicy,
+  // });
+  router.post(
+    {
+      path: NODE_API.APPLY_POLICY,
+      validate: false,
+    },
+    indexService.applyPolicy
+  );
 
-  server.route({
-    path: NODE_API.EDIT_ROLLOVER_ALIAS,
-    method: REQUEST.POST,
-    handler: indexService.editRolloverAlias,
-  });
+  // server.route({
+  //   path: NODE_API.EDIT_ROLLOVER_ALIAS,
+  //   method: REQUEST.POST,
+  //   handler: indexService.editRolloverAlias,
+  // });
+  router.post(
+    {
+      path: NODE_API.EDIT_ROLLOVER_ALIAS,
+      validate: false,
+    },
+    indexService.editRolloverAlias
+  );
 }

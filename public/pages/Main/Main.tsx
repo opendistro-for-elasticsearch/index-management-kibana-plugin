@@ -26,6 +26,8 @@ import { ModalProvider, ModalRoot } from "../../components/Modal";
 import { ServicesConsumer } from "../../services";
 import { BrowserServices } from "../../models/interfaces";
 import { ROUTES } from "../../utils/constants";
+import { CoreServicesConsumer } from "../../components/core_services";
+import { CoreStart } from "kibana/public";
 
 enum Navigation {
   IndexManagement = "Index Management",
@@ -75,67 +77,78 @@ export default class Main extends Component<MainProps, object> {
       },
     ];
     return (
-      <ServicesConsumer>
-        {(services: BrowserServices | null) =>
-          services && (
-            <ModalProvider>
-              <ModalRoot services={services} />
-              <EuiPage>
-                <EuiPageSideBar style={{ minWidth: 150 }}>
-                  <EuiSideNav style={{ width: 150 }} items={sideNav} />
-                </EuiPageSideBar>
-                <EuiPageBody>
-                  <Switch>
-                    <Route
-                      path={ROUTES.CHANGE_POLICY}
-                      render={(props: RouteComponentProps) => (
-                        <ChangePolicy {...props} managedIndexService={services.managedIndexService} indexService={services.indexService} />
-                      )}
-                    />
-                    <Route
-                      path={ROUTES.CREATE_POLICY}
-                      render={(props: RouteComponentProps) => (
-                        <CreatePolicy {...props} isEdit={false} policyService={services.policyService} />
-                      )}
-                    />
-                    <Route
-                      path={ROUTES.EDIT_POLICY}
-                      render={(props: RouteComponentProps) => (
-                        <CreatePolicy {...props} isEdit={true} policyService={services.policyService} />
-                      )}
-                    />
-                    <Route
-                      path={ROUTES.INDEX_POLICIES}
-                      render={(props: RouteComponentProps) => (
-                        <div style={{ padding: "25px 25px" }}>
-                          <Policies {...props} policyService={services.policyService} />
-                        </div>
-                      )}
-                    />
-                    <Route
-                      path={ROUTES.MANAGED_INDICES}
-                      render={(props: RouteComponentProps) => (
-                        <div>
-                          <ManagedIndices {...props} managedIndexService={services.managedIndexService} />
-                        </div>
-                      )}
-                    />
-                    <Route
-                      path={ROUTES.INDICES}
-                      render={(props: RouteComponentProps) => (
-                        <div style={{ padding: "25px 25px" }}>
-                          <Indices {...props} indexService={services.indexService} />
-                        </div>
-                      )}
-                    />
-                    <Redirect from="/" to={ROUTES.INDEX_POLICIES} />
-                  </Switch>
-                </EuiPageBody>
-              </EuiPage>
-            </ModalProvider>
+      <CoreServicesConsumer>
+        {(core: CoreStart | null) =>
+          core && (
+            <ServicesConsumer>
+              {(services: BrowserServices | null) =>
+                services && (
+                  <ModalProvider>
+                    <ModalRoot services={services} />
+                    <EuiPage>
+                      <EuiPageSideBar style={{ minWidth: 150 }}>
+                        <EuiSideNav style={{ width: 150 }} items={sideNav} />
+                      </EuiPageSideBar>
+                      <EuiPageBody>
+                        <Switch>
+                          <Route
+                            path={ROUTES.CHANGE_POLICY}
+                            render={(props: RouteComponentProps) => (
+                              <ChangePolicy
+                                {...props}
+                                managedIndexService={services.managedIndexService}
+                                indexService={services.indexService}
+                                core={core}
+                              />
+                            )}
+                          />
+                          <Route
+                            path={ROUTES.CREATE_POLICY}
+                            render={(props: RouteComponentProps) => (
+                              <CreatePolicy {...props} isEdit={false} policyService={services.policyService} core={core} />
+                            )}
+                          />
+                          <Route
+                            path={ROUTES.EDIT_POLICY}
+                            render={(props: RouteComponentProps) => (
+                              <CreatePolicy {...props} isEdit={true} policyService={services.policyService} core={core} />
+                            )}
+                          />
+                          <Route
+                            path={ROUTES.INDEX_POLICIES}
+                            render={(props: RouteComponentProps) => (
+                              <div style={{ padding: "25px 25px" }}>
+                                <Policies {...props} policyService={services.policyService} core={core} />
+                              </div>
+                            )}
+                          />
+                          <Route
+                            path={ROUTES.MANAGED_INDICES}
+                            render={(props: RouteComponentProps) => (
+                              <div>
+                                <ManagedIndices {...props} managedIndexService={services.managedIndexService} core={core} />
+                              </div>
+                            )}
+                          />
+                          <Route
+                            path={ROUTES.INDICES}
+                            render={(props: RouteComponentProps) => (
+                              <div style={{ padding: "25px 25px" }}>
+                                <Indices {...props} indexService={services.indexService} core={core} />
+                              </div>
+                            )}
+                          />
+                          <Redirect from="/" to={ROUTES.INDEX_POLICIES} />
+                        </Switch>
+                      </EuiPageBody>
+                    </EuiPage>
+                  </ModalProvider>
+                )
+              }
+            </ServicesConsumer>
           )
         }
-      </ServicesConsumer>
+      </CoreServicesConsumer>
     );
   }
 }

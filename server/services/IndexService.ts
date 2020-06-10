@@ -13,38 +13,70 @@
  * permissions and limitations under the License.
  */
 
-import { Legacy } from "kibana";
+// import { Legacy } from "kibana";
 import { RequestParams } from "@elastic/elasticsearch";
 import { CLUSTER, INDEX, Setting } from "../utils/constants";
 import { AcknowledgedResponse, ApplyPolicyResponse, AddResponse, CatIndex, GetIndicesResponse, SearchResponse } from "../models/interfaces";
 import { ServerResponse } from "../models/types";
+import {
+  KibanaRequest,
+  KibanaResponseFactory,
+  IClusterClient,
+  IKibanaResponse,
+  ResponseError,
+  RequestHandlerContext,
+} from "../../../../src/core/server";
 
 // import Request = Legacy.Request;
-type Request = Legacy.Request;
-type ElasticsearchPlugin = Legacy.Plugins.elasticsearch.Plugin;
-type ResponseToolkit = Legacy.ResponseToolkit;
+// type Request = Legacy.Request;
+// type ElasticsearchPlugin = Legacy.Plugins.elasticsearch.Plugin;
+// type ResponseToolkit = Legacy.ResponseToolkit;
 
 export default class IndexService {
-  esDriver: ElasticsearchPlugin;
+  // esDriver: ElasticsearchPlugin;
+  esDriver: IClusterClient;
 
-  constructor(esDriver: ElasticsearchPlugin) {
+  constructor(esDriver: IClusterClient) {
     this.esDriver = esDriver;
   }
 
-  search = async (req: Request, h: ResponseToolkit): Promise<ServerResponse<any>> => {
+  search = async (
+    context: RequestHandlerContext,
+    request: KibanaRequest,
+    response: KibanaResponseFactory
+  ): Promise<IKibanaResponse<ServerResponse<any>>> => {
     try {
-      const { query, index, size = 0 } = req.payload as { query: object; index: string; size?: number };
+      const { query, index, size = 0 } = request.body as { query: object; index: string; size?: number };
       const params: RequestParams.Search = { index, size, body: query };
-      const { callWithRequest } = this.esDriver.getCluster(CLUSTER.DATA);
-      const results: SearchResponse<any> = await callWithRequest(req, "search", params);
-      return { ok: true, response: results };
+      // const { callWithRequest } = this.esDriver.getCluster(CLUSTER.DATA);
+      const { callAsCurrentUser: callWithRequest } = this.esDriver.asScoped(request);
+      const results: SearchResponse<any> = await callWithRequest("search", params);
+      // return { ok: true, response: results };
+      return response.custom({
+        statusCode: 200,
+        body: {
+          ok: true,
+          response: results,
+        },
+      });
     } catch (err) {
       console.error("Index Management - IndexService - search", err);
-      return { ok: false, error: err.message };
+      // return { ok: false, error: err.message };
+      return response.custom({
+        statusCode: 200,
+        body: {
+          ok: false,
+          error: err.message,
+        },
+      });
     }
   };
 
-  getIndices = async (req: Request, h: ResponseToolkit): Promise<ServerResponse<GetIndicesResponse>> => {
+  getIndices = async (
+    context: RequestHandlerContext,
+    request: KibanaRequest,
+    response: KibanaResponseFactory
+  ): Promise<IKibanaResponse<ServerResponse<GetIndicesResponse>>> => {
     try {
       // @ts-ignore
       const { from, size, search, sortField, sortDirection } = req.query as {
@@ -56,12 +88,13 @@ export default class IndexService {
       };
       const str = search.trim();
       const params = {
-        index: str ? `*${str.split(" ").join("* *")}*` : "*",
+        index: `*${search.trim().split(" ").join("* *")}*`,
         format: "json",
         s: `${sortField}:${sortDirection}`,
       };
-      const { callWithRequest } = this.esDriver.getCluster(CLUSTER.DATA);
-      const indicesResponse: CatIndex[] = await callWithRequest(req, "cat.indices", params);
+      // const { callWithRequest } = this.esDriver.getCluster(CLUSTER.DATA);
+      const { callAsCurrentUser: callWithRequest } = this.esDriver.asScoped(request);
+      const indicesResponse: CatIndex[] = await callWithRequest("cat.indices", params);
 
       // _cat doesn't support pagination, do our own in server pagination to at least reduce network bandwidth
       const fromNumber = parseInt(from, 10);
@@ -69,35 +102,65 @@ export default class IndexService {
       const paginatedIndices = indicesResponse.slice(fromNumber, fromNumber + sizeNumber);
       const indexUuids = paginatedIndices.map((value: CatIndex) => value.uuid);
 
-      const managedStatus = await this._getManagedStatus(req, indexUuids);
+      const managedStatus = await this._getManagedStatus(request, indexUuids);
 
-      return {
-        ok: true,
-        response: {
-          indices: paginatedIndices.map((catIndex: CatIndex) => ({ ...catIndex, managed: managedStatus[catIndex.uuid] || "N/A" })),
-          totalIndices: indicesResponse.length,
+      // return {
+      //   ok: true,
+      //   response: {
+      //     indices: paginatedIndices.map((catIndex: CatIndex) => ({ ...catIndex, managed: managedStatus[catIndex.uuid] || "N/A" })),
+      //     totalIndices: indicesResponse.length,
+      //   },
+      // };
+
+      // NOTE: Cannot use response.ok due to typescript type checking
+      return response.custom({
+        statusCode: 200,
+        body: {
+          ok: true,
+          response: {
+            indices: paginatedIndices.map((catIndex: CatIndex) => ({ ...catIndex, managed: managedStatus[catIndex.uuid] || "N/A" })),
+            totalIndices: indicesResponse.length,
+          },
         },
-      };
+      });
     } catch (err) {
       // Throws an error if there is no index matching pattern
       if (err.statusCode === 404 && err.body.error.type === "index_not_found_exception") {
-        return { ok: true, response: { indices: [], totalIndices: 0 } };
+        // return { ok: true, response: { indices: [], totalIndices: 0 } };
+        return response.custom({
+          statusCode: 200,
+          body: {
+            ok: true,
+            response: {
+              indices: [],
+              totalIndices: 0,
+            },
+          },
+        });
       }
       console.error("Index Management - IndexService - getIndices:", err);
-      return { ok: false, error: err.message };
+      // return { ok: false, error: err.message };
+      return response.custom({
+        statusCode: 200,
+        body: {
+          ok: false,
+          error: err.message,
+        },
+      });
     }
   };
 
   // given a list of indexUuids return the managed status of each (true, false, N/A)
-  _getManagedStatus = async (req: Request, indexUuids: string[]): Promise<{ [indexUuid: string]: string }> => {
+  _getManagedStatus = async (request: KibanaRequest, indexUuids: string[]): Promise<{ [indexUuid: string]: string }> => {
     try {
       const searchParams: RequestParams.Search = {
         index: INDEX.OPENDISTRO_ISM_CONFIG,
         size: indexUuids.length,
         body: { _source: "_id", query: { ids: { values: indexUuids } } },
       };
-      const { callWithRequest: searchCallWithRequest } = this.esDriver.getCluster(CLUSTER.DATA);
-      const results: SearchResponse<any> = await searchCallWithRequest(req, "search", searchParams);
+      // const { callWithRequest: searchCallWithRequest } = this.esDriver.getCluster(CLUSTER.DATA);
+      const { callAsCurrentUser: searchCallWithRequest } = this.esDriver.asScoped(request);
+      const results: SearchResponse<any> = await searchCallWithRequest("search", searchParams);
       const managed: { [indexUuid: string]: string } = results.hits.hits.reduce(
         (accu: object, hit: { _id: string }) => ({ ...accu, [hit._id]: "Yes" }),
         {}
@@ -115,40 +178,89 @@ export default class IndexService {
     }
   };
 
-  applyPolicy = async (req: Request, h: ResponseToolkit): Promise<ServerResponse<ApplyPolicyResponse>> => {
+  applyPolicy = async (
+    context: RequestHandlerContext,
+    request: KibanaRequest,
+    response: KibanaResponseFactory
+  ): Promise<IKibanaResponse<ServerResponse<ApplyPolicyResponse>>> => {
     try {
-      const { indices, policyId } = req.payload as { indices: string[]; policyId: string };
-      const { callWithRequest } = await this.esDriver.getCluster(CLUSTER.ISM);
+      // const { indices, policyId } = req.payload as { indices: string[]; policyId: string };
+      const { indices, policyId } = request.body as { indices: string[]; policyId: string };
+      // const { callWithRequest } = await this.esDriver.getCluster(CLUSTER.ISM);
+      const { callAsCurrentUser: callWithRequest } = this.esDriver.asScoped(request);
       const params = { index: indices.join(","), body: { policy_id: policyId } };
-      const addResponse: AddResponse = await callWithRequest(req, "ism.add", params);
-      return {
-        ok: true,
-        response: {
-          failures: addResponse.failures,
-          updatedIndices: addResponse.updated_indices,
-          failedIndices: addResponse.failed_indices.map((failedIndex) => ({
-            indexName: failedIndex.index_name,
-            indexUuid: failedIndex.index_uuid,
-            reason: failedIndex.reason,
-          })),
+
+      const addResponse: AddResponse = await callWithRequest("ism.add", params);
+      // return {
+      //   ok: true,
+      //   response: {
+      //     failures: addResponse.failures,
+      //     updatedIndices: addResponse.updated_indices,
+      //     failedIndices: addResponse.failed_indices.map(failedIndex => ({
+      //       indexName: failedIndex.index_name,
+      //       indexUuid: failedIndex.index_uuid,
+      //       reason: failedIndex.reason,
+      //     })),
+      //   },
+      // };
+      return response.custom({
+        statusCode: 200,
+        body: {
+          ok: true,
+          response: {
+            failures: addResponse.failures,
+            updatedIndices: addResponse.updated_indices,
+            failedIndices: addResponse.failed_indices.map((failedIndex) => ({
+              indexName: failedIndex.index_name,
+              indexUuid: failedIndex.index_uuid,
+              reason: failedIndex.reason,
+            })),
+          },
         },
-      };
+      });
     } catch (err) {
       console.error("Index Management - IndexService - applyPolicy:", err);
-      return { ok: false, error: err.message };
+      // return { ok: false, error: err.message };
+      return response.custom({
+        statusCode: 200,
+        body: {
+          ok: false,
+          error: err.message,
+        },
+      });
     }
   };
 
-  editRolloverAlias = async (req: Request, h: ResponseToolkit): Promise<ServerResponse<AcknowledgedResponse>> => {
+  editRolloverAlias = async (
+    context: RequestHandlerContext,
+    request: KibanaRequest,
+    response: KibanaResponseFactory
+  ): Promise<IKibanaResponse<ServerResponse<AcknowledgedResponse>>> => {
     try {
-      const { alias, index } = req.payload as { alias: string; index: string };
-      const { callWithRequest } = await this.esDriver.getCluster(CLUSTER.DATA);
+      // const { alias, index } = req.payload as { alias: string; index: string };
+      const { alias, index } = request.body as { alias: string; index: string };
+      // const { callWithRequest } = await this.esDriver.getCluster(CLUSTER.DATA);
+      const { callAsCurrentUser: callWithRequest } = this.esDriver.asScoped(request);
       const params = { index, body: { [Setting.RolloverAlias]: alias } };
-      const response = await callWithRequest(req, "indices.putSettings", params);
-      return { ok: true, response };
+      const rollOverResponse = await callWithRequest("indices.putSettings", params);
+      // return { ok: true, response };
+      return response.custom({
+        statusCode: 200,
+        body: {
+          ok: true,
+          response: rollOverResponse,
+        },
+      });
     } catch (err) {
       console.error("Index Management - IndexService - editRolloverAlias", err);
-      return { ok: false, error: err.message };
+      // return { ok: false, error: err.message };
+      return response.custom({
+        statusCode: 200,
+        body: {
+          ok: false,
+          error: err.message,
+        },
+      });
     }
   };
 }

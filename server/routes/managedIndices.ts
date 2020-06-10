@@ -16,39 +16,90 @@
 import { Legacy } from "kibana";
 import { NodeServices } from "../models/interfaces";
 import { NODE_API, REQUEST } from "../../utils/constants";
+import { IRouter } from "kibana/server";
+import { schema } from "@kbn/config-schema";
 
-type Server = Legacy.Server;
+// type Server = Legacy.Server;
 
-export default function(server: Server, services: NodeServices) {
+export default function (services: NodeServices, router: IRouter) {
   const { managedIndexService } = services;
 
-  server.route({
-    path: NODE_API.MANAGED_INDICES,
-    method: REQUEST.GET,
-    handler: managedIndexService.getManagedIndices,
-  });
+  // server.route({
+  //   path: NODE_API.MANAGED_INDICES,
+  //   method: REQUEST.GET,
+  //   handler: managedIndexService.getManagedIndices,
+  // });
+  router.get(
+    {
+      path: NODE_API.MANAGED_INDICES,
+      validate: false,
+    },
+    managedIndexService.getManagedIndices
+  );
 
-  server.route({
-    path: `${NODE_API.MANAGED_INDICES}/{id}`,
-    method: REQUEST.GET,
-    handler: managedIndexService.getManagedIndex,
-  });
+  // server.route({
+  //   path: `${NODE_API.MANAGED_INDICES}/{id}`,
+  //   method: REQUEST.GET,
+  //   handler: managedIndexService.getManagedIndex,
+  // });
 
-  server.route({
-    path: NODE_API.RETRY,
-    method: REQUEST.POST,
-    handler: managedIndexService.retryManagedIndexPolicy,
-  });
+  router.get(
+    {
+      path: `${NODE_API.MANAGED_INDICES}/{id}`,
+      validate: {
+        params: schema.object({
+          id: schema.string(),
+        }),
+      },
+    },
+    managedIndexService.getManagedIndex
+  );
 
-  server.route({
-    path: NODE_API.CHANGE_POLICY,
-    method: REQUEST.POST,
-    handler: managedIndexService.changePolicy,
-  });
+  // server.route({
+  //   path: NODE_API.RETRY,
+  //   method: REQUEST.POST,
+  //   handler: managedIndexService.retryManagedIndexPolicy,
+  // });
 
-  server.route({
-    path: NODE_API.REMOVE_POLICY,
-    method: REQUEST.POST,
-    handler: managedIndexService.removePolicy,
-  });
+  router.post(
+    {
+      path: NODE_API.RETRY,
+      validate: {
+        body: schema.any(),
+      },
+    },
+    managedIndexService.retryManagedIndexPolicy
+  );
+
+  // server.route({
+  //   path: NODE_API.CHANGE_POLICY,
+  //   method: REQUEST.POST,
+  //   handler: managedIndexService.changePolicy,
+  // });
+
+  router.post(
+    {
+      path: NODE_API.CHANGE_POLICY,
+      validate: {
+        body: schema.any(),
+      },
+    },
+    managedIndexService.changePolicy
+  );
+
+  // server.route({
+  //   path: NODE_API.REMOVE_POLICY,
+  //   method: REQUEST.POST,
+  //   handler: managedIndexService.removePolicy,
+  // });
+
+  router.post(
+    {
+      path: NODE_API.REMOVE_POLICY,
+      validate: {
+        body: schema.any(),
+      },
+    },
+    managedIndexService.removePolicy
+  );
 }
