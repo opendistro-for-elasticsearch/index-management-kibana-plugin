@@ -270,6 +270,7 @@ exports[`<Indices /> spec renders the component 1`] = `
                   >
                     <span
                       class="euiTableCellContent__text"
+                      title="Index; Sorted in descending order"
                     >
                       Index
                     </span>
@@ -300,6 +301,7 @@ exports[`<Indices /> spec renders the component 1`] = `
                   >
                     <span
                       class="euiTableCellContent__text"
+                      title="Health"
                     >
                       Health
                     </span>
@@ -323,6 +325,7 @@ exports[`<Indices /> spec renders the component 1`] = `
                 >
                   <span
                     class="euiTableCellContent__text"
+                    title="Managed by Policy"
                   >
                     Managed by Policy
                   </span>
@@ -346,6 +349,7 @@ exports[`<Indices /> spec renders the component 1`] = `
                   >
                     <span
                       class="euiTableCellContent__text"
+                      title="Status"
                     >
                       Status
                     </span>
@@ -375,6 +379,7 @@ exports[`<Indices /> spec renders the component 1`] = `
                   >
                     <span
                       class="euiTableCellContent__text"
+                      title="Total size"
                     >
                       Total size
                     </span>
@@ -404,6 +409,7 @@ exports[`<Indices /> spec renders the component 1`] = `
                   >
                     <span
                       class="euiTableCellContent__text"
+                      title="Primaries size"
                     >
                       Primaries size
                     </span>
@@ -433,6 +439,7 @@ exports[`<Indices /> spec renders the component 1`] = `
                   >
                     <span
                       class="euiTableCellContent__text"
+                      title="Total documents"
                     >
                       Total documents
                     </span>
@@ -462,6 +469,7 @@ exports[`<Indices /> spec renders the component 1`] = `
                   >
                     <span
                       class="euiTableCellContent__text"
+                      title="Deleted documents"
                     >
                       Deleted documents
                     </span>
@@ -491,6 +499,7 @@ exports[`<Indices /> spec renders the component 1`] = `
                   >
                     <span
                       class="euiTableCellContent__text"
+                      title="Primaries"
                     >
                       Primaries
                     </span>
@@ -520,6 +529,7 @@ exports[`<Indices /> spec renders the component 1`] = `
                   >
                     <span
                       class="euiTableCellContent__text"
+                      title="Replicas"
                     >
                       Replicas
                     </span>
