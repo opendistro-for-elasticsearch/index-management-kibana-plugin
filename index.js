@@ -19,8 +19,9 @@ import { existsSync } from "fs";
 import { createISMCluster } from "./server/clusters";
 import { PolicyService, ManagedIndexService, IndexService } from "./server/services";
 import { indices, policies, managedIndices } from "./server/routes";
+import { DEFAULT_APP_CATEGORIES } from "../../src/core/utils";
 
-export default function(kibana) {
+export default function (kibana) {
   return new kibana.Plugin({
     require: ["elasticsearch"],
     name: "opendistro_index_management_kibana",
@@ -29,9 +30,10 @@ export default function(kibana) {
         title: "Index Management Kibana",
         description: "Kibana plugin for Index Management",
         main: "plugins/opendistro_index_management_kibana/app",
+        category: DEFAULT_APP_CATEGORIES.management,
       },
       hacks: [],
-      styleSheetPaths: [resolve(__dirname, "public/app.scss"), resolve(__dirname, "public/app.css")].find(p => existsSync(p)),
+      styleSheetPaths: [resolve(__dirname, "public/app.scss"), resolve(__dirname, "public/app.css")].find((p) => existsSync(p)),
     },
 
     config(Joi) {
