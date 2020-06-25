@@ -51,7 +51,7 @@ exports[`<InfoModal /> spec renders the component 1`] = `
               class="euiCodeBlock euiCodeBlock--fontMedium euiCodeBlock--paddingLarge"
             >
               <pre
-                class="euiCodeBlock__pre"
+                class="euiCodeBlock__pre euiCodeBlock__pre--whiteSpacePreWrap"
               >
                 <code
                   class="euiCodeBlock__code json hljs"

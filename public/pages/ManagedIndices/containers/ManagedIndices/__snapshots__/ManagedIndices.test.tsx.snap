@@ -349,6 +349,7 @@ exports[`<ManagedIndices /> spec renders the component 1`] = `
                     >
                       <span
                         class="euiTableCellContent__text"
+                        title="Index; Sorted in descending order"
                       >
                         Index
                       </span>
@@ -380,6 +381,7 @@ exports[`<ManagedIndices /> spec renders the component 1`] = `
                     >
                       <span
                         class="euiTableCellContent__text"
+                        title="Policy"
                       >
                         Policy
                       </span>
@@ -403,6 +405,7 @@ exports[`<ManagedIndices /> spec renders the component 1`] = `
                   >
                     <span
                       class="euiTableCellContent__text"
+                      title="State"
                     >
                       State
                     </span>
@@ -420,6 +423,7 @@ exports[`<ManagedIndices /> spec renders the component 1`] = `
                   >
                     <span
                       class="euiTableCellContent__text"
+                      title="Action"
                     >
                       Action
                     </span>
@@ -437,6 +441,7 @@ exports[`<ManagedIndices /> spec renders the component 1`] = `
                   >
                     <span
                       class="euiTableCellContent__text"
+                      title="Info"
                     >
                       Info
                     </span>
@@ -454,6 +459,7 @@ exports[`<ManagedIndices /> spec renders the component 1`] = `
                   >
                     <span
                       class="euiTableCellContent__text"
+                      title="Status"
                     >
                       Status
                     </span>

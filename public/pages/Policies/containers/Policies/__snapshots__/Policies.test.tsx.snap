@@ -312,6 +312,7 @@ exports[`<IndexPolicies /> spec renders the component 1`] = `
                     >
                       <span
                         class="euiTableCellContent__text"
+                        title="Policy; Sorted in descending order"
                       >
                         Policy
                       </span>
@@ -343,6 +344,7 @@ exports[`<IndexPolicies /> spec renders the component 1`] = `
                     >
                       <span
                         class="euiTableCellContent__text"
+                        title="Description"
                       >
                         Description
                       </span>
@@ -373,6 +375,7 @@ exports[`<IndexPolicies /> spec renders the component 1`] = `
                     >
                       <span
                         class="euiTableCellContent__text"
+                        title="Last updated time"
                       >
                         Last updated time
                       </span>
