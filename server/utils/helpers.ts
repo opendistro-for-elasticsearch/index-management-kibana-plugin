@@ -50,15 +50,13 @@ export function transformManagedIndexMetaData(metaData: ExplainAPIManagedIndexMe
 }
 
 export function getMustQuery<T extends string>(field: T, search: string): MatchAllQuery | QueryStringQuery<T> {
+  const str = search.trim();
   if (search.trim()) {
     return {
       query_string: {
         default_field: field,
         default_operator: "AND",
-        query: `*${search
-          .trim()
-          .split(" ")
-          .join("* *")}*`,
+        query: str ? `*${str.split(" ").join("* *")}*` : "*",
       },
     };
   }
