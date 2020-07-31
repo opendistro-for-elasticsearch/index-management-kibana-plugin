@@ -459,9 +459,9 @@ exports[`<ManagedIndices /> spec renders the component 1`] = `
                   >
                     <span
                       class="euiTableCellContent__text"
-                      title="Status"
+                      title="Job Status"
                     >
-                      Status
+                      Job Status
                     </span>
                   </div>
                 </th>
