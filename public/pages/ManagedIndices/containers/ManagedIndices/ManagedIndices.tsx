@@ -33,7 +33,7 @@ import _ from "lodash";
 import { ContentPanel, ContentPanelActions } from "../../../../components/ContentPanel";
 import ManagedIndexControls from "../../components/ManagedIndexControls";
 import ManagedIndexEmptyPrompt from "../../components/ManagedIndexEmptyPrompt";
-import { ACTIONS, DEFAULT_PAGE_SIZE_OPTIONS, DEFAULT_QUERY_PARAMS } from "../../utils/constants";
+import { DEFAULT_PAGE_SIZE_OPTIONS, DEFAULT_QUERY_PARAMS } from "../../utils/constants";
 import { BREADCRUMBS, DEFAULT_EMPTY_DATA, PLUGIN_NAME, ROUTES } from "../../../../utils/constants";
 import InfoModal from "../../components/InfoModal";
 import PolicyModal from "../../../../components/PolicyModal";
@@ -119,7 +119,9 @@ export default class ManagedIndices extends Component<ManagedIndicesProps, Manag
         truncateText: false,
         width: "150px",
         // @ts-ignore
-        render: (action: string) => _.defaultTo(ACTIONS[action], DEFAULT_EMPTY_DATA),
+        render: (action: string) => (
+          <span style={{ textTransform: "capitalize" }}>{(action || DEFAULT_EMPTY_DATA).split("_").join(" ")}</span>
+        ),
       },
       {
         field: "managedIndexMetaData.info",
@@ -136,7 +138,7 @@ export default class ManagedIndices extends Component<ManagedIndicesProps, Manag
       },
       {
         field: "index", // we don't care about the field as we're using the whole item in render
-        name: "Status",
+        name: "Job Status",
         sortable: false,
         truncateText: false,
         width: "150px",
@@ -231,7 +233,7 @@ export default class ManagedIndices extends Component<ManagedIndicesProps, Manag
         if (failures) {
           toastNotifications.addDanger(
             `Failed to remove policy from ${failedIndices
-              .map(failedIndex => `[${failedIndex.indexName}, ${failedIndex.reason}]`)
+              .map((failedIndex) => `[${failedIndex.indexName}, ${failedIndex.reason}]`)
               .join(", ")}`
           );
         }
@@ -309,13 +311,11 @@ export default class ManagedIndices extends Component<ManagedIndicesProps, Manag
 
     const isRetryDisabled =
       !selectedItems.length ||
-      selectedItems.some(
-        (item): boolean => {
-          if (!item.managedIndexMetaData) return true;
-          const { retryInfo, action } = item.managedIndexMetaData;
-          return !(retryInfo && retryInfo.failed) && !(action && action.failed);
-        }
-      );
+      selectedItems.some((item): boolean => {
+        if (!item.managedIndexMetaData) return true;
+        const { retryInfo, action } = item.managedIndexMetaData;
+        return !(retryInfo && retryInfo.failed) && !(action && action.failed);
+      });
 
     const actions = [
       {
@@ -341,7 +341,7 @@ export default class ManagedIndices extends Component<ManagedIndicesProps, Manag
                 selectedItems.length === 1 ? `policy from ${selectedItems[0].index}` : `policies from ${selectedItems.length} indices`
               } permanently? This action cannot be undone.`,
               actionMessage: "Remove",
-              onAction: () => this.onClickRemovePolicy(selectedItems.map(item => item.index)),
+              onAction: () => this.onClickRemovePolicy(selectedItems.map((item) => item.index)),
             }),
         },
       },
