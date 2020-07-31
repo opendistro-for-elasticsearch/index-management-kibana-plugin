@@ -20,18 +20,18 @@ import { createISMCluster } from "./server/clusters";
 import { PolicyService, ManagedIndexService, IndexService } from "./server/services";
 import { indices, policies, managedIndices } from "./server/routes";
 
-export default function(kibana) {
+export default function (kibana) {
   return new kibana.Plugin({
     require: ["elasticsearch"],
     name: "opendistro_index_management_kibana",
     uiExports: {
       app: {
-        title: "Index Management Kibana",
+        title: "Index Management",
         description: "Kibana plugin for Index Management",
         main: "plugins/opendistro_index_management_kibana/app",
       },
       hacks: [],
-      styleSheetPaths: [resolve(__dirname, "public/app.scss"), resolve(__dirname, "public/app.css")].find(p => existsSync(p)),
+      styleSheetPaths: [resolve(__dirname, "public/app.scss"), resolve(__dirname, "public/app.css")].find((p) => existsSync(p)),
     },
 
     config(Joi) {
