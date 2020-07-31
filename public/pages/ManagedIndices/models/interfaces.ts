@@ -20,15 +20,3 @@ export interface ManagedIndicesQueryParams {
   sortField: string;
   sortDirection: string;
 }
-
-export interface Actions {
-  [action: string]: string;
-
-  rollover: string;
-  delete: string;
-  open: string;
-  close: string;
-  transition: string;
-  read_only: string;
-  read_write: string;
-}
