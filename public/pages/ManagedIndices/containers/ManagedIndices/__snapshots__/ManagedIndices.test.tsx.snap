@@ -499,7 +499,7 @@ exports[`<ManagedIndices /> spec renders the component 1`] = `
                     <span
                       class="euiTableCellContent__text"
                     >
-                      Status
+                      Job Status
                     </span>
                   </div>
                 </th>
@@ -595,7 +595,7 @@ exports[`<ManagedIndices /> spec renders the component 1`] = `
                         class="euiButtonEmpty__text"
                       >
                         Rows per page
-                        : 
+                        :
                         20
                       </span>
                     </span>

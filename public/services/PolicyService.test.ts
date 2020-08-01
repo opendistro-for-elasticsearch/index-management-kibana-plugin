@@ -45,7 +45,7 @@ describe("PolicyService spec", () => {
     await policyService.putPolicy(policy, policyId);
 
     expect(httpClientMock.put).toHaveBeenCalledTimes(1);
-    expect(httpClientMock.put).toHaveBeenCalledWith(`..${NODE_API.POLICIES}/${policyId}?`, policy);
+    expect(httpClientMock.put).toHaveBeenCalledWith(`..${NODE_API.POLICIES}/${policyId}`, policy);
   });
 
   it("calls delete policy nodejs route when calling deletePolicy", async () => {
