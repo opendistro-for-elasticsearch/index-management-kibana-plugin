@@ -53,11 +53,9 @@ export default class IndexService {
         sortField: string;
         sortDirection: string;
       };
+      const str = search.trim();
       const params = {
-        index: `*${search
-          .trim()
-          .split(" ")
-          .join("* *")}*`,
+        index: str ? `*${str.split(" ").join("* *")}*` : "*",
         format: "json",
         s: `${sortField}:${sortDirection}`,
       };
@@ -127,7 +125,7 @@ export default class IndexService {
         response: {
           failures: addResponse.failures,
           updatedIndices: addResponse.updated_indices,
-          failedIndices: addResponse.failed_indices.map(failedIndex => ({
+          failedIndices: addResponse.failed_indices.map((failedIndex) => ({
             indexName: failedIndex.index_name,
             indexUuid: failedIndex.index_uuid,
             reason: failedIndex.reason,
