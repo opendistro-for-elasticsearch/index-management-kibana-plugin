@@ -27,7 +27,8 @@ export default class IndexService {
   }
 
   getIndices = async (queryParamsString: string): Promise<ServerResponse<GetIndicesResponse>> => {
-    const url = `..${NODE_API._INDICES}?${queryParamsString}`;
+    let url = `..${NODE_API._INDICES}`;
+    if (queryParamsString) url += `?${queryParamsString}`;
     const response = (await this.httpClient.get(url)) as IHttpResponse<ServerResponse<GetIndicesResponse>>;
     return response.data;
   };
@@ -47,14 +48,12 @@ export default class IndexService {
   };
 
   searchPolicies = async (searchValue: string, source: boolean = false): Promise<ServerResponse<SearchResponse<any>>> => {
+    const str = searchValue.trim();
     const mustQuery = {
       query_string: {
         default_field: "policy.policy_id",
         default_operator: "AND",
-        query: `*${searchValue
-          .trim()
-          .split(" ")
-          .join("* *")}*`,
+        query: str ? `*${str.split(" ").join("* *")}*` : "*",
       },
     };
     const body = {
