@@ -72,15 +72,6 @@ jobs:
           cd kibana/plugins/index-management-kibana-plugin
           yarn start --no-base-path --no-watch &
           timeout 300 bash -c 'while [[ "$(curl -s localhost:5601/api/status | jq -r '.status.overall.state')" != "green" ]]; do sleep 5; done'
-      - name: Cache Cypress
-        id: cache-cypress
-        uses: actions/cache@v1
-        with:
-          path: ~/.cache/Cypress
-          key: cypress-cache-v2-${{ runner.os }}-${{ hashFiles('**/package.json') }}
-      # now let's install Cypress binary
-      - run: npx cypress install
-      - run: npx cypress cache list
       # for now just chrome, use matrix to do all browsers later
       - name: Cypress tests
         uses: cypress-io/github-action@v1
