@@ -43,17 +43,18 @@ const { API, INDEX } = require("./constants");
 
 Cypress.Commands.add("deleteAllIndices", () => {
   cy.request("DELETE", `${Cypress.env("elasticsearch")}/*`);
+  cy.request("DELETE", `${Cypress.env("elasticsearch")}/.opendistro-ism*?expand_wildcards=all`);
 });
 
 Cypress.Commands.add("createPolicy", (policyId, policyJSON) => {
   cy.request("PUT", `${Cypress.env("elasticsearch")}${API.POLICY_BASE}/${policyId}`, policyJSON);
 });
 
-Cypress.Commands.add("getIndexSettings", index => {
+Cypress.Commands.add("getIndexSettings", (index) => {
   cy.request("GET", `${Cypress.env("elasticsearch")}/${index}/_settings`);
 });
 
-Cypress.Commands.add("updateManagedIndexConfigStartTime", index => {
+Cypress.Commands.add("updateManagedIndexConfigStartTime", (index) => {
   // Creating closure over startTime so it's not calculated until actual update_by_query call
   // eslint-disable-next-line cypress/no-unnecessary-waiting
   cy.wait(1000).then(() => {
