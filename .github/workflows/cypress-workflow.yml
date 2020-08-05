@@ -1,5 +1,6 @@
 name: E2E Cypress tests
 on:
+  pull_request:
   push:
     branches:
       - master
@@ -61,8 +62,6 @@ jobs:
           echo "Installing yarn ${{ steps.versions_step.outputs.yarn_version }}"
           npm i -g yarn@${{ steps.versions.outputs.yarn_version }}
       - name: Bootstrap plugin/kibana
-        env:
-          CYPRESS_INSTALL_BINARY: 0
         run: |
           mkdir -p kibana/plugins
           mv index-management-kibana-plugin kibana/plugins
@@ -72,9 +71,7 @@ jobs:
         run: |
           cd kibana/plugins/index-management-kibana-plugin
           yarn start --no-base-path --no-watch &
-          sleep 300
-          curl localhost:5601/api/status
-          timeout 300 bash -c 'while [[ "$(curl -s -o /dev/null -w ''%{http_code}'' localhost:5601/api/status)" != "200" ]]; do sleep 5; done'
+          timeout 300 bash -c 'while [[ "$(curl -s localhost:5601/api/status | jq -r '.status.overall.state')" != "green" ]]; do sleep 5; done'
       - name: Cache Cypress
         id: cache-cypress
         uses: actions/cache@v1
@@ -86,9 +83,11 @@ jobs:
       - run: npx cypress cache list
       # for now just chrome, use matrix to do all browsers later
       - name: Cypress tests
-        run: |
-          cd kibana/plugins/index-management-kibana-plugin
-          yarn run cypress run --browser chrome
+        uses: cypress-io/github-action@v1
+        with:
+          working-directory: kibana/plugins/index-management-kibana-plugin
+          command: yarn run cypress run
+          browser: chrome
       # Screenshots are only captured on failure, will change this once we do visual regression tests
       - uses: actions/upload-artifact@v1
         if: failure()
