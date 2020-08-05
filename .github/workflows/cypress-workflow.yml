@@ -1,6 +1,5 @@
 name: E2E Cypress tests
 on:
-  pull_request:
   push:
     branches:
       - master
