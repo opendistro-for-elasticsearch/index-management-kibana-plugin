@@ -40,11 +40,28 @@ Example output: `./build/opendistro_index_management_kibana-1.3.0.0.zip`
 
 - `yarn start`
 
-  Starts Kibana and includes this plugin. Kibana will be available on `localhost:5601`.
+  - Starts Kibana and includes this plugin. Kibana will be available on `localhost:5601`.
+  - You must have Elasticsearch running with the Index Management plugin
+
+## Test
+
+There are unit/stubbed integration tests and cypress e2e/integration tests.
+
+To run the cypress tests, you must have both Elasticsearch and Kibana running with the Index Management plugin running.
+
+If you are running cypress tests with Kibana development server use the `--no-base-path` option and if you are writing Cypress tests use the `--no-watch` to make sure your server is not restarted.
 
 - `yarn test:jest`
 
-  Runs the plugin tests.
+  - Runs the plugin tests.
+  
+- `yarn run cypress open`
+
+  - Opens the Cypress test runner
+
+- `yarn run cypress run`
+
+  - Runs the Cypress test runner
 
 ## Contributing to Open Distro for Elasticsearch Index Management Kibana
 
