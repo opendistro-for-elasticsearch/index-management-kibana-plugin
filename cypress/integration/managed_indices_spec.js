@@ -28,8 +28,8 @@ describe("Managed indices", () => {
     // Visit ISM Kibana
     cy.visit(`${Cypress.env("kibana")}/app/${PLUGIN_NAME}#/managed-indices`);
 
-    // Common text to wait for to confirm page loaded, give up to 20 seconds for initial load
-    cy.contains("Rows per page", { timeout: 20000 });
+    // Common text to wait for to confirm page loaded, give up to 60 seconds for initial load
+    cy.contains("Rows per page", { timeout: 60000 });
   });
 
   describe("can have policies removed", () => {
@@ -134,7 +134,7 @@ describe("Managed indices", () => {
       cy.contains(POLICY_ID);
 
       // Get current index settings for index
-      cy.getIndexSettings(SAMPLE_INDEX).then(res => {
+      cy.getIndexSettings(SAMPLE_INDEX).then((res) => {
         // Confirm the current rollover_alias is the first one we set
         expect(res.body).to.have.nested.property(
           "sample_index.settings.index.opendistro.index_state_management.rollover_alias",
@@ -149,9 +149,7 @@ describe("Managed indices", () => {
       cy.get(`[data-test-subj="Edit rollover aliasButton"]`).click({ force: true });
 
       // Type in second rollover alias in input
-      cy.get(`input[placeholder="Rollover alias"]`)
-        .focus()
-        .type(SECOND_ALIAS);
+      cy.get(`input[placeholder="Rollover alias"]`).focus().type(SECOND_ALIAS);
 
       // Click rollover alias modal confirmation button
       cy.get(`[data-test-subj="editRolloverAliasModalAddButton"]`).click({ force: true });
@@ -160,7 +158,7 @@ describe("Managed indices", () => {
       cy.contains("Edited rollover alias on sample_index");
 
       // Get updated index settings for index
-      cy.getIndexSettings(SAMPLE_INDEX).then(res => {
+      cy.getIndexSettings(SAMPLE_INDEX).then((res) => {
         // Confirm the rollover_alias setting is set to second alias
         expect(res.body).to.have.nested.property(
           "sample_index.settings.index.opendistro.index_state_management.rollover_alias",
@@ -193,20 +191,13 @@ describe("Managed indices", () => {
         .type(SAMPLE_INDEX, { parseSpecialCharSequences: false, delay: 1 });
 
       // Click the index option
-      cy.get(`button[role="option"]`)
-        .eq(1)
-        .click({ force: true });
+      cy.get(`button[role="option"]`).eq(1).click({ force: true });
 
       // Get the third combo search input box which should be the policy input
-      cy.get(`input[data-test-subj="comboBoxSearchInput"]`)
-        .eq(2)
-        .focus()
-        .type(POLICY_ID_2, { parseSpecialCharSequences: false, delay: 1 });
+      cy.get(`input[data-test-subj="comboBoxSearchInput"]`).eq(2).focus().type(POLICY_ID_2, { parseSpecialCharSequences: false, delay: 1 });
 
       // Click the policy option
-      cy.get(`button[role="option"]`)
-        .first()
-        .click({ force: true });
+      cy.get(`button[role="option"]`).first().click({ force: true });
 
       // Click the Change Policy button
       cy.get(`[data-test-subj="changePolicyChangeButton"]`).click({ force: true });

@@ -27,8 +27,8 @@ describe("Indices", () => {
     // Visit ISM Kibana
     cy.visit(`${Cypress.env("kibana")}/app/${PLUGIN_NAME}#/indices`);
 
-    // Common text to wait for to confirm page loaded, give up to 20 seconds for initial load
-    cy.contains("Rows per page", { timeout: 20000 });
+    // Common text to wait for to confirm page loaded, give up to 60 seconds for initial load
+    cy.contains("Rows per page", { timeout: 60000 });
   });
 
   describe("can be searched", () => {
@@ -43,21 +43,17 @@ describe("Indices", () => {
 
     it("successfully", () => {
       // Get the index table header and click it to sort
-      cy.get("thead > tr > th")
-        .contains("Index")
-        .click({ force: true });
+      cy.get("thead > tr > th").contains("Index").click({ force: true });
 
       // Confirm we have index_a in view and not index_z
       cy.contains("index_a");
       cy.contains("index_z").should("not.exist");
 
       // Type in index_z in search input
-      cy.get(`input[type="search"]`)
-        .focus()
-        .type("index_z");
+      cy.get(`input[type="search"]`).focus().type("index_z");
 
       // Confirm we only see index_z in table
-      cy.get("tbody > tr").should($tr => {
+      cy.get("tbody > tr").should(($tr) => {
         expect($tr, "1 row").to.have.length(1);
         expect($tr, "item").to.contain("index_z");
       });
@@ -76,9 +72,7 @@ describe("Indices", () => {
       cy.contains(SAMPLE_INDEX);
 
       // Confirm our initial index is not currently managed
-      cy.get(`tbody > tr:contains("${SAMPLE_INDEX}") > td`)
-        .filter(`:nth-child(4)`)
-        .contains("No");
+      cy.get(`tbody > tr:contains("${SAMPLE_INDEX}") > td`).filter(`:nth-child(4)`).contains("No");
 
       // Select checkbox for our index
       cy.get(`[data-test-subj="checkboxSelectRow-${SAMPLE_INDEX}"]`).check({ force: true });
@@ -86,14 +80,10 @@ describe("Indices", () => {
       // Click apply policy button
       cy.get(`[data-test-subj="Apply policyButton"]`).click({ force: true });
 
-      cy.get(`input[data-test-subj="comboBoxSearchInput"]`)
-        .focus()
-        .type(POLICY_ID, { parseSpecialCharSequences: false, delay: 1 });
+      cy.get(`input[data-test-subj="comboBoxSearchInput"]`).focus().type(POLICY_ID, { parseSpecialCharSequences: false, delay: 1 });
 
       // Click the policy option
-      cy.get(`button[role="option"]`)
-        .first()
-        .click({ force: true });
+      cy.get(`button[role="option"]`).first().click({ force: true });
 
       cy.contains("A simple description");
 
@@ -104,9 +94,7 @@ describe("Indices", () => {
       cy.contains(SAMPLE_INDEX, { timeout: 20000 });
 
       // Confirm our index is now being managed
-      cy.get(`tbody > tr:contains("${SAMPLE_INDEX}") > td`)
-        .filter(`:nth-child(4)`)
-        .contains("Yes");
+      cy.get(`tbody > tr:contains("${SAMPLE_INDEX}") > td`).filter(`:nth-child(4)`).contains("Yes");
     });
   });
 });

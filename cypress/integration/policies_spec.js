@@ -26,8 +26,8 @@ describe("Policies", () => {
     // Visit ISM Kibana
     cy.visit(`${Cypress.env("kibana")}/app/${PLUGIN_NAME}`);
 
-    // Common text to wait for to confirm page loaded, give up to 20 seconds for initial load
-    cy.contains("Create policy", { timeout: 20000 });
+    // Common text to wait for to confirm page loaded, give up to 60 seconds for initial load
+    cy.contains("Create policy", { timeout: 60000 });
   });
 
   describe("can be created", () => {
@@ -57,9 +57,7 @@ describe("Policies", () => {
         .type(JSON.stringify(samplePolicy), { parseSpecialCharSequences: false, delay: 5, timeout: 20000 });
 
       // Click the create button
-      cy.get("button")
-        .contains("Create")
-        .click({ force: true });
+      cy.get("button").contains("Create").click({ force: true });
 
       // Confirm we got created toaster
       cy.contains(`Created policy: ${POLICY_ID}`);
@@ -152,20 +150,16 @@ describe("Policies", () => {
       cy.contains("A simple description");
 
       // Sort the table by policy name
-      cy.get("thead > tr > th")
-        .contains("Policy")
-        .click({ force: true });
+      cy.get("thead > tr > th").contains("Policy").click({ force: true });
 
       // Confirm the last "_z" policy does not exist
       cy.contains(`${POLICY_ID}_z`).should("not.exist");
 
       // Type in policy name in search box
-      cy.get(`input[type="search"]`)
-        .focus()
-        .type(`${POLICY_ID}_z`);
+      cy.get(`input[type="search"]`).focus().type(`${POLICY_ID}_z`);
 
       // Confirm we filtered down to our one and only policy
-      cy.get("tbody > tr").should($tr => {
+      cy.get("tbody > tr").should(($tr) => {
         expect($tr, "1 row").to.have.length(1);
         expect($tr, "item").to.contain(`${POLICY_ID}_z`);
       });
