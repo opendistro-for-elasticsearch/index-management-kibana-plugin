@@ -1,6 +1,6 @@
 ## Version 1.3.0
 
-### New Features
+### Features
 
 This is the first official release of Open Distro Index Management Kibana plugin.
 

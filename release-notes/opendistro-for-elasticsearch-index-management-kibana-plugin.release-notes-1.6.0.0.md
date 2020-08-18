@@ -1,6 +1,6 @@
 ## Version 1.6.0
 
-### New Features
+### Features
 
 * Adds support for Kibana 7.6.1 - [PR #83](https://github.com/opendistro-for-elasticsearch/index-management-kibana-plugin/pull/83)
 
