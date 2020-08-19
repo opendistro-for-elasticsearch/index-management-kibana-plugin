@@ -44,7 +44,7 @@ exports[`<ChangePolicy /> spec renders the component 1`] = `
         />
         <div
           class="euiFormRow"
-          id="some_make_id-row"
+          id="some_html_id-row"
         >
           <div
             class="euiFormRow__labelWrapper"
@@ -52,7 +52,7 @@ exports[`<ChangePolicy /> spec renders the component 1`] = `
             <label
               aria-invalid="false"
               class="euiFormLabel euiFormRow__label"
-              for="some_make_id"
+              for="some_html_id"
             >
               Managed indices
             </label>
@@ -61,7 +61,7 @@ exports[`<ChangePolicy /> spec renders the component 1`] = `
             class="euiFormRow__fieldWrapper"
           >
             <div
-              aria-describedby="some_make_id-help"
+              aria-describedby="some_html_id-help"
               aria-expanded="false"
               aria-haspopup="listbox"
               class="euiComboBox"
@@ -85,7 +85,7 @@ exports[`<ChangePolicy /> spec renders the component 1`] = `
                       <input
                         aria-controls=""
                         data-test-subj="comboBoxSearchInput"
-                        id="some_make_id"
+                        id="some_html_id"
                         role="textbox"
                         style="box-sizing: content-box; width: 2px;"
                         value=""
@@ -112,7 +112,7 @@ exports[`<ChangePolicy /> spec renders the component 1`] = `
             </div>
             <div
               class="euiFormHelpText euiFormRow__text"
-              id="some_make_id-help"
+              id="some_html_id-help"
             >
               You can use * as wildcards to form index patterns.
             </div>
@@ -120,14 +120,14 @@ exports[`<ChangePolicy /> spec renders the component 1`] = `
         </div>
         <div
           class="euiFormRow"
-          id="some_make_id-row"
+          id="some_html_id-row"
         >
           <div
             class="euiFormRow__labelWrapper"
           >
             <label
               class="euiFormLabel euiFormRow__label"
-              for="some_make_id"
+              for="some_html_id"
             >
               State filters
             </label>
@@ -136,7 +136,7 @@ exports[`<ChangePolicy /> spec renders the component 1`] = `
             class="euiFormRow__fieldWrapper"
           >
             <div
-              aria-describedby="some_make_id-help"
+              aria-describedby="some_html_id-help"
               aria-expanded="false"
               aria-haspopup="listbox"
               class="euiComboBox euiComboBox-isDisabled"
@@ -166,7 +166,7 @@ exports[`<ChangePolicy /> spec renders the component 1`] = `
                         aria-controls=""
                         data-test-subj="comboBoxSearchInput"
                         disabled=""
-                        id="some_make_id"
+                        id="some_html_id"
                         role="textbox"
                         style="box-sizing: content-box; width: 2px;"
                         value=""
@@ -194,7 +194,7 @@ exports[`<ChangePolicy /> spec renders the component 1`] = `
             </div>
             <div
               class="euiFormHelpText euiFormRow__text"
-              id="some_make_id-help"
+              id="some_html_id-help"
             >
               Apply new policy only on managed indices in these states.
             </div>
@@ -255,7 +255,7 @@ exports[`<ChangePolicy /> spec renders the component 1`] = `
         />
         <div
           class="euiFormRow"
-          id="some_make_id-row"
+          id="some_html_id-row"
         >
           <div
             class="euiFormRow__labelWrapper"
@@ -263,7 +263,7 @@ exports[`<ChangePolicy /> spec renders the component 1`] = `
             <label
               aria-invalid="false"
               class="euiFormLabel euiFormRow__label"
-              for="some_make_id"
+              for="some_html_id"
             >
               New policy
             </label>
@@ -295,7 +295,7 @@ exports[`<ChangePolicy /> spec renders the component 1`] = `
                       <input
                         aria-controls=""
                         data-test-subj="comboBoxSearchInput"
-                        id="some_make_id"
+                        id="some_html_id"
                         role="textbox"
                         style="box-sizing: content-box; width: 2px;"
                         value=""
@@ -372,7 +372,7 @@ exports[`<ChangePolicy /> spec renders the component 1`] = `
         />
         <div
           class="euiFormRow"
-          id="some_make_id-row"
+          id="some_html_id-row"
         >
           <div
             class="euiFormRow__fieldWrapper"
@@ -387,7 +387,7 @@ exports[`<ChangePolicy /> spec renders the component 1`] = `
                   aria-label="Start state for new policy"
                   class="euiSelect"
                   disabled=""
-                  id="some_make_id"
+                  id="some_html_id"
                 />
                 <div
                   class="euiFormControlLayoutIcons euiFormControlLayoutIcons--right"

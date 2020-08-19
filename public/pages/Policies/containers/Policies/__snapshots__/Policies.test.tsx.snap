@@ -214,7 +214,7 @@ exports[`<IndexPolicies /> spec renders the component 1`] = `
                     aria-label="Select all rows"
                     class="euiCheckbox__input"
                     disabled=""
-                    id="_selection_column-checkbox_some_make_id"
+                    id="_selection_column-checkbox_some_html_id"
                     type="checkbox"
                   />
                   <div
@@ -222,7 +222,7 @@ exports[`<IndexPolicies /> spec renders the component 1`] = `
                   />
                   <label
                     class="euiCheckbox__label"
-                    for="_selection_column-checkbox_some_make_id"
+                    for="_selection_column-checkbox_some_html_id"
                   >
                     Select all rows
                   </label>
@@ -263,6 +263,8 @@ exports[`<IndexPolicies /> spec renders the component 1`] = `
           </div>
           <table
             class="euiTable euiTable--responsive"
+            id="some_html_id"
+            tabindex="-1"
           >
             <caption
               class="euiScreenReaderOnly euiTableCaption"
@@ -284,7 +286,7 @@ exports[`<IndexPolicies /> spec renders the component 1`] = `
                         class="euiCheckbox__input"
                         data-test-subj="checkboxSelectAll"
                         disabled=""
-                        id="_selection_column-checkbox_some_make_id"
+                        id="_selection_column-checkbox_some_html_id"
                         type="checkbox"
                       />
                       <div

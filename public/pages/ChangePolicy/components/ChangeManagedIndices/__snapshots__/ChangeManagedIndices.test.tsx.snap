@@ -33,7 +33,7 @@ exports[`<ChangeManagedIndices /> spec renders the component 1`] = `
       />
       <div
         class="euiFormRow"
-        id="some_make_id-row"
+        id="some_html_id-row"
       >
         <div
           class="euiFormRow__labelWrapper"
@@ -41,7 +41,7 @@ exports[`<ChangeManagedIndices /> spec renders the component 1`] = `
           <label
             aria-invalid="false"
             class="euiFormLabel euiFormRow__label"
-            for="some_make_id"
+            for="some_html_id"
           >
             Managed indices
           </label>
@@ -50,7 +50,7 @@ exports[`<ChangeManagedIndices /> spec renders the component 1`] = `
           class="euiFormRow__fieldWrapper"
         >
           <div
-            aria-describedby="some_make_id-help"
+            aria-describedby="some_html_id-help"
             aria-expanded="false"
             aria-haspopup="listbox"
             class="euiComboBox"
@@ -74,7 +74,7 @@ exports[`<ChangeManagedIndices /> spec renders the component 1`] = `
                     <input
                       aria-controls=""
                       data-test-subj="comboBoxSearchInput"
-                      id="some_make_id"
+                      id="some_html_id"
                       role="textbox"
                       style="box-sizing: content-box; width: 2px;"
                       value=""
@@ -101,7 +101,7 @@ exports[`<ChangeManagedIndices /> spec renders the component 1`] = `
           </div>
           <div
             class="euiFormHelpText euiFormRow__text"
-            id="some_make_id-help"
+            id="some_html_id-help"
           >
             You can use * as wildcards to form index patterns.
           </div>
@@ -109,14 +109,14 @@ exports[`<ChangeManagedIndices /> spec renders the component 1`] = `
       </div>
       <div
         class="euiFormRow"
-        id="some_make_id-row"
+        id="some_html_id-row"
       >
         <div
           class="euiFormRow__labelWrapper"
         >
           <label
             class="euiFormLabel euiFormRow__label"
-            for="some_make_id"
+            for="some_html_id"
           >
             State filters
           </label>
@@ -125,7 +125,7 @@ exports[`<ChangeManagedIndices /> spec renders the component 1`] = `
           class="euiFormRow__fieldWrapper"
         >
           <div
-            aria-describedby="some_make_id-help"
+            aria-describedby="some_html_id-help"
             aria-expanded="false"
             aria-haspopup="listbox"
             class="euiComboBox euiComboBox-isDisabled"
@@ -155,7 +155,7 @@ exports[`<ChangeManagedIndices /> spec renders the component 1`] = `
                       aria-controls=""
                       data-test-subj="comboBoxSearchInput"
                       disabled=""
-                      id="some_make_id"
+                      id="some_html_id"
                       role="textbox"
                       style="box-sizing: content-box; width: 2px;"
                       value=""
@@ -183,7 +183,7 @@ exports[`<ChangeManagedIndices /> spec renders the component 1`] = `
           </div>
           <div
             class="euiFormHelpText euiFormRow__text"
-            id="some_make_id-help"
+            id="some_html_id-help"
           >
             Apply new policy only on managed indices in these states.
           </div>

@@ -50,8 +50,8 @@ function renderPoliciesWithRouter() {
                         </div>
                       )}
                     />
-                    <Route path={ROUTES.CREATE_POLICY} render={props => <div>Testing create policy</div>} />
-                    <Route path={ROUTES.EDIT_POLICY} render={props => <div>Testing edit policy: {props.location.search}</div>} />
+                    <Route path={ROUTES.CREATE_POLICY} render={(props) => <div>Testing create policy</div>} />
+                    <Route path={ROUTES.EDIT_POLICY} render={(props) => <div>Testing edit policy: {props.location.search}</div>} />
                     <Redirect from="/" to={ROUTES.INDEX_POLICIES} />
                   </Switch>
                 </ModalProvider>
@@ -153,7 +153,7 @@ describe("<IndexPolicies /> spec", () => {
     expect(getByTestId("DeleteButton")).toBeEnabled();
 
     userEvent.click(getByTestId("DeleteButton"));
-
+    await wait(() => getByTestId("confirmationModalActionButton"));
     userEvent.click(getByTestId("confirmationModalActionButton"));
 
     await wait();
@@ -218,8 +218,8 @@ describe("<IndexPolicies /> spec", () => {
     const { getByText, getByTestId } = renderPoliciesWithRouter();
 
     await wait(() => getByText(testPolicy.id));
-
     userEvent.click(getByText(testPolicy.id));
+    await wait(() => getByTestId("policyModalEditButton"));
     userEvent.click(getByTestId("policyModalEditButton"));
 
     await wait(() => getByText(`Testing edit policy: ?id=${testPolicy.id}`));

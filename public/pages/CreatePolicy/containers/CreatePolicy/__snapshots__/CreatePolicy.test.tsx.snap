@@ -52,7 +52,7 @@ exports[`<CreatePolicy /> spec renders the create component 1`] = `
         />
         <div
           class="euiFormRow"
-          id="some_make_id-row"
+          id="some_html_id-row"
         >
           <div
             class="euiFormRow__labelWrapper"
@@ -60,7 +60,7 @@ exports[`<CreatePolicy /> spec renders the create component 1`] = `
             <label
               aria-invalid="false"
               class="euiFormLabel euiFormRow__label"
-              for="some_make_id"
+              for="some_html_id"
             >
               Policy ID
             </label>
@@ -75,9 +75,9 @@ exports[`<CreatePolicy /> spec renders the create component 1`] = `
                 class="euiFormControlLayout__childrenWrapper"
               >
                 <input
-                  aria-describedby="some_make_id-help"
+                  aria-describedby="some_html_id-help"
                   class="euiFieldText"
-                  id="some_make_id"
+                  id="some_html_id"
                   placeholder="hot_cold_workflow"
                   type="text"
                   value=""
@@ -86,7 +86,7 @@ exports[`<CreatePolicy /> spec renders the create component 1`] = `
             </div>
             <div
               class="euiFormHelpText euiFormRow__text"
-              id="some_make_id-help"
+              id="some_html_id-help"
             >
               Specify a unique ID that is easy to recognize and remember.
             </div>
@@ -369,7 +369,7 @@ exports[`<CreatePolicy /> spec renders the edit component 1`] = `
         />
         <div
           class="euiFormRow"
-          id="some_make_id-row"
+          id="some_html_id-row"
         >
           <div
             class="euiFormRow__labelWrapper"
@@ -377,7 +377,7 @@ exports[`<CreatePolicy /> spec renders the edit component 1`] = `
             <label
               aria-invalid="false"
               class="euiFormLabel euiFormRow__label"
-              for="some_make_id"
+              for="some_html_id"
             >
               Policy ID
             </label>
@@ -392,9 +392,9 @@ exports[`<CreatePolicy /> spec renders the edit component 1`] = `
                 class="euiFormControlLayout__childrenWrapper"
               >
                 <input
-                  aria-describedby="some_make_id-help"
+                  aria-describedby="some_html_id-help"
                   class="euiFieldText"
-                  id="some_make_id"
+                  id="some_html_id"
                   placeholder="hot_cold_workflow"
                   readonly=""
                   type="text"
@@ -404,7 +404,7 @@ exports[`<CreatePolicy /> spec renders the edit component 1`] = `
             </div>
             <div
               class="euiFormHelpText euiFormRow__text"
-              id="some_make_id-help"
+              id="some_html_id-help"
             >
               Specify a unique ID that is easy to recognize and remember.
             </div>

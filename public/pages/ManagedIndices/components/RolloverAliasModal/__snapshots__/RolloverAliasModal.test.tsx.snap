@@ -2,7 +2,7 @@
 
 exports[`<RolloverAliasModal /> spec renders the component 1`] = `
 <div
-  class="euiOverlayMask"
+  class="euiOverlayMask euiOverlayMask--aboveHeader"
 >
   <div
     data-focus-guard="true"
@@ -48,14 +48,14 @@ exports[`<RolloverAliasModal /> spec renders the component 1`] = `
           >
             <div
               class="euiFormRow"
-              id="some_make_id-row"
+              id="some_html_id-row"
             >
               <div
                 class="euiFormRow__labelWrapper"
               >
                 <label
                   class="euiFormLabel euiFormRow__label"
-                  for="some_make_id"
+                  for="some_html_id"
                 >
                   Rollover alias
                 </label>
@@ -70,9 +70,9 @@ exports[`<RolloverAliasModal /> spec renders the component 1`] = `
                     class="euiFormControlLayout__childrenWrapper"
                   >
                     <input
-                      aria-describedby="some_make_id-help"
+                      aria-describedby="some_html_id-help"
                       class="euiFieldText"
-                      id="some_make_id"
+                      id="some_html_id"
                       placeholder="Rollover alias"
                       type="text"
                       value=""
@@ -81,7 +81,7 @@ exports[`<RolloverAliasModal /> spec renders the component 1`] = `
                 </div>
                 <div
                   class="euiFormHelpText euiFormRow__text"
-                  id="some_make_id-help"
+                  id="some_html_id-help"
                 >
                   A rollover alias is required when using the rollover action.
                 </div>

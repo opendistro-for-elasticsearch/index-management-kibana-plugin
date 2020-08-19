@@ -2,7 +2,7 @@
 
 exports[`<ApplyPolicyModal /> spec renders the component 1`] = `
 <div
-  class="euiOverlayMask"
+  class="euiOverlayMask euiOverlayMask--aboveHeader"
 >
   <div
     data-focus-guard="true"
@@ -58,7 +58,7 @@ exports[`<ApplyPolicyModal /> spec renders the component 1`] = `
             />
             <div
               class="euiFormRow euiFormRow--fullWidth"
-              id="some_make_id-row"
+              id="some_html_id-row"
             >
               <div
                 class="euiFormRow__labelWrapper"
@@ -66,7 +66,7 @@ exports[`<ApplyPolicyModal /> spec renders the component 1`] = `
                 <label
                   aria-invalid="false"
                   class="euiFormLabel euiFormRow__label"
-                  for="some_make_id"
+                  for="some_html_id"
                 >
                   Policy ID
                 </label>
@@ -103,7 +103,7 @@ exports[`<ApplyPolicyModal /> spec renders the component 1`] = `
                           <input
                             aria-controls=""
                             data-test-subj="comboBoxSearchInput"
-                            id="some_make_id"
+                            id="some_html_id"
                             role="textbox"
                             style="box-sizing: content-box; width: 2px;"
                             value=""
