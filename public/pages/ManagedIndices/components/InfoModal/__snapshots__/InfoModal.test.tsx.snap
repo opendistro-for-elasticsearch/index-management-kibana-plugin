@@ -2,7 +2,7 @@
 
 exports[`<InfoModal /> spec renders the component 1`] = `
 <div
-  class="euiOverlayMask"
+  class="euiOverlayMask euiOverlayMask--aboveHeader"
 >
   <div
     data-focus-guard="true"

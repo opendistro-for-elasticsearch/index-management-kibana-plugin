@@ -2,7 +2,7 @@
 
 exports[`<RetryModal /> spec renders the component 1`] = `
 <div
-  class="euiOverlayMask"
+  class="euiOverlayMask euiOverlayMask--aboveHeader"
 >
   <div
     data-focus-guard="true"
@@ -92,14 +92,14 @@ exports[`<RetryModal /> spec renders the component 1`] = `
             />
             <div
               class="euiFormRow"
-              id="some_make_id-row"
+              id="some_html_id-row"
             >
               <div
                 class="euiFormRow__labelWrapper"
               >
                 <label
                   class="euiFormLabel euiFormRow__label"
-                  for="some_make_id"
+                  for="some_html_id"
                 >
                   Start state
                 </label>
@@ -114,11 +114,11 @@ exports[`<RetryModal /> spec renders the component 1`] = `
                     class="euiFormControlLayout__childrenWrapper"
                   >
                     <select
-                      aria-describedby="some_make_id-help"
+                      aria-describedby="some_html_id-help"
                       aria-label="Retry failed policy from"
                       class="euiSelect"
                       disabled=""
-                      id="some_make_id"
+                      id="some_html_id"
                     >
                       <option
                         value="one"
@@ -144,7 +144,7 @@ exports[`<RetryModal /> spec renders the component 1`] = `
                 </div>
                 <div
                   class="euiFormHelpText euiFormRow__text"
-                  id="some_make_id-help"
+                  id="some_html_id-help"
                 >
                   Only common states shared across all selected indices are available
                 </div>

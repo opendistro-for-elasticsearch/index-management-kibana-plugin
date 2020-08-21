@@ -19,7 +19,6 @@ import chrome from "ui/chrome";
 import { render, unmountComponentAtNode } from "react-dom";
 import { HashRouter as Router, Route } from "react-router-dom";
 
-import "ui/autoload/styles";
 import Main from "./pages/Main";
 import { ServicesContext, IndexService, ManagedIndexService } from "./services";
 import PolicyService from "./services/PolicyService";
@@ -27,14 +26,14 @@ import { DarkModeContext } from "./components/DarkMode";
 
 const app = uiModules.get("apps/indexManagementKibana");
 
-app.config($locationProvider => {
+app.config(($locationProvider) => {
   $locationProvider.html5Mode({
     enabled: false,
     requireBase: false,
     rewriteLinks: false,
   });
 });
-app.config(stateManagementConfigProvider => stateManagementConfigProvider.disable());
+app.config((stateManagementConfigProvider) => stateManagementConfigProvider.disable());
 
 function RootController($scope, $element, $http) {
   const domNode = $element[0];
@@ -50,7 +49,7 @@ function RootController($scope, $element, $http) {
   render(
     <Router>
       <Route
-        render={props => (
+        render={(props) => (
           <DarkModeContext.Provider value={isDarkMode}>
             <ServicesContext.Provider value={services}>
               <Main {...props} />

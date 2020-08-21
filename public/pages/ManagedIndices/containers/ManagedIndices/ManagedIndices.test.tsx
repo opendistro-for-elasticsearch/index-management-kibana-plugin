@@ -37,10 +37,10 @@ function renderWithRouter(Component: React.ComponentType<any>) {
         <Switch>
           <Route
             path={ROUTES.MANAGED_INDICES}
-            render={props => (
+            render={(props) => (
               <ServicesContext.Provider value={browserServicesMock}>
                 <ModalProvider>
-                  <ServicesConsumer>{services => services && <ModalRoot services={services} />}</ServicesConsumer>
+                  <ServicesConsumer>{(services) => services && <ModalRoot services={services} />}</ServicesConsumer>
                   <ServicesConsumer>
                     {({ managedIndexService }: any) => <Component managedIndexService={managedIndexService} {...props} />}
                   </ServicesConsumer>
@@ -156,6 +156,7 @@ describe("<ManagedIndices /> spec", () => {
     expect(getByTestId("Remove policyButton")).toBeEnabled();
 
     userEvent.click(getByTestId("Remove policyButton"));
+    await wait(() => getByTestId("confirmationModalActionButton"));
     userEvent.click(getByTestId("confirmationModalActionButton"));
     await wait();
 

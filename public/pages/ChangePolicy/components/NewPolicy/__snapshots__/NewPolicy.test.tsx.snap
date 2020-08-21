@@ -50,7 +50,7 @@ exports[`<NewPolicy /> spec renders the component 1`] = `
       />
       <div
         class="euiFormRow"
-        id="some_make_id-row"
+        id="some_html_id-row"
       >
         <div
           class="euiFormRow__labelWrapper"
@@ -58,7 +58,7 @@ exports[`<NewPolicy /> spec renders the component 1`] = `
           <label
             aria-invalid="false"
             class="euiFormLabel euiFormRow__label"
-            for="some_make_id"
+            for="some_html_id"
           >
             New policy
           </label>
@@ -90,7 +90,7 @@ exports[`<NewPolicy /> spec renders the component 1`] = `
                     <input
                       aria-controls=""
                       data-test-subj="comboBoxSearchInput"
-                      id="some_make_id"
+                      id="some_html_id"
                       role="textbox"
                       style="box-sizing: content-box; width: 2px;"
                       value=""
@@ -167,7 +167,7 @@ exports[`<NewPolicy /> spec renders the component 1`] = `
       />
       <div
         class="euiFormRow"
-        id="some_make_id-row"
+        id="some_html_id-row"
       >
         <div
           class="euiFormRow__fieldWrapper"
@@ -182,7 +182,7 @@ exports[`<NewPolicy /> spec renders the component 1`] = `
                 aria-label="Start state for new policy"
                 class="euiSelect"
                 disabled=""
-                id="some_make_id"
+                id="some_html_id"
               />
               <div
                 class="euiFormControlLayoutIcons euiFormControlLayoutIcons--right"
