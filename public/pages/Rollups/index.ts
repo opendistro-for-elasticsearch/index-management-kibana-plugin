@@ -13,10 +13,6 @@
  * permissions and limitations under the License.
  */
 
-import { ServicesConsumer, ServicesContext } from "./Services";
-import IndexService from "./IndexService";
-import ManagedIndexService from "./ManagedIndexService";
-import PolicyService from "./PolicyService";
-import Rollup from "./Rollup";
+import Rollups from "./containers/Rollups";
 
-export { ServicesConsumer, ServicesContext, IndexService, ManagedIndexService, PolicyService, Rollup };
+export default Rollups;

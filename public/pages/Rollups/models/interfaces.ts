@@ -13,10 +13,19 @@
  * permissions and limitations under the License.
  */
 
-import { ServicesConsumer, ServicesContext } from "./Services";
-import IndexService from "./IndexService";
-import ManagedIndexService from "./ManagedIndexService";
-import PolicyService from "./PolicyService";
-import Rollup from "./Rollup";
+import { Direction } from "@elastic/eui";
 
-export { ServicesConsumer, ServicesContext, IndexService, ManagedIndexService, PolicyService, Rollup };
+export interface PolicyItem {
+  id: string;
+  seqNo: number;
+  primaryTerm: number;
+  policy: object; // only dumped to view as JSON as of now, don't need to type
+}
+
+export interface PoliciesQueryParams {
+  from: number;
+  size: number;
+  search: string;
+  sortField: keyof PolicyItem;
+  sortDirection: Direction;
+}

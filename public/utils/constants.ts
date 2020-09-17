@@ -26,6 +26,7 @@ export const ROUTES = Object.freeze({
   MANAGED_INDICES: "/managed-indices",
   INDEX_POLICIES: "/index-policies",
   INDICES: "/indices",
+  ROLLUPS: "/rollups",
 });
 
 export const BREADCRUMBS = Object.freeze({
@@ -36,6 +37,7 @@ export const BREADCRUMBS = Object.freeze({
   EDIT_POLICY: { text: "Edit policy" },
   CREATE_POLICY: { text: "Create policy" },
   CHANGE_POLICY: { text: "Change policy" },
+  ROLLUPS: { text: "Rollups" },
 });
 
 // TODO: Kibana EUI has a SortDirection already

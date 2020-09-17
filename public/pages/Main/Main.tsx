@@ -22,6 +22,7 @@ import ManagedIndices from "../ManagedIndices";
 import Indices from "../Indices";
 import CreatePolicy from "../CreatePolicy";
 import ChangePolicy from "../ChangePolicy";
+import Rollups from "../Rollups";
 import { ModalProvider, ModalRoot } from "../../components/Modal";
 import { ServicesConsumer } from "../../services";
 import { BrowserServices } from "../../models/interfaces";
@@ -32,12 +33,14 @@ enum Navigation {
   IndexPolicies = "Index Policies",
   ManagedIndices = "Managed Indices",
   Indices = "Indices",
+  Rollups = "Rollup Jobs",
 }
 
 enum Pathname {
   IndexPolicies = "/index-policies",
   ManagedIndices = "/managed-indices",
   Indices = "/indices",
+  Rollups = "/rollups",
 }
 
 interface MainProps extends RouteComponentProps {}
@@ -70,6 +73,12 @@ export default class Main extends Component<MainProps, object> {
             id: 3,
             href: `#${Pathname.Indices}`,
             isSelected: pathname === Pathname.Indices,
+          },
+          {
+            name: Navigation.Rollups,
+            id: 4,
+            href: `#${Pathname.Rollups}`,
+            isSelected: pathname === Pathname.Rollups,
           },
         ],
       },
@@ -125,6 +134,14 @@ export default class Main extends Component<MainProps, object> {
                       render={(props: RouteComponentProps) => (
                         <div style={{ padding: "25px 25px" }}>
                           <Indices {...props} indexService={services.indexService} />
+                        </div>
+                      )}
+                    />
+                    <Route
+                      path={ROUTES.ROLLUPS}
+                      render={(props: RouteComponentProps) => (
+                        <div style={{ padding: "25px 25px" }}>
+                          <Rollups {...props} />
                         </div>
                       )}
                     />

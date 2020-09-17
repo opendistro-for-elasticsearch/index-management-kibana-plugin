@@ -13,10 +13,14 @@
  * permissions and limitations under the License.
  */
 
-import { ServicesConsumer, ServicesContext } from "./Services";
-import IndexService from "./IndexService";
-import ManagedIndexService from "./ManagedIndexService";
-import PolicyService from "./PolicyService";
-import Rollup from "./Rollup";
+import { PoliciesQueryParams } from "../models/interfaces";
+import { SortDirection } from "../../../utils/constants";
 
-export { ServicesConsumer, ServicesContext, IndexService, ManagedIndexService, PolicyService, Rollup };
+export const DEFAULT_PAGE_SIZE_OPTIONS = [5, 10, 20, 50];
+export const DEFAULT_QUERY_PARAMS: PoliciesQueryParams = {
+  from: 0,
+  size: 20,
+  search: "",
+  sortField: "id",
+  sortDirection: SortDirection.DESC,
+};
