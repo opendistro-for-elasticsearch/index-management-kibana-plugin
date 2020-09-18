@@ -163,7 +163,7 @@ export default class Rollups extends Component<IndicesProps, IndicesState> {
     const selection: EuiTableSelectionType<ManagedCatIndex> = {
       onSelectionChange: this.onSelectionChange,
     };
-
+    //TODO: Add action buttons here
     return (
       <ContentPanel
         actions={
@@ -172,9 +172,29 @@ export default class Rollups extends Component<IndicesProps, IndicesState> {
               <ContentPanelActions
                 actions={[
                   {
-                    text: "Apply policy",
+                    text: "Actions",
                     buttonProps: {
                       disabled: !selectedItems.length,
+                      onClick: () => onShow(ApplyPolicyModal, { indices: selectedItems.map((item: ManagedCatIndex) => item.index) }),
+                    },
+                  },
+                  {
+                    text: "Disable",
+                    buttonProps: {
+                      disabled: !selectedItems.length,
+                      onClick: () => onShow(ApplyPolicyModal, { indices: selectedItems.map((item: ManagedCatIndex) => item.index) }),
+                    },
+                  },
+                  {
+                    text: "Enable",
+                    buttonProps: {
+                      disabled: !selectedItems.length,
+                      onClick: () => onShow(ApplyPolicyModal, { indices: selectedItems.map((item: ManagedCatIndex) => item.index) }),
+                    },
+                  },
+                  {
+                    text: "Create rollup job",
+                    buttonProps: {
                       onClick: () => onShow(ApplyPolicyModal, { indices: selectedItems.map((item: ManagedCatIndex) => item.index) }),
                     },
                   },

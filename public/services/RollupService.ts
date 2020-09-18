@@ -13,7 +13,7 @@
  * permissions and limitations under the License.
  */
 
-//TODO: Create actual rollup service here.
+//TODO: Create actual rollup service here when backend is done.
 
 import { IHttpResponse, IHttpService } from "angular";
 import { INDEX } from "../../server/utils/constants";
@@ -21,7 +21,7 @@ import { AcknowledgedResponse, ApplyPolicyResponse, GetIndicesResponse, SearchRe
 import { ServerResponse } from "../../server/models/types";
 import { NODE_API } from "../../utils/constants";
 
-export default class Rollup {
+export default class RollupService {
   httpClient: IHttpService;
 
   constructor(httpClient: IHttpService) {

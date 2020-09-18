@@ -17,6 +17,6 @@ import { ServicesConsumer, ServicesContext } from "./Services";
 import IndexService from "./IndexService";
 import ManagedIndexService from "./ManagedIndexService";
 import PolicyService from "./PolicyService";
-import Rollup from "./Rollup";
+import RollupService from "./RollupService";
 
-export { ServicesConsumer, ServicesContext, IndexService, ManagedIndexService, PolicyService, Rollup };
+export { ServicesConsumer, ServicesContext, IndexService, ManagedIndexService, PolicyService, RollupService };
