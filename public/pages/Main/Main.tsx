@@ -141,7 +141,7 @@ export default class Main extends Component<MainProps, object> {
                       path={ROUTES.ROLLUPS}
                       render={(props: RouteComponentProps) => (
                         <div style={{ padding: "25px 25px" }}>
-                          <Rollups {...props} />
+                          <Rollups {...props} indexService={services.indexService} />
                         </div>
                       )}
                     />
