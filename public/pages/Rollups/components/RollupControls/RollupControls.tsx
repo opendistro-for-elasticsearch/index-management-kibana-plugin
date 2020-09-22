@@ -13,11 +13,12 @@
  * permissions and limitations under the License.
  */
 
+//TODO: Implement actual control to Rollup
 import React, { Component } from "react";
 import { EuiFieldSearch, EuiFlexGroup, EuiFlexItem, EuiPagination } from "@elastic/eui";
 import EuiRefreshPicker from "../../../../temporary/EuiRefreshPicker";
 
-interface PolicyControlsProps {
+interface RollupControlsProps {
   activePage: number;
   pageCount: number;
   search: string;
@@ -31,7 +32,7 @@ interface PolicyControlsState {
   isPaused: boolean;
 }
 
-export default class PolicyControls extends Component<PolicyControlsProps, PolicyControlsState> {
+export default class RollupControls extends Component<RollupControlsProps, PolicyControlsState> {
   state: PolicyControlsState = {
     refreshInterval: 0,
     isPaused: true,

@@ -1,6 +1,6 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`<PolicyControls /> spec renders the component 1`] = `
+exports[`<RollupControls /> spec renders the component 1`] = `
 <div
   class="euiFlexGroup euiFlexGroup--gutterLarge euiFlexGroup--directionRow euiFlexGroup--responsive"
   style="padding: 0px 5px;"

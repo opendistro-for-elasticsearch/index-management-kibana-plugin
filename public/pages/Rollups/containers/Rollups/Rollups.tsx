@@ -28,7 +28,6 @@ import { ContentPanel, ContentPanelActions } from "../../../../components/Conten
 import { ModalConsumer } from "../../../../components/Modal";
 import ApplyPolicyModal from "../../../Indices/components/ApplyPolicyModal";
 import IndexControls from "../../../Indices/components/IndexControls";
-import IndexEmptyPrompt from "../../../Indices/components/IndexEmptyPrompt";
 import { RouteComponentProps } from "react-router-dom";
 import {
   EuiBasicTable,
@@ -43,6 +42,7 @@ import {
 } from "@elastic/eui";
 import { rollupsColumns } from "../../utils/constants";
 import { RollupService } from "../../../../services";
+import RollupEmptyPrompt from "../../components/RollupEmptyPrompt";
 
 interface RollupsProps extends RouteComponentProps {
   rollupService: RollupService;
@@ -82,7 +82,7 @@ export default class Rollups extends Component<RollupsProps, RollupsState> {
   }
 
   async componentDidMount() {
-    chrome.breadcrumbs.set([BREADCRUMBS.INDEX_MANAGEMENT, BREADCRUMBS.INDICES]);
+    chrome.breadcrumbs.set([BREADCRUMBS.INDEX_MANAGEMENT, BREADCRUMBS.ROLLUPS]);
     await this.getRollups();
   }
 
@@ -226,7 +226,7 @@ export default class Rollups extends Component<RollupsProps, RollupsState> {
           isSelectable={true}
           itemId="index"
           items={rollups}
-          noItemsMessage={<IndexEmptyPrompt filterIsApplied={filterIsApplied} loading={loadingRollups} resetFilters={this.resetFilters} />}
+          noItemsMessage={<RollupEmptyPrompt filterIsApplied={filterIsApplied} loading={loadingRollups} resetFilters={this.resetFilters} />}
           onChange={this.onTableChange}
           pagination={pagination}
           selection={selection}

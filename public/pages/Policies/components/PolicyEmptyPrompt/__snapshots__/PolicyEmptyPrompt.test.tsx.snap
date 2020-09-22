@@ -1,6 +1,6 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`<PolicyEmptyPrompt /> spec renders the component 1`] = `
+exports[`<RollupEmptyPrompt /> spec renders the component 1`] = `
 <div
   class="euiEmptyPrompt"
   style="max-width: 45em;"

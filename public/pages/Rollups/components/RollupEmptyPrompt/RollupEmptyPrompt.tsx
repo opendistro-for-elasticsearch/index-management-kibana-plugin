@@ -18,18 +18,18 @@ import { EuiButton, EuiEmptyPrompt, EuiText } from "@elastic/eui";
 import { PLUGIN_NAME, ROUTES } from "../../../../utils/constants";
 
 export const TEXT = {
-  RESET_FILTERS: "There are no policies matching your applied filters. Reset your filters to view your policies.",
-  NO_POLICIES: "There are no existing policies. Create a policy to apply to your indices.",
-  LOADING: "Loading policies...",
+  RESET_FILTERS: "There are no rollup jobs matching your applied filters. Reset your filters to view your rollup jobs.",
+  NO_ROLLUPS: "There are no existing rollup jobs. Create a rollup job.",
+  LOADING: "Loading rollup jobs...",
 };
 
-const getMessagePrompt = ({ filterIsApplied, loading }: PolicyEmptyPromptProps) => {
+const getMessagePrompt = ({ filterIsApplied, loading }: RollupEmptyPromptProps) => {
   if (loading) return TEXT.LOADING;
   if (filterIsApplied) return TEXT.RESET_FILTERS;
-  return TEXT.NO_POLICIES;
+  return TEXT.NO_ROLLUPS;
 };
 
-const getActions: React.SFC<PolicyEmptyPromptProps> = ({ filterIsApplied, loading, resetFilters }) => {
+const getActions: React.SFC<RollupEmptyPromptProps> = ({ filterIsApplied, loading, resetFilters }) => {
   if (loading) {
     return null;
   }
@@ -42,19 +42,19 @@ const getActions: React.SFC<PolicyEmptyPromptProps> = ({ filterIsApplied, loadin
   }
 
   return (
-    <EuiButton fill href={`${PLUGIN_NAME}#${ROUTES.CREATE_POLICY}`}>
-      Create policy
+    <EuiButton fill href={`${PLUGIN_NAME}#${ROUTES.CREATE_ROLLUP}`}>
+      Create rollup
     </EuiButton>
   );
 };
 
-interface PolicyEmptyPromptProps {
+interface RollupEmptyPromptProps {
   filterIsApplied: boolean;
   loading: boolean;
   resetFilters: () => void;
 }
 
-const PolicyEmptyPrompt: React.SFC<PolicyEmptyPromptProps> = (props) => (
+const RollupEmptyPrompt: React.SFC<RollupEmptyPromptProps> = (props) => (
   <EuiEmptyPrompt
     style={{ maxWidth: "45em" }}
     body={
@@ -66,4 +66,4 @@ const PolicyEmptyPrompt: React.SFC<PolicyEmptyPromptProps> = (props) => (
   />
 );
 
-export default PolicyEmptyPrompt;
+export default RollupEmptyPrompt;

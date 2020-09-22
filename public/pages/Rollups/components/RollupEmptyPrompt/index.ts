@@ -13,6 +13,6 @@
  * permissions and limitations under the License.
  */
 
-import PolicyControls from "./PolicyControls";
+import RollupEmptyPrompt from "./RollupEmptyPrompt";
 
-export default PolicyControls;
+export default RollupEmptyPrompt;

@@ -59,19 +59,19 @@ export default class CreateRollup extends Component<CreateRollupProps, CreateRol
   }
 
   componentDidMount = async (): Promise<void> => {
-    chrome.breadcrumbs.set([BREADCRUMBS.INDEX_MANAGEMENT, BREADCRUMBS.INDEX_POLICIES]);
+    chrome.breadcrumbs.set([BREADCRUMBS.INDEX_MANAGEMENT, BREADCRUMBS.ROLLUPS]);
     if (this.props.isEdit) {
       const { id } = queryString.parse(this.props.location.search);
       if (typeof id === "string" && !!id) {
-        chrome.breadcrumbs.push(BREADCRUMBS.EDIT_POLICY);
+        chrome.breadcrumbs.push(BREADCRUMBS.EDIT_ROLLUP);
         chrome.breadcrumbs.push({ text: id });
         await this.getRollupToEdit(id);
       } else {
         toastNotifications.addDanger(`Invalid rollup id: ${id}`);
-        this.props.history.push(ROUTES.INDEX_POLICIES);
+        this.props.history.push(ROUTES.ROLLUPS);
       }
     } else {
-      chrome.breadcrumbs.push(BREADCRUMBS.CREATE_POLICY);
+      chrome.breadcrumbs.push(BREADCRUMBS.CREATE_ROLLUP);
       this.setState({ jsonString: DEFAULT_POLICY });
     }
   };
