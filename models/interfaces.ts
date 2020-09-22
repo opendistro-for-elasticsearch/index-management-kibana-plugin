@@ -66,3 +66,9 @@ export interface State {
   actions: object[];
   transitions: object[];
 }
+
+export interface Rollup {
+  description: string;
+  default_state: string;
+  states: State[];
+}

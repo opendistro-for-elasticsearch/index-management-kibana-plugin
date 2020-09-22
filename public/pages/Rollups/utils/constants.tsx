@@ -14,9 +14,10 @@
  */
 
 import React from "react";
-import { EuiHealth, EuiTableFieldDataColumnType } from "@elastic/eui";
+import { EuiTableFieldDataColumnType } from "@elastic/eui";
 import { ManagedCatIndex } from "../../../../server/models/interfaces";
 import { SortDirection } from "../../../utils/constants";
+import { renderTime } from "../../Policies/utils/helpers";
 
 export const DEFAULT_PAGE_SIZE_OPTIONS = [5, 10, 20, 50];
 
@@ -28,21 +29,10 @@ export const DEFAULT_QUERY_PARAMS = {
   sortDirection: SortDirection.DESC,
 };
 
-const HEALTH_TO_COLOR: {
-  [health: string]: string;
-  green: string;
-  yellow: string;
-  red: string;
-} = {
-  green: "success",
-  yellow: "warning",
-  red: "danger",
-};
-
 export const rollupsColumns: EuiTableFieldDataColumnType<ManagedCatIndex>[] = [
   {
     field: "index",
-    name: "Index",
+    name: "Name",
     sortable: true,
     truncateText: true,
     textOnly: true,
@@ -50,54 +40,30 @@ export const rollupsColumns: EuiTableFieldDataColumnType<ManagedCatIndex>[] = [
     render: (index: string) => <span title={index}>{index}</span>,
   },
   {
-    field: "health",
-    name: "Health",
-    sortable: true,
-    truncateText: true,
-    textOnly: true,
-    align: "right",
-    render: (health: string, item: ManagedCatIndex) => {
-      const color = health ? HEALTH_TO_COLOR[health] : "subdued";
-      const text = health || item.status;
-      return <EuiHealth color={color}>{text}</EuiHealth>;
-    },
-  },
-  {
-    field: "managed",
-    name: "Managed by Policy",
-    sortable: false,
-    truncateText: true,
-    textOnly: true,
-    align: "right",
-    width: "150px",
-  },
-  {
-    field: "status",
-    name: "Status",
+    field: "source_index",
+    name: "Source index",
     sortable: true,
     truncateText: true,
     textOnly: true,
     align: "right",
   },
   {
-    field: "store.size",
-    name: "Total size",
+    field: "target_index",
+    name: "Target index",
     sortable: true,
     truncateText: true,
     textOnly: true,
-    dataType: "number",
   },
   {
-    field: "pri.store.size",
-    name: "Primaries size",
+    field: "enabled",
+    name: "Job state",
     sortable: true,
     truncateText: true,
     textOnly: true,
-    dataType: "number",
   },
   {
     field: "docs.count",
-    name: "Total documents",
+    name: "Recurring job",
     sortable: true,
     truncateText: true,
     textOnly: true,
@@ -105,28 +71,28 @@ export const rollupsColumns: EuiTableFieldDataColumnType<ManagedCatIndex>[] = [
     render: (count: string) => <span title={count}>{count}</span>,
   },
   {
-    field: "docs.deleted",
-    name: "Deleted documents",
+    field: "enabled_time",
+    name: "Last execution",
     sortable: true,
     truncateText: true,
     textOnly: true,
-    dataType: "number",
-    render: (deleted: string) => <span title={deleted}>{deleted}</span>,
+    render: renderTime,
+    dataType: "date",
   },
   {
-    field: "pri",
-    name: "Primaries",
+    field: "result",
+    name: "Execution result",
     sortable: true,
     truncateText: true,
     textOnly: true,
-    dataType: "number",
   },
   {
-    field: "rep",
-    name: "Replicas",
+    field: "master_timeout",
+    name: "Next execution",
     sortable: true,
     truncateText: true,
     textOnly: true,
-    dataType: "number",
+    render: renderTime,
+    dataType: "date",
   },
 ];

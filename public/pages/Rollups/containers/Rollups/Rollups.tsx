@@ -17,20 +17,19 @@ import React, { Component } from "react";
 import { getURLQueryParams } from "../../../Indices/utils/helpers";
 import _ from "lodash";
 import chrome from "ui/chrome";
-import { BREADCRUMBS } from "../../../../utils/constants";
+import { BREADCRUMBS, ROUTES } from "../../../../utils/constants";
 import { IndicesQueryParams } from "../../../Indices/models/interfaces";
 import queryString from "query-string";
 import { toastNotifications } from "ui/notify";
 import { getErrorMessage } from "../../../../utils/helpers";
 import { ManagedCatIndex } from "../../../../../server/models/interfaces";
-import { DEFAULT_PAGE_SIZE_OPTIONS, DEFAULT_QUERY_PARAMS, indicesColumns } from "../../../Indices/utils/constants";
+import { DEFAULT_PAGE_SIZE_OPTIONS, DEFAULT_QUERY_PARAMS } from "../../../Indices/utils/constants";
 import { ContentPanel, ContentPanelActions } from "../../../../components/ContentPanel";
 import { ModalConsumer } from "../../../../components/Modal";
 import ApplyPolicyModal from "../../../Indices/components/ApplyPolicyModal";
 import IndexControls from "../../../Indices/components/IndexControls";
 import IndexEmptyPrompt from "../../../Indices/components/IndexEmptyPrompt";
 import { RouteComponentProps } from "react-router-dom";
-import IndexService from "../../../../services/IndexService";
 import {
   EuiBasicTable,
   EuiHorizontalRule,
@@ -42,79 +41,84 @@ import {
   Pagination,
   EuiTableSelectionType,
 } from "@elastic/eui";
-import Indices from "../../../Indices/containers/Indices";
+import { rollupsColumns } from "../../utils/constants";
+import { RollupService } from "../../../../services";
 
-interface IndicesProps extends RouteComponentProps {
-  indexService: IndexService;
+interface RollupsProps extends RouteComponentProps {
+  rollupService: RollupService;
 }
 
-interface IndicesState {
-  totalIndices: number;
+interface RollupsState {
+  totalRollups: number;
   from: number;
   size: number;
   search: string;
   sortField: keyof ManagedCatIndex;
   sortDirection: Direction;
   selectedItems: ManagedCatIndex[];
-  indices: ManagedCatIndex[];
-  loadingIndices: boolean;
+  rollups: ManagedCatIndex[];
+  loadingRollups: boolean;
 }
 
-export default class Rollups extends Component<IndicesProps, IndicesState> {
-  constructor(props: IndicesProps) {
+export default class Rollups extends Component<RollupsProps, RollupsState> {
+  constructor(props: RollupsProps) {
     super(props);
 
     const { from, size, search, sortField, sortDirection } = getURLQueryParams(this.props.location);
 
     this.state = {
-      totalIndices: 0,
+      totalRollups: 0,
       from,
       size,
       search,
       sortField,
       sortDirection,
       selectedItems: [],
-      indices: [],
-      loadingIndices: true,
+      rollups: [],
+      loadingRollups: true,
     };
 
-    this.getIndices = _.debounce(this.getIndices, 500, { leading: true });
+    this.getRollups = _.debounce(this.getRollups, 500, { leading: true });
   }
 
   async componentDidMount() {
     chrome.breadcrumbs.set([BREADCRUMBS.INDEX_MANAGEMENT, BREADCRUMBS.INDICES]);
-    await this.getIndices();
+    await this.getRollups();
   }
 
-  async componentDidUpdate(prevProps: IndicesProps, prevState: IndicesState) {
-    const prevQuery = Indices.getQueryObjectFromState(prevState);
-    const currQuery = Indices.getQueryObjectFromState(this.state);
+  async componentDidUpdate(prevProps: RollupsProps, prevState: RollupsState) {
+    const prevQuery = Rollups.getQueryObjectFromState(prevState);
+    const currQuery = Rollups.getQueryObjectFromState(this.state);
     if (!_.isEqual(prevQuery, currQuery)) {
-      await this.getIndices();
+      await this.getRollups();
     }
   }
 
-  static getQueryObjectFromState({ from, size, search, sortField, sortDirection }: IndicesState): IndicesQueryParams {
+  static getQueryObjectFromState({ from, size, search, sortField, sortDirection }: RollupsState): IndicesQueryParams {
     return { from, size, search, sortField, sortDirection };
   }
 
-  getIndices = async (): Promise<void> => {
-    this.setState({ loadingIndices: true });
+  getRollups = async (): Promise<void> => {
+    this.setState({ loadingRollups: true });
     try {
-      const { indexService, history } = this.props;
-      const queryParamsString = queryString.stringify(Indices.getQueryObjectFromState(this.state));
+      const { rollupService, history } = this.props;
+      const queryParamsString = queryString.stringify(Rollups.getQueryObjectFromState(this.state));
       history.replace({ ...this.props.location, search: queryParamsString });
-      const getIndicesResponse = await indexService.getIndices(queryParamsString);
-      if (getIndicesResponse.ok) {
-        const { indices, totalIndices } = getIndicesResponse.response;
-        this.setState({ indices, totalIndices });
+      const rollupJobsResponse = await rollupService.getRollups(queryParamsString);
+      if (rollupJobsResponse.ok) {
+        const { rollups, totalRollups } = rollupJobsResponse.response;
+        this.setState({ rollups, totalRollups });
       } else {
-        toastNotifications.addDanger(getIndicesResponse.error);
+        toastNotifications.addDanger(rollupJobsResponse.error);
       }
     } catch (err) {
-      toastNotifications.addDanger(getErrorMessage(err, "There was a problem loading the indices"));
+      toastNotifications.addDanger(getErrorMessage(err, "There was a problem loading the rollups"));
     }
-    this.setState({ loadingIndices: false });
+    this.setState({ loadingRollups: false });
+  };
+
+  onClickCreate = (): void => {
+    this.props.history.push(ROUTES.CREATE_ROLLUP);
   };
 
   onTableChange = ({ page: tablePage, sort }: Criteria<ManagedCatIndex>): void => {
@@ -141,7 +145,7 @@ export default class Rollups extends Component<IndicesProps, IndicesState> {
   };
 
   render() {
-    const { totalIndices, from, size, search, sortField, sortDirection, selectedItems, indices, loadingIndices } = this.state;
+    const { totalRollups, from, size, search, sortField, sortDirection, selectedItems, rollups, loadingRollups } = this.state;
 
     const filterIsApplied = !!search;
     const page = Math.floor(from / size);
@@ -150,7 +154,7 @@ export default class Rollups extends Component<IndicesProps, IndicesState> {
       pageIndex: page,
       pageSize: size,
       pageSizeOptions: DEFAULT_PAGE_SIZE_OPTIONS,
-      totalItemCount: totalIndices,
+      totalItemCount: totalRollups,
     };
 
     const sorting: EuiTableSortingType<ManagedCatIndex> = {
@@ -195,7 +199,7 @@ export default class Rollups extends Component<IndicesProps, IndicesState> {
                   {
                     text: "Create rollup job",
                     buttonProps: {
-                      onClick: () => onShow(ApplyPolicyModal, { indices: selectedItems.map((item: ManagedCatIndex) => item.index) }),
+                      onClick: () => this.onClickCreate(),
                     },
                   },
                 ]}
@@ -208,21 +212,21 @@ export default class Rollups extends Component<IndicesProps, IndicesState> {
       >
         <IndexControls
           activePage={page}
-          pageCount={Math.ceil(totalIndices / size) || 1}
+          pageCount={Math.ceil(totalRollups / size) || 1}
           search={search}
           onSearchChange={this.onSearchChange}
           onPageClick={this.onPageClick}
-          onRefresh={this.getIndices}
+          onRefresh={this.getRollups}
         />
 
         <EuiHorizontalRule margin="xs" />
 
         <EuiBasicTable
-          columns={indicesColumns}
+          columns={rollupsColumns}
           isSelectable={true}
           itemId="index"
-          items={indices}
-          noItemsMessage={<IndexEmptyPrompt filterIsApplied={filterIsApplied} loading={loadingIndices} resetFilters={this.resetFilters} />}
+          items={rollups}
+          noItemsMessage={<IndexEmptyPrompt filterIsApplied={filterIsApplied} loading={loadingRollups} resetFilters={this.resetFilters} />}
           onChange={this.onTableChange}
           pagination={pagination}
           selection={selection}

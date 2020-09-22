@@ -13,11 +13,6 @@
  * permissions and limitations under the License.
  */
 
-import { IndexService, ManagedIndexService, PolicyService, RollupService } from "../services";
+import ConfigureRollup from "./ConfigureRollup";
 
-export interface BrowserServices {
-  indexService: IndexService;
-  managedIndexService: ManagedIndexService;
-  policyService: PolicyService;
-  rollupService: RollupService;
-}
+export default ConfigureRollup;

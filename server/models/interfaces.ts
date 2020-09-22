@@ -60,6 +60,17 @@ export interface GetIndicesResponse {
   indices: ManagedCatIndex[];
   totalIndices: number;
 }
+export interface RollupJobsResponse {
+  rollups: ManagedCatIndex[];
+  totalRollups: number;
+}
+
+export interface PutRollupResponse {
+  _id: string;
+  _primary_term: number;
+  _seq_no: number;
+  rollup: { rollup: object };
+}
 
 export interface IndexUpdateResponse {
   updatedIndices: number;
@@ -86,6 +97,13 @@ export interface DeletePolicyParams {
 
 export interface PutPolicyParams {
   policyId: string;
+  ifSeqNo?: string;
+  ifPrimaryTerm?: string;
+  body: string;
+}
+
+export interface PutRollupParams {
+  rollupId: string;
   ifSeqNo?: string;
   ifPrimaryTerm?: string;
   body: string;

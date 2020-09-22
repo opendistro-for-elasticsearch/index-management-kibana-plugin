@@ -27,6 +27,7 @@ export const ROUTES = Object.freeze({
   INDEX_POLICIES: "/index-policies",
   INDICES: "/indices",
   ROLLUPS: "/rollups",
+  CREATE_ROLLUP: "/create-rollup",
 });
 
 export const BREADCRUMBS = Object.freeze({

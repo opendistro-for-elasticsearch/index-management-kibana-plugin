@@ -17,9 +17,11 @@
 
 import { IHttpResponse, IHttpService } from "angular";
 import { INDEX } from "../../server/utils/constants";
-import { AcknowledgedResponse, ApplyPolicyResponse, GetIndicesResponse, SearchResponse } from "../../server/models/interfaces";
+import { PutRollupResponse, RollupJobsResponse, SearchResponse } from "../../server/models/interfaces";
 import { ServerResponse } from "../../server/models/types";
 import { NODE_API } from "../../utils/constants";
+import queryString from "query-string";
+import { DocumentPolicy, Rollup } from "../../models/interfaces";
 
 export default class RollupService {
   httpClient: IHttpService;
@@ -28,43 +30,38 @@ export default class RollupService {
     this.httpClient = httpClient;
   }
 
-  getIndices = async (queryParamsString: string): Promise<ServerResponse<GetIndicesResponse>> => {
-    let url = `..${NODE_API._INDICES}`;
+  getRollups = async (queryParamsString: string): Promise<ServerResponse<RollupJobsResponse>> => {
+    let url = `..${NODE_API._ROLLUP}`;
     if (queryParamsString) url += `?${queryParamsString}`;
-    const response = (await this.httpClient.get(url)) as IHttpResponse<ServerResponse<GetIndicesResponse>>;
+    const response = (await this.httpClient.get(url)) as IHttpResponse<ServerResponse<RollupJobsResponse>>;
     return response.data;
   };
 
-  applyPolicy = async (indices: string[], policyId: string): Promise<ServerResponse<ApplyPolicyResponse>> => {
-    const body = { indices, policyId };
-    const url = `..${NODE_API.APPLY_POLICY}`;
-    const response = (await this.httpClient.post(url, body)) as IHttpResponse<ServerResponse<ApplyPolicyResponse>>;
+  /**
+   * Calls backend Put Rollup API
+   */
+  putRollup = async (
+    rollup: Rollup,
+    rollupId: string,
+    seqNo?: number,
+    primaryTerm?: number
+  ): Promise<ServerResponse<PutRollupResponse>> => {
+    const queryParamsString = queryString.stringify({ seqNo, primaryTerm });
+    let url = `..${NODE_API._ROLLUP}/${rollupId}`;
+    if (queryParamsString) url += `?${queryParamsString}`;
+    const response = (await this.httpClient.put(url, rollup)) as IHttpResponse<ServerResponse<PutRollupResponse>>;
     return response.data;
   };
 
-  editRolloverAlias = async (index: string, alias: string): Promise<ServerResponse<AcknowledgedResponse>> => {
-    const body = { index, alias };
-    const url = `..${NODE_API.EDIT_ROLLOVER_ALIAS}`;
-    const response = (await this.httpClient.post(url, body)) as IHttpResponse<ServerResponse<AcknowledgedResponse>>;
+  getRollup = async (rollupId: string): Promise<ServerResponse<DocumentPolicy>> => {
+    const url = `..${NODE_API._ROLLUP}/${rollupId}`;
+    const response = (await this.httpClient.get(url)) as IHttpResponse<ServerResponse<DocumentPolicy>>;
     return response.data;
   };
 
-  searchPolicies = async (searchValue: string, source: boolean = false): Promise<ServerResponse<SearchResponse<any>>> => {
-    const str = searchValue.trim();
-    const mustQuery = {
-      query_string: {
-        default_field: "policy.policy_id",
-        default_operator: "AND",
-        query: str ? `*${str.split(" ").join("* *")}*` : "*",
-      },
-    };
-    const body = {
-      index: INDEX.OPENDISTRO_ISM_CONFIG,
-      size: 10,
-      query: { _source: source, query: { bool: { must: [mustQuery, { exists: { field: "policy" } }] } } },
-    };
-    const url = `..${NODE_API._SEARCH}`;
-    const response = (await this.httpClient.post(url, body)) as IHttpResponse<ServerResponse<any>>;
+  deleteRollup = async (rollupId: string): Promise<ServerResponse<boolean>> => {
+    const url = `..${NODE_API._ROLLUP}/${rollupId}`;
+    const response = (await this.httpClient.delete(url)) as IHttpResponse<ServerResponse<boolean>>;
     return response.data;
   };
 }
