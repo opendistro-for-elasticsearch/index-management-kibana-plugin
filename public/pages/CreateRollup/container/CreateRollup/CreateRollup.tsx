@@ -14,7 +14,20 @@
  */
 
 import React, { ChangeEvent, Component, Fragment } from "react";
-import { EuiSpacer, EuiTitle, EuiFlexGroup, EuiFlexItem, EuiButton, EuiButtonEmpty, EuiCallOut, EuiLink, EuiIcon } from "@elastic/eui";
+import {
+  EuiSpacer,
+  EuiTitle,
+  EuiFlexGroup,
+  EuiFlexItem,
+  EuiButton,
+  EuiButtonEmpty,
+  EuiCallOut,
+  EuiLink,
+  EuiIcon,
+  EuiSteps,
+  EuiText,
+  EuiCode,
+} from "@elastic/eui";
 import chrome from "ui/chrome";
 import { toastNotifications } from "ui/notify";
 import queryString from "query-string";
@@ -26,6 +39,7 @@ import { DEFAULT_POLICY } from "../../../CreatePolicy/utils/constants";
 import ConfigureRollup from "../../component/ConfigureRollup";
 import { Rollup } from "../../../../../models/interfaces";
 import RollupIndices from "../../component/RollupIndices";
+import CreateRollupSteps from "../../component/CreateRollupSteps";
 
 interface CreateRollupProps extends RouteComponentProps {
   isEdit: boolean;
@@ -224,15 +238,23 @@ export default class CreateRollup extends Component<CreateRollupProps, CreateRol
         </EuiTitle>
         <EuiSpacer />
         {this.renderEditCallOut()}
-        <ConfigureRollup rollupId={rollupId} rollupIdError={rollupIdError} isEdit={isEdit} onChange={this.onChange} />
+        <EuiFlexGroup>
+          <EuiFlexItem>
+            <CreateRollupSteps rollupId={rollupId} rollupIdError={rollupIdError} isEdit={isEdit} onChange={this.onChange} />
+          </EuiFlexItem>
+          <EuiFlexItem>
+            <ConfigureRollup rollupId={rollupId} rollupIdError={rollupIdError} isEdit={isEdit} onChange={this.onChange} />
+            <EuiSpacer />
+            <RollupIndices rollupId={rollupId} rollupIdError={rollupIdError} isEdit={isEdit} onChange={this.onChange} />
+            {submitError && (
+              <EuiCallOut title="Sorry, there was an error" color="danger" iconType="alert">
+                <p>{submitError}</p>
+              </EuiCallOut>
+            )}
+          </EuiFlexItem>
+        </EuiFlexGroup>
         <EuiSpacer />
-        <RollupIndices rollupId={rollupId} rollupIdError={rollupIdError} isEdit={isEdit} onChange={this.onChange} />
-        {submitError && (
-          <EuiCallOut title="Sorry, there was an error" color="danger" iconType="alert">
-            <p>{submitError}</p>
-          </EuiCallOut>
-        )}
-        <EuiSpacer />
+
         <EuiFlexGroup alignItems="center" justifyContent="flexEnd">
           <EuiFlexItem grow={false}>
             <EuiButtonEmpty onClick={this.onCancel} data-test-subj="createPolicyCancelButton">
