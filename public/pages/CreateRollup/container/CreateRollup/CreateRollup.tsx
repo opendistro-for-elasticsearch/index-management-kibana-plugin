@@ -25,6 +25,7 @@ import { getErrorMessage } from "../../../../utils/helpers";
 import { DEFAULT_POLICY } from "../../../CreatePolicy/utils/constants";
 import ConfigureRollup from "../../component/ConfigureRollup";
 import { Rollup } from "../../../../../models/interfaces";
+import RollupIndices from "../../component/RollupIndices";
 
 interface CreateRollupProps extends RouteComponentProps {
   isEdit: boolean;
@@ -58,6 +59,8 @@ export default class CreateRollup extends Component<CreateRollupProps, CreateRol
     };
   }
 
+  //TODO: Figure out what to do with the DEFAULT_POLICY part.
+
   componentDidMount = async (): Promise<void> => {
     chrome.breadcrumbs.set([BREADCRUMBS.INDEX_MANAGEMENT, BREADCRUMBS.ROLLUPS]);
     if (this.props.isEdit) {
@@ -90,11 +93,11 @@ export default class CreateRollup extends Component<CreateRollupProps, CreateRol
         });
       } else {
         toastNotifications.addDanger(`Could not load the rollup: ${response.error}`);
-        this.props.history.push(ROUTES.INDEX_POLICIES);
+        this.props.history.push(ROUTES.ROLLUPS);
       }
     } catch (err) {
       toastNotifications.addDanger(getErrorMessage(err, "Could not load the rollup"));
-      this.props.history.push(ROUTES.INDEX_POLICIES);
+      this.props.history.push(ROUTES.ROLLUPS);
     }
   };
 
@@ -104,7 +107,7 @@ export default class CreateRollup extends Component<CreateRollupProps, CreateRol
       const response = await rollupService.putRollup(rollup, rollupId);
       if (response.ok) {
         toastNotifications.addSuccess(`Created rollup: ${response.response._id}`);
-        this.props.history.push(ROUTES.INDEX_POLICIES);
+        this.props.history.push(ROUTES.ROLLUPS);
       } else {
         this.setState({ submitError: response.error });
       }
@@ -124,7 +127,7 @@ export default class CreateRollup extends Component<CreateRollupProps, CreateRol
       const response = await rollupService.putRollup(rollup, rollupId, rollupSeqNo, rollupPrimaryTerm);
       if (response.ok) {
         toastNotifications.addSuccess(`Updated rollup: ${response.response._id}`);
-        this.props.history.push(ROUTES.INDEX_POLICIES);
+        this.props.history.push(ROUTES.ROLLUPS);
       } else {
         this.setState({ submitError: response.error });
       }
@@ -133,9 +136,10 @@ export default class CreateRollup extends Component<CreateRollupProps, CreateRol
     }
   };
 
+  //TODO: Go back to rollup jobs page when cancelled
   onCancel = (): void => {
     if (this.props.isEdit) this.props.history.goBack();
-    else this.props.history.push(ROUTES.INDEX_POLICIES);
+    else this.props.history.push(ROUTES.ROLLUPS);
   };
 
   onChange = (e: ChangeEvent<HTMLInputElement>): void => {
@@ -216,12 +220,13 @@ export default class CreateRollup extends Component<CreateRollupProps, CreateRol
     return (
       <div style={{ padding: "25px 50px" }}>
         <EuiTitle size="l">
-          <h1>{isEdit ? "Edit" : "Create"} rollup</h1>
+          <h1>{isEdit ? "Edit" : "Create"} rollup job profile</h1>
         </EuiTitle>
         <EuiSpacer />
         {this.renderEditCallOut()}
         <ConfigureRollup rollupId={rollupId} rollupIdError={rollupIdError} isEdit={isEdit} onChange={this.onChange} />
         <EuiSpacer />
+        <RollupIndices rollupId={rollupId} rollupIdError={rollupIdError} isEdit={isEdit} onChange={this.onChange} />
         {submitError && (
           <EuiCallOut title="Sorry, there was an error" color="danger" iconType="alert">
             <p>{submitError}</p>

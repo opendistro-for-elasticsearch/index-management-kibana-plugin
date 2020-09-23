@@ -14,7 +14,7 @@
  */
 
 import React, { ChangeEvent } from "react";
-import { EuiSpacer, EuiFormRow, EuiFieldText } from "@elastic/eui";
+import { EuiSpacer, EuiFormRow, EuiFieldText, EuiTextArea } from "@elastic/eui";
 import { ContentPanel } from "../../../../components/ContentPanel";
 
 interface ConfigureRollupProps {
@@ -34,7 +34,11 @@ const ConfigureRollup = ({ isEdit, rollupId, rollupIdError, onChange }: Configur
         isInvalid={!!rollupIdError}
         error={rollupIdError}
       >
-        <EuiFieldText isInvalid={!!rollupIdError} placeholder="hot_cold_workflow" readOnly={isEdit} value={rollupId} onChange={onChange} />
+        <EuiFieldText isInvalid={!!rollupIdError} placeholder="my-rollupjob1" readOnly={isEdit} value={rollupId} onChange={onChange} />
+      </EuiFormRow>
+
+      <EuiFormRow label="Description" helpText="Describe details about this rollup job." isInvalid={!!rollupIdError} error={rollupIdError}>
+        <EuiTextArea isInvalid={!!rollupIdError} />
       </EuiFormRow>
     </div>
   </ContentPanel>

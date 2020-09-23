@@ -30,7 +30,7 @@ export interface ManagedIndexMetaData {
 }
 
 /**
- * ManagedIndex item shown in the Managed Indices table
+ * ManagedIndex item shown in the Managed RollupIndices table
  */
 export interface ManagedIndexItem {
   index: string;
