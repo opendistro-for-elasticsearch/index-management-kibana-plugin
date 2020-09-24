@@ -26,6 +26,10 @@ import RollupIndices from "../../component/RollupIndices";
 import CreateRollupSteps from "../../component/CreateRollupSteps";
 import DateHistogram from "../../component/DateHistogram";
 import { DEFAULT_ROLLUP } from "../../utils/constants";
+import HistogramAndMetrics from "../../component/HistogramAndMetrics";
+import JobNameAndIndices from "../../component/JobNameAndIndices";
+import ScheduleRolesAndNotifications from "../../component/ScheduleRolesAndNotifications";
+import Metrics from "../../component/Metrics";
 
 interface CreateRollupProps extends RouteComponentProps {
   rollupService: RollupService;
@@ -149,9 +153,14 @@ export default class CreateRollupStep4 extends Component<CreateRollupProps, Crea
               <h1>Review and create</h1>
             </EuiTitle>
             <EuiSpacer />
-            <DateHistogram rollupId={rollupId} rollupIdError={rollupIdError} onChange={this.onChange} />
+            <JobNameAndIndices rollupId={rollupId} rollupIdError={rollupIdError} onChange={this.onChange} />
             <EuiSpacer />
-            <RollupIndices rollupId={rollupId} rollupIdError={rollupIdError} onChange={this.onChange} />
+            <HistogramAndMetrics rollupId={rollupId} rollupIdError={rollupIdError} onChange={this.onChange} />
+            <EuiSpacer />
+            <Metrics rollupId={rollupId} rollupIdError={rollupIdError} onChange={this.onChange} />
+            <EuiSpacer />
+            <ScheduleRolesAndNotifications rollupId={rollupId} rollupIdError={rollupIdError} onChange={this.onChange} />
+            <EuiSpacer />
             {submitError && (
               <EuiCallOut title="Sorry, there was an error" color="danger" iconType="alert">
                 <p>{submitError}</p>
