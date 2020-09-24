@@ -13,28 +13,65 @@
  * permissions and limitations under the License.
  */
 
-import React, { ChangeEvent } from "react";
-import { EuiSpacer, EuiFormRow, EuiFieldText, EuiTextArea } from "@elastic/eui";
+import React, { ChangeEvent, Component } from "react";
+import { EuiSpacer, EuiFormRow, EuiComboBox, EuiSelect } from "@elastic/eui";
 import { ContentPanel } from "../../../../components/ContentPanel";
 
-interface ConfigureRollupProps {
+interface DateHistogramProps {
   rollupId: string;
   rollupIdError: string;
   onChange: (value: ChangeEvent<HTMLInputElement>) => void;
+  // onChangeStateRadio: (optionId: string) => void;
+  // stateRadioIdSelected: string;
 }
+const timeUnitOptions = [
+  { value: "ms", text: "Milliseconds" },
+  { value: "s", text: "Seconds" },
+  { value: "m", text: "Minutes" },
+  { value: "h", text: "Hours" },
+  { value: "d", text: "Days" },
+];
 
-const DateHistogram = ({ rollupId, rollupIdError, onChange }: ConfigureRollupProps) => (
-  <ContentPanel bodyStyles={{ padding: "initial" }} title="Date Histogram" titleSize="s" helpText="Rolling up by a date...">
-    <div style={{ paddingLeft: "10px" }}>
-      <EuiSpacer size="s" />
-      <EuiFormRow label="Timestamp" isInvalid={!!rollupIdError} error={rollupIdError}>
-        <EuiFieldText isInvalid={!!rollupIdError} placeholder="my-rollupjob1" value={rollupId} onChange={onChange} />
-      </EuiFormRow>
+export default class DateHistogram extends Component<DateHistogramProps> {
+  render() {
+    const {
+      rollupIdError,
+      // stateRadioIdSelected
+    } = this.props;
 
-      <EuiFormRow label="Description" helpText="Describe details about this rollup job." isInvalid={!!rollupIdError} error={rollupIdError}>
-        <EuiTextArea isInvalid={!!rollupIdError} />
-      </EuiFormRow>
-    </div>
-  </ContentPanel>
-);
-export default DateHistogram;
+    // const currentRadio = { id: Radio.Current, label: "Fixed"};
+    // const stateRadio = { id: Radio.State, label: "Calender", };
+    // const radioOptions = [currentRadio, stateRadio];
+
+    return (
+      <ContentPanel bodyStyles={{ padding: "initial" }} title="Date Histogram" titleSize="s">
+        {/*<EuiFormHelpText> Rolling up by a date dimension is required</EuiFormHelpText>*/}
+        <div style={{ paddingLeft: "10px" }}>
+          <EuiSpacer size="s" />
+          <EuiFormRow label="Timestamp" isInvalid={!!rollupIdError} error={rollupIdError}>
+            <EuiComboBox
+              placeholder="Select timestamp"
+              // options={timeUnitOptions}
+              // selectedOptions={selectedOptions}
+              // onChange={onChange}
+              // onCreateOption={onCreateOption}
+            />
+          </EuiFormRow>
+          <EuiSpacer size="s" />
+          {/*<EuiFormRow label="Interval type"  isInvalid={!!rollupIdError} error={rollupIdError}>*/}
+          {/*  <EuiRadioGroup options={radioOptions} idSelected={stateRadioIdSelected} onChange={this.props.onChangeStateRadio} />*/}
+          {/*</EuiFormRow>*/}
+          <EuiSpacer size="s" />
+          <EuiFormRow label="Rollup interval" isInvalid={!!rollupIdError} error={rollupIdError}>
+            <EuiSelect
+              id="selectDocExample"
+              options={timeUnitOptions}
+              // value={value}
+              // onChange={onChange}
+            />
+          </EuiFormRow>
+        </div>
+      </ContentPanel>
+    );
+  }
+}

@@ -23,21 +23,21 @@ const setOfSteps = (step: number) => {
   return [
     {
       title: "Choose indices",
-      children: "",
+      children: null,
     },
     {
       title: "Define histogram and metrics",
-      children: "",
+      children: null,
       status: step < 2 ? "disabled" : null,
     },
     {
       title: "Specify schedule, roles, and notifications",
-      children: "",
+      children: null,
       status: step < 3 ? "disabled" : null,
     },
     {
       title: "Review and create",
-      children: "",
+      children: null,
       status: step < 4 ? "disabled" : "",
     },
   ];
