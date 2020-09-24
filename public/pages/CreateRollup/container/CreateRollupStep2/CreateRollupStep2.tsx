@@ -23,6 +23,7 @@ import RollupIndices from "../../component/RollupIndices";
 import CreateRollupSteps from "../../component/CreateRollupSteps";
 import DateHistogram from "../../component/DateHistogram";
 import { DEFAULT_ROLLUP } from "../../utils/constants";
+import AdvancedAggregation from "../../component/AdvancedAggregation";
 
 interface CreateRollupProps extends RouteComponentProps {
   rollupService: RollupService;
@@ -114,7 +115,7 @@ export default class CreateRollupStep2 extends Component<CreateRollupProps, Crea
             <EuiSpacer />
             <DateHistogram rollupId={rollupId} rollupIdError={rollupIdError} onChange={this.onChange} />
             <EuiSpacer />
-            <RollupIndices rollupId={rollupId} rollupIdError={rollupIdError} onChange={this.onChange} />
+            <AdvancedAggregation rollupId={rollupId} rollupIdError={rollupIdError} onChange={this.onChange} />
             {submitError && (
               <EuiCallOut title="Sorry, there was an error" color="danger" iconType="alert">
                 <p>{submitError}</p>
