@@ -28,6 +28,9 @@ export const ROUTES = Object.freeze({
   INDICES: "/indices",
   ROLLUPS: "/rollups",
   CREATE_ROLLUP: "/create-rollup",
+  CREATE_ROLLUP_STEP2: "/create-rollup-step2",
+  CREATE_ROLLUP_STEP3: "/create-rollup-step3",
+  CREATE_ROLLUP_STEP4: "/create-rollup-step4",
   EDIT_ROLLUP: "/edit-rollup",
 });
 
@@ -41,6 +44,9 @@ export const BREADCRUMBS = Object.freeze({
   CHANGE_POLICY: { text: "Change policy" },
   ROLLUPS: { text: "Rollup jobs" },
   CREATE_ROLLUP: { text: "Create Rollup job" },
+  CREATE_ROLLUP_STEP2: { text: "Create Rollup job Step 2" },
+  CREATE_ROLLUP_STEP3: { text: "Create Rollup job Step 3" },
+  CREATE_ROLLUP_STEP4: { text: "Create Rollup job Step 4" },
   EDIT_ROLLUP: { text: "Edit rollup job" },
 });
 

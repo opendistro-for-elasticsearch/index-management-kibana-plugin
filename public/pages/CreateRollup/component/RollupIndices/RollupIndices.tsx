@@ -14,17 +14,16 @@
  */
 
 import React, { ChangeEvent } from "react";
-import { EuiSpacer, EuiFormRow, EuiFieldText, EuiComboBox } from "@elastic/eui";
+import { EuiSpacer, EuiFormRow, EuiComboBox } from "@elastic/eui";
 import { ContentPanel } from "../../../../components/ContentPanel";
 
 interface RollupIndicesProps {
   rollupId: string;
   rollupIdError: string;
-  isEdit: boolean;
   onChange: (value: ChangeEvent<HTMLInputElement>) => void;
 }
 
-const RollupIndices = ({ isEdit, rollupId, rollupIdError, onChange }: RollupIndicesProps) => (
+const RollupIndices = ({ rollupId, rollupIdError, onChange }: RollupIndicesProps) => (
   <ContentPanel bodyStyles={{ padding: "initial" }} title="Indices" titleSize="s">
     <div style={{ paddingLeft: "10px" }}>
       <EuiSpacer size="s" />

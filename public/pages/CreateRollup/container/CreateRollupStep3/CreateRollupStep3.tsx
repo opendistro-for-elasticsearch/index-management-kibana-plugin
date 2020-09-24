@@ -16,16 +16,23 @@
 import React, { ChangeEvent, Component, Fragment } from "react";
 import { EuiSpacer, EuiTitle, EuiFlexGroup, EuiFlexItem, EuiButton, EuiButtonEmpty, EuiCallOut, EuiLink, EuiIcon } from "@elastic/eui";
 import chrome from "ui/chrome";
+import { toastNotifications } from "ui/notify";
+import queryString from "query-string";
 import { RouteComponentProps } from "react-router-dom";
 import { RollupService } from "../../../../services";
 import { BREADCRUMBS, DOCUMENTATION_URL, ROUTES } from "../../../../utils/constants";
-import ConfigureRollup from "../../component/ConfigureRollup";
+import { getErrorMessage } from "../../../../utils/helpers";
+import { DEFAULT_POLICY } from "../../../CreatePolicy/utils/constants";
+import { Rollup } from "../../../../../models/interfaces";
 import RollupIndices from "../../component/RollupIndices";
 import CreateRollupSteps from "../../component/CreateRollupSteps";
+import DateHistogram from "../../component/DateHistogram";
 import { DEFAULT_ROLLUP } from "../../utils/constants";
 
 interface CreateRollupProps extends RouteComponentProps {
+  isEdit: boolean;
   rollupService: RollupService;
+  step: number;
 }
 
 interface CreateRollupState {
@@ -39,7 +46,7 @@ interface CreateRollupState {
   hasSubmitted: boolean;
 }
 
-export default class CreateRollup extends Component<CreateRollupProps, CreateRollupState> {
+export default class CreateRollupStep3 extends Component<CreateRollupProps, CreateRollupState> {
   constructor(props: CreateRollupProps) {
     super(props);
 
@@ -55,15 +62,86 @@ export default class CreateRollup extends Component<CreateRollupProps, CreateRol
     };
   }
 
+  //TODO: Figure out what to do with the DEFAULT_POLICY part.
+
   componentDidMount = async (): Promise<void> => {
     chrome.breadcrumbs.set([BREADCRUMBS.INDEX_MANAGEMENT, BREADCRUMBS.ROLLUPS]);
-    chrome.breadcrumbs.push(BREADCRUMBS.CREATE_ROLLUP);
-    this.setState({ jsonString: DEFAULT_ROLLUP });
+    if (this.props.isEdit) {
+      const { id } = queryString.parse(this.props.location.search);
+      if (typeof id === "string" && !!id) {
+        chrome.breadcrumbs.push(BREADCRUMBS.ROLLUPS);
+        chrome.breadcrumbs.push({ text: id });
+        await this.getRollupToEdit(id);
+      } else {
+        toastNotifications.addDanger(`Invalid rollup id: ${id}`);
+        this.props.history.push(ROUTES.ROLLUPS);
+      }
+    } else {
+      chrome.breadcrumbs.push(BREADCRUMBS.CREATE_ROLLUP_STEP3);
+      this.setState({ jsonString: DEFAULT_ROLLUP });
+    }
   };
 
-  //TODO: Go back to rollup jobs page when cancelled
+  getRollupToEdit = async (rollupId: string): Promise<void> => {
+    try {
+      const { rollupService } = this.props;
+      const response = await rollupService.getRollup(rollupId);
+      if (response.ok) {
+        //TODO: Figure out what DocumentResponse does, so that the JSON.stringify can do appropriate action to rollup
+        this.setState({
+          rollupSeqNo: response.response.seqNo,
+          rollupPrimaryTerm: response.response.primaryTerm,
+          rollupId: response.response.id,
+          jsonString: JSON.stringify({ rollup: response.response.rollup }, null, 4),
+        });
+      } else {
+        toastNotifications.addDanger(`Could not load the rollup: ${response.error}`);
+        this.props.history.push(ROUTES.ROLLUPS);
+      }
+    } catch (err) {
+      toastNotifications.addDanger(getErrorMessage(err, "Could not load the rollup"));
+      this.props.history.push(ROUTES.ROLLUPS);
+    }
+  };
+
+  onCreate = async (rollupId: string, rollup: Rollup): Promise<void> => {
+    const { rollupService } = this.props;
+    try {
+      const response = await rollupService.putRollup(rollup, rollupId);
+      if (response.ok) {
+        toastNotifications.addSuccess(`Created rollup: ${response.response._id}`);
+        this.props.history.push(ROUTES.ROLLUPS);
+      } else {
+        this.setState({ submitError: response.error });
+      }
+    } catch (err) {
+      this.setState({ submitError: getErrorMessage(err, "There was a problem creating the rollup") });
+    }
+  };
+
+  onUpdate = async (rollupId: string, rollup: Rollup): Promise<void> => {
+    try {
+      const { rollupService } = this.props;
+      const { rollupPrimaryTerm, rollupSeqNo } = this.state;
+      if (rollupSeqNo == null || rollupPrimaryTerm == null) {
+        toastNotifications.addDanger("Could not update rollup without seqNo and primaryTerm");
+        return;
+      }
+      const response = await rollupService.putRollup(rollup, rollupId, rollupSeqNo, rollupPrimaryTerm);
+      if (response.ok) {
+        toastNotifications.addSuccess(`Updated rollup: ${response.response._id}`);
+        this.props.history.push(ROUTES.ROLLUPS);
+      } else {
+        this.setState({ submitError: response.error });
+      }
+    } catch (err) {
+      this.setState({ submitError: getErrorMessage(err, "There was a problem updating the rollup") });
+    }
+  };
+
   onCancel = (): void => {
-    this.props.history.push(ROUTES.ROLLUPS);
+    if (this.props.isEdit) this.props.history.goBack();
+    else this.props.history.push(ROUTES.ROLLUPS);
   };
 
   onChange = (e: ChangeEvent<HTMLInputElement>): void => {
@@ -87,10 +165,13 @@ export default class CreateRollup extends Component<CreateRollupProps, CreateRol
   };
 
   onNext = (): void => {
-    this.props.history.push(ROUTES.CREATE_ROLLUP_STEP2);
+    this.props.history.push(ROUTES.CREATE_ROLLUP_STEP4);
   };
 
   renderEditCallOut = (): React.ReactNode | null => {
+    const { isEdit } = this.props;
+    if (!isEdit) return null;
+
     return (
       <Fragment>
         <EuiCallOut
@@ -112,6 +193,7 @@ export default class CreateRollup extends Component<CreateRollupProps, CreateRol
   };
 
   render() {
+    const { isEdit } = this.props;
     const { rollupId, rollupIdError, jsonString, submitError, isSubmitting } = this.state;
     // Will be used later on for DefineRollup job (similar to DefinePolicy)
     let hasJSONError = false;
@@ -123,18 +205,19 @@ export default class CreateRollup extends Component<CreateRollupProps, CreateRol
 
     return (
       <div style={{ padding: "25px 50px" }}>
+        {this.renderEditCallOut()}
         <EuiFlexGroup>
           <EuiFlexItem grow={false}>
-            <CreateRollupSteps step={1} />
+            <CreateRollupSteps step={3} />
           </EuiFlexItem>
           <EuiFlexItem>
             <EuiTitle size="l">
-              <h1>Choose Indices</h1>
+              <h1>Define histograms and metrics</h1>
             </EuiTitle>
             <EuiSpacer />
-            <ConfigureRollup rollupId={rollupId} rollupIdError={rollupIdError} onChange={this.onChange} />
+            <DateHistogram rollupId={rollupId} rollupIdError={rollupIdError} isEdit={isEdit} onChange={this.onChange} />
             <EuiSpacer />
-            <RollupIndices rollupId={rollupId} rollupIdError={rollupIdError} onChange={this.onChange} />
+            <RollupIndices rollupId={rollupId} rollupIdError={rollupIdError} isEdit={isEdit} onChange={this.onChange} />
             {submitError && (
               <EuiCallOut title="Sorry, there was an error" color="danger" iconType="alert">
                 <p>{submitError}</p>
@@ -146,13 +229,13 @@ export default class CreateRollup extends Component<CreateRollupProps, CreateRol
 
         <EuiFlexGroup alignItems="center" justifyContent="flexEnd">
           <EuiFlexItem grow={false}>
-            <EuiButtonEmpty onClick={this.onCancel} data-test-subj="createRollupCancelButton">
+            <EuiButtonEmpty onClick={this.onCancel} data-test-subj="createPolicyCancelButton">
               Cancel
             </EuiButtonEmpty>
           </EuiFlexItem>
           <EuiFlexItem grow={false}>
-            <EuiButton fill onClick={this.onNext} isLoading={isSubmitting} data-test-subj="createRollupStep1NextButton">
-              {"Next"}
+            <EuiButton fill onClick={this.onNext} isLoading={isSubmitting} data-test-subj="createPolicyCreateButton">
+              {isEdit ? "Update" : "Next"}
             </EuiButton>
           </EuiFlexItem>
         </EuiFlexGroup>

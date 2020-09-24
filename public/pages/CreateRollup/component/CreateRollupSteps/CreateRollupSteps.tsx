@@ -12,37 +12,39 @@
  * express or implied. See the License for the specific language governing
  * permissions and limitations under the License.
  */
-import React, { ChangeEvent } from "react";
-import { EuiSteps, EuiText, EuiCode, EuiSpacer } from "@elastic/eui";
+import React from "react";
+import { EuiSteps } from "@elastic/eui";
 
 interface CreateRollupStepsProps {
-  rollupId: string;
-  rollupIdError: string;
-  isEdit: boolean;
-  onChange: (value: ChangeEvent<HTMLInputElement>) => void;
+  step: number;
 }
-const setOfSteps = [
-  {
-    title: "Choose indices",
-    children: "",
-  },
-  {
-    title: "Define histogram and metrics",
-    children: "",
-  },
-  {
-    title: "Specify schedule, roles, and notifications",
-    children: "",
-  },
-  {
-    title: "Review and create",
-    children: "",
-  },
-];
 
-const CreateRollupSteps = ({ isEdit, rollupId, rollupIdError, onChange }: CreateRollupStepsProps) => (
+const setOfSteps = (step: number) => {
+  return [
+    {
+      title: "Choose indices",
+      children: "",
+    },
+    {
+      title: "Define histogram and metrics",
+      children: "",
+      // status: (step < 2) ? "disabled" : "complete",
+    },
+    {
+      title: "Specify schedule, roles, and notifications",
+      children: "",
+      // status: (step < 3) ? "disabled" : "complete",
+    },
+    {
+      title: "Review and create",
+      children: "",
+    },
+  ];
+};
+
+const CreateRollupSteps = ({ step }: CreateRollupStepsProps) => (
   <div style={{ paddingLeft: "10px" }}>
-    <EuiSteps steps={setOfSteps} headingElement="h4" />
+    <EuiSteps steps={setOfSteps(step)} headingElement="h6" />
   </div>
 );
 

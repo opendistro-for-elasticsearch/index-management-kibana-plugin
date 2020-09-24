@@ -23,16 +23,11 @@ interface ConfigureRollupProps {
   onChange: (value: ChangeEvent<HTMLInputElement>) => void;
 }
 
-const ConfigureRollup = ({ rollupId, rollupIdError, onChange }: ConfigureRollupProps) => (
-  <ContentPanel bodyStyles={{ padding: "initial" }} title="Name and description" titleSize="s">
+const DateHistogram = ({ rollupId, rollupIdError, onChange }: ConfigureRollupProps) => (
+  <ContentPanel bodyStyles={{ padding: "initial" }} title="Date Histogram" titleSize="s" helpText="Rolling up by a date...">
     <div style={{ paddingLeft: "10px" }}>
       <EuiSpacer size="s" />
-      <EuiFormRow
-        label="Name"
-        helpText="Specify a unique and descriptive name. Allowed characters are..."
-        isInvalid={!!rollupIdError}
-        error={rollupIdError}
-      >
+      <EuiFormRow label="Timestamp" isInvalid={!!rollupIdError} error={rollupIdError}>
         <EuiFieldText isInvalid={!!rollupIdError} placeholder="my-rollupjob1" value={rollupId} onChange={onChange} />
       </EuiFormRow>
 
@@ -42,4 +37,4 @@ const ConfigureRollup = ({ rollupId, rollupIdError, onChange }: ConfigureRollupP
     </div>
   </ContentPanel>
 );
-export default ConfigureRollup;
+export default DateHistogram;

@@ -28,6 +28,9 @@ import { ServicesConsumer } from "../../services";
 import { BrowserServices } from "../../models/interfaces";
 import { ROUTES } from "../../utils/constants";
 import CreateRollup from "../CreateRollup";
+import CreateRollupStep2 from "../CreateRollup/container/CreateRollupStep2";
+import CreateRollupStep3 from "../CreateRollup/container/CreateRollupStep3";
+import CreateRollupStep4 from "../CreateRollup/container/CreateRollupStep4";
 
 enum Navigation {
   IndexManagement = "Index Management",
@@ -151,6 +154,30 @@ export default class Main extends Component<MainProps, object> {
                       render={(props: RouteComponentProps) => (
                         <div style={{ padding: "25px 25px" }}>
                           <CreateRollup {...props} rollupService={services.rollupService} />
+                        </div>
+                      )}
+                    />
+                    <Route
+                      path={ROUTES.CREATE_ROLLUP_STEP2}
+                      render={(props: RouteComponentProps) => (
+                        <div style={{ padding: "25px 25px" }}>
+                          <CreateRollupStep2 {...props} rollupService={services.rollupService} />
+                        </div>
+                      )}
+                    />
+                    <Route
+                      path={ROUTES.CREATE_ROLLUP_STEP3}
+                      render={(props: RouteComponentProps) => (
+                        <div style={{ padding: "25px 25px" }}>
+                          <CreateRollupStep3 {...props} rollupService={services.rollupService} />
+                        </div>
+                      )}
+                    />
+                    <Route
+                      path={ROUTES.CREATE_ROLLUP_STEP4}
+                      render={(props: RouteComponentProps) => (
+                        <div style={{ padding: "25px 25px" }}>
+                          <CreateRollupStep4 {...props} rollupService={services.rollupService} />
                         </div>
                       )}
                     />
