@@ -28,20 +28,20 @@ const setOfSteps = (step: number) => {
     {
       title: "Define histogram and metrics",
       children: "",
-      // status: (step < 2) ? "disabled" : "complete",
+      status: step < 2 ? "disabled" : null,
     },
     {
       title: "Specify schedule, roles, and notifications",
       children: "",
-      // status: (step < 3) ? "disabled" : "complete",
+      status: step < 3 ? "disabled" : null,
     },
     {
       title: "Review and create",
       children: "",
+      status: step < 4 ? "disabled" : "",
     },
   ];
 };
-
 const CreateRollupSteps = ({ step }: CreateRollupStepsProps) => (
   <div style={{ paddingLeft: "10px" }}>
     <EuiSteps steps={setOfSteps(step)} headingElement="h6" />

@@ -17,12 +17,10 @@ import React, { ChangeEvent, Component, Fragment } from "react";
 import { EuiSpacer, EuiTitle, EuiFlexGroup, EuiFlexItem, EuiButton, EuiButtonEmpty, EuiCallOut, EuiLink, EuiIcon } from "@elastic/eui";
 import chrome from "ui/chrome";
 import { toastNotifications } from "ui/notify";
-import queryString from "query-string";
 import { RouteComponentProps } from "react-router-dom";
 import { RollupService } from "../../../../services";
 import { BREADCRUMBS, DOCUMENTATION_URL, ROUTES } from "../../../../utils/constants";
 import { getErrorMessage } from "../../../../utils/helpers";
-import { DEFAULT_POLICY } from "../../../CreatePolicy/utils/constants";
 import { Rollup } from "../../../../../models/interfaces";
 import RollupIndices from "../../component/RollupIndices";
 import CreateRollupSteps from "../../component/CreateRollupSteps";
@@ -66,42 +64,8 @@ export default class CreateRollupStep3 extends Component<CreateRollupProps, Crea
 
   componentDidMount = async (): Promise<void> => {
     chrome.breadcrumbs.set([BREADCRUMBS.INDEX_MANAGEMENT, BREADCRUMBS.ROLLUPS]);
-    if (this.props.isEdit) {
-      const { id } = queryString.parse(this.props.location.search);
-      if (typeof id === "string" && !!id) {
-        chrome.breadcrumbs.push(BREADCRUMBS.ROLLUPS);
-        chrome.breadcrumbs.push({ text: id });
-        await this.getRollupToEdit(id);
-      } else {
-        toastNotifications.addDanger(`Invalid rollup id: ${id}`);
-        this.props.history.push(ROUTES.ROLLUPS);
-      }
-    } else {
-      chrome.breadcrumbs.push(BREADCRUMBS.CREATE_ROLLUP_STEP3);
-      this.setState({ jsonString: DEFAULT_ROLLUP });
-    }
-  };
-
-  getRollupToEdit = async (rollupId: string): Promise<void> => {
-    try {
-      const { rollupService } = this.props;
-      const response = await rollupService.getRollup(rollupId);
-      if (response.ok) {
-        //TODO: Figure out what DocumentResponse does, so that the JSON.stringify can do appropriate action to rollup
-        this.setState({
-          rollupSeqNo: response.response.seqNo,
-          rollupPrimaryTerm: response.response.primaryTerm,
-          rollupId: response.response.id,
-          jsonString: JSON.stringify({ rollup: response.response.rollup }, null, 4),
-        });
-      } else {
-        toastNotifications.addDanger(`Could not load the rollup: ${response.error}`);
-        this.props.history.push(ROUTES.ROLLUPS);
-      }
-    } catch (err) {
-      toastNotifications.addDanger(getErrorMessage(err, "Could not load the rollup"));
-      this.props.history.push(ROUTES.ROLLUPS);
-    }
+    chrome.breadcrumbs.push(BREADCRUMBS.CREATE_ROLLUP_STEP3);
+    this.setState({ jsonString: DEFAULT_ROLLUP });
   };
 
   onCreate = async (rollupId: string, rollup: Rollup): Promise<void> => {
@@ -193,7 +157,6 @@ export default class CreateRollupStep3 extends Component<CreateRollupProps, Crea
   };
 
   render() {
-    const { isEdit } = this.props;
     const { rollupId, rollupIdError, jsonString, submitError, isSubmitting } = this.state;
     // Will be used later on for DefineRollup job (similar to DefinePolicy)
     let hasJSONError = false;
@@ -212,12 +175,12 @@ export default class CreateRollupStep3 extends Component<CreateRollupProps, Crea
           </EuiFlexItem>
           <EuiFlexItem>
             <EuiTitle size="l">
-              <h1>Define histograms and metrics</h1>
+              <h1>Specify schedules, roles, and notifications</h1>
             </EuiTitle>
             <EuiSpacer />
-            <DateHistogram rollupId={rollupId} rollupIdError={rollupIdError} isEdit={isEdit} onChange={this.onChange} />
+            <DateHistogram rollupId={rollupId} rollupIdError={rollupIdError} onChange={this.onChange} />
             <EuiSpacer />
-            <RollupIndices rollupId={rollupId} rollupIdError={rollupIdError} isEdit={isEdit} onChange={this.onChange} />
+            <RollupIndices rollupId={rollupId} rollupIdError={rollupIdError} onChange={this.onChange} />
             {submitError && (
               <EuiCallOut title="Sorry, there was an error" color="danger" iconType="alert">
                 <p>{submitError}</p>
@@ -235,7 +198,7 @@ export default class CreateRollupStep3 extends Component<CreateRollupProps, Crea
           </EuiFlexItem>
           <EuiFlexItem grow={false}>
             <EuiButton fill onClick={this.onNext} isLoading={isSubmitting} data-test-subj="createPolicyCreateButton">
-              {isEdit ? "Update" : "Next"}
+              Next
             </EuiButton>
           </EuiFlexItem>
         </EuiFlexGroup>
