@@ -13,6 +13,6 @@
  * permissions and limitations under the License.
  */
 
-import CreateRollup from "./containers/CreateRollup";
+import ErrorNotification from "./ErrorNotification";
 
-export default CreateRollup;
+export default ErrorNotification;

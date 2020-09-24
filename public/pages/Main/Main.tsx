@@ -28,9 +28,9 @@ import { ServicesConsumer } from "../../services";
 import { BrowserServices } from "../../models/interfaces";
 import { ROUTES } from "../../utils/constants";
 import CreateRollup from "../CreateRollup";
-import CreateRollupStep2 from "../CreateRollup/container/CreateRollupStep2";
-import CreateRollupStep3 from "../CreateRollup/container/CreateRollupStep3";
-import CreateRollupStep4 from "../CreateRollup/container/CreateRollupStep4";
+import CreateRollupStep2 from "../CreateRollup/containers/CreateRollupStep2";
+import CreateRollupStep3 from "../CreateRollup/containers/CreateRollupStep3";
+import CreateRollupStep4 from "../CreateRollup/containers/CreateRollupStep4";
 
 enum Navigation {
   IndexManagement = "Index Management",

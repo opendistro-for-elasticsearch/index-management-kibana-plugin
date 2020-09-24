@@ -13,6 +13,6 @@
  * permissions and limitations under the License.
  */
 
-import CreateRollup from "./containers/CreateRollup";
+import Roles from "./Roles";
 
-export default CreateRollup;
+export default Roles;

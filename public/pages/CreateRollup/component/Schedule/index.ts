@@ -13,6 +13,6 @@
  * permissions and limitations under the License.
  */
 
-import CreateRollup from "./containers/CreateRollup";
+import Schedule from "./Schedule";
 
-export default CreateRollup;
+export default Schedule;
