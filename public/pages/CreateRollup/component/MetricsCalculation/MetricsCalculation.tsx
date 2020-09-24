@@ -26,7 +26,7 @@ interface MetricsCalculationProps {
 export default class MetricsCalculation extends Component<MetricsCalculationProps> {
   render() {
     return (
-      <ContentPanel bodyStyles={{ padding: "initial" }} title="Advanced aggregation - optional" titleSize="s">
+      <ContentPanel bodyStyles={{ padding: "initial" }} title="Metrics calculation - optional" titleSize="s">
         <div style={{ paddingLeft: "10px" }}>
           <EuiSpacer size="s" />
         </div>
