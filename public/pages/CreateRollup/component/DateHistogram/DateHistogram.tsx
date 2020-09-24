@@ -14,7 +14,18 @@
  */
 
 import React, { ChangeEvent, Component } from "react";
-import { EuiSpacer, EuiFormRow, EuiComboBox, EuiSelect, EuiText, EuiRadioGroup, htmlIdGenerator } from "@elastic/eui";
+import {
+  EuiSpacer,
+  EuiFormRow,
+  EuiComboBox,
+  EuiSelect,
+  EuiText,
+  EuiRadioGroup,
+  htmlIdGenerator,
+  EuiFlexGroup,
+  EuiFlexItem,
+  EuiFieldNumber,
+} from "@elastic/eui";
 import { ContentPanel } from "../../../../components/ContentPanel";
 
 interface DateHistogramProps {
@@ -50,20 +61,30 @@ export default class DateHistogram extends Component<DateHistogramProps> {
               // onCreateOption={onCreateOption}
             />
           </EuiFormRow>
-          <EuiSpacer size="s" />
+          <EuiSpacer size="m" />
           <EuiFormRow label="Interval type" isInvalid={!!rollupIdError} error={rollupIdError}>
             <EuiText>(Radio buttons here)</EuiText>
           </EuiFormRow>
-          <EuiSpacer size="s" />
-          <EuiFormRow label="Rollup interval" isInvalid={!!rollupIdError} error={rollupIdError}>
-            <EuiSelect
-              id="selectTimeunit"
-              options={timeunitOptions}
-              // value={value}
-              // onChange={onChange}
-            />
-          </EuiFormRow>
-          <EuiSpacer size="s" />
+          <EuiSpacer size="m" />
+          <EuiFlexGroup style={{ maxWidth: 300 }}>
+            <EuiFlexItem grow={false} style={{ width: 100 }}>
+              <EuiFormRow label="Interval" isInvalid={!!rollupIdError} error={rollupIdError}>
+                <EuiFieldNumber min={1} placeholder={42} />
+              </EuiFormRow>
+            </EuiFlexItem>
+            <EuiFlexItem>
+              <EuiFormRow hasEmptyLabelSpace={true}>
+                <EuiSelect
+                  id="selectTimeunit"
+                  options={timeunitOptions}
+                  // value={value}
+                  // onChange={onChange}
+                />
+              </EuiFormRow>
+            </EuiFlexItem>
+          </EuiFlexGroup>
+
+          <EuiSpacer size="m" />
           {/*Create monitor from alerting uses moment library for timezone*/}
           <EuiFormRow label="Timezone">
             <EuiSelect
