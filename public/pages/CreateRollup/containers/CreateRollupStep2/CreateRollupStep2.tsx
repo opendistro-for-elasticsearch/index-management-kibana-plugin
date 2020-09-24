@@ -19,7 +19,6 @@ import chrome from "ui/chrome";
 import { RouteComponentProps } from "react-router-dom";
 import { RollupService } from "../../../../services";
 import { BREADCRUMBS, ROUTES } from "../../../../utils/constants";
-import RollupIndices from "../../component/RollupIndices";
 import CreateRollupSteps from "../../component/CreateRollupSteps";
 import DateHistogram from "../../component/DateHistogram";
 import { DEFAULT_ROLLUP } from "../../utils/constants";

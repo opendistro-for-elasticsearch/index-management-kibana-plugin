@@ -14,7 +14,7 @@
  */
 
 import React, { ChangeEvent, Component } from "react";
-import { EuiSpacer, EuiFormRow, EuiComboBox, EuiSelect } from "@elastic/eui";
+import { EuiSpacer, EuiFormRow, EuiComboBox, EuiSelect, EuiText, EuiRadioGroup, htmlIdGenerator } from "@elastic/eui";
 import { ContentPanel } from "../../../../components/ContentPanel";
 
 interface DateHistogramProps {
@@ -24,7 +24,7 @@ interface DateHistogramProps {
   // onChangeStateRadio: (optionId: string) => void;
   // stateRadioIdSelected: string;
 }
-const timeUnitOptions = [
+const timeunitOptions = [
   { value: "ms", text: "Milliseconds" },
   { value: "s", text: "Seconds" },
   { value: "m", text: "Minutes" },
@@ -34,14 +34,7 @@ const timeUnitOptions = [
 
 export default class DateHistogram extends Component<DateHistogramProps> {
   render() {
-    const {
-      rollupIdError,
-      // stateRadioIdSelected
-    } = this.props;
-
-    // const currentRadio = { id: Radio.Current, label: "Fixed"};
-    // const stateRadio = { id: Radio.State, label: "Calender", };
-    // const radioOptions = [currentRadio, stateRadio];
+    const { rollupIdError } = this.props;
 
     return (
       <ContentPanel bodyStyles={{ padding: "initial" }} title="Date Histogram" titleSize="s">
@@ -58,14 +51,23 @@ export default class DateHistogram extends Component<DateHistogramProps> {
             />
           </EuiFormRow>
           <EuiSpacer size="s" />
-          {/*<EuiFormRow label="Interval type"  isInvalid={!!rollupIdError} error={rollupIdError}>*/}
-          {/*  <EuiRadioGroup options={radioOptions} idSelected={stateRadioIdSelected} onChange={this.props.onChangeStateRadio} />*/}
-          {/*</EuiFormRow>*/}
+          <EuiFormRow label="Interval type" isInvalid={!!rollupIdError} error={rollupIdError}>
+            <EuiText>(Radio buttons here)</EuiText>
+          </EuiFormRow>
           <EuiSpacer size="s" />
           <EuiFormRow label="Rollup interval" isInvalid={!!rollupIdError} error={rollupIdError}>
             <EuiSelect
-              id="selectDocExample"
-              options={timeUnitOptions}
+              id="selectTimeunit"
+              options={timeunitOptions}
+              // value={value}
+              // onChange={onChange}
+            />
+          </EuiFormRow>
+          <EuiSpacer size="s" />
+          {/*Create monitor from alerting uses moment library for timezone*/}
+          <EuiFormRow label="Timezone">
+            <EuiSelect
+              id="timezone"
               // value={value}
               // onChange={onChange}
             />
