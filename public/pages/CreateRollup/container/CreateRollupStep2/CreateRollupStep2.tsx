@@ -37,13 +37,7 @@ interface CreateRollupState {
   submitError: string;
   isSubmitting: boolean;
   hasSubmitted: boolean;
-  stateRadioIdSelected: string;
 }
-
-// export enum Radio {
-//   Fixed = "fixed",
-//   Calender = "calender",
-// }
 
 export default class CreateRollupStep2 extends Component<CreateRollupProps, CreateRollupState> {
   constructor(props: CreateRollupProps) {
@@ -58,7 +52,6 @@ export default class CreateRollupStep2 extends Component<CreateRollupProps, Crea
       jsonString: "",
       isSubmitting: false,
       hasSubmitted: false,
-      // stateRadioIdSelected: Radio.Fixed,
     };
   }
 
@@ -81,10 +74,6 @@ export default class CreateRollupStep2 extends Component<CreateRollupProps, Crea
     else this.setState({ rollupId });
   };
 
-  onChangeStateRadio = (optionId: string): void => {
-    this.setState({ stateRadioIdSelected: optionId });
-  };
-
   onChangeJSON = (value: string): void => {
     this.setState({ jsonString: value });
   };
@@ -103,14 +92,7 @@ export default class CreateRollupStep2 extends Component<CreateRollupProps, Crea
   };
 
   render() {
-    const {
-      rollupId,
-      rollupIdError,
-      jsonString,
-      submitError,
-      isSubmitting,
-      // stateRadioIdSelected
-    } = this.state;
+    const { rollupId, rollupIdError, jsonString, submitError, isSubmitting } = this.state;
     // Will be used later on for DefineRollup job (similar to DefinePolicy)
     let hasJSONError = false;
     try {
@@ -130,13 +112,7 @@ export default class CreateRollupStep2 extends Component<CreateRollupProps, Crea
               <h1>Histogram aggregation on a date</h1>
             </EuiTitle>
             <EuiSpacer />
-            <DateHistogram
-              rollupId={rollupId}
-              rollupIdError={rollupIdError}
-              onChange={this.onChange}
-              // onChangeStateRadio={this.onChangeStateRadio}
-              // stateRadioIdSelected={stateRadioIdSelected}
-            />
+            <DateHistogram rollupId={rollupId} rollupIdError={rollupIdError} onChange={this.onChange} />
             <EuiSpacer />
             <RollupIndices rollupId={rollupId} rollupIdError={rollupIdError} onChange={this.onChange} />
             {submitError && (
