@@ -171,7 +171,7 @@ export default class CreateRollupStep3 extends Component<CreateRollupProps, Crea
       <div style={{ padding: "25px 50px" }}>
         {this.renderEditCallOut()}
         <EuiFlexGroup>
-          <EuiFlexItem grow={false}>
+          <EuiFlexItem style={{ maxWidth: 300 }} grow={false}>
             <CreateRollupSteps step={3} />
           </EuiFlexItem>
           <EuiFlexItem>

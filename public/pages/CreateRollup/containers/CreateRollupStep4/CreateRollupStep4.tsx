@@ -145,7 +145,7 @@ export default class CreateRollupStep4 extends Component<CreateRollupProps, Crea
     return (
       <div style={{ padding: "25px 50px" }}>
         <EuiFlexGroup>
-          <EuiFlexItem grow={false}>
+          <EuiFlexItem style={{ maxWidth: 300 }} grow={false}>
             <CreateRollupSteps step={4} />
           </EuiFlexItem>
           <EuiFlexItem>
