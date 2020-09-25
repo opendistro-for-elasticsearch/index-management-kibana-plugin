@@ -14,40 +14,13 @@
  */
 
 import React, { ChangeEvent, Component } from "react";
-import {
-  EuiSpacer,
-  EuiBasicTable,
-  EuiHorizontalRule,
-  // @ts-ignore
-  Criteria,
-  EuiTableSortingType,
-  Direction,
-  // @ts-ignore
-  Pagination,
-  EuiTableSelectionType,
-} from "@elastic/eui";
+import { EuiSpacer, EuiBasicTable } from "@elastic/eui";
 import { ContentPanel } from "../../../../components/ContentPanel";
-import { rollupsColumns } from "../../../Rollups/utils/constants";
-import { DEFAULT_PAGE_SIZE_OPTIONS, DEFAULT_QUERY_PARAMS } from "../../../Indices/utils/constants";
-import { ManagedCatIndex } from "../../../../../server/models/interfaces";
-import { getURLQueryParams } from "../../../Indices/utils/helpers";
-import _ from "lodash";
 
 interface AdvancedAggregationProps {
   rollupId: string;
   rollupIdError: string;
   onChange: (value: ChangeEvent<HTMLInputElement>) => void;
-}
-interface AdvancedAggregationState {
-  totalAggregations: number;
-  from: number;
-  size: number;
-  search: string;
-  sortField: keyof ManagedCatIndex;
-  sortDirection: Direction;
-  selectedItems: ManagedCatIndex[];
-  aggregations: ManagedCatIndex[];
-  loadingAggregations: boolean;
 }
 
 const columns = [
