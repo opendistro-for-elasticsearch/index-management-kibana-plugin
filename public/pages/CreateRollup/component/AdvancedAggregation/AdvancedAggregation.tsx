@@ -14,20 +14,73 @@
  */
 
 import React, { ChangeEvent, Component } from "react";
-import { EuiSpacer } from "@elastic/eui";
+import {
+  EuiSpacer,
+  EuiBasicTable,
+  EuiHorizontalRule,
+  // @ts-ignore
+  Criteria,
+  EuiTableSortingType,
+  Direction,
+  // @ts-ignore
+  Pagination,
+  EuiTableSelectionType,
+} from "@elastic/eui";
 import { ContentPanel } from "../../../../components/ContentPanel";
+import { rollupsColumns } from "../../../Rollups/utils/constants";
+import { DEFAULT_PAGE_SIZE_OPTIONS, DEFAULT_QUERY_PARAMS } from "../../../Indices/utils/constants";
+import { ManagedCatIndex } from "../../../../../server/models/interfaces";
+import { getURLQueryParams } from "../../../Indices/utils/helpers";
+import _ from "lodash";
 
 interface AdvancedAggregationProps {
   rollupId: string;
   rollupIdError: string;
   onChange: (value: ChangeEvent<HTMLInputElement>) => void;
 }
+interface AdvancedAggregationState {
+  totalAggregations: number;
+  from: number;
+  size: number;
+  search: string;
+  sortField: keyof ManagedCatIndex;
+  sortDirection: Direction;
+  selectedItems: ManagedCatIndex[];
+  aggregations: ManagedCatIndex[];
+  loadingAggregations: boolean;
+}
+
+const columns = [
+  {
+    field: "fieldname",
+    name: "Field Name",
+    sortable: true,
+  },
+  {
+    field: "fieldType",
+    name: "Field Type",
+    truncateText: true,
+  },
+  {
+    field: "aggregationMethod",
+    name: "Aggregation method",
+  },
+  {
+    field: "histogramInterval",
+    name: "Histogram Interval",
+  },
+  {
+    field: "actions",
+    name: "Actions",
+  },
+];
 
 export default class AdvancedAggregation extends Component<AdvancedAggregationProps> {
   render() {
     return (
       <ContentPanel bodyStyles={{ padding: "initial" }} title="Advanced aggregation - optional" titleSize="s">
         <div style={{ paddingLeft: "10px" }}>
+          <EuiBasicTable items={[]} rowHeader="fieldName" columns={columns} />
           <EuiSpacer size="s" />
         </div>
       </ContentPanel>
