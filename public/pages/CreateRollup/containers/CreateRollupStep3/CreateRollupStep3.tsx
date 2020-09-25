@@ -25,8 +25,6 @@ import { Rollup } from "../../../../../models/interfaces";
 import CreateRollupSteps from "../../component/CreateRollupSteps";
 import { DEFAULT_ROLLUP } from "../../utils/constants";
 import Schedule from "../../component/Schedule";
-import Roles from "../../component/Roles";
-import ErrorNotification from "../../component/ErrorNotification";
 
 interface CreateRollupProps extends RouteComponentProps {
   isEdit: boolean;
@@ -176,14 +174,11 @@ export default class CreateRollupStep3 extends Component<CreateRollupProps, Crea
           </EuiFlexItem>
           <EuiFlexItem>
             <EuiTitle size="l">
-              <h1>Specify schedules, roles, and notifications</h1>
+              <h1>Specify schedules</h1>
             </EuiTitle>
             <EuiSpacer />
             <Schedule rollupId={rollupId} rollupIdError={rollupIdError} onChange={this.onChange} />
             <EuiSpacer />
-            <Roles rollupId={rollupId} rollupIdError={rollupIdError} onChange={this.onChange} />
-            <EuiSpacer />
-            <ErrorNotification rollupId={rollupId} rollupIdError={rollupIdError} onChange={this.onChange} />
             {submitError && (
               <EuiCallOut title="Sorry, there was an error" color="danger" iconType="alert">
                 <p>{submitError}</p>

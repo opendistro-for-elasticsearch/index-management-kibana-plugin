@@ -23,6 +23,7 @@ import ConfigureRollup from "../../component/ConfigureRollup";
 import RollupIndices from "../../component/RollupIndices";
 import CreateRollupSteps from "../../component/CreateRollupSteps";
 import { DEFAULT_ROLLUP } from "../../utils/constants";
+import Roles from "../../component/Roles";
 
 interface CreateRollupProps extends RouteComponentProps {
   rollupService: RollupService;
@@ -135,6 +136,8 @@ export default class CreateRollup extends Component<CreateRollupProps, CreateRol
             <ConfigureRollup rollupId={rollupId} rollupIdError={rollupIdError} onChange={this.onChange} />
             <EuiSpacer />
             <RollupIndices rollupId={rollupId} rollupIdError={rollupIdError} onChange={this.onChange} />
+            <EuiSpacer />
+            <Roles rollupId={rollupId} rollupIdError={rollupIdError} onChange={this.onChange} />
             {submitError && (
               <EuiCallOut title="Sorry, there was an error" color="danger" iconType="alert">
                 <p>{submitError}</p>
