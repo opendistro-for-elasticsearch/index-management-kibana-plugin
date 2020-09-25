@@ -22,16 +22,16 @@ interface CreateRollupStepsProps {
 const setOfSteps = (step: number) => {
   return [
     {
-      title: "Choose indices",
+      title: "Set up indices",
       children: null,
     },
     {
-      title: "Define histogram and metrics",
+      title: "Define aggregations and metrics",
       children: null,
       status: step < 2 ? "disabled" : null,
     },
     {
-      title: "Specify schedule, roles, and notifications",
+      title: "Specify schedule",
       children: null,
       status: step < 3 ? "disabled" : null,
     },
