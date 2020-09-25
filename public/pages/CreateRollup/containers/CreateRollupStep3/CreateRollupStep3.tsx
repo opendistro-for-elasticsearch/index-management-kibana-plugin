@@ -22,9 +22,9 @@ import { RollupService } from "../../../../services";
 import { BREADCRUMBS, DOCUMENTATION_URL, ROUTES } from "../../../../utils/constants";
 import { getErrorMessage } from "../../../../utils/helpers";
 import { Rollup } from "../../../../../models/interfaces";
-import CreateRollupSteps from "../../component/CreateRollupSteps";
+import CreateRollupSteps from "../../components/CreateRollupSteps";
 import { DEFAULT_ROLLUP } from "../../utils/constants";
-import Schedule from "../../component/Schedule";
+import Schedule from "../../components/Schedule";
 
 interface CreateRollupProps extends RouteComponentProps {
   isEdit: boolean;

@@ -19,12 +19,12 @@ import chrome from "ui/chrome";
 import { RouteComponentProps } from "react-router-dom";
 import { RollupService } from "../../../../services";
 import { BREADCRUMBS, ROUTES } from "../../../../utils/constants";
-import RollupIndices from "../../component/RollupIndices";
-import CreateRollupSteps from "../../component/CreateRollupSteps";
-import DateHistogram from "../../component/DateHistogram";
+import RollupIndices from "../../components/RollupIndices";
+import CreateRollupSteps from "../../components/CreateRollupSteps";
+import DateHistogram from "../../components/DateHistogram";
 import { DEFAULT_ROLLUP } from "../../utils/constants";
-import AdvancedAggregation from "../../component/AdvancedAggregation";
-import MetricsCalculation from "../../component/MetricsCalculation";
+import AdvancedAggregation from "../../components/AdvancedAggregation";
+import MetricsCalculation from "../../components/MetricsCalculation";
 
 interface CreateRollupProps extends RouteComponentProps {
   rollupService: RollupService;

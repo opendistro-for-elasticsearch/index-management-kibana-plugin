@@ -22,14 +22,14 @@ import { RollupService } from "../../../../services";
 import { BREADCRUMBS, ROUTES } from "../../../../utils/constants";
 import { getErrorMessage } from "../../../../utils/helpers";
 import { Rollup } from "../../../../../models/interfaces";
-import RollupIndices from "../../component/RollupIndices";
-import CreateRollupSteps from "../../component/CreateRollupSteps";
-import DateHistogram from "../../component/DateHistogram";
+import RollupIndices from "../../components/RollupIndices";
+import CreateRollupSteps from "../../components/CreateRollupSteps";
+import DateHistogram from "../../components/DateHistogram";
 import { DEFAULT_ROLLUP } from "../../utils/constants";
-import HistogramAndMetrics from "../../component/HistogramAndMetrics";
-import JobNameAndIndices from "../../component/JobNameAndIndices";
-import ScheduleRolesAndNotifications from "../../component/ScheduleRolesAndNotifications";
-import Metrics from "../../component/Metrics";
+import HistogramAndMetrics from "../../components/HistogramAndMetrics";
+import JobNameAndIndices from "../../components/JobNameAndIndices";
+import ScheduleRolesAndNotifications from "../../components/ScheduleRolesAndNotifications";
+import Metrics from "../../components/Metrics";
 
 interface CreateRollupProps extends RouteComponentProps {
   rollupService: RollupService;
