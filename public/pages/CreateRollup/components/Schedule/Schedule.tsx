@@ -14,7 +14,7 @@
  */
 
 import React, { ChangeEvent, Component } from "react";
-import { EuiSpacer, EuiCheckbox } from "@elastic/eui";
+import { EuiSpacer, EuiCheckbox, EuiRadioGroup } from "@elastic/eui";
 import { ContentPanel } from "../../../../components/ContentPanel";
 
 interface ScheduleProps {
@@ -25,7 +25,18 @@ interface ScheduleProps {
 
 interface ScheduleState {
   checked: boolean;
+  radioIdSelected: string;
 }
+const radios = [
+  {
+    id: `no`,
+    label: "No",
+  },
+  {
+    id: `yes`,
+    label: "Yes",
+  },
+];
 
 export default class Schedule extends Component<ScheduleProps, ScheduleState> {
   constructor(props: ScheduleProps) {
@@ -33,6 +44,7 @@ export default class Schedule extends Component<ScheduleProps, ScheduleState> {
 
     this.state = {
       checked: false,
+      radioIdSelected: "no",
     };
   }
 
@@ -41,12 +53,25 @@ export default class Schedule extends Component<ScheduleProps, ScheduleState> {
     this.setState({ checked: !checked });
   };
 
+  onChangeRadio = (optionId: string): void => {
+    this.setState({ radioIdSelected: optionId });
+  };
+
   render() {
     return (
       <ContentPanel bodyStyles={{ padding: "initial" }} title="Schedule" titleSize="s">
         <div style={{ paddingLeft: "10px" }}>
           <EuiCheckbox id="jobEnabledByDefault" label="Job enabled by default" checked={this.state.checked} onChange={this.onChangeCheck} />
-          <EuiSpacer size="s" />
+          <EuiSpacer size="m" />
+          <EuiRadioGroup
+            options={radios}
+            idSelected={this.state.radioIdSelected}
+            onChange={(id) => this.onChangeRadio(id)}
+            name="recurringJob"
+            legend={{
+              children: <span>Recurring job</span>,
+            }}
+          />
         </div>
       </ContentPanel>
     );
