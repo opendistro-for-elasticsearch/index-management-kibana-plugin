@@ -14,7 +14,7 @@
  */
 
 import React, { ChangeEvent, Component } from "react";
-import { EuiSpacer } from "@elastic/eui";
+import { EuiSpacer, EuiCheckbox } from "@elastic/eui";
 import { ContentPanel } from "../../../../components/ContentPanel";
 
 interface ScheduleProps {
@@ -23,11 +23,29 @@ interface ScheduleProps {
   onChange: (value: ChangeEvent<HTMLInputElement>) => void;
 }
 
-export default class Schedule extends Component<ScheduleProps> {
+interface ScheduleState {
+  checked: boolean;
+}
+
+export default class Schedule extends Component<ScheduleProps, ScheduleState> {
+  constructor(props: ScheduleProps) {
+    super(props);
+
+    this.state = {
+      checked: false,
+    };
+  }
+
+  onChangeCheck = (): void => {
+    const checked = this.state.checked;
+    this.setState({ checked: !checked });
+  };
+
   render() {
     return (
       <ContentPanel bodyStyles={{ padding: "initial" }} title="Schedule" titleSize="s">
         <div style={{ paddingLeft: "10px" }}>
+          <EuiCheckbox id="jobEnabledByDefault" label="Job enabled by default" checked={this.state.checked} onChange={this.onChangeCheck} />
           <EuiSpacer size="s" />
         </div>
       </ContentPanel>
