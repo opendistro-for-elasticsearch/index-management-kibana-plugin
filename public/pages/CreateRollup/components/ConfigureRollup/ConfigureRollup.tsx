@@ -36,7 +36,12 @@ const ConfigureRollup = ({ rollupId, rollupIdError, onChange }: ConfigureRollupP
         <EuiFieldText isInvalid={!!rollupIdError} placeholder="my-rollupjob1" value={rollupId} onChange={onChange} />
       </EuiFormRow>
 
-      <EuiFormRow label="Description" helpText="Describe details about this rollup job." isInvalid={!!rollupIdError} error={rollupIdError}>
+      <EuiFormRow
+        label="Description - optional"
+        helpText="Describe details about this rollup job."
+        isInvalid={!!rollupIdError}
+        error={rollupIdError}
+      >
         <EuiTextArea isInvalid={!!rollupIdError} compressed={true} />
       </EuiFormRow>
     </div>
