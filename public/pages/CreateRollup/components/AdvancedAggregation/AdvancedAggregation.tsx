@@ -14,8 +14,20 @@
  */
 
 import React, { ChangeEvent, Component } from "react";
-import { EuiSpacer, EuiBasicTable } from "@elastic/eui";
+import {
+  EuiSpacer,
+  EuiBasicTable,
+  EuiButton,
+  EuiOverlayMask,
+  EuiModal,
+  EuiModalHeader,
+  EuiModalHeaderTitle,
+  EuiModalBody,
+  EuiModalFooter,
+  EuiButtonEmpty,
+} from "@elastic/eui";
 import { ContentPanel } from "../../../../components/ContentPanel";
+import { EuiForm } from "@elastic/eui/src/components/form/form";
 
 interface AdvancedAggregationProps {
   rollupId: string;
@@ -23,11 +35,24 @@ interface AdvancedAggregationProps {
   onChange: (value: ChangeEvent<HTMLInputElement>) => void;
 }
 
+interface AdvancedAggregationState {
+  isModalVisible: boolean;
+}
+
+// const formSample = (
+//   <EuiForm title={"Add fields"}>
+//   </EuiForm>
+// );
+
 const columns = [
+  {
+    field: "sequence",
+    name: "Sequence",
+    sortable: true,
+  },
   {
     field: "fieldname",
     name: "Field Name",
-    sortable: true,
   },
   {
     field: "fieldType",
@@ -39,8 +64,8 @@ const columns = [
     name: "Aggregation method",
   },
   {
-    field: "histogramInterval",
-    name: "Histogram Interval",
+    field: "interval",
+    name: "Interval",
   },
   {
     field: "actions",
@@ -48,13 +73,45 @@ const columns = [
   },
 ];
 
-export default class AdvancedAggregation extends Component<AdvancedAggregationProps> {
+export default class AdvancedAggregation extends Component<AdvancedAggregationProps, AdvancedAggregationState> {
+  constructor(props: AdvancedAggregationProps) {
+    super(props);
+
+    this.state = {
+      isModalVisible: false,
+    };
+  }
+
+  closeModal = () => this.setState({ isModalVisible: false });
+
+  showModal = () => this.setState({ isModalVisible: true });
+
   render() {
+    const { isModalVisible } = this.state;
+
     return (
       <ContentPanel bodyStyles={{ padding: "initial" }} title="Advanced aggregation - optional" titleSize="s">
         <div style={{ paddingLeft: "10px" }}>
-          <EuiBasicTable items={[]} rowHeader="fieldName" columns={columns} />
+          <EuiBasicTable items={[]} rowHeader="fieldName" columns={columns} noItemsMessage="No field added for aggregation" />
           <EuiSpacer size="s" />
+          {isModalVisible && (
+            <EuiOverlayMask>
+              <EuiModal onClose={this.closeModal} initialFocus="[name=popswitch]">
+                <EuiModalHeader>
+                  <EuiModalHeaderTitle>Modal title</EuiModalHeaderTitle>
+                </EuiModalHeader>
+
+                <EuiModalBody>{/*{formSample}*/}</EuiModalBody>
+
+                <EuiModalFooter>
+                  <EuiButtonEmpty onClick={this.closeModal}>Cancel</EuiButtonEmpty>
+
+                  <EuiButton onClick={this.closeModal}>Save</EuiButton>
+                </EuiModalFooter>
+              </EuiModal>
+            </EuiOverlayMask>
+          )}
+          <EuiButton onClick={this.showModal}>Add fields</EuiButton>
         </div>
       </ContentPanel>
     );
