@@ -24,6 +24,7 @@ import {
   EuiFieldNumber,
   EuiFlexGroup,
   EuiFlexItem,
+  EuiTextArea,
 } from "@elastic/eui";
 import { ContentPanel } from "../../../../components/ContentPanel";
 import moment, { Moment } from "moment";
@@ -43,6 +44,7 @@ interface ScheduleState {
   hasEndDate: boolean;
   endDate: Moment;
   timezone: number;
+  cronExpression: string;
   pageSize: number;
   delayTime: number | null;
   delayTimeunit: string;
@@ -88,7 +90,12 @@ const timezones = [
 ];
 
 //TODO: Add invalid and error for date picker
-const jobStartSelect = (startDate: Moment, timezone: number, handleDateChange: void, onChangeTimezone: ChangeEvent<HTMLSelectElement>) => (
+const jobStartSelect = (
+  startDate: Moment,
+  timezone: number,
+  handleDateChange: (value: Moment) => void,
+  onChangeTimezone: (value: ChangeEvent<HTMLSelectElement>) => void
+) => (
   <React.Fragment>
     <EuiFormRow label="Job starts on">
       <EuiDatePicker showTimeSelect selected={startDate} onChange={handleDateChange} />
@@ -105,12 +112,21 @@ const jobStartSelect = (startDate: Moment, timezone: number, handleDateChange: v
 );
 
 //TODO: Add invalid and error for end date, such as endDate should be later than start date. Also add a clear field since this is optional
-const jobEndSelect = (endDate: Moment, handleDateChange: void) => (
+const jobEndSelect = (endDate: Moment, handleDateChange: (value: Moment) => void) => (
   <React.Fragment>
     <EuiFormRow label="Job ends on - optional">
       <EuiDatePicker showTimeSelect selected={endDate} onChange={handleDateChange} />
     </EuiFormRow>
 
+    <EuiSpacer size="m" />
+  </React.Fragment>
+);
+
+const defineCron = (cronExpression: string, onChangeCron: (value: ChangeEvent<HTMLTextAreaElement>) => void) => (
+  <React.Fragment>
+    <EuiFormRow label="Cron expression">
+      <EuiTextArea value={cronExpression} onChange={onChangeCron} compressed={true} />
+    </EuiFormRow>
     <EuiSpacer size="m" />
   </React.Fragment>
 );
@@ -127,6 +143,7 @@ export default class Schedule extends Component<ScheduleProps, ScheduleState> {
       endDate: null,
       hasEndDate: false,
       timezone: -7,
+      cronExpression: "",
       pageSize: 1000,
       delayTime: null,
       delayTimeunit: "m",
@@ -136,6 +153,10 @@ export default class Schedule extends Component<ScheduleProps, ScheduleState> {
   onChangeCheck = (): void => {
     const checked = this.state.checked;
     this.setState({ checked: !checked });
+  };
+
+  onChangeCron = (e: ChangeEvent<HTMLTextAreaElement>): void => {
+    this.setState({ cronExpression: e.target.value });
   };
 
   onChangeDelayTime = (e: ChangeEvent<HTMLInputElement>): void => {
@@ -175,6 +196,7 @@ export default class Schedule extends Component<ScheduleProps, ScheduleState> {
       endDate,
       hasEndDate,
       timezone,
+      cronExpression,
       pageSize,
       delayTime,
       delayTimeunit,
@@ -209,7 +231,7 @@ export default class Schedule extends Component<ScheduleProps, ScheduleState> {
             jobStartSelect(startDate, timezone, this.handleStartDateChange, this.onChangeTimezone)}
 
           {recurringJob == "yes" && recurringDefinition == "date" && jobEndSelect(endDate, this.handleEndDateChange)}
-
+          {recurringJob == "yes" && recurringDefinition == "cron" && defineCron(cronExpression, this.onChangeCron)}
           <EuiSpacer size="m" />
 
           <EuiFormRow
