@@ -27,9 +27,11 @@ import {
   EuiButtonEmpty,
   EuiFlexGroup,
   EuiFlexItem,
+  EuiForm,
+  EuiFormRow,
+  EuiFieldText,
 } from "@elastic/eui";
 import { ContentPanel } from "../../../../components/ContentPanel";
-import { EuiForm } from "@elastic/eui/src/components/form/form";
 
 interface AdvancedAggregationProps {
   rollupId: string;
@@ -41,10 +43,13 @@ interface AdvancedAggregationState {
   isModalVisible: boolean;
 }
 
-// const formSample = (
-//   <EuiForm title={"Add fields"}>
-//   </EuiForm>
-// );
+const formSample = (
+  <EuiForm title={"Add fields"}>
+    <EuiFormRow label="A text field">
+      <EuiFieldText name="popfirst" />
+    </EuiFormRow>
+  </EuiForm>
+);
 
 const columns = [
   {
@@ -103,7 +108,7 @@ export default class AdvancedAggregation extends Component<AdvancedAggregationPr
                   <EuiModalHeaderTitle>Modal title</EuiModalHeaderTitle>
                 </EuiModalHeader>
 
-                <EuiModalBody>{/*{formSample}*/}</EuiModalBody>
+                <EuiModalBody>{formSample}</EuiModalBody>
 
                 <EuiModalFooter>
                   <EuiButtonEmpty onClick={this.closeModal}>Cancel</EuiButtonEmpty>
