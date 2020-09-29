@@ -40,6 +40,8 @@ interface ScheduleState {
   recurringJob: string;
   recurringDefinition: string;
   startDate: Moment;
+  hasEndDate: boolean;
+  endDate: Moment;
   timezone: number;
   pageSize: number;
   delayTime: number | null;
@@ -102,6 +104,17 @@ const jobStartSelect = (startDate: Moment, timezone: number, handleDateChange: v
   </React.Fragment>
 );
 
+//TODO: Add invalid and error for end date, such as endDate should be later than start date. Also add a clear field since this is optional
+const jobEndSelect = (endDate: Moment, handleDateChange: void) => (
+  <React.Fragment>
+    <EuiFormRow label="Job ends on - optional">
+      <EuiDatePicker showTimeSelect selected={endDate} onChange={handleDateChange} />
+    </EuiFormRow>
+
+    <EuiSpacer size="m" />
+  </React.Fragment>
+);
+
 export default class Schedule extends Component<ScheduleProps, ScheduleState> {
   constructor(props: ScheduleProps) {
     super(props);
@@ -111,6 +124,8 @@ export default class Schedule extends Component<ScheduleProps, ScheduleState> {
       recurringJob: "no",
       recurringDefinition: "date",
       startDate: moment(),
+      endDate: null,
+      hasEndDate: false,
       timezone: -7,
       pageSize: 1000,
       delayTime: null,
@@ -143,12 +158,27 @@ export default class Schedule extends Component<ScheduleProps, ScheduleState> {
     this.setState({ delayTimeunit: e.target.value });
   };
 
-  handleDateChange = (date: Moment): void => {
+  handleStartDateChange = (date: Moment): void => {
     this.setState({ startDate: date });
   };
 
+  handleEndDateChange = (date: Moment): void => {
+    this.setState({ endDate: date, hasEndDate: true });
+  };
+
   render() {
-    const { checked, recurringJob, recurringDefinition, startDate, timezone, pageSize, delayTime, delayTimeunit } = this.state;
+    const {
+      checked,
+      recurringJob,
+      recurringDefinition,
+      startDate,
+      endDate,
+      hasEndDate,
+      timezone,
+      pageSize,
+      delayTime,
+      delayTimeunit,
+    } = this.state;
     return (
       <ContentPanel bodyStyles={{ padding: "initial" }} title="Schedule" titleSize="s">
         <div style={{ paddingLeft: "10px" }}>
@@ -176,7 +206,9 @@ export default class Schedule extends Component<ScheduleProps, ScheduleState> {
 
           {/*Hide this part if is recurring job and defined by cron expression*/}
           {(recurringJob == "no" || (recurringJob == "yes" && recurringDefinition == "date")) &&
-            jobStartSelect(startDate, timezone, this.handleDateChange, this.onChangeTimezone)}
+            jobStartSelect(startDate, timezone, this.handleStartDateChange, this.onChangeTimezone)}
+
+          {recurringJob == "yes" && recurringDefinition == "date" && jobEndSelect(endDate, this.handleEndDateChange)}
 
           <EuiSpacer size="m" />
 
