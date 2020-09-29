@@ -85,6 +85,7 @@ const timezones = [
   { value: -12, text: "UTC -12" },
 ];
 
+//TODO: Add invalid and error for date picker
 const jobStartSelect = (startDate: Moment, timezone: number, handleDateChange: void, onChangeTimezone: ChangeEvent<HTMLSelectElement>) => (
   <React.Fragment>
     <EuiFormRow label="Job starts on">
@@ -174,18 +175,8 @@ export default class Schedule extends Component<ScheduleProps, ScheduleState> {
           )}
 
           {/*Hide this part if is recurring job and defined by cron expression*/}
-          {/*TODO: Add invalid and error for date picker*/}
-          {(!recurringJob || (recurringJob && recurringDefinition == "date")) &&
+          {(recurringJob == "no" || (recurringJob == "yes" && recurringDefinition == "date")) &&
             jobStartSelect(startDate, timezone, this.handleDateChange, this.onChangeTimezone)}
-          {/*<EuiFormRow label="Job starts on">*/}
-          {/*  <EuiDatePicker showTimeSelect selected={startDate} onChange={this.handleDateChange}/>*/}
-          {/*</EuiFormRow>*/}
-
-          {/*<EuiSpacer size="m"/>*/}
-
-          {/*<EuiFormRow label={"Timezone"}>*/}
-          {/*  <EuiSelect id="timezone" options={timezones} value={timezone} onChange={this.onChangeTimezone}/>*/}
-          {/*</EuiFormRow>*/}
 
           <EuiSpacer size="m" />
 
