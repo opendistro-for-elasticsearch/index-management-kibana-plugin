@@ -37,7 +37,7 @@ interface ScheduleProps {
 
 interface ScheduleState {
   checked: boolean;
-  radioIdSelected: string;
+  recurringJob: string;
   startDate: Moment;
   timezone: number;
   pageSize: number;
@@ -47,11 +47,11 @@ interface ScheduleState {
 
 const radios = [
   {
-    id: `no`,
+    id: "no",
     label: "No",
   },
   {
-    id: `yes`,
+    id: "yes",
     label: "Yes",
   },
 ];
@@ -90,7 +90,7 @@ export default class Schedule extends Component<ScheduleProps, ScheduleState> {
 
     this.state = {
       checked: false,
-      radioIdSelected: "no",
+      recurringJob: "no",
       startDate: moment(),
       timezone: -7,
       pageSize: 1000,
@@ -109,7 +109,7 @@ export default class Schedule extends Component<ScheduleProps, ScheduleState> {
   };
 
   onChangeRadio = (optionId: string): void => {
-    this.setState({ radioIdSelected: optionId });
+    this.setState({ recurringJob: optionId });
   };
 
   onChangeTimezone = (e: ChangeEvent<HTMLSelectElement>): void => {
@@ -125,16 +125,32 @@ export default class Schedule extends Component<ScheduleProps, ScheduleState> {
   };
 
   render() {
-    const { checked, radioIdSelected, startDate, timezone, pageSize, delayTime, delayTimeunit } = this.state;
+    const { checked, recurringJob, startDate, timezone, pageSize, delayTime, delayTimeunit } = this.state;
     return (
       <ContentPanel bodyStyles={{ padding: "initial" }} title="Schedule" titleSize="s">
         <div style={{ paddingLeft: "10px" }}>
           <EuiCheckbox id="jobEnabledByDefault" label="Job enabled by default" checked={checked} onChange={this.onChangeCheck} />
           <EuiSpacer size="m" />
           <EuiFormRow label="Recurring job">
-            <EuiRadioGroup options={radios} idSelected={radioIdSelected} onChange={(id) => this.onChangeRadio(id)} name="recurringJob" />
+            <EuiRadioGroup options={radios} idSelected={recurringJob} onChange={(id) => this.onChangeRadio(id)} name="recurringJob" />
           </EuiFormRow>
           <EuiSpacer size="m" />
+
+          {/*Hide this portion of components if the rollup job is not recurring*/}
+          {recurringJob == "yes" && (
+            <EuiFormRow label={"Recurring definition"}>
+              <EuiSelect
+                id="recurringDefinition"
+                options={[
+                  { value: "date", text: "Choose date and time" },
+                  { value: "cron", text: "Cron expression" },
+                ]}
+                value={timezone}
+                onChange={this.onChangeTimezone}
+              />
+            </EuiFormRow>
+          )}
+
           {/*TODO: Add invalid and error for date picker*/}
           <EuiFormRow label="Job starts on">
             <EuiDatePicker showTimeSelect selected={startDate} onChange={this.handleDateChange} />
@@ -143,6 +159,7 @@ export default class Schedule extends Component<ScheduleProps, ScheduleState> {
           <EuiFormRow label={"Timezone"}>
             <EuiSelect id="timezone" options={timezones} value={timezone} onChange={this.onChangeTimezone} />
           </EuiFormRow>
+
           <EuiSpacer size="m" />
           <EuiFormRow
             label="Page per execution"
