@@ -14,9 +14,20 @@
  */
 
 import React, { ChangeEvent, Component } from "react";
-import { EuiSpacer, EuiCheckbox, EuiRadioGroup, EuiFormRow, EuiDatePicker, EuiSelect, EuiFieldNumber } from "@elastic/eui";
+import {
+  EuiSpacer,
+  EuiCheckbox,
+  EuiRadioGroup,
+  EuiFormRow,
+  EuiDatePicker,
+  EuiSelect,
+  EuiFieldNumber,
+  EuiFlexGroup,
+  EuiFlexItem,
+} from "@elastic/eui";
 import { ContentPanel } from "../../../../components/ContentPanel";
 import moment, { Moment } from "moment";
+import { TimeunitOptions } from "../../utils/constants";
 
 interface ScheduleProps {
   rollupId: string;
@@ -30,6 +41,8 @@ interface ScheduleState {
   startDate: Moment;
   timezone: number;
   pageSize: number;
+  delayTime: number | null;
+  delayTimeunit: string;
 }
 
 const radios = [
@@ -81,12 +94,18 @@ export default class Schedule extends Component<ScheduleProps, ScheduleState> {
       startDate: moment(),
       timezone: -7,
       pageSize: 1000,
+      delayTime: null,
+      delayTimeunit: "m",
     };
   }
 
   onChangeCheck = (): void => {
     const checked = this.state.checked;
     this.setState({ checked: !checked });
+  };
+
+  onChangeDelayTime = (e: ChangeEvent<HTMLInputElement>): void => {
+    this.setState({ delayTime: e.target.value });
   };
 
   onChangeRadio = (optionId: string): void => {
@@ -97,27 +116,23 @@ export default class Schedule extends Component<ScheduleProps, ScheduleState> {
     this.setState({ timezone: e.target.value });
   };
 
+  onChangeTimeunit = (e: ChangeEvent<HTMLSelectElement>): void => {
+    this.setState({ delayTimeunit: e.target.value });
+  };
+
   handleDateChange = (date: Moment): void => {
     this.setState({ startDate: date });
   };
 
   render() {
-    const { checked, radioIdSelected, startDate, timezone, pageSize } = this.state;
+    const { checked, radioIdSelected, startDate, timezone, pageSize, delayTime, delayTimeunit } = this.state;
     return (
       <ContentPanel bodyStyles={{ padding: "initial" }} title="Schedule" titleSize="s">
         <div style={{ paddingLeft: "10px" }}>
           <EuiCheckbox id="jobEnabledByDefault" label="Job enabled by default" checked={checked} onChange={this.onChangeCheck} />
           <EuiSpacer size="m" />
           <EuiFormRow label="Recurring job">
-            <EuiRadioGroup
-              options={radios}
-              idSelected={radioIdSelected}
-              onChange={(id) => this.onChangeRadio(id)}
-              name="recurringJob"
-              // legend={{
-              //   children: <span>Recurring job</span>,
-              // }}
-            />
+            <EuiRadioGroup options={radios} idSelected={radioIdSelected} onChange={(id) => this.onChangeRadio(id)} name="recurringJob" />
           </EuiFormRow>
           <EuiSpacer size="m" />
           {/*TODO: Add invalid and error for date picker*/}
@@ -128,12 +143,33 @@ export default class Schedule extends Component<ScheduleProps, ScheduleState> {
           <EuiFormRow label={"Timezone"}>
             <EuiSelect id="timezone" options={timezones} value={timezone} onChange={this.onChangeTimezone} />
           </EuiFormRow>
+          <EuiSpacer size="m" />
           <EuiFormRow
             label="Page per execution"
             helpText={"The number of pages every execution processes. A larger number means faster execution and more cost on memory."}
           >
             <EuiFieldNumber min={1} placeholder={"1000"} value={pageSize} />
           </EuiFormRow>
+          <EuiSpacer size="m" />
+          <EuiFlexGroup style={{ maxWidth: 400 }}>
+            <EuiFlexItem grow={false} style={{ width: 200 }}>
+              <EuiFormRow label="Execution delay - optional">
+                <EuiFieldNumber value={delayTime} onChange={this.onChangeDelayTime} />
+              </EuiFormRow>
+            </EuiFlexItem>
+            <EuiFlexItem>
+              <EuiFormRow hasEmptyLabelSpace={true}>
+                <EuiSelect
+                  id="selectTimeunit"
+                  options={TimeunitOptions}
+                  value={delayTimeunit}
+                  onChange={this.onChangeTimeunit}
+                  disabled={delayTime == null}
+                  isInvalid={delayTime != null && delayTime <= 0}
+                />
+              </EuiFormRow>
+            </EuiFlexItem>
+          </EuiFlexGroup>
         </div>
       </ContentPanel>
     );
