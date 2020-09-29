@@ -37,7 +37,7 @@ const ConfigureRollup = ({ rollupId, rollupIdError, onChange }: ConfigureRollupP
       </EuiFormRow>
 
       <EuiFormRow label="Description" helpText="Describe details about this rollup job." isInvalid={!!rollupIdError} error={rollupIdError}>
-        <EuiTextArea isInvalid={!!rollupIdError} />
+        <EuiTextArea isInvalid={!!rollupIdError} compressed={true} />
       </EuiFormRow>
     </div>
   </ContentPanel>
