@@ -14,9 +14,20 @@
  */
 
 import React, { ChangeEvent, Component } from "react";
-import { EuiSpacer, EuiFormRow, EuiComboBox, EuiSelect, EuiText, EuiFlexGroup, EuiFlexItem, EuiFieldNumber } from "@elastic/eui";
+import {
+  EuiSpacer,
+  EuiFormRow,
+  EuiComboBox,
+  EuiSelect,
+  EuiText,
+  EuiFlexGroup,
+  EuiFlexItem,
+  EuiFieldNumber,
+  EuiRadioGroup,
+} from "@elastic/eui";
 import { ContentPanel } from "../../../../components/ContentPanel";
-import { TimeunitOptions } from "../../utils/constants";
+import { TimeunitOptions, TimezoneOptions } from "../../utils/constants";
+import moment from "moment";
 
 interface DateHistogramProps {
   rollupId: string;
@@ -25,11 +36,34 @@ interface DateHistogramProps {
   // onChangeStateRadio: (optionId: string) => void;
   // stateRadioIdSelected: string;
 }
+interface DateHistogramState {
+  intervalType: string;
+}
+const radios = [
+  {
+    id: "fixed",
+    label: "Fixed",
+  },
+  {
+    id: "calender",
+    label: "Calender",
+  },
+];
+export default class DateHistogram extends Component<DateHistogramProps, DateHistogramState> {
+  constructor(props: DateHistogramProps) {
+    super(props);
 
-export default class DateHistogram extends Component<DateHistogramProps> {
+    this.state = {
+      intervalType: "fixed",
+    };
+  }
+  onChangeRadio = (optionId: string): void => {
+    this.setState({ intervalType: optionId });
+  };
+
   render() {
     const { rollupIdError } = this.props;
-
+    const { intervalType } = this.state;
     return (
       <ContentPanel bodyStyles={{ padding: "initial" }} title="Date Histogram" titleSize="s">
         {/*<EuiFormHelpText> Rolling up by a date dimension is required</EuiFormHelpText>*/}
@@ -46,7 +80,7 @@ export default class DateHistogram extends Component<DateHistogramProps> {
           </EuiFormRow>
           <EuiSpacer size="m" />
           <EuiFormRow label="Interval type" isInvalid={!!rollupIdError} error={rollupIdError}>
-            <EuiText>(Radio buttons here)</EuiText>
+            <EuiRadioGroup options={radios} idSelected={intervalType} onChange={(id) => this.onChangeRadio(id)} name="intervalType" />
           </EuiFormRow>
           <EuiSpacer size="m" />
           <EuiFlexGroup style={{ maxWidth: 300 }}>
@@ -72,6 +106,7 @@ export default class DateHistogram extends Component<DateHistogramProps> {
           <EuiFormRow label="Timezone">
             <EuiSelect
               id="timezone"
+              options={TimezoneOptions}
               // value={value}
               // onChange={onChange}
             />
