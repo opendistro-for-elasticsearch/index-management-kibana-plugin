@@ -14,19 +14,9 @@
  */
 
 import React, { ChangeEvent, Component } from "react";
-import {
-  EuiSpacer,
-  EuiFormRow,
-  EuiComboBox,
-  EuiSelect,
-  EuiText,
-  EuiRadioGroup,
-  htmlIdGenerator,
-  EuiFlexGroup,
-  EuiFlexItem,
-  EuiFieldNumber,
-} from "@elastic/eui";
+import { EuiSpacer, EuiFormRow, EuiComboBox, EuiSelect, EuiText, EuiFlexGroup, EuiFlexItem, EuiFieldNumber } from "@elastic/eui";
 import { ContentPanel } from "../../../../components/ContentPanel";
+import { TimeunitOptions } from "../../utils/constants";
 
 interface DateHistogramProps {
   rollupId: string;
@@ -35,13 +25,6 @@ interface DateHistogramProps {
   // onChangeStateRadio: (optionId: string) => void;
   // stateRadioIdSelected: string;
 }
-const timeunitOptions = [
-  { value: "ms", text: "Milliseconds" },
-  { value: "s", text: "Seconds" },
-  { value: "m", text: "Minutes" },
-  { value: "h", text: "Hours" },
-  { value: "d", text: "Days" },
-];
 
 export default class DateHistogram extends Component<DateHistogramProps> {
   render() {
@@ -76,7 +59,7 @@ export default class DateHistogram extends Component<DateHistogramProps> {
               <EuiFormRow hasEmptyLabelSpace={true}>
                 <EuiSelect
                   id="selectTimeunit"
-                  options={timeunitOptions}
+                  options={TimeunitOptions}
                   // value={value}
                   // onChange={onChange}
                 />
