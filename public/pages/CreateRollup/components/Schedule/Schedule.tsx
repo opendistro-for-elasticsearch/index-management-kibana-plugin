@@ -38,6 +38,7 @@ interface ScheduleProps {
 interface ScheduleState {
   checked: boolean;
   recurringJob: string;
+  recurringDefinition: string;
   startDate: Moment;
   timezone: number;
   pageSize: number;
@@ -84,6 +85,22 @@ const timezones = [
   { value: -12, text: "UTC -12" },
 ];
 
+const jobStartSelect = (startDate: Moment, timezone: number, handleDateChange: void, onChangeTimezone: ChangeEvent<HTMLSelectElement>) => (
+  <React.Fragment>
+    <EuiFormRow label="Job starts on">
+      <EuiDatePicker showTimeSelect selected={startDate} onChange={handleDateChange} />
+    </EuiFormRow>
+
+    <EuiSpacer size="m" />
+
+    <EuiFormRow label={"Timezone"}>
+      <EuiSelect id="timezone" options={timezones} value={timezone} onChange={onChangeTimezone} />
+    </EuiFormRow>
+
+    <EuiSpacer size="m" />
+  </React.Fragment>
+);
+
 export default class Schedule extends Component<ScheduleProps, ScheduleState> {
   constructor(props: ScheduleProps) {
     super(props);
@@ -91,6 +108,7 @@ export default class Schedule extends Component<ScheduleProps, ScheduleState> {
     this.state = {
       checked: false,
       recurringJob: "no",
+      recurringDefinition: "date",
       startDate: moment(),
       timezone: -7,
       pageSize: 1000,
@@ -106,6 +124,10 @@ export default class Schedule extends Component<ScheduleProps, ScheduleState> {
 
   onChangeDelayTime = (e: ChangeEvent<HTMLInputElement>): void => {
     this.setState({ delayTime: e.target.value });
+  };
+
+  onChangeRecurringDefinition = (e: ChangeEvent<HTMLSelectElement>): void => {
+    this.setState({ recurringDefinition: e.target.value });
   };
 
   onChangeRadio = (optionId: string): void => {
@@ -125,7 +147,7 @@ export default class Schedule extends Component<ScheduleProps, ScheduleState> {
   };
 
   render() {
-    const { checked, recurringJob, startDate, timezone, pageSize, delayTime, delayTimeunit } = this.state;
+    const { checked, recurringJob, recurringDefinition, startDate, timezone, pageSize, delayTime, delayTimeunit } = this.state;
     return (
       <ContentPanel bodyStyles={{ padding: "initial" }} title="Schedule" titleSize="s">
         <div style={{ paddingLeft: "10px" }}>
@@ -145,22 +167,28 @@ export default class Schedule extends Component<ScheduleProps, ScheduleState> {
                   { value: "date", text: "Choose date and time" },
                   { value: "cron", text: "Cron expression" },
                 ]}
-                value={timezone}
-                onChange={this.onChangeTimezone}
+                value={recurringDefinition}
+                onChange={this.onChangeRecurringDefinition}
               />
             </EuiFormRow>
           )}
 
+          {/*Hide this part if is recurring job and defined by cron expression*/}
           {/*TODO: Add invalid and error for date picker*/}
-          <EuiFormRow label="Job starts on">
-            <EuiDatePicker showTimeSelect selected={startDate} onChange={this.handleDateChange} />
-          </EuiFormRow>
-          <EuiSpacer size="m" />
-          <EuiFormRow label={"Timezone"}>
-            <EuiSelect id="timezone" options={timezones} value={timezone} onChange={this.onChangeTimezone} />
-          </EuiFormRow>
+          {(!recurringJob || (recurringJob && recurringDefinition == "date")) &&
+            jobStartSelect(startDate, timezone, this.handleDateChange, this.onChangeTimezone)}
+          {/*<EuiFormRow label="Job starts on">*/}
+          {/*  <EuiDatePicker showTimeSelect selected={startDate} onChange={this.handleDateChange}/>*/}
+          {/*</EuiFormRow>*/}
+
+          {/*<EuiSpacer size="m"/>*/}
+
+          {/*<EuiFormRow label={"Timezone"}>*/}
+          {/*  <EuiSelect id="timezone" options={timezones} value={timezone} onChange={this.onChangeTimezone}/>*/}
+          {/*</EuiFormRow>*/}
 
           <EuiSpacer size="m" />
+
           <EuiFormRow
             label="Page per execution"
             helpText={"The number of pages every execution processes. A larger number means faster execution and more cost on memory."}
