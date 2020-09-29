@@ -42,12 +42,22 @@ export const DEFAULT_ROLLUP = JSON.stringify(
   4
 );
 
-export const TimeunitOptions = [
-  { value: "ms", text: "Milliseconds" },
-  { value: "s", text: "Seconds" },
-  { value: "m", text: "Minutes" },
-  { value: "h", text: "Hours" },
-  { value: "d", text: "Days" },
+export const FixedTimeunitOptions = [
+  { value: "ms", text: "Millisecond(s)" },
+  { value: "s", text: "Second(s)" },
+  { value: "m", text: "Minute(s)" },
+  { value: "h", text: "Hour(s)" },
+  { value: "d", text: "Day(s)" },
+];
+
+export const CalenderTimeunitOptions = [
+  { value: "m", text: "Minute(s)" },
+  { value: "h", text: "Hour(s)" },
+  { value: "d", text: "Day(s)" },
+  { value: "w", text: "Week(s)" },
+  { value: "M", text: "Month(s)" },
+  { value: "q", text: "Quarter(s)" },
+  { value: "y", text: "Year(s)" },
 ];
 
 export const TimezoneOptions = [

@@ -26,7 +26,7 @@ import {
   EuiRadioGroup,
 } from "@elastic/eui";
 import { ContentPanel } from "../../../../components/ContentPanel";
-import { TimeunitOptions, TimezoneOptions } from "../../utils/constants";
+import { CalenderTimeunitOptions, FixedTimeunitOptions, TimezoneOptions } from "../../utils/constants";
 import moment from "moment";
 
 interface DateHistogramProps {
@@ -38,6 +38,7 @@ interface DateHistogramProps {
 }
 interface DateHistogramState {
   intervalType: string;
+  timezone: number;
 }
 const radios = [
   {
@@ -55,6 +56,7 @@ export default class DateHistogram extends Component<DateHistogramProps, DateHis
 
     this.state = {
       intervalType: "fixed",
+      timezone: -7,
     };
   }
   onChangeRadio = (optionId: string): void => {
@@ -63,7 +65,7 @@ export default class DateHistogram extends Component<DateHistogramProps, DateHis
 
   render() {
     const { rollupIdError } = this.props;
-    const { intervalType } = this.state;
+    const { intervalType, timezone } = this.state;
     return (
       <ContentPanel bodyStyles={{ padding: "initial" }} title="Date Histogram" titleSize="s">
         {/*<EuiFormHelpText> Rolling up by a date dimension is required</EuiFormHelpText>*/}
@@ -86,15 +88,16 @@ export default class DateHistogram extends Component<DateHistogramProps, DateHis
           <EuiFlexGroup style={{ maxWidth: 300 }}>
             <EuiFlexItem grow={false} style={{ width: 100 }}>
               <EuiFormRow label="Interval" isInvalid={!!rollupIdError} error={rollupIdError}>
-                <EuiFieldNumber min={1} placeholder={42} />
+                <EuiFieldNumber min={1} placeholder={2} />
               </EuiFormRow>
             </EuiFlexItem>
             <EuiFlexItem>
+              {/*Change the options of timeunits according to the interval type*/}
               <EuiFormRow hasEmptyLabelSpace={true}>
                 <EuiSelect
                   id="selectTimeunit"
-                  options={TimeunitOptions}
-                  // value={value}
+                  options={intervalType == "fixed" ? FixedTimeunitOptions : CalenderTimeunitOptions}
+                  value={timezone}
                   // onChange={onChange}
                 />
               </EuiFormRow>
@@ -107,7 +110,7 @@ export default class DateHistogram extends Component<DateHistogramProps, DateHis
             <EuiSelect
               id="timezone"
               options={TimezoneOptions}
-              // value={value}
+              value={timezone}
               // onChange={onChange}
             />
           </EuiFormRow>

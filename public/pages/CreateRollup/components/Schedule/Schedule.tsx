@@ -28,7 +28,7 @@ import {
 } from "@elastic/eui";
 import { ContentPanel } from "../../../../components/ContentPanel";
 import moment, { Moment } from "moment";
-import { TimeunitOptions, TimezoneOptions } from "../../utils/constants";
+import { FixedTimeunitOptions, TimezoneOptions } from "../../utils/constants";
 
 interface ScheduleProps {
   rollupId: string;
@@ -223,7 +223,7 @@ export default class Schedule extends Component<ScheduleProps, ScheduleState> {
               <EuiFormRow hasEmptyLabelSpace={true}>
                 <EuiSelect
                   id="selectTimeunit"
-                  options={TimeunitOptions}
+                  options={FixedTimeunitOptions}
                   value={delayTimeunit}
                   onChange={this.onChangeTimeunit}
                   disabled={delayTime == null}
