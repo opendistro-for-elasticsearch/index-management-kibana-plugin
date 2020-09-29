@@ -14,7 +14,7 @@
  */
 
 import React, { ChangeEvent, Component } from "react";
-import { EuiSpacer, EuiCheckbox, EuiRadioGroup, EuiFormRow, EuiDatePicker, EuiSelect } from "@elastic/eui";
+import { EuiSpacer, EuiCheckbox, EuiRadioGroup, EuiFormRow, EuiDatePicker, EuiSelect, EuiFieldNumber } from "@elastic/eui";
 import { ContentPanel } from "../../../../components/ContentPanel";
 import moment, { Moment } from "moment";
 
@@ -29,6 +29,7 @@ interface ScheduleState {
   radioIdSelected: string;
   startDate: Moment;
   timezone: number;
+  pageSize: number;
 }
 
 const radios = [
@@ -79,6 +80,7 @@ export default class Schedule extends Component<ScheduleProps, ScheduleState> {
       radioIdSelected: "no",
       startDate: moment(),
       timezone: -7,
+      pageSize: 1000,
     };
   }
 
@@ -100,7 +102,7 @@ export default class Schedule extends Component<ScheduleProps, ScheduleState> {
   };
 
   render() {
-    const { checked, radioIdSelected, startDate, timezone } = this.state;
+    const { checked, radioIdSelected, startDate, timezone, pageSize } = this.state;
     return (
       <ContentPanel bodyStyles={{ padding: "initial" }} title="Schedule" titleSize="s">
         <div style={{ paddingLeft: "10px" }}>
@@ -125,6 +127,12 @@ export default class Schedule extends Component<ScheduleProps, ScheduleState> {
           <EuiSpacer size="m" />
           <EuiFormRow label={"Timezone"}>
             <EuiSelect id="timezone" options={timezones} value={timezone} onChange={this.onChangeTimezone} />
+          </EuiFormRow>
+          <EuiFormRow
+            label="Page per execution"
+            helpText={"The number of pages every execution processes. A larger number means faster execution and more cost on memory."}
+          >
+            <EuiFieldNumber min={1} placeholder={"1000"} value={pageSize} />
           </EuiFormRow>
         </div>
       </ContentPanel>
