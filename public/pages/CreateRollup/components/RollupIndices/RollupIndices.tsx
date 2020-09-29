@@ -14,7 +14,7 @@
  */
 
 import React, { ChangeEvent } from "react";
-import { EuiSpacer, EuiFormRow, EuiComboBox } from "@elastic/eui";
+import { EuiSpacer, EuiFormRow, EuiComboBox, EuiCallOut } from "@elastic/eui";
 import { ContentPanel } from "../../../../components/ContentPanel";
 
 interface RollupIndicesProps {
@@ -27,6 +27,10 @@ const RollupIndices = ({ rollupId, rollupIdError, onChange }: RollupIndicesProps
   <ContentPanel bodyStyles={{ padding: "initial" }} title="Indices" titleSize="s">
     <div style={{ paddingLeft: "10px" }}>
       <EuiSpacer size="s" />
+      <EuiCallOut color="warning">
+        <p>Indices cannot be changed once the job is created. Please ensure that you have correct spellings.</p>
+      </EuiCallOut>
+      <EuiSpacer size="m" />
       <EuiFormRow
         label="Source index"
         helpText="The index where this rollup job is performed on. Type in * as wildcard for index pattern."

@@ -130,7 +130,7 @@ export default class CreateRollup extends Component<CreateRollupProps, CreateRol
           </EuiFlexItem>
           <EuiFlexItem>
             <EuiTitle size="l">
-              <h1>Choose Indices</h1>
+              <h1>Set up Indices</h1>
             </EuiTitle>
             <EuiSpacer />
             <ConfigureRollup rollupId={rollupId} rollupIdError={rollupIdError} onChange={this.onChange} />

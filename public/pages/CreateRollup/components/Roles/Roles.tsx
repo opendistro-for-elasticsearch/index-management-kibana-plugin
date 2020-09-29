@@ -14,7 +14,7 @@
  */
 
 import React, { ChangeEvent, Component } from "react";
-import { EuiSpacer } from "@elastic/eui";
+import { EuiSpacer, EuiFormRow, EuiComboBox, EuiComboBoxOptionOption } from "@elastic/eui";
 import { ContentPanel } from "../../../../components/ContentPanel";
 
 interface RolesProps {
@@ -23,12 +23,48 @@ interface RolesProps {
   onChange: (value: ChangeEvent<HTMLInputElement>) => void;
 }
 
-export default class Roles extends Component<RolesProps> {
+interface RolesStates {
+  roles: EuiComboBoxOptionOption<String>[];
+}
+
+//TODO: Fetch roles from backend to fill in options
+const options = [
+  {
+    label: "Role1",
+  },
+  {
+    label: "Role2",
+  },
+  {
+    label: "Role3",
+  },
+];
+export default class Roles extends Component<RolesProps, RolesStates> {
+  constructor(props: RolesProps) {
+    super(props);
+
+    this.state = {
+      roles: [{ label: "Role1" }],
+    };
+  }
+  onChange = (selectedOptions: EuiComboBoxOptionOption<String>[]): void => {
+    this.setState({ roles: selectedOptions });
+  };
   render() {
+    const { roles } = this.state;
     return (
       <ContentPanel bodyStyles={{ padding: "initial" }} title="Roles" titleSize="s">
         <div style={{ paddingLeft: "10px" }}>
           <EuiSpacer size="s" />
+          <EuiFormRow label="Roles" helpText="Security roles have access to this rollup job.">
+            <EuiComboBox
+              placeholder="Select for roles"
+              options={options}
+              selectedOptions={roles}
+              onChange={this.onChange}
+              isClearable={true}
+            />
+          </EuiFormRow>
         </div>
       </ContentPanel>
     );

@@ -24,12 +24,12 @@ interface ConfigureRollupProps {
 }
 
 const ConfigureRollup = ({ rollupId, rollupIdError, onChange }: ConfigureRollupProps) => (
-  <ContentPanel bodyStyles={{ padding: "initial" }} title="Name and description" titleSize="s">
+  <ContentPanel bodyStyles={{ padding: "initial" }} title="Job name and description" titleSize="s">
     <div style={{ paddingLeft: "10px" }}>
       <EuiSpacer size="s" />
       <EuiFormRow
         label="Name"
-        helpText="Specify a unique and descriptive name. Allowed characters are..."
+        helpText="Specify a unique and descriptive name. Allowed characters are... Name cannot be changed after creation."
         isInvalid={!!rollupIdError}
         error={rollupIdError}
       >
