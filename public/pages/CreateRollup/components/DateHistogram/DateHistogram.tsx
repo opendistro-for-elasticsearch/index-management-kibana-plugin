@@ -14,8 +14,9 @@
  */
 
 import React, { ChangeEvent, Component } from "react";
-import { EuiSpacer, EuiFormRow, EuiComboBox, EuiSelect } from "@elastic/eui";
+import { EuiSpacer, EuiFormRow, EuiComboBox, EuiSelect, EuiText, EuiFlexGroup, EuiFlexItem, EuiFieldNumber } from "@elastic/eui";
 import { ContentPanel } from "../../../../components/ContentPanel";
+import { TimeunitOptions } from "../../utils/constants";
 
 interface DateHistogramProps {
   rollupId: string;
@@ -24,24 +25,10 @@ interface DateHistogramProps {
   // onChangeStateRadio: (optionId: string) => void;
   // stateRadioIdSelected: string;
 }
-const timeUnitOptions = [
-  { value: "ms", text: "Milliseconds" },
-  { value: "s", text: "Seconds" },
-  { value: "m", text: "Minutes" },
-  { value: "h", text: "Hours" },
-  { value: "d", text: "Days" },
-];
 
 export default class DateHistogram extends Component<DateHistogramProps> {
   render() {
-    const {
-      rollupIdError,
-      // stateRadioIdSelected
-    } = this.props;
-
-    // const currentRadio = { id: Radio.Current, label: "Fixed"};
-    // const stateRadio = { id: Radio.State, label: "Calender", };
-    // const radioOptions = [currentRadio, stateRadio];
+    const { rollupIdError } = this.props;
 
     return (
       <ContentPanel bodyStyles={{ padding: "initial" }} title="Date Histogram" titleSize="s">
@@ -57,15 +44,34 @@ export default class DateHistogram extends Component<DateHistogramProps> {
               // onCreateOption={onCreateOption}
             />
           </EuiFormRow>
-          <EuiSpacer size="s" />
-          {/*<EuiFormRow label="Interval type"  isInvalid={!!rollupIdError} error={rollupIdError}>*/}
-          {/*  <EuiRadioGroup options={radioOptions} idSelected={stateRadioIdSelected} onChange={this.props.onChangeStateRadio} />*/}
-          {/*</EuiFormRow>*/}
-          <EuiSpacer size="s" />
-          <EuiFormRow label="Rollup interval" isInvalid={!!rollupIdError} error={rollupIdError}>
+          <EuiSpacer size="m" />
+          <EuiFormRow label="Interval type" isInvalid={!!rollupIdError} error={rollupIdError}>
+            <EuiText>(Radio buttons here)</EuiText>
+          </EuiFormRow>
+          <EuiSpacer size="m" />
+          <EuiFlexGroup style={{ maxWidth: 300 }}>
+            <EuiFlexItem grow={false} style={{ width: 100 }}>
+              <EuiFormRow label="Interval" isInvalid={!!rollupIdError} error={rollupIdError}>
+                <EuiFieldNumber min={1} placeholder={42} />
+              </EuiFormRow>
+            </EuiFlexItem>
+            <EuiFlexItem>
+              <EuiFormRow hasEmptyLabelSpace={true}>
+                <EuiSelect
+                  id="selectTimeunit"
+                  options={TimeunitOptions}
+                  // value={value}
+                  // onChange={onChange}
+                />
+              </EuiFormRow>
+            </EuiFlexItem>
+          </EuiFlexGroup>
+
+          <EuiSpacer size="m" />
+          {/*Create monitor from alerting uses moment library for timezone*/}
+          <EuiFormRow label="Timezone">
             <EuiSelect
-              id="selectDocExample"
-              options={timeUnitOptions}
+              id="timezone"
               // value={value}
               // onChange={onChange}
             />

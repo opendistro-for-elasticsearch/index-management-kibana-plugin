@@ -14,7 +14,7 @@
  */
 
 import React, { ChangeEvent, Component } from "react";
-import { EuiSpacer } from "@elastic/eui";
+import { EuiSpacer, EuiBasicTable } from "@elastic/eui";
 import { ContentPanel } from "../../../../components/ContentPanel";
 
 interface AdvancedAggregationProps {
@@ -23,11 +23,37 @@ interface AdvancedAggregationProps {
   onChange: (value: ChangeEvent<HTMLInputElement>) => void;
 }
 
+const columns = [
+  {
+    field: "fieldname",
+    name: "Field Name",
+    sortable: true,
+  },
+  {
+    field: "fieldType",
+    name: "Field Type",
+    truncateText: true,
+  },
+  {
+    field: "aggregationMethod",
+    name: "Aggregation method",
+  },
+  {
+    field: "histogramInterval",
+    name: "Histogram Interval",
+  },
+  {
+    field: "actions",
+    name: "Actions",
+  },
+];
+
 export default class AdvancedAggregation extends Component<AdvancedAggregationProps> {
   render() {
     return (
       <ContentPanel bodyStyles={{ padding: "initial" }} title="Advanced aggregation - optional" titleSize="s">
         <div style={{ paddingLeft: "10px" }}>
+          <EuiBasicTable items={[]} rowHeader="fieldName" columns={columns} />
           <EuiSpacer size="s" />
         </div>
       </ContentPanel>

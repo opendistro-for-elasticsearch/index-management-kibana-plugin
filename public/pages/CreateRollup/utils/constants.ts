@@ -41,3 +41,11 @@ export const DEFAULT_ROLLUP = JSON.stringify(
   null,
   4
 );
+
+export const TimeunitOptions = [
+  { value: "ms", text: "Milliseconds" },
+  { value: "s", text: "Seconds" },
+  { value: "m", text: "Minutes" },
+  { value: "h", text: "Hours" },
+  { value: "d", text: "Days" },
+];
