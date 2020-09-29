@@ -25,6 +25,8 @@ import {
   EuiModalBody,
   EuiModalFooter,
   EuiButtonEmpty,
+  EuiFlexGroup,
+  EuiFlexItem,
 } from "@elastic/eui";
 import { ContentPanel } from "../../../../components/ContentPanel";
 import { EuiForm } from "@elastic/eui/src/components/form/form";
@@ -111,7 +113,17 @@ export default class AdvancedAggregation extends Component<AdvancedAggregationPr
               </EuiModal>
             </EuiOverlayMask>
           )}
-          <EuiButton onClick={this.showModal}>Add fields</EuiButton>
+          <EuiFlexGroup alignItems="center">
+            <EuiFlexItem>
+              <EuiSpacer />
+            </EuiFlexItem>
+            <EuiFlexItem grow={false}>
+              <EuiButton onClick={this.showModal}>Add fields</EuiButton>
+            </EuiFlexItem>
+            <EuiFlexItem>
+              <EuiSpacer />
+            </EuiFlexItem>
+          </EuiFlexGroup>
         </div>
       </ContentPanel>
     );
