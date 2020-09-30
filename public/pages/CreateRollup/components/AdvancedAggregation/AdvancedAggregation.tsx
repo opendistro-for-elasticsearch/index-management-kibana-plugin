@@ -36,9 +36,11 @@ import {
   EuiTableSortingType,
   EuiTableSelectionType,
 } from "@elastic/eui";
-import { ContentPanel } from "../../../../components/ContentPanel";
+import { ContentPanel, ContentPanelActions } from "../../../../components/ContentPanel";
 import { DEFAULT_PAGE_SIZE_OPTIONS } from "../../../Indices/utils/constants";
 import { ManagedCatIndex } from "../../../../../server/models/interfaces";
+import { ModalConsumer } from "../../../../components/Modal";
+import ApplyPolicyModal from "../../../Indices/components/ApplyPolicyModal";
 
 interface AdvancedAggregationProps {
   rollupId: string;
@@ -180,7 +182,27 @@ export default class AdvancedAggregation extends Component<AdvancedAggregationPr
     };
 
     return (
-      <ContentPanel bodyStyles={{ padding: "initial" }} title="Advanced aggregation - optional" titleSize="s">
+      <ContentPanel
+        actions={
+          <ModalConsumer>
+            {({ onShow }) => (
+              <ContentPanelActions
+                actions={[
+                  {
+                    text: "Add field",
+                    buttonProps: {
+                      onClick: () => this.showModal(),
+                    },
+                  },
+                ]}
+              />
+            )}
+          </ModalConsumer>
+        }
+        bodyStyles={{ padding: "initial" }}
+        title="Advanced aggregation - optional"
+        titleSize="s"
+      >
         <div style={{ paddingLeft: "10px" }}>
           <EuiBasicTable items={[]} rowHeader="fieldName" columns={aggregationColumns} noItemsMessage="No field added for aggregation" />
           <EuiSpacer size="s" />

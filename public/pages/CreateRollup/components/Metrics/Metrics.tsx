@@ -22,7 +22,37 @@ interface MetricsProps {
   rollupIdError: string;
   onChange: (value: ChangeEvent<HTMLInputElement>) => void;
 }
-
+const metricColumns = [
+  {
+    field: "numericField",
+    name: "Numeric field",
+    sortable: true,
+  },
+  {
+    field: "min",
+    name: "Min",
+  },
+  {
+    field: "max",
+    name: "Max",
+  },
+  {
+    field: "sum",
+    name: "Sum",
+  },
+  {
+    field: "avg",
+    name: "Avg",
+  },
+  {
+    field: "valueCount",
+    name: "Value Count",
+  },
+  {
+    field: "actions",
+    name: "Actions",
+  },
+];
 export default class Metrics extends Component<MetricsProps> {
   render() {
     return (
