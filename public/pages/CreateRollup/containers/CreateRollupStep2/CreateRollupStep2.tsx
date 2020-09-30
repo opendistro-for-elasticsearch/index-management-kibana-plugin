@@ -20,7 +20,7 @@ import { RouteComponentProps } from "react-router-dom";
 import { RollupService } from "../../../../services";
 import { BREADCRUMBS, ROUTES } from "../../../../utils/constants";
 import CreateRollupSteps from "../../components/CreateRollupSteps";
-import DateHistogram from "../../components/DateHistogram";
+import TimeAggregation from "../../components/TimeAggregations";
 
 import { DEFAULT_ROLLUP } from "../../utils/constants";
 import AdvancedAggregation from "../../components/AdvancedAggregation";
@@ -109,12 +109,20 @@ export default class CreateRollupStep2 extends Component<CreateRollupProps, Crea
           <EuiFlexItem style={{ maxWidth: 300 }} grow={false}>
             <CreateRollupSteps step={2} />
           </EuiFlexItem>
+
           <EuiFlexItem>
             <EuiTitle size="l">
               <h1>Histogram aggregation on a date</h1>
             </EuiTitle>
             <EuiSpacer />
-            <DateHistogram rollupId={rollupId} rollupIdError={rollupIdError} onChange={this.onChange} />
+            <EuiCallOut color="warning">
+              <p>
+                Aggregations and metrics cannot be changed once the job is created. Please ensure that you select correct fields and
+                metrics.
+              </p>
+            </EuiCallOut>
+            <EuiSpacer />
+            <TimeAggregation rollupId={rollupId} rollupIdError={rollupIdError} onChange={this.onChange} />
             <EuiSpacer />
             <AdvancedAggregation rollupId={rollupId} rollupIdError={rollupIdError} onChange={this.onChange} />
             <EuiSpacer />

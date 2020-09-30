@@ -24,7 +24,7 @@ import { getErrorMessage } from "../../../../utils/helpers";
 import { Rollup } from "../../../../../models/interfaces";
 import RollupIndices from "../../components/RollupIndices";
 import CreateRollupSteps from "../../components/CreateRollupSteps";
-import DateHistogram from "../../components/DateHistogram";
+import TimeAggregation from "../../components/TimeAggregations";
 import { DEFAULT_ROLLUP } from "../../utils/constants";
 import HistogramAndMetrics from "../../components/HistogramAndMetrics";
 import JobNameAndIndices from "../../components/JobNameAndIndices";

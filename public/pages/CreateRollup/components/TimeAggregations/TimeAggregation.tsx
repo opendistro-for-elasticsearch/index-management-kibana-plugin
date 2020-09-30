@@ -14,29 +14,18 @@
  */
 
 import React, { ChangeEvent, Component } from "react";
-import {
-  EuiSpacer,
-  EuiFormRow,
-  EuiComboBox,
-  EuiSelect,
-  EuiText,
-  EuiFlexGroup,
-  EuiFlexItem,
-  EuiFieldNumber,
-  EuiRadioGroup,
-} from "@elastic/eui";
+import { EuiSpacer, EuiFormRow, EuiComboBox, EuiSelect, EuiFlexGroup, EuiFlexItem, EuiFieldNumber, EuiRadioGroup } from "@elastic/eui";
 import { ContentPanel } from "../../../../components/ContentPanel";
 import { CalenderTimeunitOptions, FixedTimeunitOptions, TimezoneOptions } from "../../utils/constants";
-import moment from "moment";
 
-interface DateHistogramProps {
+interface TimeAggregationProps {
   rollupId: string;
   rollupIdError: string;
   onChange: (value: ChangeEvent<HTMLInputElement>) => void;
   // onChangeStateRadio: (optionId: string) => void;
   // stateRadioIdSelected: string;
 }
-interface DateHistogramState {
+interface TimeAggregationState {
   intervalType: string;
   timezone: number;
 }
@@ -50,8 +39,8 @@ const radios = [
     label: "Calender",
   },
 ];
-export default class DateHistogram extends Component<DateHistogramProps, DateHistogramState> {
-  constructor(props: DateHistogramProps) {
+export default class TimeAggregation extends Component<TimeAggregationProps, TimeAggregationState> {
+  constructor(props: TimeAggregationProps) {
     super(props);
 
     this.state = {
@@ -67,11 +56,11 @@ export default class DateHistogram extends Component<DateHistogramProps, DateHis
     const { rollupIdError } = this.props;
     const { intervalType, timezone } = this.state;
     return (
-      <ContentPanel bodyStyles={{ padding: "initial" }} title="Date Histogram" titleSize="s">
+      <ContentPanel bodyStyles={{ padding: "initial" }} title="Time aggregation" titleSize="s">
         {/*<EuiFormHelpText> Rolling up by a date dimension is required</EuiFormHelpText>*/}
         <div style={{ paddingLeft: "10px" }}>
           <EuiSpacer size="s" />
-          <EuiFormRow label="Timestamp" isInvalid={!!rollupIdError} error={rollupIdError}>
+          <EuiFormRow label="Timestamp field" isInvalid={!!rollupIdError} error={rollupIdError}>
             <EuiComboBox
               placeholder="Select timestamp"
               // options={timeUnitOptions}
@@ -88,7 +77,7 @@ export default class DateHistogram extends Component<DateHistogramProps, DateHis
           <EuiFlexGroup style={{ maxWidth: 300 }}>
             <EuiFlexItem grow={false} style={{ width: 100 }}>
               <EuiFormRow label="Interval" isInvalid={!!rollupIdError} error={rollupIdError}>
-                <EuiFieldNumber min={1} placeholder={2} />
+                <EuiFieldNumber min={1} placeholder="2" />
               </EuiFormRow>
             </EuiFlexItem>
             <EuiFlexItem>

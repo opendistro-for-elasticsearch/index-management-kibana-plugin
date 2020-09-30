@@ -13,6 +13,6 @@
  * permissions and limitations under the License.
  */
 
-import DateHistogram from "./DateHistogram";
+import TimeAggregation from "./TimeAggregation";
 
-export default DateHistogram;
+export default TimeAggregation;
