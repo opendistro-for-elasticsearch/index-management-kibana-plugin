@@ -32,8 +32,13 @@ import {
   EuiFieldSearch,
   EuiComboBox,
   EuiComboBoxOptionOption,
+  Pagination,
+  EuiTableSortingType,
+  EuiTableSelectionType,
 } from "@elastic/eui";
 import { ContentPanel } from "../../../../components/ContentPanel";
+import { DEFAULT_PAGE_SIZE_OPTIONS } from "../../../Indices/utils/constants";
+import { ManagedCatIndex } from "../../../../../server/models/interfaces";
 
 interface AdvancedAggregationProps {
   rollupId: string;
@@ -45,6 +50,7 @@ interface AdvancedAggregationState {
   isModalVisible: boolean;
   searchText: string;
   selectedFieldType: EuiComboBoxOptionOption<String>[];
+  selectedFields: ManagedCatIndex[];
 }
 
 const tempFieldTypeOptions = [{ label: "string" }, { label: "location" }, { label: "number" }, { label: "timestamp" }];
@@ -53,7 +59,8 @@ const addFields = (
   searchText: string,
   onChangeSearch: (value: ChangeEvent<HTMLInputElement>) => void,
   selectedFieldType: EuiComboBoxOptionOption<String>[],
-  onChangeFieldType: (options: EuiComboBoxOptionOption<String>[]) => void
+  onChangeFieldType: (options: EuiComboBoxOptionOption<String>[]) => void,
+  selection: EuiTableSelectionType<ManagedCatIndex>
 ) => (
   <EuiForm title={"Add fields"}>
     <EuiFlexGroup>
@@ -71,10 +78,19 @@ const addFields = (
         />
       </EuiFlexItem>
     </EuiFlexGroup>
+    {/*TODO: create fake list of items, and figure out how to retrieve the selections for table*/}
+    <EuiBasicTable
+      items={[]}
+      rowHeader="fieldName"
+      columns={addFieldsColumns}
+      noItemsMessage="No field added for aggregation"
+      isSelectable={true}
+      selection={selection}
+    />
   </EuiForm>
 );
 
-const columns = [
+const aggregationColumns = [
   {
     field: "sequence",
     name: "Sequence",
@@ -103,6 +119,18 @@ const columns = [
   },
 ];
 
+const addFieldsColumns = [
+  {
+    field: "fieldname",
+    name: "Field name",
+    sortable: true,
+  },
+  {
+    field: "fieldType",
+    name: "Field type",
+  },
+];
+
 export default class AdvancedAggregation extends Component<AdvancedAggregationProps, AdvancedAggregationState> {
   constructor(props: AdvancedAggregationProps) {
     super(props);
@@ -111,6 +139,7 @@ export default class AdvancedAggregation extends Component<AdvancedAggregationPr
       isModalVisible: false,
       searchText: "",
       selectedFieldType: [],
+      selectedFields: [],
     };
   }
 
@@ -126,22 +155,45 @@ export default class AdvancedAggregation extends Component<AdvancedAggregationPr
     this.setState({ selectedFieldType: options });
   };
 
+  onSelectionChange = (selectedFields: ManagedCatIndex[]): void => {
+    this.setState({ selectedFields });
+  };
+
   render() {
     const { isModalVisible, searchText, selectedFieldType } = this.state;
+    // const pagination: Pagination = {
+    //   pageIndex: page,
+    //   pageSize: size,
+    //   pageSizeOptions: DEFAULT_PAGE_SIZE_OPTIONS,
+    //   totalItemCount: totalIndices,
+    // };
+    //
+    // const sorting: EuiTableSortingType<ManagedCatIndex> = {
+    //   sort: {
+    //     direction: sortDirection,
+    //     field: sortField,
+    //   },
+    // };
+
+    const selection: EuiTableSelectionType<ManagedCatIndex> = {
+      onSelectionChange: this.onSelectionChange,
+    };
 
     return (
       <ContentPanel bodyStyles={{ padding: "initial" }} title="Advanced aggregation - optional" titleSize="s">
         <div style={{ paddingLeft: "10px" }}>
-          <EuiBasicTable items={[]} rowHeader="fieldName" columns={columns} noItemsMessage="No field added for aggregation" />
+          <EuiBasicTable items={[]} rowHeader="fieldName" columns={aggregationColumns} noItemsMessage="No field added for aggregation" />
           <EuiSpacer size="s" />
           {isModalVisible && (
             <EuiOverlayMask>
-              <EuiModal onClose={this.closeModal} maxWidth={false}>
+              <EuiModal onClose={this.closeModal} maxWidth={700}>
                 <EuiModalHeader>
                   <EuiModalHeaderTitle>Add fields</EuiModalHeaderTitle>
                 </EuiModalHeader>
 
-                <EuiModalBody>{addFields(searchText, this.onChangeSearch, selectedFieldType, this.onChangeFieldType)}</EuiModalBody>
+                <EuiModalBody>
+                  {addFields(searchText, this.onChangeSearch, selectedFieldType, this.onChangeFieldType, selection)}
+                </EuiModalBody>
 
                 <EuiModalFooter>
                   <EuiButtonEmpty onClick={this.closeModal}>Cancel</EuiButtonEmpty>
