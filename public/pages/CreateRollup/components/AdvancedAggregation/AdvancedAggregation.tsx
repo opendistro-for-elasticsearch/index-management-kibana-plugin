@@ -29,7 +29,9 @@ import {
   EuiFlexItem,
   EuiForm,
   EuiFormRow,
-  EuiFieldText,
+  EuiFieldSearch,
+  EuiComboBox,
+  EuiComboBoxOptionOption,
 } from "@elastic/eui";
 import { ContentPanel } from "../../../../components/ContentPanel";
 
@@ -41,13 +43,34 @@ interface AdvancedAggregationProps {
 
 interface AdvancedAggregationState {
   isModalVisible: boolean;
+  searchText: string;
+  selectedFieldType: EuiComboBoxOptionOption<String>[];
 }
 
-const formSample = (
+const tempFieldTypeOptions = [{ label: "string" }, { label: "location" }, { label: "number" }, { label: "timestamp" }];
+
+const addFields = (
+  searchText: string,
+  onChangeSearch: (value: ChangeEvent<HTMLInputElement>) => void,
+  selectedFieldType: EuiComboBoxOptionOption<String>[],
+  onChangeFieldType: (options: EuiComboBoxOptionOption<String>[]) => void
+) => (
   <EuiForm title={"Add fields"}>
-    <EuiFormRow label="A text field">
-      <EuiFieldText name="popfirst" />
-    </EuiFormRow>
+    <EuiFlexGroup>
+      <EuiFlexItem>
+        <EuiFieldSearch placeholder="Search field name" value={searchText} onChange={onChangeSearch} isClearable={true} />
+      </EuiFlexItem>
+      <EuiFlexItem grow={false}>
+        <EuiComboBox
+          placeholder="Field type"
+          options={tempFieldTypeOptions}
+          selectedOptions={selectedFieldType}
+          onChange={onChangeFieldType}
+          isClearable={true}
+          singleSelection={true}
+        />
+      </EuiFlexItem>
+    </EuiFlexGroup>
   </EuiForm>
 );
 
@@ -86,6 +109,8 @@ export default class AdvancedAggregation extends Component<AdvancedAggregationPr
 
     this.state = {
       isModalVisible: false,
+      searchText: "",
+      selectedFieldType: [],
     };
   }
 
@@ -93,8 +118,16 @@ export default class AdvancedAggregation extends Component<AdvancedAggregationPr
 
   showModal = () => this.setState({ isModalVisible: true });
 
+  onChangeSearch = (e: ChangeEvent<HTMLInputElement>): void => {
+    this.setState({ searchText: e.target.value });
+  };
+
+  onChangeFieldType = (options: EuiComboBoxOptionOption<String>[]): void => {
+    this.setState({ selectedFieldType: options });
+  };
+
   render() {
-    const { isModalVisible } = this.state;
+    const { isModalVisible, searchText, selectedFieldType } = this.state;
 
     return (
       <ContentPanel bodyStyles={{ padding: "initial" }} title="Advanced aggregation - optional" titleSize="s">
@@ -103,12 +136,12 @@ export default class AdvancedAggregation extends Component<AdvancedAggregationPr
           <EuiSpacer size="s" />
           {isModalVisible && (
             <EuiOverlayMask>
-              <EuiModal onClose={this.closeModal} initialFocus="[name=popswitch]">
+              <EuiModal onClose={this.closeModal} maxWidth={800}>
                 <EuiModalHeader>
-                  <EuiModalHeaderTitle>Modal title</EuiModalHeaderTitle>
+                  <EuiModalHeaderTitle>Add fields</EuiModalHeaderTitle>
                 </EuiModalHeader>
 
-                <EuiModalBody>{formSample}</EuiModalBody>
+                <EuiModalBody>{addFields(searchText, this.onChangeSearch, selectedFieldType, this.onChangeFieldType)}</EuiModalBody>
 
                 <EuiModalFooter>
                   <EuiButtonEmpty onClick={this.closeModal}>Cancel</EuiButtonEmpty>

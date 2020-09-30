@@ -60,7 +60,7 @@ export default class TimeAggregation extends Component<TimeAggregationProps, Tim
         {/*<EuiFormHelpText> Rolling up by a date dimension is required</EuiFormHelpText>*/}
         <div style={{ paddingLeft: "10px" }}>
           <EuiSpacer size="s" />
-          <EuiFormRow label="Timestamp" isInvalid={!!rollupIdError} error={rollupIdError}>
+          <EuiFormRow label="Timestamp field" isInvalid={!!rollupIdError} error={rollupIdError}>
             <EuiComboBox
               placeholder="Select timestamp"
               // options={timeUnitOptions}
