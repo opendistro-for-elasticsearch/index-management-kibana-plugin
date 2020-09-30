@@ -57,10 +57,10 @@ const addFields = (
 ) => (
   <EuiForm title={"Add fields"}>
     <EuiFlexGroup>
-      <EuiFlexItem>
+      <EuiFlexItem grow={2}>
         <EuiFieldSearch placeholder="Search field name" value={searchText} onChange={onChangeSearch} isClearable={true} />
       </EuiFlexItem>
-      <EuiFlexItem grow={false}>
+      <EuiFlexItem grow={1}>
         <EuiComboBox
           placeholder="Field type"
           options={tempFieldTypeOptions}
@@ -136,7 +136,7 @@ export default class AdvancedAggregation extends Component<AdvancedAggregationPr
           <EuiSpacer size="s" />
           {isModalVisible && (
             <EuiOverlayMask>
-              <EuiModal onClose={this.closeModal} maxWidth={800}>
+              <EuiModal onClose={this.closeModal} maxWidth={false}>
                 <EuiModalHeader>
                   <EuiModalHeaderTitle>Add fields</EuiModalHeaderTitle>
                 </EuiModalHeader>
