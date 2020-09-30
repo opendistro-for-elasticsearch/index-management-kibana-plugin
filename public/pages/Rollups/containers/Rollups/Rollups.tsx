@@ -39,10 +39,15 @@ import {
   // @ts-ignore
   Pagination,
   EuiTableSelectionType,
+  EuiFlexItem,
+  EuiFieldSearch,
+  EuiPagination,
+  EuiFlexGroup,
 } from "@elastic/eui";
 import { rollupsColumns } from "../../utils/constants";
 import { RollupService } from "../../../../services";
 import RollupEmptyPrompt from "../../components/RollupEmptyPrompt";
+import EuiRefreshPicker from "../../../../temporary/EuiRefreshPicker";
 
 interface RollupsProps extends RouteComponentProps {
   rollupService: RollupService;
@@ -149,6 +154,7 @@ export default class Rollups extends Component<RollupsProps, RollupsState> {
 
     const filterIsApplied = !!search;
     const page = Math.floor(from / size);
+    const pageCount = Math.ceil(totalRollups / size) || 1;
 
     const pagination: Pagination = {
       pageIndex: page,
@@ -176,13 +182,6 @@ export default class Rollups extends Component<RollupsProps, RollupsState> {
               <ContentPanelActions
                 actions={[
                   {
-                    text: "Actions",
-                    buttonProps: {
-                      disabled: !selectedItems.length,
-                      onClick: () => onShow(ApplyPolicyModal, { indices: selectedItems.map((item: ManagedCatIndex) => item.index) }),
-                    },
-                  },
-                  {
                     text: "Disable",
                     buttonProps: {
                       disabled: !selectedItems.length,
@@ -196,6 +195,16 @@ export default class Rollups extends Component<RollupsProps, RollupsState> {
                       onClick: () => onShow(ApplyPolicyModal, { indices: selectedItems.map((item: ManagedCatIndex) => item.index) }),
                     },
                   },
+                  {
+                    text: "Actions",
+                    buttonProps: {
+                      iconType: "arrowDown",
+                      iconSide: "right",
+                      disabled: !selectedItems.length,
+                      onClick: () => onShow(ApplyPolicyModal, { indices: selectedItems.map((item: ManagedCatIndex) => item.index) }),
+                    },
+                  },
+
                   {
                     text: "Create rollup job",
                     buttonProps: {
@@ -211,14 +220,21 @@ export default class Rollups extends Component<RollupsProps, RollupsState> {
         bodyStyles={{ padding: "initial" }}
         title="Rollup jobs"
       >
-        <IndexControls
-          activePage={page}
-          pageCount={Math.ceil(totalRollups / size) || 1}
-          search={search}
-          onSearchChange={this.onSearchChange}
-          onPageClick={this.onPageClick}
-          onRefresh={this.getRollups}
-        />
+        <EuiFlexGroup style={{ padding: "0px 5px" }}>
+          <EuiFlexItem>
+            <EuiFieldSearch fullWidth={true} value={search} placeholder="Search" onChange={this.onSearchChange} />
+          </EuiFlexItem>
+          {pageCount > 1 && (
+            <EuiFlexItem grow={false} style={{ justifyContent: "center" }}>
+              <EuiPagination
+                pageCount={pageCount}
+                activePage={page}
+                onPageClick={this.onPageClick}
+                data-test-subj="indexControlsPagination"
+              />
+            </EuiFlexItem>
+          )}
+        </EuiFlexGroup>
 
         <EuiHorizontalRule margin="xs" />
 
