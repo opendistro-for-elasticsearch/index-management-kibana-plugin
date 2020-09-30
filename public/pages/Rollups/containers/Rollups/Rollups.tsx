@@ -200,6 +200,7 @@ export default class Rollups extends Component<RollupsProps, RollupsState> {
                     text: "Create rollup job",
                     buttonProps: {
                       onClick: () => this.onClickCreate(),
+                      fill: true,
                     },
                   },
                 ]}

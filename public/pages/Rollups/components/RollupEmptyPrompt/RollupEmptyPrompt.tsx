@@ -41,11 +41,7 @@ const getActions: React.SFC<RollupEmptyPromptProps> = ({ filterIsApplied, loadin
     );
   }
 
-  return (
-    <EuiButton fill href={`${PLUGIN_NAME}#${ROUTES.CREATE_ROLLUP}`}>
-      Create rollup
-    </EuiButton>
-  );
+  return <EuiButton href={`${PLUGIN_NAME}#${ROUTES.CREATE_ROLLUP}`}>Create rollup</EuiButton>;
 };
 
 interface RollupEmptyPromptProps {
