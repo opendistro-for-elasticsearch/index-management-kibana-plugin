@@ -65,12 +65,53 @@ interface RollupsState {
 
 let SampleGetRollupJobs: RollupItem[] = [
   {
-    id: "1",
+    id: "rollup-job-1",
     seqNo: 1,
     primaryTerm: 1,
     rollup: {
       source_index: "stats-*",
       target_index: "rollup-stats",
+      schedule: {
+        interval: {
+          period: 1,
+          unit: "Days",
+        },
+      },
+      run_as_user: "dbbaughe",
+      roles: ["admin"],
+      description: "Rolls up our daily indices into monthly summarized views",
+      enabled: true,
+      error_notification: {
+        destination: { slack: { url: "..." } },
+        message_template: { source: "..." },
+      },
+      page_size: 200,
+      delay: "6h",
+      dimensions: {
+        date_histogram: {
+          field: "timestamp",
+          fixed_interval: "30d",
+          timezone: "America/Los_Angeles",
+        },
+        terms: {
+          fields: ["customer_city"],
+        },
+      },
+      metrics: [
+        {
+          field: "price",
+          metric_aggregations: ["avg", "min", "max", "sum"],
+        },
+      ],
+    },
+  },
+  {
+    id: "rollup-job-2",
+    seqNo: 2,
+    primaryTerm: 2,
+    rollup: {
+      source_index: "Pricehistory",
+      target_index: "All-history",
       schedule: {
         interval: {
           period: 1,
@@ -122,7 +163,7 @@ export default class Rollups extends Component<RollupsProps, RollupsState> {
       sortDirection,
       selectedItems: [],
       rollups: SampleGetRollupJobs,
-      loadingRollups: true,
+      loadingRollups: false,
     };
 
     this.getRollups = _.debounce(this.getRollups, 500, { leading: true });
@@ -167,6 +208,11 @@ export default class Rollups extends Component<RollupsProps, RollupsState> {
   onClickCreate = (): void => {
     this.props.history.push(ROUTES.CREATE_ROLLUP);
   };
+
+  //TODO: Complete this function to disable selected rollup jobs
+  onDisable = (): void => {};
+
+  onEnable = (): void => {};
 
   onTableChange = ({ page: tablePage, sort }: Criteria<ManagedCatIndex>): void => {
     const { index: page, size } = tablePage;
@@ -228,14 +274,14 @@ export default class Rollups extends Component<RollupsProps, RollupsState> {
                     text: "Disable",
                     buttonProps: {
                       disabled: !selectedItems.length,
-                      onClick: () => onShow(ApplyPolicyModal, { indices: selectedItems.map((item: RollupItem) => item.id) }),
+                      onClick: () => this.onDisable,
                     },
                   },
                   {
                     text: "Enable",
                     buttonProps: {
                       disabled: !selectedItems.length,
-                      onClick: () => onShow(ApplyPolicyModal, { indices: selectedItems.map((item: RollupItem) => item.id) }),
+                      onClick: () => this.onEnable,
                     },
                   },
                   {

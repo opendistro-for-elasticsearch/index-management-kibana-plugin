@@ -31,26 +31,26 @@ export const DEFAULT_QUERY_PARAMS = {
 
 export const rollupsColumns: EuiTableFieldDataColumnType<RollupItem>[] = [
   {
-    field: "name",
+    field: "id",
     name: "Name",
     sortable: true,
     textOnly: true,
   },
   {
-    field: "source_index",
+    field: "rollup.source_index",
     name: "Source index",
     sortable: true,
     textOnly: true,
     align: "right",
   },
   {
-    field: "target_index",
+    field: "rollup.target_index",
     name: "Target index",
     sortable: true,
     textOnly: true,
   },
   {
-    field: "enabled",
+    field: "rollup.enabled",
     name: "Job state",
     sortable: true,
     textOnly: true,
