@@ -87,7 +87,7 @@ const jobStartSelect = (
 const jobEndSelect = (endDate: Moment, handleDateChange: (value: Moment) => void) => (
   <React.Fragment>
     <EuiFormRow label="Job ends on - optional">
-      <EuiDatePicker showTimeSelect selected={endDate} onChange={handleDateChange} />
+      <EuiDatePicker showTimeSelect selected={endDate} onChange={handleDateChange} onClear={() => handleDateChange(null)} />
     </EuiFormRow>
 
     <EuiSpacer size="m" />
