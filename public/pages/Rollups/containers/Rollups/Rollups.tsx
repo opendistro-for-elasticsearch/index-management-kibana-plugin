@@ -27,7 +27,6 @@ import { DEFAULT_PAGE_SIZE_OPTIONS, DEFAULT_QUERY_PARAMS } from "../../../Indice
 import { ContentPanel, ContentPanelActions } from "../../../../components/ContentPanel";
 import { ModalConsumer } from "../../../../components/Modal";
 import ApplyPolicyModal from "../../../Indices/components/ApplyPolicyModal";
-import IndexControls from "../../../Indices/components/IndexControls";
 import { RouteComponentProps } from "react-router-dom";
 import {
   EuiBasicTable,
@@ -47,7 +46,6 @@ import {
 import { rollupsColumns } from "../../utils/constants";
 import { RollupService } from "../../../../services";
 import RollupEmptyPrompt from "../../components/RollupEmptyPrompt";
-import EuiRefreshPicker from "../../../../temporary/EuiRefreshPicker";
 
 interface RollupsProps extends RouteComponentProps {
   rollupService: RollupService;
