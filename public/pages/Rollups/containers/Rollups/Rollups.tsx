@@ -14,11 +14,9 @@
  */
 
 import React, { Component } from "react";
-import { getURLQueryParams } from "../../../Indices/utils/helpers";
 import _ from "lodash";
 import chrome from "ui/chrome";
 import { BREADCRUMBS, ROUTES } from "../../../../utils/constants";
-import { IndicesQueryParams } from "../../../Indices/models/interfaces";
 import queryString from "query-string";
 import { toastNotifications } from "ui/notify";
 import { getErrorMessage } from "../../../../utils/helpers";
@@ -46,6 +44,8 @@ import {
 import { rollupsColumns } from "../../utils/constants";
 import { RollupService } from "../../../../services";
 import RollupEmptyPrompt from "../../components/RollupEmptyPrompt";
+import { RollupItem, RollupsQueryParams } from "../../models/interfaces";
+import { getURLQueryParams } from "../../utils/helpers";
 
 interface RollupsProps extends RouteComponentProps {
   rollupService: RollupService;
@@ -56,12 +56,56 @@ interface RollupsState {
   from: number;
   size: number;
   search: string;
-  sortField: keyof ManagedCatIndex;
+  sortField: keyof RollupItem;
   sortDirection: Direction;
-  selectedItems: ManagedCatIndex[];
-  rollups: ManagedCatIndex[];
+  selectedItems: RollupItem[];
+  rollups: RollupItem[];
   loadingRollups: boolean;
 }
+
+let SampleGetRollupJobs: RollupItem[] = [
+  {
+    id: "1",
+    seqNo: 1,
+    primaryTerm: 1,
+    rollup: {
+      source_index: "stats-*",
+      target_index: "rollup-stats",
+      schedule: {
+        interval: {
+          period: 1,
+          unit: "Days",
+        },
+      },
+      run_as_user: "dbbaughe",
+      roles: ["admin"],
+      description: "Rolls up our daily indices into monthly summarized views",
+      enabled: true,
+      error_notification: {
+        destination: { slack: { url: "..." } },
+        message_template: { source: "..." },
+      },
+      page_size: 200,
+      delay: "6h",
+      dimensions: {
+        date_histogram: {
+          field: "timestamp",
+          fixed_interval: "30d",
+          timezone: "America/Los_Angeles",
+        },
+        terms: {
+          fields: ["customer_city"],
+        },
+      },
+      metrics: [
+        {
+          field: "price",
+          metric_aggregations: ["avg", "min", "max", "sum"],
+        },
+      ],
+    },
+  },
+];
 
 export default class Rollups extends Component<RollupsProps, RollupsState> {
   constructor(props: RollupsProps) {
@@ -70,14 +114,14 @@ export default class Rollups extends Component<RollupsProps, RollupsState> {
     const { from, size, search, sortField, sortDirection } = getURLQueryParams(this.props.location);
 
     this.state = {
-      totalRollups: 0,
+      totalRollups: 1,
       from,
       size,
       search,
       sortField,
       sortDirection,
       selectedItems: [],
-      rollups: [],
+      rollups: SampleGetRollupJobs,
       loadingRollups: true,
     };
 
@@ -86,18 +130,18 @@ export default class Rollups extends Component<RollupsProps, RollupsState> {
 
   async componentDidMount() {
     chrome.breadcrumbs.set([BREADCRUMBS.INDEX_MANAGEMENT, BREADCRUMBS.ROLLUPS]);
-    await this.getRollups();
+    // await this.getRollups();
   }
 
   async componentDidUpdate(prevProps: RollupsProps, prevState: RollupsState) {
-    const prevQuery = Rollups.getQueryObjectFromState(prevState);
-    const currQuery = Rollups.getQueryObjectFromState(this.state);
-    if (!_.isEqual(prevQuery, currQuery)) {
-      await this.getRollups();
-    }
+    // const prevQuery = Rollups.getQueryObjectFromState(prevState);
+    // const currQuery = Rollups.getQueryObjectFromState(this.state);
+    // if (!_.isEqual(prevQuery, currQuery)) {
+    //   await this.getRollups();
+    // }
   }
 
-  static getQueryObjectFromState({ from, size, search, sortField, sortDirection }: RollupsState): IndicesQueryParams {
+  static getQueryObjectFromState({ from, size, search, sortField, sortDirection }: RollupsState): RollupsQueryParams {
     return { from, size, search, sortField, sortDirection };
   }
 
@@ -130,7 +174,7 @@ export default class Rollups extends Component<RollupsProps, RollupsState> {
     this.setState({ from: page * size, size, sortField, sortDirection });
   };
 
-  onSelectionChange = (selectedItems: ManagedCatIndex[]): void => {
+  onSelectionChange = (selectedItems: RollupItem[]): void => {
     this.setState({ selectedItems });
   };
 
@@ -161,16 +205,17 @@ export default class Rollups extends Component<RollupsProps, RollupsState> {
       totalItemCount: totalRollups,
     };
 
-    const sorting: EuiTableSortingType<ManagedCatIndex> = {
+    const sorting: EuiTableSortingType<RollupItem> = {
       sort: {
         direction: sortDirection,
         field: sortField,
       },
     };
 
-    const selection: EuiTableSelectionType<ManagedCatIndex> = {
+    const selection: EuiTableSelectionType<RollupItem> = {
       onSelectionChange: this.onSelectionChange,
     };
+
     //TODO: Add action buttons here
     return (
       <ContentPanel
@@ -183,14 +228,14 @@ export default class Rollups extends Component<RollupsProps, RollupsState> {
                     text: "Disable",
                     buttonProps: {
                       disabled: !selectedItems.length,
-                      onClick: () => onShow(ApplyPolicyModal, { indices: selectedItems.map((item: ManagedCatIndex) => item.index) }),
+                      onClick: () => onShow(ApplyPolicyModal, { indices: selectedItems.map((item: RollupItem) => item.id) }),
                     },
                   },
                   {
                     text: "Enable",
                     buttonProps: {
                       disabled: !selectedItems.length,
-                      onClick: () => onShow(ApplyPolicyModal, { indices: selectedItems.map((item: ManagedCatIndex) => item.index) }),
+                      onClick: () => onShow(ApplyPolicyModal, { indices: selectedItems.map((item: RollupItem) => item.id) }),
                     },
                   },
                   {
@@ -199,7 +244,7 @@ export default class Rollups extends Component<RollupsProps, RollupsState> {
                       iconType: "arrowDown",
                       iconSide: "right",
                       disabled: !selectedItems.length,
-                      onClick: () => onShow(ApplyPolicyModal, { indices: selectedItems.map((item: ManagedCatIndex) => item.index) }),
+                      onClick: () => onShow(ApplyPolicyModal, { indices: selectedItems.map((item: RollupItem) => item.id) }),
                     },
                   },
 
@@ -239,7 +284,7 @@ export default class Rollups extends Component<RollupsProps, RollupsState> {
         <EuiBasicTable
           columns={rollupsColumns}
           isSelectable={true}
-          itemId="index"
+          itemId="id"
           items={rollups}
           noItemsMessage={<RollupEmptyPrompt filterIsApplied={filterIsApplied} loading={loadingRollups} resetFilters={this.resetFilters} />}
           onChange={this.onTableChange}

@@ -15,6 +15,7 @@
 
 import { IndexService, ManagedIndexService, PolicyService } from "../services";
 import { DocumentPolicy, ManagedIndexItem } from "../../models/interfaces";
+import { RollupItem } from "../../public/pages/Rollups/models/interfaces";
 
 export interface NodeServices {
   indexService: IndexService;
@@ -61,7 +62,7 @@ export interface GetIndicesResponse {
   totalIndices: number;
 }
 export interface RollupJobsResponse {
-  rollups: ManagedCatIndex[];
+  rollups: RollupItem[];
   totalRollups: number;
 }
 

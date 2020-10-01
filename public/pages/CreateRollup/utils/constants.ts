@@ -13,34 +13,44 @@
  * permissions and limitations under the License.
  */
 
-export const DEFAULT_ROLLUP = JSON.stringify(
-  {
-    rollup: {
-      source_index: "logstash-1", // or "log*" or "some-alias" or "logstash-*, something"
-      target_index: "rollup-logstash",
-      page_size: 100,
-      delay: "10m",
-      schedule: {
-        interval: {
-          start_time: 1553112384,
-          period: 1,
-          unit: "Hours",
-        },
+export const DEFAULT_ROLLUP = JSON.stringify({
+  rollup: {
+    source_index: "stats-*",
+    target_index: "rollup-stats",
+    schedule: {
+      interval: {
+        period: 1,
+        unit: "Days",
       },
-      roles: ["super_role", "ops"],
-      run_as_user: "drew",
-      description: "Rolls up our daily logstash indices into monthly summarized views",
-      last_updated_time: 1553112384,
-      error_notification: {
-        destination: { slack: { url: "..." } },
-      },
-      message_template: { source: "..." },
     },
-    // fill in dimensions/metrics
+    run_as_user: "dbbaughe",
+    roles: ["admin"],
+    description: "Rolls up our daily indices into monthly summarized views",
+    enabled: true,
+    error_notification: {
+      destination: { slack: { url: "..." } },
+    },
+    message_template: { source: "..." },
   },
-  null,
-  4
-);
+  page_size: 200,
+  delay: "6h",
+  dimensions: {
+    date_histogram: {
+      field: "timestamp",
+      fixed_interval: "30d",
+      timezone: "America/Los_Angeles",
+    },
+    terms: {
+      fields: ["customer_city"],
+    },
+  },
+  metrics: [
+    {
+      field: "price",
+      metric_aggregations: ["avg", "min", "max", "sum"],
+    },
+  ],
+});
 
 export const FixedTimeunitOptions = [
   { value: "ms", text: "Millisecond(s)" },

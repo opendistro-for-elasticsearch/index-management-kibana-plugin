@@ -15,17 +15,17 @@
 
 import { Direction } from "@elastic/eui";
 
-export interface PolicyItem {
+export interface RollupItem {
   id: string;
   seqNo: number;
   primaryTerm: number;
-  policy: object; // only dumped to view as JSON as of now, don't need to type
+  rollup: object; // only dumped to view as JSON as of now, don't need to type
 }
 
-export interface PoliciesQueryParams {
+export interface RollupsQueryParams {
   from: number;
   size: number;
   search: string;
-  sortField: keyof PolicyItem;
+  sortField: keyof RollupItem;
   sortDirection: Direction;
 }

@@ -15,9 +15,9 @@
 
 import React from "react";
 import { EuiTableFieldDataColumnType } from "@elastic/eui";
-import { ManagedCatIndex } from "../../../../server/models/interfaces";
 import { SortDirection } from "../../../utils/constants";
 import { renderTime } from "../../Policies/utils/helpers";
+import { RollupItem } from "../models/interfaces";
 
 export const DEFAULT_PAGE_SIZE_OPTIONS = [5, 10, 20, 50];
 
@@ -29,7 +29,7 @@ export const DEFAULT_QUERY_PARAMS = {
   sortDirection: SortDirection.DESC,
 };
 
-export const rollupsColumns: EuiTableFieldDataColumnType<ManagedCatIndex>[] = [
+export const rollupsColumns: EuiTableFieldDataColumnType<RollupItem>[] = [
   {
     field: "name",
     name: "Name",
@@ -82,3 +82,120 @@ export const rollupsColumns: EuiTableFieldDataColumnType<ManagedCatIndex>[] = [
     dataType: "date",
   },
 ];
+
+// export const SampleGetRollupJobs = [
+//       {
+//         "config": {
+//           "id": "sensor2",
+//           "index_pattern": "sensor-*",
+//           "rollup_index": "sensor_rollup",
+//           "cron": "*/30 * * * * ?",
+//           "groups": {
+//             "date_histogram": {
+//               "fixed_interval": "1h",
+//               "delay": "7d",
+//               "field": "timestamp",
+//               "time_zone": "UTC"
+//             },
+//             "terms": {
+//               "fields": [
+//                 "node"
+//               ]
+//             }
+//           },
+//           "metrics": [
+//             {
+//               "field": "temperature",
+//               "metrics": [
+//                 "min",
+//                 "max",
+//                 "sum"
+//               ]
+//             },
+//             {
+//               "field": "voltage",
+//               "metrics": [
+//                 "avg"
+//               ]
+//             }
+//           ],
+//           "timeout": "20s",
+//           "page_size": 1000
+//         },
+//         "status": {
+//           "job_state": "stopped",
+//           "upgraded_doc_id": true
+//         },
+//         "stats": {
+//           "pages_processed": 0,
+//           "documents_processed": 0,
+//           "rollups_indexed": 0,
+//           "trigger_count": 0,
+//           "index_failures": 0,
+//           "index_time_in_ms": 0,
+//           "index_total": 0,
+//           "search_failures": 0,
+//           "search_time_in_ms": 0,
+//           "search_total": 0,
+//           "processing_time_in_ms": 0,
+//           "processing_total": 0
+//         }
+//       },
+//       {
+//         "config": {
+//           "id": "sensor",
+//           "index_pattern": "sensor-*",
+//           "rollup_index": "sensor_rollup",
+//           "cron": "*/30 * * * * ?",
+//           "groups": {
+//             "date_histogram": {
+//               "fixed_interval": "1h",
+//               "delay": "7d",
+//               "field": "timestamp",
+//               "time_zone": "UTC"
+//             },
+//             "terms": {
+//               "fields": [
+//                 "node"
+//               ]
+//             }
+//           },
+//           "metrics": [
+//             {
+//               "field": "temperature",
+//               "metrics": [
+//                 "min",
+//                 "max",
+//                 "sum"
+//               ]
+//             },
+//             {
+//               "field": "voltage",
+//               "metrics": [
+//                 "avg"
+//               ]
+//             }
+//           ],
+//           "timeout": "20s",
+//           "page_size": 1000
+//         },
+//         "status": {
+//           "job_state": "stopped",
+//           "upgraded_doc_id": true
+//         },
+//         "stats": {
+//           "pages_processed": 0,
+//           "documents_processed": 0,
+//           "rollups_indexed": 0,
+//           "trigger_count": 0,
+//           "index_failures": 0,
+//           "index_time_in_ms": 0,
+//           "index_total": 0,
+//           "search_failures": 0,
+//           "search_time_in_ms": 0,
+//           "search_total": 0,
+//           "processing_time_in_ms": 0,
+//           "pro cessing_total": 0
+//         }
+//       }
+//     ];
