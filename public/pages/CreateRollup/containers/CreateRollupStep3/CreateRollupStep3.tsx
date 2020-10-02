@@ -27,9 +27,7 @@ import { DEFAULT_ROLLUP } from "../../utils/constants";
 import Schedule from "../../components/Schedule";
 
 interface CreateRollupProps extends RouteComponentProps {
-  isEdit: boolean;
   rollupService: RollupService;
-  step: number;
 }
 
 interface CreateRollupState {
