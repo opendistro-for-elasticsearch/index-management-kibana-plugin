@@ -101,8 +101,7 @@ export default class CreateRollupStep3 extends Component<CreateRollupProps, Crea
   };
 
   onCancel = (): void => {
-    if (this.props.isEdit) this.props.history.goBack();
-    else this.props.history.push(ROUTES.ROLLUPS);
+    this.props.history.push(ROUTES.ROLLUPS);
   };
 
   onChange = (e: ChangeEvent<HTMLInputElement>): void => {
@@ -130,9 +129,6 @@ export default class CreateRollupStep3 extends Component<CreateRollupProps, Crea
   };
 
   renderEditCallOut = (): React.ReactNode | null => {
-    const { isEdit } = this.props;
-    if (!isEdit) return null;
-
     return (
       <Fragment>
         <EuiCallOut
