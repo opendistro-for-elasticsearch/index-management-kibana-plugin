@@ -154,6 +154,7 @@ export default class MetricsCalculation extends Component<MetricsCalculationProp
   onSelectionChange = (selectedFields: ManagedCatIndex[]): void => {
     this.setState({ selectedFields });
   };
+
   render() {
     const { isModalVisible, searchText, selectedFieldType } = this.state;
     const selection: EuiTableSelectionType<ManagedCatIndex> = {
@@ -194,7 +195,7 @@ export default class MetricsCalculation extends Component<MetricsCalculationProp
             )}
           </ModalConsumer>
         }
-        title="Metrics calculation - optional"
+        title="Additional metrics - optional"
         titleSize="s"
       >
         <div style={{ paddingLeft: "10px" }}>

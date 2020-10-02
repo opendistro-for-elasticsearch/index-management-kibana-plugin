@@ -25,10 +25,12 @@ interface TimeAggregationProps {
   // onChangeStateRadio: (optionId: string) => void;
   // stateRadioIdSelected: string;
 }
+
 interface TimeAggregationState {
   intervalType: string;
   timezone: number;
 }
+
 const radios = [
   {
     id: "fixed",
@@ -48,6 +50,7 @@ export default class TimeAggregation extends Component<TimeAggregationProps, Tim
       timezone: -7,
     };
   }
+
   onChangeRadio = (optionId: string): void => {
     this.setState({ intervalType: optionId });
   };

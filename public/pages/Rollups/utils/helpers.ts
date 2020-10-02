@@ -38,3 +38,7 @@ export const renderTime = (time: number): string => {
   if (time && momentTime.isValid()) return momentTime.format("MM/DD/YY h:mm a");
   return "-";
 };
+
+export const renderEnabled = (isEnabled: boolean): string => {
+  return isEnabled ? "Enabled" : "Disabled";
+};

@@ -112,7 +112,7 @@ export default class CreateRollupStep2 extends Component<CreateRollupProps, Crea
 
           <EuiFlexItem>
             <EuiTitle size="l">
-              <h1>Histogram aggregation on a date</h1>
+              <h1>Define aggregations and metrics</h1>
             </EuiTitle>
             <EuiSpacer />
             <EuiCallOut color="warning">

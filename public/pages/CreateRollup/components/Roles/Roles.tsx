@@ -47,9 +47,11 @@ export default class Roles extends Component<RolesProps, RolesStates> {
       roles: [{ label: "Role1" }],
     };
   }
+
   onChange = (selectedOptions: EuiComboBoxOptionOption<String>[]): void => {
     this.setState({ roles: selectedOptions });
   };
+
   render() {
     const { roles } = this.state;
     return (

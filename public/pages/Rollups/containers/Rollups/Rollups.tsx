@@ -40,6 +40,7 @@ import {
   EuiFieldSearch,
   EuiPagination,
   EuiFlexGroup,
+  EuiButton,
 } from "@elastic/eui";
 import { rollupsColumns } from "../../utils/constants";
 import { RollupService } from "../../../../services";
@@ -121,7 +122,7 @@ let SampleGetRollupJobs: RollupItem[] = [
       run_as_user: "dbbaughe",
       roles: ["admin"],
       description: "Rolls up our daily indices into monthly summarized views",
-      enabled: true,
+      enabled: false,
       error_notification: {
         destination: { slack: { url: "..." } },
         message_template: { source: "..." },
@@ -290,7 +291,7 @@ export default class Rollups extends Component<RollupsProps, RollupsState> {
                       iconType: "arrowDown",
                       iconSide: "right",
                       disabled: !selectedItems.length,
-                      onClick: () => onShow(ApplyPolicyModal, { indices: selectedItems.map((item: RollupItem) => item.id) }),
+                      // onClick: () => onShow(ApplyPolicyModal, { indices: selectedItems.map((item: RollupItem) => item.id) }),
                     },
                   },
 

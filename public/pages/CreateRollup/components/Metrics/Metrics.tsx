@@ -22,6 +22,7 @@ interface MetricsProps {
   rollupIdError: string;
   onChange: (value: ChangeEvent<HTMLInputElement>) => void;
 }
+
 const metricColumns = [
   {
     field: "numericField",

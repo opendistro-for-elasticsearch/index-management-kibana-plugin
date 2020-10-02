@@ -18,6 +18,7 @@ import { EuiTableFieldDataColumnType } from "@elastic/eui";
 import { SortDirection } from "../../../utils/constants";
 import { renderTime } from "../../Policies/utils/helpers";
 import { RollupItem } from "../models/interfaces";
+import { renderEnabled } from "./helpers";
 
 export const DEFAULT_PAGE_SIZE_OPTIONS = [5, 10, 20, 50];
 
@@ -35,31 +36,36 @@ export const rollupsColumns: EuiTableFieldDataColumnType<RollupItem>[] = [
     name: "Name",
     sortable: true,
     textOnly: true,
+    truncateText: true,
   },
   {
     field: "rollup.source_index",
     name: "Source index",
     sortable: true,
     textOnly: true,
-    align: "right",
+    truncateText: true,
   },
   {
     field: "rollup.target_index",
     name: "Target index",
     sortable: true,
     textOnly: true,
+    truncateText: true,
   },
   {
     field: "rollup.enabled",
     name: "Job state",
     sortable: true,
     textOnly: true,
+    truncateText: true,
+    render: renderEnabled,
   },
   {
     field: "currentWindow",
     name: "Current rollup window",
     sortable: true,
     textOnly: true,
+    truncateText: true,
   },
   {
     field: "status",
@@ -72,6 +78,7 @@ export const rollupsColumns: EuiTableFieldDataColumnType<RollupItem>[] = [
     name: "Recurring",
     sortable: true,
     textOnly: true,
+    truncateText: true,
   },
   {
     field: "master_timeout",
@@ -82,120 +89,3 @@ export const rollupsColumns: EuiTableFieldDataColumnType<RollupItem>[] = [
     dataType: "date",
   },
 ];
-
-// export const SampleGetRollupJobs = [
-//       {
-//         "config": {
-//           "id": "sensor2",
-//           "index_pattern": "sensor-*",
-//           "rollup_index": "sensor_rollup",
-//           "cron": "*/30 * * * * ?",
-//           "groups": {
-//             "date_histogram": {
-//               "fixed_interval": "1h",
-//               "delay": "7d",
-//               "field": "timestamp",
-//               "time_zone": "UTC"
-//             },
-//             "terms": {
-//               "fields": [
-//                 "node"
-//               ]
-//             }
-//           },
-//           "metrics": [
-//             {
-//               "field": "temperature",
-//               "metrics": [
-//                 "min",
-//                 "max",
-//                 "sum"
-//               ]
-//             },
-//             {
-//               "field": "voltage",
-//               "metrics": [
-//                 "avg"
-//               ]
-//             }
-//           ],
-//           "timeout": "20s",
-//           "page_size": 1000
-//         },
-//         "status": {
-//           "job_state": "stopped",
-//           "upgraded_doc_id": true
-//         },
-//         "stats": {
-//           "pages_processed": 0,
-//           "documents_processed": 0,
-//           "rollups_indexed": 0,
-//           "trigger_count": 0,
-//           "index_failures": 0,
-//           "index_time_in_ms": 0,
-//           "index_total": 0,
-//           "search_failures": 0,
-//           "search_time_in_ms": 0,
-//           "search_total": 0,
-//           "processing_time_in_ms": 0,
-//           "processing_total": 0
-//         }
-//       },
-//       {
-//         "config": {
-//           "id": "sensor",
-//           "index_pattern": "sensor-*",
-//           "rollup_index": "sensor_rollup",
-//           "cron": "*/30 * * * * ?",
-//           "groups": {
-//             "date_histogram": {
-//               "fixed_interval": "1h",
-//               "delay": "7d",
-//               "field": "timestamp",
-//               "time_zone": "UTC"
-//             },
-//             "terms": {
-//               "fields": [
-//                 "node"
-//               ]
-//             }
-//           },
-//           "metrics": [
-//             {
-//               "field": "temperature",
-//               "metrics": [
-//                 "min",
-//                 "max",
-//                 "sum"
-//               ]
-//             },
-//             {
-//               "field": "voltage",
-//               "metrics": [
-//                 "avg"
-//               ]
-//             }
-//           ],
-//           "timeout": "20s",
-//           "page_size": 1000
-//         },
-//         "status": {
-//           "job_state": "stopped",
-//           "upgraded_doc_id": true
-//         },
-//         "stats": {
-//           "pages_processed": 0,
-//           "documents_processed": 0,
-//           "rollups_indexed": 0,
-//           "trigger_count": 0,
-//           "index_failures": 0,
-//           "index_time_in_ms": 0,
-//           "index_total": 0,
-//           "search_failures": 0,
-//           "search_time_in_ms": 0,
-//           "search_total": 0,
-//           "processing_time_in_ms": 0,
-//           "pro cessing_total": 0
-//         }
-//       }
-//     ];

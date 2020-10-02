@@ -200,7 +200,7 @@ export default class AdvancedAggregation extends Component<AdvancedAggregationPr
           </ModalConsumer>
         }
         bodyStyles={{ padding: "initial" }}
-        title="Advanced aggregation - optional"
+        title="Additional aggregations - optional"
         titleSize="s"
       >
         <div style={{ paddingLeft: "10px" }}>
