@@ -24,11 +24,7 @@ import RollupIndices from "../../components/RollupIndices";
 import CreateRollupSteps from "../../components/CreateRollupSteps";
 import { DEFAULT_ROLLUP } from "../../utils/constants";
 import Roles from "../../components/Roles";
-import queryString from "query-string";
-import { toastNotifications } from "ui/notify";
-import { getErrorMessage } from "../../../../utils/helpers";
 import IndexService from "../../../../services/IndexService";
-import Indices from "../../../Indices/containers/Indices";
 import { ManagedCatIndex } from "../../../../../server/models/interfaces";
 
 interface CreateRollupProps extends RouteComponentProps {
@@ -48,6 +44,7 @@ interface CreateRollupState {
   loadingIndices: boolean;
   indices: ManagedCatIndex[];
   totalIndices: number;
+  description: string;
 }
 
 export default class CreateRollup extends Component<CreateRollupProps, CreateRollupState> {
@@ -66,6 +63,7 @@ export default class CreateRollup extends Component<CreateRollupProps, CreateRol
       loadingIndices: true,
       indices: [],
       totalIndices: 0,
+      description: "",
     };
   }
 
@@ -75,24 +73,24 @@ export default class CreateRollup extends Component<CreateRollupProps, CreateRol
     this.setState({ jsonString: DEFAULT_ROLLUP });
   };
 
-  getIndices = async (): Promise<void> => {
-    this.setState({ loadingIndices: true });
-    try {
-      const { indexService, history } = this.props;
-      const queryParamsString = queryString.stringify(Indices.getQueryObjectFromState(this.state));
-      history.replace({ ...this.props.location, search: queryParamsString });
-      const getIndicesResponse = await indexService.getIndices(queryParamsString);
-      if (getIndicesResponse.ok) {
-        const { indices, totalIndices } = getIndicesResponse.response;
-        this.setState({ indices, totalIndices });
-      } else {
-        toastNotifications.addDanger(getIndicesResponse.error);
-      }
-    } catch (err) {
-      toastNotifications.addDanger(getErrorMessage(err, "There was a problem loading the indices"));
-    }
-    this.setState({ loadingIndices: false });
-  };
+  // getIndices = async (): Promise<void> => {
+  //   this.setState({ loadingIndices: true });
+  //   try {
+  //     const { indexService, history } = this.props;
+  //     const queryParamsString = queryString.stringify(Indices.getQueryObjectFromState(this.state));
+  //     history.replace({ ...this.props.location, search: queryParamsString });
+  //     const getIndicesResponse = await indexService.getIndices(queryParamsString);
+  //     if (getIndicesResponse.ok) {
+  //       const { indices, totalIndices } = getIndicesResponse.response;
+  //       this.setState({ indices, totalIndices });
+  //     } else {
+  //       toastNotifications.addDanger(getIndicesResponse.error);
+  //     }
+  //   } catch (err) {
+  //     toastNotifications.addDanger(getErrorMessage(err, "There was a problem loading the indices"));
+  //   }
+  //   this.setState({ loadingIndices: false });
+  // };
 
   //TODO: Go back to rollup jobs page when cancelled
   onCancel = (): void => {
@@ -104,6 +102,11 @@ export default class CreateRollup extends Component<CreateRollupProps, CreateRol
     const rollupId = e.target.value;
     if (hasSubmitted) this.setState({ rollupId, rollupIdError: rollupId ? "" : "Required" });
     else this.setState({ rollupId });
+  };
+
+  onChangeDescription = (e: ChangeEvent<HTMLTextAreaElement>): void => {
+    const description = e.target.value;
+    this.setState({ description });
   };
 
   onChangeJSON = (value: string): void => {
@@ -120,6 +123,7 @@ export default class CreateRollup extends Component<CreateRollupProps, CreateRol
   };
 
   onNext = (): void => {
+    console.log(this.state);
     this.props.history.push(ROUTES.CREATE_ROLLUP_STEP2);
   };
 
@@ -145,7 +149,7 @@ export default class CreateRollup extends Component<CreateRollupProps, CreateRol
   };
 
   render() {
-    const { rollupId, rollupIdError, jsonString, submitError, isSubmitting } = this.state;
+    const { rollupId, rollupIdError, jsonString, submitError, isSubmitting, description } = this.state;
     // Will be used later on for DefineRollup job (similar to DefinePolicy)
     let hasJSONError = false;
     try {
@@ -165,7 +169,13 @@ export default class CreateRollup extends Component<CreateRollupProps, CreateRol
               <h1>Set up Indices</h1>
             </EuiTitle>
             <EuiSpacer />
-            <ConfigureRollup rollupId={rollupId} rollupIdError={rollupIdError} onChange={this.onChange} />
+            <ConfigureRollup
+              rollupId={rollupId}
+              rollupIdError={rollupIdError}
+              description={description}
+              onChange={this.onChange}
+              onChangeDescription={this.onChangeDescription}
+            />
             <EuiSpacer />
             <RollupIndices rollupId={rollupId} rollupIdError={rollupIdError} onChange={this.onChange} />
             <EuiSpacer />

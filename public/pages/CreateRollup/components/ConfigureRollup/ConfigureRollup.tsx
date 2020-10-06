@@ -21,9 +21,11 @@ interface ConfigureRollupProps {
   rollupId: string;
   rollupIdError: string;
   onChange: (value: ChangeEvent<HTMLInputElement>) => void;
+  onChangeDescription: (value: ChangeEvent<HTMLTextAreaElement>) => void;
+  description: string;
 }
 
-const ConfigureRollup = ({ rollupId, rollupIdError, onChange }: ConfigureRollupProps) => (
+const ConfigureRollup = ({ rollupId, rollupIdError, onChange, onChangeDescription, description }: ConfigureRollupProps) => (
   <ContentPanel bodyStyles={{ padding: "initial" }} title="Job name and description" titleSize="s">
     <div style={{ paddingLeft: "10px" }}>
       <EuiSpacer size="s" />
@@ -42,7 +44,7 @@ const ConfigureRollup = ({ rollupId, rollupIdError, onChange }: ConfigureRollupP
         isInvalid={!!rollupIdError}
         error={rollupIdError}
       >
-        <EuiTextArea isInvalid={!!rollupIdError} compressed={true} />
+        <EuiTextArea isInvalid={!!rollupIdError} compressed={true} value={description} onChange={onChangeDescription} />
       </EuiFormRow>
     </div>
   </ContentPanel>
