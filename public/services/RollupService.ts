@@ -16,12 +16,11 @@
 //TODO: Create actual rollup service here when backend is done.
 
 import { IHttpResponse, IHttpService } from "angular";
-import { INDEX } from "../../server/utils/constants";
-import { PutRollupResponse, RollupJobsResponse, SearchResponse } from "../../server/models/interfaces";
+import { GetIndicesResponse, PutRollupResponse, GetRollupsResponse } from "../../server/models/interfaces";
 import { ServerResponse } from "../../server/models/types";
 import { NODE_API } from "../../utils/constants";
 import queryString from "query-string";
-import { DocumentPolicy, Rollup } from "../../models/interfaces";
+import { DocumentRollup, Rollup } from "../../models/interfaces";
 
 export default class RollupService {
   httpClient: IHttpService;
@@ -30,10 +29,16 @@ export default class RollupService {
     this.httpClient = httpClient;
   }
 
-  getRollups = async (queryParamsString: string): Promise<ServerResponse<RollupJobsResponse>> => {
-    let url = `..${NODE_API._ROLLUP}`;
+  getRollups = async (queryParamsString: string): Promise<ServerResponse<GetRollupsResponse>> => {
+    let url = `..${NODE_API.ROLLUPS}`;
     if (queryParamsString) url += `?${queryParamsString}`;
-    const response = (await this.httpClient.get(url)) as IHttpResponse<ServerResponse<RollupJobsResponse>>;
+    const response = (await this.httpClient.get(url)) as IHttpResponse<ServerResponse<GetRollupsResponse>>;
+    return response.data;
+  };
+
+  getIndices = async (): Promise<ServerResponse<GetIndicesResponse>> => {
+    let url = `..${NODE_API._INDICES}`;
+    const response = (await this.httpClient.get(url)) as IHttpResponse<ServerResponse<GetIndicesResponse>>;
     return response.data;
   };
 
@@ -47,20 +52,20 @@ export default class RollupService {
     primaryTerm?: number
   ): Promise<ServerResponse<PutRollupResponse>> => {
     const queryParamsString = queryString.stringify({ seqNo, primaryTerm });
-    let url = `..${NODE_API._ROLLUP}/${rollupId}`;
+    let url = `..${NODE_API.ROLLUPS}/${rollupId}`;
     if (queryParamsString) url += `?${queryParamsString}`;
     const response = (await this.httpClient.put(url, rollup)) as IHttpResponse<ServerResponse<PutRollupResponse>>;
     return response.data;
   };
 
-  getRollup = async (rollupId: string): Promise<ServerResponse<DocumentPolicy>> => {
-    const url = `..${NODE_API._ROLLUP}/${rollupId}`;
-    const response = (await this.httpClient.get(url)) as IHttpResponse<ServerResponse<DocumentPolicy>>;
+  getRollup = async (rollupId: string): Promise<ServerResponse<DocumentRollup>> => {
+    const url = `..${NODE_API.ROLLUPS}/${rollupId}`;
+    const response = (await this.httpClient.get(url)) as IHttpResponse<ServerResponse<DocumentRollup>>;
     return response.data;
   };
 
   deleteRollup = async (rollupId: string): Promise<ServerResponse<boolean>> => {
-    const url = `..${NODE_API._ROLLUP}/${rollupId}`;
+    const url = `..${NODE_API.ROLLUPS}/${rollupId}`;
     const response = (await this.httpClient.delete(url)) as IHttpResponse<ServerResponse<boolean>>;
     return response.data;
   };

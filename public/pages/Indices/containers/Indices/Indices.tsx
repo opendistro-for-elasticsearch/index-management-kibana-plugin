@@ -101,7 +101,9 @@ export default class Indices extends Component<IndicesProps, IndicesState> {
     this.setState({ loadingIndices: true });
     try {
       const { indexService, history } = this.props;
+      console.log(this.props);
       const queryParamsString = queryString.stringify(Indices.getQueryObjectFromState(this.state));
+      console.log(queryParamsString);
       history.replace({ ...this.props.location, search: queryParamsString });
       const getIndicesResponse = await indexService.getIndices(queryParamsString);
       if (getIndicesResponse.ok) {
@@ -162,7 +164,7 @@ export default class Indices extends Component<IndicesProps, IndicesState> {
     const selection: EuiTableSelectionType<ManagedCatIndex> = {
       onSelectionChange: this.onSelectionChange,
     };
-
+    console.log(indices);
     return (
       <ContentPanel
         actions={

@@ -156,5 +156,20 @@ export default function ismPlugin(Client: any, config: any, components: any) {
     method: "POST",
   });
 
+  //TODO: See if anything different needs to be done when removing rollup jobs
+  ism.getRollup = ca({
+    url: {
+      fmt: `${API.ROLLUP_JOBS_BASE}/<%=index%>`,
+      req: {
+        index: {
+          type: "string",
+          required: true,
+        },
+      },
+    },
+    needBody: true,
+    method: "POST",
+  });
+
   // TODO add new APIs as they are being implemented: status, stop, start
 }

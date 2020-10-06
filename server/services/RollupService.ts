@@ -17,22 +17,22 @@ import _ from "lodash";
 import { Legacy } from "kibana";
 import { CLUSTER, INDEX } from "../utils/constants";
 import {
-  DeletePolicyParams,
-  DeletePolicyResponse,
-  GetPoliciesResponse,
-  PutPolicyParams,
+  DeleteRollupParams,
+  DeleteRollupResponse,
+  GetRollupsResponse,
+  PutRollupParams,
   PutRollupResponse,
   SearchResponse,
 } from "../models/interfaces";
 import { getMustQuery } from "../utils/helpers";
-import { PoliciesSort, ServerResponse } from "../models/types";
-import { DocumentPolicy, Policy } from "../../models/interfaces";
+import { RollupsSort, ServerResponse } from "../models/types";
+import { DocumentRollup, Rollup } from "../../models/interfaces";
 
 type Request = Legacy.Request;
 type ElasticsearchPlugin = Legacy.Plugins.elasticsearch.Plugin;
 type ResponseToolkit = Legacy.ResponseToolkit;
 
-export default class PolicyService {
+export default class RollupService {
   esDriver: ElasticsearchPlugin;
 
   constructor(esDriver: ElasticsearchPlugin) {
@@ -40,73 +40,74 @@ export default class PolicyService {
   }
 
   /**
-   * Calls backend Put Policy API
+   * Calls backend Put Rollup API
    */
-  putPolicy = async (req: Request, h: ResponseToolkit): Promise<ServerResponse<PutRollupResponse>> => {
+  putRollup = async (req: Request, h: ResponseToolkit): Promise<ServerResponse<PutRollupResponse>> => {
     try {
       const { id } = req.params;
       const { seqNo, primaryTerm } = req.query as { seqNo?: string; primaryTerm?: string };
-      let method = "ism.putPolicy";
-      let params: PutPolicyParams = { policyId: id, ifSeqNo: seqNo, ifPrimaryTerm: primaryTerm, body: JSON.stringify(req.payload) };
+      let method = "ism.putRollup";
+      let params: PutRollupParams = { rollupId: id, ifSeqNo: seqNo, ifPrimaryTerm: primaryTerm, body: JSON.stringify(req.payload) };
       if (seqNo === undefined || primaryTerm === undefined) {
-        method = "ism.createPolicy";
-        params = { policyId: id, body: JSON.stringify(req.payload) };
+        method = "ism.createRollup";
+        params = { rollupId: id, body: JSON.stringify(req.payload) };
       }
       const { callWithRequest } = await this.esDriver.getCluster(CLUSTER.ISM);
       const response = await callWithRequest(req, method, params);
       return { ok: true, response: response };
     } catch (err) {
-      console.error("Index Management - PolicyService - putPolicy:", err);
+      console.error("Index Management - RollupService - putRollup", err);
       return { ok: false, error: err.message };
     }
   };
 
   /**
-   * Calls backend Delete Policy API
+   * Calls backend Delete Rollup API
    */
-  deletePolicy = async (req: Request, h: ResponseToolkit): Promise<ServerResponse<boolean>> => {
+  deleteRollup = async (req: Request, h: ResponseToolkit): Promise<ServerResponse<boolean>> => {
     try {
       const { id } = req.params;
-      const params: DeletePolicyParams = { policyId: id };
+      const params: DeleteRollupParams = { rollupId: id };
       const { callWithRequest } = await this.esDriver.getCluster(CLUSTER.ISM);
-      const response: DeletePolicyResponse = await callWithRequest(req, "ism.deletePolicy", params);
+      const response: DeleteRollupResponse = await callWithRequest(req, "ism.deleteRollup", params);
       if (response.result !== "deleted") {
         return { ok: false, error: response.result };
       }
       return { ok: true, response: true };
     } catch (err) {
-      console.error("Index Management - PolicyService - deletePolicy:", err);
+      console.error("Index Management - RollupService - deleteRollup:", err);
       return { ok: false, error: err.message };
     }
   };
 
   /**
-   * Calls backend Get Policy API
+   * Calls backend Get Rollup API
    */
-  getPolicy = async (req: Request, h: ResponseToolkit): Promise<ServerResponse<DocumentPolicy>> => {
+  //TODO: Figure out the part for DocumentPolicy
+  getRollup = async (req: Request, h: ResponseToolkit): Promise<ServerResponse<DocumentRollup>> => {
     try {
       const { id } = req.params;
-      const params = { policyId: id };
+      const params = { rollupId: id };
       const { callWithRequest } = await this.esDriver.getCluster(CLUSTER.ISM);
-      const getResponse = await callWithRequest(req, "ism.getPolicy", params);
-      const policy = _.get(getResponse, "policy", null);
+      const getResponse = await callWithRequest(req, "ism.getRollup", params);
+      const rollup = _.get(getResponse, "rollup", null);
       const seqNo = _.get(getResponse, "_seq_no");
       const primaryTerm = _.get(getResponse, "_primary_term");
-      if (policy) {
-        return { ok: true, response: { id, seqNo: seqNo as number, primaryTerm: primaryTerm as number, policy: policy as Policy } };
+      if (rollup) {
+        return { ok: true, response: { id, seqNo: seqNo as number, primaryTerm: primaryTerm as number, rollup: rollup as Rollup } };
       } else {
-        return { ok: false, error: "Failed to load policy" };
+        return { ok: false, error: "Failed to load rollup" };
       }
     } catch (err) {
-      console.error("Index Management - PolicyService - getPolicy:", err);
+      console.error("Index Management - RollupService - getRollup:", err);
       return { ok: false, error: err.message };
     }
   };
 
   /**
-   * Performs a fuzzy search request on policy id
+   * Performs a fuzzy search request on rollup id
    */
-  getPolicies = async (req: Request, h: ResponseToolkit): Promise<ServerResponse<GetPoliciesResponse>> => {
+  getRollups = async (req: Request, h: ResponseToolkit): Promise<ServerResponse<GetRollupsResponse>> => {
     try {
       const { from, size, search, sortDirection, sortField } = req.query as {
         from: string;
@@ -116,10 +117,10 @@ export default class PolicyService {
         sortField: string;
       };
 
-      const policySorts: PoliciesSort = {
-        id: "policy.policy_id.keyword",
-        "policy.policy.description": "policy.description.keyword",
-        "policy.policy.last_updated_time": "policy.last_updated_time",
+      const rollupSorts: RollupsSort = {
+        id: "rollup.rollup_id.keyword",
+        "rollup.rollup.description": "rollup.description.keyword",
+        "rollup.rollup.last_updated_time": "rollup.last_updated_time",
       };
       const params = {
         index: INDEX.OPENDISTRO_ISM_CONFIG,
@@ -127,11 +128,11 @@ export default class PolicyService {
         body: {
           size,
           from,
-          sort: policySorts[sortField] ? [{ [policySorts[sortField]]: sortDirection }] : [],
+          sort: rollupSorts[sortField] ? [{ [rollupSorts[sortField]]: sortDirection }] : [],
           query: {
             bool: {
-              filter: [{ exists: { field: "policy" } }],
-              must: getMustQuery("policy.policy_id", search),
+              filter: [{ exists: { field: "rollup" } }],
+              must: getMustQuery("rollup.rollup_id", search),
             },
           },
         },
@@ -140,20 +141,20 @@ export default class PolicyService {
       const { callWithRequest } = await this.esDriver.getCluster(CLUSTER.DATA);
       const searchResponse: SearchResponse<any> = await callWithRequest(req, "search", params);
 
-      const totalPolicies = searchResponse.hits.total.value;
-      const policies = searchResponse.hits.hits.map((hit) => ({
+      const totalRollups = searchResponse.hits.total.value;
+      const rollups = searchResponse.hits.hits.map((hit) => ({
         seqNo: hit._seq_no as number,
         primaryTerm: hit._primary_term as number,
         id: hit._id,
-        policy: hit._source,
+        rollup: hit._source,
       }));
 
-      return { ok: true, response: { policies: policies, totalPolicies } };
+      return { ok: true, response: { rollups: rollups, totalRollups } };
     } catch (err) {
       if (err.statusCode === 404 && err.body.error.type === "index_not_found_exception") {
-        return { ok: true, response: { policies: [], totalPolicies: 0 } };
+        return { ok: true, response: { rollups: [], totalRollups: 0 } };
       }
-      console.error("Index Management - PolicyService - getPolicies", err);
+      console.error("Index Management - RollupService - getRollups", err);
       return { ok: false, error: err.message };
     }
   };

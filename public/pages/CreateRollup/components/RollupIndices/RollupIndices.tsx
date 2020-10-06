@@ -21,6 +21,7 @@ interface RollupIndicesProps {
   rollupId: string;
   rollupIdError: string;
   onChange: (value: ChangeEvent<HTMLInputElement>) => void;
+  // indices: ManagedCatIndex[];
 }
 
 const RollupIndices = ({ rollupId, rollupIdError, onChange }: RollupIndicesProps) => (

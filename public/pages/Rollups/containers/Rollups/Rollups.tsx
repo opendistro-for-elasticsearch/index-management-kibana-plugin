@@ -24,7 +24,6 @@ import { ManagedCatIndex } from "../../../../../server/models/interfaces";
 import { DEFAULT_PAGE_SIZE_OPTIONS, DEFAULT_QUERY_PARAMS } from "../../../Indices/utils/constants";
 import { ContentPanel, ContentPanelActions } from "../../../../components/ContentPanel";
 import { ModalConsumer } from "../../../../components/Modal";
-import ApplyPolicyModal from "../../../Indices/components/ApplyPolicyModal";
 import { RouteComponentProps } from "react-router-dom";
 import {
   EuiBasicTable,
@@ -40,7 +39,6 @@ import {
   EuiFieldSearch,
   EuiPagination,
   EuiFlexGroup,
-  EuiButton,
 } from "@elastic/eui";
 import { rollupsColumns } from "../../utils/constants";
 import { RollupService } from "../../../../services";

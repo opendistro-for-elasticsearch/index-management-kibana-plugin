@@ -53,6 +53,13 @@ export interface DocumentPolicy {
   policy: Policy;
 }
 
+export interface DocumentRollup {
+  id: string;
+  primaryTerm: number;
+  seqNo: number;
+  rollup: Rollup;
+}
+
 // TODO: Fill out when needed
 // TODO: separate a frontend Policy from backendPolicy
 export interface Policy {
