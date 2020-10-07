@@ -1,5 +1,5 @@
 /*
- * Copyright 2019 Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ * Copyright 2020 Amazon.com, Inc. or its affiliates. All Rights Reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License").
  * You may not use this file except in compliance with the License.
@@ -25,6 +25,7 @@ interface ConfigureRollupProps {
   description: string;
 }
 
+//TODO: Define the allowed characters for rollup job name.
 const ConfigureRollup = ({ rollupId, rollupIdError, onChange, onChangeDescription, description }: ConfigureRollupProps) => (
   <ContentPanel bodyStyles={{ padding: "initial" }} title="Job name and description" titleSize="s">
     <div style={{ paddingLeft: "10px" }}>
@@ -38,13 +39,8 @@ const ConfigureRollup = ({ rollupId, rollupIdError, onChange, onChangeDescriptio
         <EuiFieldText isInvalid={!!rollupIdError} placeholder="my-rollupjob1" value={rollupId} onChange={onChange} />
       </EuiFormRow>
 
-      <EuiFormRow
-        label="Description - optional"
-        helpText="Describe details about this rollup job."
-        isInvalid={!!rollupIdError}
-        error={rollupIdError}
-      >
-        <EuiTextArea isInvalid={!!rollupIdError} compressed={true} value={description} onChange={onChangeDescription} />
+      <EuiFormRow label="Description - optional" helpText="Describe details about this rollup job.">
+        <EuiTextArea compressed={true} value={description} onChange={onChangeDescription} />
       </EuiFormRow>
     </div>
   </ContentPanel>
