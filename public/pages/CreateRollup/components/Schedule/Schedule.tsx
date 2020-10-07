@@ -67,7 +67,7 @@ const jobStartSelect = (
   onChangeTimezone: (value: ChangeEvent<HTMLSelectElement>) => void
 ) => (
   <React.Fragment>
-    <EuiFormRow label="Job starts on" error={"Start date should be later than current time."}>
+    <EuiFormRow label="Job starts on" isInvalid={startDate.isBefore(moment())} error={"Start date should be later than current time."}>
       <EuiDatePicker showTimeSelect selected={startDate} onChange={handleDateChange} isInvalid={startDate.isBefore(moment())} />
     </EuiFormRow>
 
@@ -83,7 +83,11 @@ const jobStartSelect = (
 
 const jobEndSelect = (startDate: Moment, endDate: Moment | null, handleDateChange: (value: Moment | null) => void) => (
   <React.Fragment>
-    <EuiFormRow label="Job ends on - optional" error={"End date should be later than start date"}>
+    <EuiFormRow
+      label="Job ends on - optional"
+      isInvalid={endDate != null && startDate.isAfter(endDate)}
+      error={"End date should be later than start date"}
+    >
       <EuiDatePicker
         showTimeSelect
         selected={endDate}
