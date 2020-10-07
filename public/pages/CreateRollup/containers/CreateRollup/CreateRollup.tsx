@@ -55,6 +55,7 @@ interface CreateRollupState {
   roles: EuiComboBoxOptionOption<String>[];
 }
 
+//TODO: Fetch actual roles from backend
 const options: EuiComboBoxOptionOption<String>[] = [
   {
     label: "Role1",
