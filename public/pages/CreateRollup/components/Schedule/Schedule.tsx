@@ -25,10 +25,11 @@ import {
   EuiFlexGroup,
   EuiFlexItem,
   EuiTextArea,
+  EuiFormHelpText,
 } from "@elastic/eui";
-import { ContentPanel } from "../../../../components/ContentPanel";
 import moment, { Moment } from "moment";
 import { FixedTimeunitOptions, TimezoneOptions } from "../../utils/constants";
+import { ContentPanel } from "../../../../components/ContentPanel";
 
 interface ScheduleProps {
   rollupId: string;
@@ -37,16 +38,15 @@ interface ScheduleProps {
 }
 
 interface ScheduleState {
-  checked: boolean;
+  jobEnabledByDefault: boolean;
   recurringJob: string;
   recurringDefinition: string;
   startDate: Moment;
-  hasEndDate: boolean;
-  endDate: Moment;
-  timezone: number;
+  endDate: Moment | null;
+  timezone: string;
   cronExpression: string;
   pageSize: number;
-  delayTime: number | null;
+  delayTime: number | undefined;
   delayTimeunit: string;
 }
 
@@ -61,16 +61,15 @@ const radios = [
   },
 ];
 
-//TODO: Add invalid and error for date picker
 const jobStartSelect = (
   startDate: Moment,
-  timezone: number,
+  timezone: string,
   handleDateChange: (value: Moment) => void,
   onChangeTimezone: (value: ChangeEvent<HTMLSelectElement>) => void
 ) => (
   <React.Fragment>
-    <EuiFormRow label="Job starts on">
-      <EuiDatePicker showTimeSelect selected={startDate} onChange={handleDateChange} />
+    <EuiFormRow label="Job starts on" isInvalid={startDate.isBefore(moment())} error={"Start date should be later than current time."}>
+      <EuiDatePicker showTimeSelect selected={startDate} onChange={handleDateChange} isInvalid={startDate.isBefore(moment())} />
     </EuiFormRow>
 
     <EuiSpacer size="m" />
@@ -83,11 +82,20 @@ const jobStartSelect = (
   </React.Fragment>
 );
 
-//TODO: Add invalid and error for end date, such as endDate should be later than start date. Also add a clear field since this is optional
-const jobEndSelect = (endDate: Moment, handleDateChange: (value: Moment) => void) => (
+const jobEndSelect = (startDate: Moment, endDate: Moment | null, handleDateChange: (value: Moment | null) => void) => (
   <React.Fragment>
-    <EuiFormRow label="Job ends on - optional">
-      <EuiDatePicker showTimeSelect selected={endDate} onChange={handleDateChange} onClear={() => handleDateChange(null)} />
+    <EuiFormRow
+      label="Job ends on - optional"
+      isInvalid={endDate != null && startDate.isAfter(endDate)}
+      error={"End date should be later than start date"}
+    >
+      <EuiDatePicker
+        showTimeSelect
+        selected={endDate}
+        onChange={handleDateChange}
+        onClear={() => handleDateChange(null)}
+        isInvalid={endDate != null && startDate.isAfter(endDate)}
+      />
     </EuiFormRow>
 
     <EuiSpacer size="m" />
@@ -108,23 +116,22 @@ export default class Schedule extends Component<ScheduleProps, ScheduleState> {
     super(props);
 
     this.state = {
-      checked: false,
+      jobEnabledByDefault: false,
       recurringJob: "no",
       recurringDefinition: "date",
-      startDate: moment(),
+      startDate: moment().add(30, "minutes"),
       endDate: null,
-      hasEndDate: false,
-      timezone: -7,
+      timezone: "-7",
       cronExpression: "",
       pageSize: 1000,
-      delayTime: null,
+      delayTime: undefined,
       delayTimeunit: "m",
     };
   }
 
   onChangeCheck = (): void => {
-    const checked = this.state.checked;
-    this.setState({ checked: !checked });
+    const checked = this.state.jobEnabledByDefault;
+    this.setState({ jobEnabledByDefault: !checked });
   };
 
   onChangeCron = (e: ChangeEvent<HTMLTextAreaElement>): void => {
@@ -132,7 +139,11 @@ export default class Schedule extends Component<ScheduleProps, ScheduleState> {
   };
 
   onChangeDelayTime = (e: ChangeEvent<HTMLInputElement>): void => {
-    this.setState({ delayTime: e.target.value });
+    this.setState({ delayTime: e.target.valueAsNumber });
+  };
+
+  onChangePage = (e: ChangeEvent<HTMLInputElement>): void => {
+    this.setState({ pageSize: e.target.valueAsNumber });
   };
 
   onChangeRecurringDefinition = (e: ChangeEvent<HTMLSelectElement>): void => {
@@ -155,18 +166,17 @@ export default class Schedule extends Component<ScheduleProps, ScheduleState> {
     this.setState({ startDate: date });
   };
 
-  handleEndDateChange = (date: Moment): void => {
-    this.setState({ endDate: date, hasEndDate: true });
+  handleEndDateChange = (date: Moment | null): void => {
+    this.setState({ endDate: date });
   };
 
   render() {
     const {
-      checked,
+      jobEnabledByDefault,
       recurringJob,
       recurringDefinition,
       startDate,
       endDate,
-      hasEndDate,
       timezone,
       cronExpression,
       pageSize,
@@ -176,14 +186,19 @@ export default class Schedule extends Component<ScheduleProps, ScheduleState> {
     return (
       <ContentPanel bodyStyles={{ padding: "initial" }} title="Schedule" titleSize="s">
         <div style={{ paddingLeft: "10px" }}>
-          <EuiCheckbox id="jobEnabledByDefault" label="Job enabled by default" checked={checked} onChange={this.onChangeCheck} />
+          <EuiCheckbox
+            id="jobEnabledByDefault"
+            label="Job enabled by default"
+            checked={jobEnabledByDefault}
+            onChange={this.onChangeCheck}
+          />
           <EuiSpacer size="m" />
           <EuiFormRow label="Recurring job">
             <EuiRadioGroup options={radios} idSelected={recurringJob} onChange={(id) => this.onChangeRadio(id)} name="recurringJob" />
           </EuiFormRow>
           <EuiSpacer size="m" />
 
-          {/*Hide this portion of components if the rollup job is not recurring*/}
+          {/*Hide this part if the rollup job is not recurring*/}
           {recurringJob == "yes" && (
             <EuiFormRow label={"Recurring definition"}>
               <EuiSelect
@@ -202,7 +217,7 @@ export default class Schedule extends Component<ScheduleProps, ScheduleState> {
           {(recurringJob == "no" || (recurringJob == "yes" && recurringDefinition == "date")) &&
             jobStartSelect(startDate, timezone, this.handleStartDateChange, this.onChangeTimezone)}
 
-          {recurringJob == "yes" && recurringDefinition == "date" && jobEndSelect(endDate, this.handleEndDateChange)}
+          {recurringJob == "yes" && recurringDefinition == "date" && jobEndSelect(startDate, endDate, this.handleEndDateChange)}
           {recurringJob == "yes" && recurringDefinition == "cron" && defineCron(cronExpression, this.onChangeCron)}
           <EuiSpacer size="m" />
 
@@ -210,7 +225,7 @@ export default class Schedule extends Component<ScheduleProps, ScheduleState> {
             label="Page per execution"
             helpText={"The number of pages every execution processes. A larger number means faster execution and more cost on memory."}
           >
-            <EuiFieldNumber min={1} placeholder={"1000"} value={pageSize} />
+            <EuiFieldNumber min={1} placeholder={"1000"} value={pageSize} onChange={this.onChangePage} />
           </EuiFormRow>
           <EuiSpacer size="m" />
           <EuiFlexGroup style={{ maxWidth: 400 }}>
@@ -226,12 +241,15 @@ export default class Schedule extends Component<ScheduleProps, ScheduleState> {
                   options={FixedTimeunitOptions}
                   value={delayTimeunit}
                   onChange={this.onChangeTimeunit}
-                  disabled={delayTime == null}
-                  isInvalid={delayTime != null && delayTime <= 0}
+                  disabled={delayTime == undefined}
+                  isInvalid={delayTime != undefined && delayTime <= 0}
                 />
               </EuiFormRow>
             </EuiFlexItem>
           </EuiFlexGroup>
+          <EuiFormHelpText style={{ maxWidth: 400 }}>
+            The amount of time the job wait for data ingestion to accommodate any necessary processing time.
+          </EuiFormHelpText>
         </div>
       </ContentPanel>
     );

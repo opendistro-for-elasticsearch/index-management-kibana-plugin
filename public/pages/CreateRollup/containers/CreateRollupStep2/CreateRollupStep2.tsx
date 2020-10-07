@@ -1,5 +1,5 @@
 /*
- * Copyright 2019 Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ * Copyright 2020 Amazon.com, Inc. or its affiliates. All Rights Reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License").
  * You may not use this file except in compliance with the License.
@@ -14,15 +14,22 @@
  */
 
 import React, { ChangeEvent, Component } from "react";
-import { EuiSpacer, EuiTitle, EuiFlexGroup, EuiFlexItem, EuiButton, EuiButtonEmpty, EuiCallOut } from "@elastic/eui";
+import {
+  EuiSpacer,
+  EuiTitle,
+  EuiFlexGroup,
+  EuiFlexItem,
+  EuiButton,
+  EuiButtonEmpty,
+  EuiCallOut,
+  EuiComboBoxOptionOption,
+} from "@elastic/eui";
 import chrome from "ui/chrome";
 import { RouteComponentProps } from "react-router-dom";
 import { RollupService } from "../../../../services";
 import { BREADCRUMBS, ROUTES } from "../../../../utils/constants";
 import CreateRollupSteps from "../../components/CreateRollupSteps";
 import TimeAggregation from "../../components/TimeAggregations";
-
-import { DEFAULT_ROLLUP } from "../../utils/constants";
 import AdvancedAggregation from "../../components/AdvancedAggregation";
 import MetricsCalculation from "../../components/MetricsCalculation";
 
@@ -33,13 +40,29 @@ interface CreateRollupProps extends RouteComponentProps {
 interface CreateRollupState {
   rollupId: string;
   rollupIdError: string;
-  jsonString: string;
   rollupSeqNo: number | null;
   rollupPrimaryTerm: number | null;
   submitError: string;
   isSubmitting: boolean;
   hasSubmitted: boolean;
+  timestamp: EuiComboBoxOptionOption<String>[];
+  intervalType: string;
+  timezone: string;
+  timeunit: string;
 }
+
+//TODO: Fetch actual timestamp options from backend
+const options: EuiComboBoxOptionOption<String>[] = [
+  {
+    label: "timestamp1",
+  },
+  {
+    label: "timestamp2",
+  },
+  {
+    label: "timestamp3",
+  },
+];
 
 export default class CreateRollupStep2 extends Component<CreateRollupProps, CreateRollupState> {
   constructor(props: CreateRollupProps) {
@@ -51,18 +74,18 @@ export default class CreateRollupStep2 extends Component<CreateRollupProps, Crea
       rollupId: "",
       rollupIdError: "",
       submitError: "",
-      jsonString: "",
       isSubmitting: false,
       hasSubmitted: false,
+      timestamp: [],
+      intervalType: "fixed",
+      timezone: "-7",
+      timeunit: "ms",
     };
   }
-
-  //TODO: Figure out what to do with the DEFAULT_POLICY part.
 
   componentDidMount = async (): Promise<void> => {
     chrome.breadcrumbs.set([BREADCRUMBS.INDEX_MANAGEMENT, BREADCRUMBS.ROLLUPS]);
     chrome.breadcrumbs.push(BREADCRUMBS.CREATE_ROLLUP_STEP2);
-    this.setState({ jsonString: DEFAULT_ROLLUP });
   };
 
   onCancel = (): void => {
@@ -76,17 +99,20 @@ export default class CreateRollupStep2 extends Component<CreateRollupProps, Crea
     else this.setState({ rollupId });
   };
 
-  onChangeJSON = (value: string): void => {
-    this.setState({ jsonString: value });
+  onChangeIntervalType = (optionId: string): void => {
+    this.setState({ intervalType: optionId });
   };
 
-  onAutoIndent = (): void => {
-    try {
-      const parsedJSON = JSON.parse(this.state.jsonString);
-      this.setState({ jsonString: JSON.stringify(parsedJSON, null, 4) });
-    } catch (err) {
-      // do nothing
-    }
+  onChangeTimestamp = (selectedOptions: EuiComboBoxOptionOption<String>[]): void => {
+    this.setState({ timestamp: selectedOptions });
+  };
+
+  onChangeTimeunit = (e: ChangeEvent<HTMLSelectElement>): void => {
+    this.setState({ timeunit: e.target.value });
+  };
+
+  onChangeTimezone = (e: ChangeEvent<HTMLSelectElement>): void => {
+    this.setState({ timezone: e.target.value });
   };
 
   onNext = (): void => {
@@ -94,14 +120,7 @@ export default class CreateRollupStep2 extends Component<CreateRollupProps, Crea
   };
 
   render() {
-    const { rollupId, rollupIdError, jsonString, submitError, isSubmitting } = this.state;
-    // Will be used later on for DefineRollup job (similar to DefinePolicy)
-    let hasJSONError = false;
-    try {
-      JSON.parse(jsonString);
-    } catch (err) {
-      hasJSONError = true;
-    }
+    const { rollupId, rollupIdError, submitError, isSubmitting, intervalType, timestamp, timezone, timeunit } = this.state;
 
     return (
       <div style={{ padding: "25px 50px" }}>
@@ -122,7 +141,18 @@ export default class CreateRollupStep2 extends Component<CreateRollupProps, Crea
               </p>
             </EuiCallOut>
             <EuiSpacer />
-            <TimeAggregation rollupId={rollupId} rollupIdError={rollupIdError} onChange={this.onChange} />
+            <TimeAggregation
+              onChange={this.onChange}
+              onChangeTimestamp={this.onChangeTimestamp}
+              timestampOptions={options}
+              onChangeIntervalType={this.onChangeIntervalType}
+              intervalType={intervalType}
+              selectedTimestamp={timestamp}
+              timezone={timezone}
+              timeunit={timeunit}
+              onChangeTimezone={this.onChangeTimezone}
+              onChangeTimeunit={this.onChangeTimeunit}
+            />
             <EuiSpacer />
             <AdvancedAggregation rollupId={rollupId} rollupIdError={rollupIdError} onChange={this.onChange} />
             <EuiSpacer />
