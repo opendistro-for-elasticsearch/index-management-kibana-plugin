@@ -21,20 +21,14 @@ import { EuiComboBoxOptionOption } from "@elastic/eui/src/components/combo_box/t
 import { IndexOption } from "../../models/interfaces";
 
 interface RollupIndicesProps {
-  indices: ManagedCatIndex[];
   indicesOptions: IndexOption[];
   sourceIndex: IndexOption;
   targetIndex: IndexOption;
   onChange: (options: EuiComboBoxOptionOption<ManagedCatIndex>[]) => void;
+  onCreateIndex: (searchValue: string, options: EuiComboBoxOptionOption<ManagedCatIndex>[]) => boolean | void;
 }
 
-//TODO: Handle creation of target index. May need to add prop.
-
-// const onCreateOption = (searchValue: string, options: EuiComboBoxOptionOption<T>[]) => boolean
-//   | void  => {
-// };
-
-const RollupIndices = ({ onChange, indices, indicesOptions, sourceIndex, targetIndex }: RollupIndicesProps) => (
+const RollupIndices = ({ onChange, indicesOptions, sourceIndex, targetIndex, onCreateIndex }: RollupIndicesProps) => (
   <ContentPanel bodyStyles={{ padding: "initial" }} title="Indices" titleSize="s">
     <div style={{ paddingLeft: "10px" }}>
       <EuiSpacer size="s" />
@@ -60,6 +54,7 @@ const RollupIndices = ({ onChange, indices, indicesOptions, sourceIndex, targetI
           options={indicesOptions}
           selectedOptions={targetIndex ? [targetIndex] : []}
           onChange={onChange}
+          onCreateOption={onCreateIndex}
         />
       </EuiFormRow>
     </div>
