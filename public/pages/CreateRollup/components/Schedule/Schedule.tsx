@@ -25,6 +25,7 @@ import {
   EuiFlexGroup,
   EuiFlexItem,
   EuiTextArea,
+  EuiFormHelpText,
 } from "@elastic/eui";
 import moment, { Moment } from "moment";
 import { FixedTimeunitOptions, TimezoneOptions } from "../../utils/constants";
@@ -118,7 +119,7 @@ export default class Schedule extends Component<ScheduleProps, ScheduleState> {
       jobEnabledByDefault: false,
       recurringJob: "no",
       recurringDefinition: "date",
-      startDate: moment(),
+      startDate: moment().add(30, "minutes"),
       endDate: null,
       timezone: "-7",
       cronExpression: "",
@@ -246,6 +247,9 @@ export default class Schedule extends Component<ScheduleProps, ScheduleState> {
               </EuiFormRow>
             </EuiFlexItem>
           </EuiFlexGroup>
+          <EuiFormHelpText style={{ maxWidth: 400 }}>
+            The amount of time the job wait for data ingestion to accommodate any necessary processing time.
+          </EuiFormHelpText>
         </div>
       </ContentPanel>
     );
