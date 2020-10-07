@@ -28,6 +28,8 @@ interface RollupIndicesProps {
   onChange: (options: EuiComboBoxOptionOption<ManagedCatIndex>[]) => void;
 }
 
+//TODO: Handle creation of target index. May need to add prop.
+
 // const onCreateOption = (searchValue: string, options: EuiComboBoxOptionOption<T>[]) => boolean
 //   | void  => {
 // };
