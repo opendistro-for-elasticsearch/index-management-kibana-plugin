@@ -14,7 +14,16 @@
  */
 
 import React, { ChangeEvent, Component } from "react";
-import { EuiSpacer, EuiTitle, EuiFlexGroup, EuiFlexItem, EuiButton, EuiButtonEmpty, EuiCallOut } from "@elastic/eui";
+import {
+  EuiSpacer,
+  EuiTitle,
+  EuiFlexGroup,
+  EuiFlexItem,
+  EuiButton,
+  EuiButtonEmpty,
+  EuiCallOut,
+  EuiComboBoxOptionOption,
+} from "@elastic/eui";
 import chrome from "ui/chrome";
 import { RouteComponentProps } from "react-router-dom";
 import { RollupService } from "../../../../services";
@@ -43,7 +52,20 @@ interface CreateRollupState {
   indices: ManagedCatIndex[];
   totalIndices: number;
   description: string;
+  roles: EuiComboBoxOptionOption<String>[];
 }
+
+const options: EuiComboBoxOptionOption<String>[] = [
+  {
+    label: "Role1",
+  },
+  {
+    label: "Role2",
+  },
+  {
+    label: "Role3",
+  },
+];
 
 export default class CreateRollup extends Component<CreateRollupProps, CreateRollupState> {
   constructor(props: CreateRollupProps) {
@@ -61,6 +83,7 @@ export default class CreateRollup extends Component<CreateRollupProps, CreateRol
       indices: [],
       totalIndices: 0,
       description: "",
+      roles: [],
     };
   }
 
@@ -85,13 +108,17 @@ export default class CreateRollup extends Component<CreateRollupProps, CreateRol
     this.setState({ description });
   };
 
+  onChangeRoles = (selectedOptions: EuiComboBoxOptionOption<String>[]): void => {
+    this.setState({ roles: selectedOptions });
+  };
+
   onNext = (): void => {
     console.log(this.state);
     this.props.history.push(ROUTES.CREATE_ROLLUP_STEP2);
   };
 
   render() {
-    const { rollupId, rollupIdError, submitError, isSubmitting, description } = this.state;
+    const { rollupId, rollupIdError, submitError, isSubmitting, description, roles } = this.state;
 
     return (
       <div style={{ padding: "25px 50px" }}>
@@ -114,7 +141,7 @@ export default class CreateRollup extends Component<CreateRollupProps, CreateRol
             <EuiSpacer />
             <RollupIndices rollupId={rollupId} rollupIdError={rollupIdError} onChange={this.onChange} />
             <EuiSpacer />
-            <Roles rollupId={rollupId} rollupIdError={rollupIdError} onChange={this.onChange} />
+            <Roles rollupId={rollupId} rollupIdError={rollupIdError} onChange={this.onChangeRoles} roles={roles} roleOptions={options} />
             {submitError && (
               <EuiCallOut title="Sorry, there was an error" color="danger" iconType="alert">
                 <p>{submitError}</p>
