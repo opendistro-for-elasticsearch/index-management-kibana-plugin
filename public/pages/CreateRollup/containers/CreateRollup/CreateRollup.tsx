@@ -22,7 +22,6 @@ import { BREADCRUMBS, DOCUMENTATION_URL, ROUTES } from "../../../../utils/consta
 import ConfigureRollup from "../../components/ConfigureRollup";
 import RollupIndices from "../../components/RollupIndices";
 import CreateRollupSteps from "../../components/CreateRollupSteps";
-import { DEFAULT_ROLLUP } from "../../utils/constants";
 import Roles from "../../components/Roles";
 import IndexService from "../../../../services/IndexService";
 import { ManagedCatIndex } from "../../../../../server/models/interfaces";
@@ -35,7 +34,6 @@ interface CreateRollupProps extends RouteComponentProps {
 interface CreateRollupState {
   rollupId: string;
   rollupIdError: string;
-  jsonString: string;
   rollupSeqNo: number | null;
   rollupPrimaryTerm: number | null;
   submitError: string;
@@ -57,7 +55,6 @@ export default class CreateRollup extends Component<CreateRollupProps, CreateRol
       rollupId: "",
       rollupIdError: "",
       submitError: "",
-      jsonString: "",
       isSubmitting: false,
       hasSubmitted: false,
       loadingIndices: true,
@@ -70,7 +67,6 @@ export default class CreateRollup extends Component<CreateRollupProps, CreateRol
   componentDidMount = async (): Promise<void> => {
     chrome.breadcrumbs.set([BREADCRUMBS.INDEX_MANAGEMENT, BREADCRUMBS.ROLLUPS]);
     chrome.breadcrumbs.push(BREADCRUMBS.CREATE_ROLLUP);
-    this.setState({ jsonString: DEFAULT_ROLLUP });
   };
 
   // getIndices = async (): Promise<void> => {
@@ -109,19 +105,6 @@ export default class CreateRollup extends Component<CreateRollupProps, CreateRol
     this.setState({ description });
   };
 
-  onChangeJSON = (value: string): void => {
-    this.setState({ jsonString: value });
-  };
-
-  onAutoIndent = (): void => {
-    try {
-      const parsedJSON = JSON.parse(this.state.jsonString);
-      this.setState({ jsonString: JSON.stringify(parsedJSON, null, 4) });
-    } catch (err) {
-      // do nothing
-    }
-  };
-
   onNext = (): void => {
     console.log(this.state);
     this.props.history.push(ROUTES.CREATE_ROLLUP_STEP2);
@@ -149,14 +132,8 @@ export default class CreateRollup extends Component<CreateRollupProps, CreateRol
   };
 
   render() {
-    const { rollupId, rollupIdError, jsonString, submitError, isSubmitting, description } = this.state;
+    const { rollupId, rollupIdError, submitError, isSubmitting, description } = this.state;
     // Will be used later on for DefineRollup job (similar to DefinePolicy)
-    let hasJSONError = false;
-    try {
-      JSON.parse(jsonString);
-    } catch (err) {
-      hasJSONError = true;
-    }
 
     return (
       <div style={{ padding: "25px 50px" }}>

@@ -153,7 +153,7 @@ export default class Main extends Component<MainProps, object> {
                       path={ROUTES.CREATE_ROLLUP}
                       render={(props: RouteComponentProps) => (
                         <div style={{ padding: "25px 25px" }}>
-                          <CreateRollup {...props} rollupService={services.rollupService} />
+                          <CreateRollup {...props} rollupService={services.rollupService} indexService={services.indexService} />
                         </div>
                       )}
                     />
