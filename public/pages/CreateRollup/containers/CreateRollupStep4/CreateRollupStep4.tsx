@@ -1,5 +1,5 @@
 /*
- * Copyright 2019 Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ * Copyright 2020 Amazon.com, Inc. or its affiliates. All Rights Reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License").
  * You may not use this file except in compliance with the License.
@@ -22,9 +22,7 @@ import { RollupService } from "../../../../services";
 import { BREADCRUMBS, ROUTES } from "../../../../utils/constants";
 import { getErrorMessage } from "../../../../utils/helpers";
 import { Rollup } from "../../../../../models/interfaces";
-import RollupIndices from "../../components/RollupIndices";
 import CreateRollupSteps from "../../components/CreateRollupSteps";
-import TimeAggregation from "../../components/TimeAggregations";
 import { DEFAULT_ROLLUP } from "../../utils/constants";
 import HistogramAndMetrics from "../../components/HistogramAndMetrics";
 import JobNameAndIndices from "../../components/JobNameAndIndices";
@@ -33,6 +31,7 @@ import Metrics from "../../components/Metrics";
 
 interface CreateRollupProps extends RouteComponentProps {
   rollupService: RollupService;
+  currentStep: number;
 }
 
 interface CreateRollupState {
@@ -104,8 +103,7 @@ export default class CreateRollupStep4 extends Component<CreateRollupProps, Crea
   };
 
   onCancel = (): void => {
-    if (this.props.isEdit) this.props.history.goBack();
-    else this.props.history.push(ROUTES.ROLLUPS);
+    this.props.history.push(ROUTES.ROLLUPS);
   };
 
   onChange = (e: ChangeEvent<HTMLInputElement>): void => {
@@ -119,28 +117,14 @@ export default class CreateRollupStep4 extends Component<CreateRollupProps, Crea
     this.setState({ jsonString: value });
   };
 
-  onAutoIndent = (): void => {
-    try {
-      const parsedJSON = JSON.parse(this.state.jsonString);
-      this.setState({ jsonString: JSON.stringify(parsedJSON, null, 4) });
-    } catch (err) {
-      // do nothing
-    }
-  };
-
   onNext = (): void => {
     this.props.history.push(ROUTES.ROLLUPS);
   };
 
   render() {
-    const { rollupId, rollupIdError, jsonString, submitError, isSubmitting } = this.state;
-    // Will be used later on for DefineRollup job (similar to DefinePolicy)
-    let hasJSONError = false;
-    try {
-      JSON.parse(jsonString);
-    } catch (err) {
-      hasJSONError = true;
-    }
+    if (this.props.currentStep != 4) return null;
+
+    const { rollupId, rollupIdError, submitError, isSubmitting } = this.state;
 
     return (
       <div style={{ padding: "25px 50px" }}>
@@ -169,19 +153,6 @@ export default class CreateRollupStep4 extends Component<CreateRollupProps, Crea
           </EuiFlexItem>
         </EuiFlexGroup>
         <EuiSpacer />
-
-        <EuiFlexGroup alignItems="center" justifyContent="flexEnd">
-          <EuiFlexItem grow={false}>
-            <EuiButtonEmpty onClick={this.onCancel} data-test-subj="createPolicyCancelButton">
-              Cancel
-            </EuiButtonEmpty>
-          </EuiFlexItem>
-          <EuiFlexItem grow={false}>
-            <EuiButton fill onClick={this.onNext} isLoading={isSubmitting} data-test-subj="createPolicyCreateButton">
-              Create
-            </EuiButton>
-          </EuiFlexItem>
-        </EuiFlexGroup>
       </div>
     );
   }

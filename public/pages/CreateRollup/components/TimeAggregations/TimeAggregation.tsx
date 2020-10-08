@@ -1,5 +1,5 @@
 /*
- * Copyright 2019 Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ * Copyright 2020 Amazon.com, Inc. or its affiliates. All Rights Reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License").
  * You may not use this file except in compliance with the License.
@@ -14,21 +14,31 @@
  */
 
 import React, { ChangeEvent, Component } from "react";
-import { EuiSpacer, EuiFormRow, EuiComboBox, EuiSelect, EuiFlexGroup, EuiFlexItem, EuiFieldNumber, EuiRadioGroup } from "@elastic/eui";
+import {
+  EuiSpacer,
+  EuiFormRow,
+  EuiComboBox,
+  EuiSelect,
+  EuiFlexGroup,
+  EuiFlexItem,
+  EuiFieldNumber,
+  EuiRadioGroup,
+  EuiComboBoxOptionOption,
+} from "@elastic/eui";
 import { ContentPanel } from "../../../../components/ContentPanel";
 import { CalenderTimeunitOptions, FixedTimeunitOptions, TimezoneOptions } from "../../utils/constants";
 
 interface TimeAggregationProps {
-  rollupId: string;
-  rollupIdError: string;
-  onChange: (value: ChangeEvent<HTMLInputElement>) => void;
-  // onChangeStateRadio: (optionId: string) => void;
-  // stateRadioIdSelected: string;
-}
-
-interface TimeAggregationState {
   intervalType: string;
-  timezone: number;
+  onChange: (value: ChangeEvent<HTMLInputElement>) => void;
+  timestampOptions: EuiComboBoxOptionOption<String>[];
+  selectedTimestamp: EuiComboBoxOptionOption<String>[];
+  onChangeIntervalType: (optionId: string) => void;
+  onChangeTimestamp: (options: EuiComboBoxOptionOption<String>[]) => void;
+  onChangeTimezone: (e: ChangeEvent<HTMLSelectElement>) => void;
+  onChangeTimeunit: (e: ChangeEvent<HTMLSelectElement>) => void;
+  timezone: string;
+  timeunit: string;
 }
 
 const radios = [
@@ -41,70 +51,51 @@ const radios = [
     label: "Calender",
   },
 ];
-export default class TimeAggregation extends Component<TimeAggregationProps, TimeAggregationState> {
+export default class TimeAggregation extends Component<TimeAggregationProps> {
   constructor(props: TimeAggregationProps) {
     super(props);
-
-    this.state = {
-      intervalType: "fixed",
-      timezone: -7,
-    };
   }
 
-  onChangeRadio = (optionId: string): void => {
-    this.setState({ intervalType: optionId });
-  };
-
   render() {
-    const { rollupIdError } = this.props;
-    const { intervalType, timezone } = this.state;
+    const { timestampOptions, intervalType, timezone, timeunit, onChangeTimezone, onChangeIntervalType, onChangeTimeunit } = this.props;
     return (
       <ContentPanel bodyStyles={{ padding: "initial" }} title="Time aggregation" titleSize="s">
-        {/*<EuiFormHelpText> Rolling up by a date dimension is required</EuiFormHelpText>*/}
         <div style={{ paddingLeft: "10px" }}>
           <EuiSpacer size="s" />
-          <EuiFormRow label="Timestamp field" isInvalid={!!rollupIdError} error={rollupIdError}>
+          <EuiFormRow label="Timestamp field">
             <EuiComboBox
               placeholder="Select timestamp"
-              // options={timeUnitOptions}
-              // selectedOptions={selectedOptions}
-              // onChange={onChange}
-              // onCreateOption={onCreateOption}
+              options={timestampOptions}
+              selectedOptions={this.props.selectedTimestamp}
+              onChange={this.props.onChangeTimestamp}
+              singleSelection={true}
             />
           </EuiFormRow>
           <EuiSpacer size="m" />
-          <EuiFormRow label="Interval type" isInvalid={!!rollupIdError} error={rollupIdError}>
-            <EuiRadioGroup options={radios} idSelected={intervalType} onChange={(id) => this.onChangeRadio(id)} name="intervalType" />
+          <EuiFormRow label="Interval type">
+            <EuiRadioGroup options={radios} idSelected={intervalType} onChange={(id) => onChangeIntervalType(id)} name="intervalType" />
           </EuiFormRow>
           <EuiSpacer size="m" />
           <EuiFlexGroup style={{ maxWidth: 300 }}>
             <EuiFlexItem grow={false} style={{ width: 100 }}>
-              <EuiFormRow label="Interval" isInvalid={!!rollupIdError} error={rollupIdError}>
+              <EuiFormRow label="Interval">
                 <EuiFieldNumber min={1} placeholder="2" />
               </EuiFormRow>
             </EuiFlexItem>
             <EuiFlexItem>
-              {/*Change the options of timeunits according to the interval type*/}
               <EuiFormRow hasEmptyLabelSpace={true}>
                 <EuiSelect
                   id="selectTimeunit"
                   options={intervalType == "fixed" ? FixedTimeunitOptions : CalenderTimeunitOptions}
-                  value={timezone}
-                  // onChange={onChange}
+                  value={timeunit}
+                  onChange={onChangeTimeunit}
                 />
               </EuiFormRow>
             </EuiFlexItem>
           </EuiFlexGroup>
-
           <EuiSpacer size="m" />
-          {/*Create monitor from alerting uses moment library for timezone*/}
           <EuiFormRow label="Timezone">
-            <EuiSelect
-              id="timezone"
-              options={TimezoneOptions}
-              value={timezone}
-              // onChange={onChange}
-            />
+            <EuiSelect id="timezone" options={TimezoneOptions} value={timezone} onChange={onChangeTimezone} />
           </EuiFormRow>
         </div>
       </ContentPanel>

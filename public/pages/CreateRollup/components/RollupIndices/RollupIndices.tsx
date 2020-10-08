@@ -1,5 +1,5 @@
 /*
- * Copyright 2019 Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ * Copyright 2020 Amazon.com, Inc. or its affiliates. All Rights Reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License").
  * You may not use this file except in compliance with the License.
@@ -13,18 +13,22 @@
  * permissions and limitations under the License.
  */
 
-import React, { ChangeEvent } from "react";
+import React from "react";
 import { EuiSpacer, EuiFormRow, EuiComboBox, EuiCallOut } from "@elastic/eui";
 import { ContentPanel } from "../../../../components/ContentPanel";
+import { ManagedCatIndex } from "../../../../../server/models/interfaces";
+import { EuiComboBoxOptionOption } from "@elastic/eui/src/components/combo_box/types";
+import { IndexOption } from "../../models/interfaces";
 
 interface RollupIndicesProps {
-  rollupId: string;
-  rollupIdError: string;
-  onChange: (value: ChangeEvent<HTMLInputElement>) => void;
-  // indices: ManagedCatIndex[];
+  indicesOptions: IndexOption[];
+  sourceIndex: IndexOption;
+  targetIndex: IndexOption;
+  onChange: (options: EuiComboBoxOptionOption<ManagedCatIndex>[]) => void;
+  onCreateIndex: (searchValue: string, options: EuiComboBoxOptionOption<ManagedCatIndex>[]) => boolean | void;
 }
 
-const RollupIndices = ({ rollupId, rollupIdError, onChange }: RollupIndicesProps) => (
+const RollupIndices = ({ onChange, indicesOptions, sourceIndex, targetIndex, onCreateIndex }: RollupIndicesProps) => (
   <ContentPanel bodyStyles={{ padding: "initial" }} title="Indices" titleSize="s">
     <div style={{ paddingLeft: "10px" }}>
       <EuiSpacer size="s" />
@@ -32,33 +36,25 @@ const RollupIndices = ({ rollupId, rollupIdError, onChange }: RollupIndicesProps
         <p>Indices cannot be changed once the job is created. Please ensure that you have correct spellings.</p>
       </EuiCallOut>
       <EuiSpacer size="m" />
-      <EuiFormRow
-        label="Source index"
-        helpText="The index where this rollup job is performed on. Type in * as wildcard for index pattern."
-        isInvalid={!!rollupIdError}
-        error={rollupIdError}
-      >
+      <EuiFormRow label="Source index" helpText="The index where this rollup job is performed on. Type in * as wildcard for index pattern.">
         <EuiComboBox
           placeholder="Select source index"
-          // options={options}
-          // selectedOptions={selectedOptions}
-          // onChange={onChange}
-          // onCreateOption={onCreateOption}
+          options={indicesOptions}
+          selectedOptions={sourceIndex ? [sourceIndex] : []}
+          onChange={onChange}
         />
       </EuiFormRow>
 
       <EuiFormRow
         label="Target index"
         helpText="The index stores rollup results. You can look up or an existing index to reuse or type to create a new index."
-        isInvalid={!!rollupIdError}
-        error={rollupIdError}
       >
         <EuiComboBox
           placeholder="Select or create target index"
-          // options={options}
-          // selectedOptions={selectedOptions}
-          // onChange={onChange}
-          // onCreateOption={onCreateOption}
+          options={indicesOptions}
+          selectedOptions={targetIndex ? [targetIndex] : []}
+          onChange={onChange}
+          onCreateOption={onCreateIndex}
         />
       </EuiFormRow>
     </div>
