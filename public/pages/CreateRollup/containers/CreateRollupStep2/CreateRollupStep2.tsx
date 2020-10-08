@@ -14,20 +14,9 @@
  */
 
 import React, { ChangeEvent, Component } from "react";
-import {
-  EuiSpacer,
-  EuiTitle,
-  EuiFlexGroup,
-  EuiFlexItem,
-  EuiButton,
-  EuiButtonEmpty,
-  EuiCallOut,
-  EuiComboBoxOptionOption,
-} from "@elastic/eui";
-import chrome from "ui/chrome";
+import { EuiSpacer, EuiTitle, EuiFlexGroup, EuiFlexItem, EuiCallOut, EuiComboBoxOptionOption } from "@elastic/eui";
 import { RouteComponentProps } from "react-router-dom";
 import { RollupService } from "../../../../services";
-import { BREADCRUMBS, ROUTES } from "../../../../utils/constants";
 import CreateRollupSteps from "../../components/CreateRollupSteps";
 import TimeAggregation from "../../components/TimeAggregations";
 import AdvancedAggregation from "../../components/AdvancedAggregation";
@@ -35,13 +24,17 @@ import MetricsCalculation from "../../components/MetricsCalculation";
 
 interface CreateRollupProps extends RouteComponentProps {
   rollupService: RollupService;
-  timestamp: EuiComboBoxOptionOption<String>[];
+  currentStep: number;
   intervalType: string;
+  timestampOptions: EuiComboBoxOptionOption<String>[];
+  selectedTimestamp: EuiComboBoxOptionOption<String>[];
+  onChangeIntervalType: (optionId: string) => void;
+  onChangeTimestamp: (options: EuiComboBoxOptionOption<String>[]) => void;
+  onChangeTimezone: (e: ChangeEvent<HTMLSelectElement>) => void;
+  onChangeTimeunit: (e: ChangeEvent<HTMLSelectElement>) => void;
   timezone: string;
   timeunit: string;
 }
-
-interface CreateRollupState {}
 
 //TODO: Fetch actual timestamp options from backend
 const options: EuiComboBoxOptionOption<String>[] = [
@@ -56,33 +49,10 @@ const options: EuiComboBoxOptionOption<String>[] = [
   },
 ];
 
-export default class CreateRollupStep2 extends Component<CreateRollupProps, CreateRollupState> {
+export default class CreateRollupStep2 extends Component<CreateRollupProps> {
   constructor(props: CreateRollupProps) {
     super(props);
-
-    this.state = {
-      rollupSeqNo: null,
-      rollupPrimaryTerm: null,
-      rollupId: "",
-      rollupIdError: "",
-      submitError: "",
-      isSubmitting: false,
-      hasSubmitted: false,
-      timestamp: [],
-      intervalType: "fixed",
-      timezone: "-7",
-      timeunit: "ms",
-    };
   }
-
-  componentDidMount = async (): Promise<void> => {
-    chrome.breadcrumbs.set([BREADCRUMBS.INDEX_MANAGEMENT, BREADCRUMBS.ROLLUPS]);
-    chrome.breadcrumbs.push(BREADCRUMBS.CREATE_ROLLUP_STEP2);
-  };
-
-  onCancel = (): void => {
-    this.props.history.push(ROUTES.ROLLUPS);
-  };
 
   onChangeIntervalType = (optionId: string): void => {
     this.setState({ intervalType: optionId });
@@ -100,12 +70,10 @@ export default class CreateRollupStep2 extends Component<CreateRollupProps, Crea
     this.setState({ timezone: e.target.value });
   };
 
-  onNext = (): void => {
-    this.props.history.push(ROUTES.CREATE_ROLLUP_STEP3);
-  };
-
   render() {
-    const { intervalType, timestamp, timezone, timeunit } = this.props;
+    if (this.props.currentStep !== 2) return null;
+
+    const { intervalType, selectedTimestamp, timezone, timeunit } = this.props;
 
     return (
       <div style={{ padding: "25px 50px" }}>
@@ -131,32 +99,19 @@ export default class CreateRollupStep2 extends Component<CreateRollupProps, Crea
               timestampOptions={options}
               onChangeIntervalType={this.onChangeIntervalType}
               intervalType={intervalType}
-              selectedTimestamp={timestamp}
+              selectedTimestamp={selectedTimestamp}
               timezone={timezone}
               timeunit={timeunit}
               onChangeTimezone={this.onChangeTimezone}
               onChangeTimeunit={this.onChangeTimeunit}
             />
             <EuiSpacer />
-            <AdvancedAggregation onChange={this.onChange} />
+            <AdvancedAggregation {...this.props} />
             <EuiSpacer />
-            <MetricsCalculation onChange={this.onChange} />
+            <MetricsCalculation {...this.props} />
           </EuiFlexItem>
         </EuiFlexGroup>
         <EuiSpacer />
-
-        <EuiFlexGroup alignItems="center" justifyContent="flexEnd">
-          <EuiFlexItem grow={false}>
-            <EuiButtonEmpty onClick={this.onCancel} data-test-subj="createRollupCancelButton">
-              Cancel
-            </EuiButtonEmpty>
-          </EuiFlexItem>
-          <EuiFlexItem grow={false}>
-            <EuiButton fill onClick={this.onNext} isLoading={isSubmitting} data-test-subj="createRollupStep2NextButton">
-              Next
-            </EuiButton>
-          </EuiFlexItem>
-        </EuiFlexGroup>
       </div>
     );
   }

@@ -13,27 +13,26 @@
  * permissions and limitations under the License.
  */
 
-import React, { ChangeEvent, Component, Fragment } from "react";
-import { EuiSpacer, EuiTitle, EuiFlexGroup, EuiFlexItem, EuiButton, EuiButtonEmpty, EuiCallOut, EuiLink, EuiIcon } from "@elastic/eui";
+import React, { ChangeEvent, Component } from "react";
+import { EuiSpacer, EuiTitle, EuiFlexGroup, EuiFlexItem, EuiCallOut } from "@elastic/eui";
 import chrome from "ui/chrome";
 import { toastNotifications } from "ui/notify";
 import { RouteComponentProps } from "react-router-dom";
 import { RollupService } from "../../../../services";
-import { BREADCRUMBS, DOCUMENTATION_URL, ROUTES } from "../../../../utils/constants";
+import { BREADCRUMBS, ROUTES } from "../../../../utils/constants";
 import { getErrorMessage } from "../../../../utils/helpers";
 import { Rollup } from "../../../../../models/interfaces";
 import CreateRollupSteps from "../../components/CreateRollupSteps";
-import { DEFAULT_ROLLUP } from "../../utils/constants";
 import Schedule from "../../components/Schedule";
 
 interface CreateRollupProps extends RouteComponentProps {
   rollupService: RollupService;
+  currentStep: number;
 }
 
 interface CreateRollupState {
   rollupId: string;
   rollupIdError: string;
-  jsonString: string;
   rollupSeqNo: number | null;
   rollupPrimaryTerm: number | null;
   submitError: string;
@@ -51,7 +50,6 @@ export default class CreateRollupStep3 extends Component<CreateRollupProps, Crea
       rollupId: "",
       rollupIdError: "",
       submitError: "",
-      jsonString: "",
       isSubmitting: false,
       hasSubmitted: false,
     };
@@ -62,7 +60,6 @@ export default class CreateRollupStep3 extends Component<CreateRollupProps, Crea
   componentDidMount = async (): Promise<void> => {
     chrome.breadcrumbs.set([BREADCRUMBS.INDEX_MANAGEMENT, BREADCRUMBS.ROLLUPS]);
     chrome.breadcrumbs.push(BREADCRUMBS.CREATE_ROLLUP_STEP3);
-    this.setState({ jsonString: DEFAULT_ROLLUP });
   };
 
   onCreate = async (rollupId: string, rollup: Rollup): Promise<void> => {
@@ -111,57 +108,16 @@ export default class CreateRollupStep3 extends Component<CreateRollupProps, Crea
     else this.setState({ rollupId });
   };
 
-  onChangeJSON = (value: string): void => {
-    this.setState({ jsonString: value });
-  };
-
-  onAutoIndent = (): void => {
-    try {
-      const parsedJSON = JSON.parse(this.state.jsonString);
-      this.setState({ jsonString: JSON.stringify(parsedJSON, null, 4) });
-    } catch (err) {
-      // do nothing
-    }
-  };
-
   onNext = (): void => {
     this.props.history.push(ROUTES.CREATE_ROLLUP_STEP4);
   };
 
-  renderEditCallOut = (): React.ReactNode | null => {
-    return (
-      <Fragment>
-        <EuiCallOut
-          title="Edits to the rollup are not automatically applied to indices that are already being managed by this rollup."
-          iconType="questionInCircle"
-        >
-          <p>
-            This ensures that any update to a rollup doesn't harm indices that are running under an older version of the rollup. To carry
-            over your edits to these indices, please use the "Change Rollup" under "Managed Indices" to reapply the rollup after submitting
-            your edits.{" "}
-            <EuiLink href={DOCUMENTATION_URL} target="_blank">
-              Learn more <EuiIcon type="popout" size="s" />
-            </EuiLink>
-          </p>
-        </EuiCallOut>
-        <EuiSpacer />
-      </Fragment>
-    );
-  };
-
   render() {
-    const { rollupId, rollupIdError, jsonString, submitError, isSubmitting } = this.state;
-    // Will be used later on for DefineRollup job (similar to DefinePolicy)
-    let hasJSONError = false;
-    try {
-      JSON.parse(jsonString);
-    } catch (err) {
-      hasJSONError = true;
-    }
+    if (this.props.currentStep != 3) return null;
 
+    const { rollupId, rollupIdError, submitError, isSubmitting } = this.state;
     return (
       <div style={{ padding: "25px 50px" }}>
-        {this.renderEditCallOut()}
         <EuiFlexGroup>
           <EuiFlexItem style={{ maxWidth: 300 }} grow={false}>
             <CreateRollupSteps step={3} />
@@ -181,19 +137,6 @@ export default class CreateRollupStep3 extends Component<CreateRollupProps, Crea
           </EuiFlexItem>
         </EuiFlexGroup>
         <EuiSpacer />
-
-        <EuiFlexGroup alignItems="center" justifyContent="flexEnd">
-          <EuiFlexItem grow={false}>
-            <EuiButtonEmpty onClick={this.onCancel} data-test-subj="createPolicyCancelButton">
-              Cancel
-            </EuiButtonEmpty>
-          </EuiFlexItem>
-          <EuiFlexItem grow={false}>
-            <EuiButton fill onClick={this.onNext} isLoading={isSubmitting} data-test-subj="createPolicyCreateButton">
-              Next
-            </EuiButton>
-          </EuiFlexItem>
-        </EuiFlexGroup>
       </div>
     );
   }
