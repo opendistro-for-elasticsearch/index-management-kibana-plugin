@@ -37,11 +37,7 @@ import { ContentPanel, ContentPanelActions } from "../../../../components/Conten
 import { ModalConsumer } from "../../../../components/Modal";
 import { ManagedCatIndex } from "../../../../../server/models/interfaces";
 
-interface MetricsCalculationProps {
-  rollupId: string;
-  rollupIdError: string;
-  onChange: (value: ChangeEvent<HTMLInputElement>) => void;
-}
+interface MetricsCalculationProps {}
 
 interface MetricsCalculationState {
   isModalVisible: boolean;

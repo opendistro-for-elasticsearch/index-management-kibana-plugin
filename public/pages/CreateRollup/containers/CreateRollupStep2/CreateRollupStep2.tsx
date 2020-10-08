@@ -73,7 +73,16 @@ export default class CreateRollupStep2 extends Component<CreateRollupProps> {
   render() {
     if (this.props.currentStep !== 2) return null;
 
-    const { intervalType, selectedTimestamp, timezone, timeunit } = this.props;
+    const {
+      intervalType,
+      selectedTimestamp,
+      timezone,
+      timeunit,
+      onChangeTimestamp,
+      onChangeTimezone,
+      onChangeIntervalType,
+      onChangeTimeunit,
+    } = this.props;
 
     return (
       <div style={{ padding: "25px 50px" }}>
@@ -95,15 +104,15 @@ export default class CreateRollupStep2 extends Component<CreateRollupProps> {
             </EuiCallOut>
             <EuiSpacer />
             <TimeAggregation
-              onChangeTimestamp={this.onChangeTimestamp}
+              onChangeTimestamp={onChangeTimestamp}
               timestampOptions={options}
-              onChangeIntervalType={this.onChangeIntervalType}
+              onChangeIntervalType={onChangeIntervalType}
               intervalType={intervalType}
               selectedTimestamp={selectedTimestamp}
               timezone={timezone}
               timeunit={timeunit}
-              onChangeTimezone={this.onChangeTimezone}
-              onChangeTimeunit={this.onChangeTimeunit}
+              onChangeTimezone={onChangeTimezone}
+              onChangeTimeunit={onChangeTimeunit}
             />
             <EuiSpacer />
             <AdvancedAggregation {...this.props} />

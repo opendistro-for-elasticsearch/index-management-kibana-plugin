@@ -49,6 +49,10 @@ interface CreateRollupFormState {
   totalIndices: number;
   description: string;
   roles: EuiComboBoxOptionOption<String>[];
+  selectedTimestamp: EuiComboBoxOptionOption<String>[];
+  intervalType: string;
+  timezone: string;
+  timeunit: string;
 }
 
 //TODO: Fetch actual roles from backend
@@ -70,10 +74,10 @@ export default class CreateRollupForm extends Component<CreateRollupFormProps, C
 
     this.state = {
       currentStep: 1,
-      rollupSeqNo: null,
-      rollupPrimaryTerm: null,
       rollupId: "",
       rollupIdError: "",
+      rollupSeqNo: null,
+      rollupPrimaryTerm: null,
       submitError: "",
       isSubmitting: false,
       hasSubmitted: false,
@@ -82,6 +86,10 @@ export default class CreateRollupForm extends Component<CreateRollupFormProps, C
       totalIndices: 0,
       description: "",
       roles: [],
+      selectedTimestamp: [],
+      intervalType: "fixed",
+      timezone: "-7",
+      timeunit: "ms",
     };
     this._next = this._next.bind(this);
     this._prev = this._prev.bind(this);
@@ -167,6 +175,22 @@ export default class CreateRollupForm extends Component<CreateRollupFormProps, C
     this.setState({ roles: selectedOptions });
   };
 
+  onChangeIntervalType = (optionId: string): void => {
+    this.setState({ intervalType: optionId });
+  };
+
+  onChangeTimestamp = (selectedOptions: EuiComboBoxOptionOption<String>[]): void => {
+    this.setState({ selectedTimestamp: selectedOptions });
+  };
+
+  onChangeTimeunit = (e: ChangeEvent<HTMLSelectElement>): void => {
+    this.setState({ timeunit: e.target.value });
+  };
+
+  onChangeTimezone = (e: ChangeEvent<HTMLSelectElement>): void => {
+    this.setState({ timezone: e.target.value });
+  };
+
   //TODO: Complete submit logistic
   onSubmit = async (): Promise<void> => {
     const { rollupId } = this.state;
@@ -188,7 +212,20 @@ export default class CreateRollupForm extends Component<CreateRollupFormProps, C
   };
 
   render() {
-    const { rollupId, rollupIdError, submitError, isSubmitting, hasSubmitted, description, roles, currentStep } = this.state;
+    const {
+      rollupId,
+      rollupIdError,
+      submitError,
+      isSubmitting,
+      hasSubmitted,
+      description,
+      roles,
+      currentStep,
+      intervalType,
+      selectedTimestamp,
+      timezone,
+      timeunit,
+    } = this.state;
     return (
       <form onSubmit={this.onSubmit}>
         <CreateRollup
@@ -206,7 +243,19 @@ export default class CreateRollupForm extends Component<CreateRollupFormProps, C
           onChange={this.onChangeName}
           currentStep={this.state.currentStep}
         />
-        <CreateRollupStep2 {...this.props} currentStep={this.state.currentStep} />
+        <CreateRollupStep2
+          {...this.props}
+          currentStep={this.state.currentStep}
+          onChangeTimestamp={this.onChangeTimestamp}
+          timestampOptions={options}
+          onChangeIntervalType={this.onChangeIntervalType}
+          intervalType={intervalType}
+          selectedTimestamp={selectedTimestamp}
+          timezone={timezone}
+          timeunit={timeunit}
+          onChangeTimezone={this.onChangeTimezone}
+          onChangeTimeunit={this.onChangeTimeunit}
+        />
         <CreateRollupStep3 {...this.props} currentStep={this.state.currentStep} />
         <CreateRollupStep4 {...this.props} currentStep={this.state.currentStep} />
         <EuiFlexGroup alignItems="center" justifyContent="flexEnd">

@@ -28,25 +28,16 @@ import {
   EuiFlexGroup,
   EuiFlexItem,
   EuiForm,
-  EuiFormRow,
   EuiFieldSearch,
   EuiComboBox,
   EuiComboBoxOptionOption,
-  Pagination,
-  EuiTableSortingType,
   EuiTableSelectionType,
 } from "@elastic/eui";
 import { ContentPanel, ContentPanelActions } from "../../../../components/ContentPanel";
-import { DEFAULT_PAGE_SIZE_OPTIONS } from "../../../Indices/utils/constants";
 import { ManagedCatIndex } from "../../../../../server/models/interfaces";
 import { ModalConsumer } from "../../../../components/Modal";
-import ApplyPolicyModal from "../../../Indices/components/ApplyPolicyModal";
 
-interface AdvancedAggregationProps {
-  rollupId: string;
-  rollupIdError: string;
-  onChange: (value: ChangeEvent<HTMLInputElement>) => void;
-}
+interface AdvancedAggregationProps {}
 
 interface AdvancedAggregationState {
   isModalVisible: boolean;
