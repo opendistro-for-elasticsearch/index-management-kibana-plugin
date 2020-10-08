@@ -14,7 +14,7 @@
  */
 
 import React, { ChangeEvent, Component } from "react";
-import { EuiSpacer, EuiTitle, EuiFlexGroup, EuiFlexItem, EuiButton, EuiButtonEmpty, EuiCallOut } from "@elastic/eui";
+import { EuiSpacer, EuiTitle, EuiFlexGroup, EuiFlexItem } from "@elastic/eui";
 import chrome from "ui/chrome";
 import { toastNotifications } from "ui/notify";
 import { RouteComponentProps } from "react-router-dom";
@@ -23,7 +23,6 @@ import { BREADCRUMBS, ROUTES } from "../../../../utils/constants";
 import { getErrorMessage } from "../../../../utils/helpers";
 import { Rollup } from "../../../../../models/interfaces";
 import CreateRollupSteps from "../../components/CreateRollupSteps";
-import { DEFAULT_ROLLUP } from "../../utils/constants";
 import HistogramAndMetrics from "../../components/HistogramAndMetrics";
 import JobNameAndIndices from "../../components/JobNameAndIndices";
 import ScheduleRolesAndNotifications from "../../components/ScheduleRolesAndNotifications";
@@ -32,6 +31,7 @@ import Metrics from "../../components/Metrics";
 interface CreateRollupProps extends RouteComponentProps {
   rollupService: RollupService;
   currentStep: number;
+  onChangeStep: (step: number) => void;
 }
 
 interface CreateRollupState {
@@ -63,8 +63,6 @@ export default class CreateRollupStep4 extends Component<CreateRollupProps, Crea
 
   componentDidMount = async (): Promise<void> => {
     chrome.breadcrumbs.set([BREADCRUMBS.INDEX_MANAGEMENT, BREADCRUMBS.ROLLUPS]);
-    chrome.breadcrumbs.push(BREADCRUMBS.CREATE_ROLLUP_STEP4);
-    this.setState({ jsonString: DEFAULT_ROLLUP });
   };
 
   onCreate = async (rollupId: string, rollup: Rollup): Promise<void> => {
@@ -113,18 +111,10 @@ export default class CreateRollupStep4 extends Component<CreateRollupProps, Crea
     else this.setState({ rollupId });
   };
 
-  onChangeJSON = (value: string): void => {
-    this.setState({ jsonString: value });
-  };
-
-  onNext = (): void => {
-    this.props.history.push(ROUTES.ROLLUPS);
-  };
-
   render() {
     if (this.props.currentStep != 4) return null;
-
-    const { rollupId, rollupIdError, submitError, isSubmitting } = this.state;
+    const { onChangeStep } = this.props;
+    const { rollupId, rollupIdError } = this.state;
 
     return (
       <div style={{ padding: "25px 50px" }}>
@@ -137,19 +127,16 @@ export default class CreateRollupStep4 extends Component<CreateRollupProps, Crea
               <h1>Review and create</h1>
             </EuiTitle>
             <EuiSpacer />
-            <JobNameAndIndices rollupId={rollupId} rollupIdError={rollupIdError} onChange={this.onChange} />
+            <JobNameAndIndices rollupId={rollupId} rollupIdError={rollupIdError} onChange={this.onChange} onChangeStep={onChangeStep} />
             <EuiSpacer />
-            <HistogramAndMetrics rollupId={rollupId} rollupIdError={rollupIdError} onChange={this.onChange} />
+            <HistogramAndMetrics rollupId={rollupId} rollupIdError={rollupIdError} onChange={this.onChange} onChangeStep={onChangeStep} />
             <EuiSpacer />
-            <Metrics rollupId={rollupId} rollupIdError={rollupIdError} onChange={this.onChange} />
-            <EuiSpacer />
-            <ScheduleRolesAndNotifications rollupId={rollupId} rollupIdError={rollupIdError} onChange={this.onChange} />
-            <EuiSpacer />
-            {submitError && (
-              <EuiCallOut title="Sorry, there was an error" color="danger" iconType="alert">
-                <p>{submitError}</p>
-              </EuiCallOut>
-            )}
+            <ScheduleRolesAndNotifications
+              rollupId={rollupId}
+              rollupIdError={rollupIdError}
+              onChange={this.onChange}
+              onChangeStep={onChangeStep}
+            />
           </EuiFlexItem>
         </EuiFlexGroup>
         <EuiSpacer />

@@ -110,18 +110,12 @@ export default class CreateRollupForm extends Component<CreateRollupFormProps, C
     });
   }
 
-  get previousButton() {
-    let currentStep = this.state.currentStep;
-    // If the current step is not 1, then render the "previous" button
-    if (currentStep !== 1) {
-      return (
-        <button className="btn btn-secondary" type="button" onClick={this._prev}>
-          Previous
-        </button>
-      );
-    }
-    return null;
-  }
+  onChangeStep = (step: number): void => {
+    if (step > 3) return;
+    this.setState({
+      currentStep: step,
+    });
+  };
 
   //TODO: Go back to rollup jobs page when cancelled
   onCancel = (): void => {
@@ -208,7 +202,7 @@ export default class CreateRollupForm extends Component<CreateRollupFormProps, C
         />
         <CreateRollupStep2 {...this.props} currentStep={this.state.currentStep} />
         <CreateRollupStep3 {...this.props} currentStep={this.state.currentStep} />
-        <CreateRollupStep4 {...this.props} currentStep={this.state.currentStep} />
+        <CreateRollupStep4 {...this.props} currentStep={this.state.currentStep} onChangeStep={this.onChangeStep} />
         <EuiFlexGroup alignItems="center" justifyContent="flexEnd">
           <EuiFlexItem grow={false}>
             <EuiButtonEmpty onClick={this.onCancel} data-test-subj="createRollupCancelButton">

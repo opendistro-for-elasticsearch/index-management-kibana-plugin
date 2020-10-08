@@ -59,7 +59,6 @@ export default class CreateRollupStep3 extends Component<CreateRollupProps, Crea
 
   componentDidMount = async (): Promise<void> => {
     chrome.breadcrumbs.set([BREADCRUMBS.INDEX_MANAGEMENT, BREADCRUMBS.ROLLUPS]);
-    chrome.breadcrumbs.push(BREADCRUMBS.CREATE_ROLLUP_STEP3);
   };
 
   onCreate = async (rollupId: string, rollup: Rollup): Promise<void> => {
@@ -108,14 +107,10 @@ export default class CreateRollupStep3 extends Component<CreateRollupProps, Crea
     else this.setState({ rollupId });
   };
 
-  onNext = (): void => {
-    this.props.history.push(ROUTES.CREATE_ROLLUP_STEP4);
-  };
-
   render() {
     if (this.props.currentStep != 3) return null;
 
-    const { rollupId, rollupIdError, submitError, isSubmitting } = this.state;
+    const { rollupId, rollupIdError } = this.state;
     return (
       <div style={{ padding: "25px 50px" }}>
         <EuiFlexGroup>
@@ -129,11 +124,6 @@ export default class CreateRollupStep3 extends Component<CreateRollupProps, Crea
             <EuiSpacer />
             <Schedule rollupId={rollupId} rollupIdError={rollupIdError} onChange={this.onChange} />
             <EuiSpacer />
-            {submitError && (
-              <EuiCallOut title="Sorry, there was an error" color="danger" iconType="alert">
-                <p>{submitError}</p>
-              </EuiCallOut>
-            )}
           </EuiFlexItem>
         </EuiFlexGroup>
         <EuiSpacer />

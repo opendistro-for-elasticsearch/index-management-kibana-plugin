@@ -77,7 +77,6 @@ export default class CreateRollupStep2 extends Component<CreateRollupProps, Crea
 
   componentDidMount = async (): Promise<void> => {
     chrome.breadcrumbs.set([BREADCRUMBS.INDEX_MANAGEMENT, BREADCRUMBS.ROLLUPS]);
-    chrome.breadcrumbs.push(BREADCRUMBS.CREATE_ROLLUP_STEP2);
   };
 
   onCancel = (): void => {
@@ -105,10 +104,6 @@ export default class CreateRollupStep2 extends Component<CreateRollupProps, Crea
 
   onChangeTimezone = (e: ChangeEvent<HTMLSelectElement>): void => {
     this.setState({ timezone: e.target.value });
-  };
-
-  onNext = (): void => {
-    this.props.history.push(ROUTES.CREATE_ROLLUP_STEP3);
   };
 
   render() {

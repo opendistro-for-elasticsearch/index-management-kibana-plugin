@@ -15,18 +15,45 @@
 
 import React, { ChangeEvent, Component } from "react";
 import { EuiSpacer } from "@elastic/eui";
-import { ContentPanel } from "../../../../components/ContentPanel";
+import { ContentPanel, ContentPanelActions } from "../../../../components/ContentPanel";
+import { ModalConsumer } from "../../../../components/Modal";
 
 interface JobNameAndIndicesProps {
   rollupId: string;
   rollupIdError: string;
   onChange: (value: ChangeEvent<HTMLInputElement>) => void;
+  onChangeStep: (step: number) => void;
 }
 
-export default class Roles extends Component<JobNameAndIndicesProps> {
+export default class JobNameAndIndices extends Component<JobNameAndIndicesProps> {
+  constructor(props: JobNameAndIndicesProps) {
+    super(props);
+  }
   render() {
+    const { onChangeStep } = this.props;
+
     return (
-      <ContentPanel bodyStyles={{ padding: "initial" }} title="Job name and indices" titleSize="s">
+      <ContentPanel
+        actions={
+          <ModalConsumer>
+            {({ onShow }) => (
+              <ContentPanelActions
+                actions={[
+                  {
+                    text: "Edit",
+                    buttonProps: {
+                      onClick: () => onChangeStep(1),
+                    },
+                  },
+                ]}
+              />
+            )}
+          </ModalConsumer>
+        }
+        bodyStyles={{ padding: "initial" }}
+        title="Job name and indices"
+        titleSize="s"
+      >
         <div style={{ paddingLeft: "10px" }}>
           <EuiSpacer size="s" />
         </div>

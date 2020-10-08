@@ -15,18 +15,44 @@
 
 import React, { ChangeEvent, Component } from "react";
 import { EuiSpacer } from "@elastic/eui";
-import { ContentPanel } from "../../../../components/ContentPanel";
+import { ContentPanel, ContentPanelActions } from "../../../../components/ContentPanel";
+import { ModalConsumer } from "../../../../components/Modal";
 
 interface HistogramAndMetricsProps {
   rollupId: string;
   rollupIdError: string;
   onChange: (value: ChangeEvent<HTMLInputElement>) => void;
+  onChangeStep: (step: number) => void;
 }
 
 export default class HistogramAndMetrics extends Component<HistogramAndMetricsProps> {
+  constructor(props: HistogramAndMetricsProps) {
+    super(props);
+  }
   render() {
+    const { onChangeStep } = this.props;
     return (
-      <ContentPanel bodyStyles={{ padding: "initial" }} title="Histogram and metrics" titleSize="s">
+      <ContentPanel
+        actions={
+          <ModalConsumer>
+            {({ onShow }) => (
+              <ContentPanelActions
+                actions={[
+                  {
+                    text: "Edit",
+                    buttonProps: {
+                      onClick: () => onChangeStep(2),
+                    },
+                  },
+                ]}
+              />
+            )}
+          </ModalConsumer>
+        }
+        bodyStyles={{ padding: "initial" }}
+        title="Aggregation and metrics setting"
+        titleSize="s"
+      >
         <div style={{ paddingLeft: "10px" }}>
           <EuiSpacer size="s" />
         </div>

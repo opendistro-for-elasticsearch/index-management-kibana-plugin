@@ -84,10 +84,6 @@ export default class CreateRollup extends Component<CreateRollupProps> {
     this.setState({ roles: selectedOptions });
   };
 
-  onNext = (): void => {
-    this.props.history.push(ROUTES.CREATE_ROLLUP_STEP2);
-  };
-
   render() {
     if (this.props.currentStep !== 1) {
       // Prop: The current step
