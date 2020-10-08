@@ -1,5 +1,5 @@
 /*
- * Copyright 2019 Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ * Copyright 2020 Amazon.com, Inc. or its affiliates. All Rights Reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License").
  * You may not use this file except in compliance with the License.
@@ -13,12 +13,12 @@
  * permissions and limitations under the License.
  */
 
-import React, { ChangeEvent, Component, Fragment } from "react";
-import { EuiSpacer, EuiCallOut, EuiLink, EuiIcon } from "@elastic/eui";
+import React, { ChangeEvent, Component } from "react";
+import { EuiComboBoxOptionOption } from "@elastic/eui";
 import chrome from "ui/chrome";
 import { RouteComponentProps } from "react-router-dom";
 import { RollupService } from "../../../../services";
-import { BREADCRUMBS, DOCUMENTATION_URL, ROUTES } from "../../../../utils/constants";
+import { BREADCRUMBS, ROUTES } from "../../../../utils/constants";
 import IndexService from "../../../../services/IndexService";
 import { ManagedCatIndex } from "../../../../../server/models/interfaces";
 import CreateRollup from "../CreateRollup";
@@ -34,6 +34,7 @@ interface CreateRollupFormProps extends RouteComponentProps {
 }
 
 interface CreateRollupFormState {
+  currentStep: number;
   rollupId: string;
   rollupIdError: string;
   rollupSeqNo: number | null;
@@ -45,14 +46,28 @@ interface CreateRollupFormState {
   indices: ManagedCatIndex[];
   totalIndices: number;
   description: string;
-  currentStep: number;
+  roles: EuiComboBoxOptionOption<String>[];
 }
+
+//TODO: Fetch actual roles from backend
+const options: EuiComboBoxOptionOption<String>[] = [
+  {
+    label: "Role1",
+  },
+  {
+    label: "Role2",
+  },
+  {
+    label: "Role3",
+  },
+];
 
 export default class CreateRollupForm extends Component<CreateRollupFormProps, CreateRollupFormState> {
   constructor(props: CreateRollupFormProps) {
     super(props);
 
     this.state = {
+      currentStep: 1,
       rollupSeqNo: null,
       rollupPrimaryTerm: null,
       rollupId: "",
@@ -64,11 +79,11 @@ export default class CreateRollupForm extends Component<CreateRollupFormProps, C
       indices: [],
       totalIndices: 0,
       description: "",
-      currentStep: 1,
+      roles: [],
     };
     this._next = this._next.bind(this);
     this._prev = this._prev.bind(this);
-    this.onChange = this.onChange.bind(this);
+    // this.onChange = this.onChange.bind(this);
   }
 
   componentDidMount = async (): Promise<void> => {
@@ -124,12 +139,12 @@ export default class CreateRollupForm extends Component<CreateRollupFormProps, C
     this.props.history.push(ROUTES.ROLLUPS);
   };
 
-  onChange = (e: ChangeEvent<HTMLInputElement>): void => {
-    const { name, value } = e.target;
-    this.setState({
-      [name]: value,
-    });
-  };
+  // onChange = (e: ChangeEvent<HTMLInputElement>): void => {
+  //   const {name, value} = e.target;
+  //   this.setState({
+  //     [name]: value,
+  //   });
+  // };
 
   onCreate = async (rollupId: string, rollup: Rollup): Promise<void> => {
     const { rollupService } = this.props;
@@ -144,6 +159,23 @@ export default class CreateRollupForm extends Component<CreateRollupFormProps, C
     } catch (err) {
       this.setState({ submitError: getErrorMessage(err, "There was a problem creating the rollup job") });
     }
+  };
+
+  onChangeDescription = (e: ChangeEvent<HTMLTextAreaElement>): void => {
+    const description = e.target.value;
+    this.setState({ description });
+    console.log(this.state);
+  };
+
+  onChangeName = (e: ChangeEvent<HTMLInputElement>): void => {
+    const { hasSubmitted } = this.state;
+    const rollupId = e.target.value;
+    if (hasSubmitted) this.setState({ rollupId, rollupIdError: rollupId ? "" : "Required" });
+    else this.setState({ rollupId });
+  };
+
+  onChangeRoles = (selectedOptions: EuiComboBoxOptionOption<String>[]): void => {
+    this.setState({ roles: selectedOptions });
   };
 
   onSubmit = async (): Promise<void> => {
@@ -165,31 +197,24 @@ export default class CreateRollupForm extends Component<CreateRollupFormProps, C
     this.setState({ isSubmitting: false });
   };
 
-  renderEditCallOut = (): React.ReactNode | null => {
-    return (
-      <Fragment>
-        <EuiCallOut
-          title="Edits to the rollup are not automatically applied to indices that are already being managed by this rollup."
-          iconType="questionInCircle"
-        >
-          <p>
-            This ensures that any update to a rollup doesn't harm indices that are running under an older version of the rollup. To carry
-            over your edits to these indices, please use the "Change Rollup" under "Managed Indices" to reapply the rollup after submitting
-            your edits.{" "}
-            <EuiLink href={DOCUMENTATION_URL} target="_blank">
-              Learn more <EuiIcon type="popout" size="s" />
-            </EuiLink>
-          </p>
-        </EuiCallOut>
-        <EuiSpacer />
-      </Fragment>
-    );
-  };
-
   render() {
+    const { rollupId, rollupIdError, submitError, isSubmitting, hasSubmitted, description, roles } = this.state;
     return (
       <form onSubmit={this.onSubmit}>
-        <CreateRollup {...this.props} />
+        <CreateRollup
+          {...this.props}
+          rollupId={rollupId}
+          rollupIdError={rollupIdError}
+          submitError={submitError}
+          isSubmitting={isSubmitting}
+          hasSubmitted={hasSubmitted}
+          description={description}
+          roles={roles}
+          onChangeRoles={this.onChangeRoles}
+          roleOptions={options}
+          onChangeDescription={this.onChangeDescription}
+          onChange={this.onChangeName}
+        />
         <CreateRollupStep2 {...this.props} />
         {this.previousButton}
         {this.nextButton}

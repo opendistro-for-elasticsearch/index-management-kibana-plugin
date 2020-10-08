@@ -1,5 +1,5 @@
 /*
- * Copyright 2019 Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ * Copyright 2020 Amazon.com, Inc. or its affiliates. All Rights Reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License").
  * You may not use this file except in compliance with the License.
@@ -33,29 +33,23 @@ import RollupIndices from "../../components/RollupIndices";
 import CreateRollupSteps from "../../components/CreateRollupSteps";
 import Roles from "../../components/Roles";
 import IndexService from "../../../../services/IndexService";
-import { ManagedCatIndex } from "../../../../../server/models/interfaces";
 
 interface CreateRollupProps extends RouteComponentProps {
   rollupService: RollupService;
   indexService: IndexService;
-}
-
-interface CreateRollupState {
   rollupId: string;
   rollupIdError: string;
-  rollupSeqNo: number | null;
-  rollupPrimaryTerm: number | null;
   submitError: string;
   isSubmitting: boolean;
   hasSubmitted: boolean;
-  loadingIndices: boolean;
-  indices: ManagedCatIndex[];
-  totalIndices: number;
   description: string;
   roles: EuiComboBoxOptionOption<String>[];
+  onChangeRoles: (selectedOptions: EuiComboBoxOptionOption<String>[]) => void;
+  onChangeDescription: (value: ChangeEvent<HTMLTextAreaElement>) => void;
+  roleOptions: EuiComboBoxOptionOption<String>[];
+  onChange: (e: ChangeEvent<HTMLInputElement>) => void;
 }
 
-//TODO: Fetch actual roles from backend
 const options: EuiComboBoxOptionOption<String>[] = [
   {
     label: "Role1",
@@ -68,24 +62,9 @@ const options: EuiComboBoxOptionOption<String>[] = [
   },
 ];
 
-export default class CreateRollup extends Component<CreateRollupProps, CreateRollupState> {
+export default class CreateRollup extends Component<CreateRollupProps> {
   constructor(props: CreateRollupProps) {
     super(props);
-
-    this.state = {
-      rollupSeqNo: null,
-      rollupPrimaryTerm: null,
-      rollupId: "",
-      rollupIdError: "",
-      submitError: "",
-      isSubmitting: false,
-      hasSubmitted: false,
-      loadingIndices: true,
-      indices: [],
-      totalIndices: 0,
-      description: "",
-      roles: [],
-    };
   }
 
   componentDidMount = async (): Promise<void> => {
@@ -98,7 +77,7 @@ export default class CreateRollup extends Component<CreateRollupProps, CreateRol
   };
 
   onChange = (e: ChangeEvent<HTMLInputElement>): void => {
-    const { hasSubmitted } = this.state;
+    const { hasSubmitted } = this.props;
     const rollupId = e.target.value;
     if (hasSubmitted) this.setState({ rollupId, rollupIdError: rollupId ? "" : "Required" });
     else this.setState({ rollupId });
@@ -119,7 +98,18 @@ export default class CreateRollup extends Component<CreateRollupProps, CreateRol
   };
 
   render() {
-    const { rollupId, rollupIdError, submitError, isSubmitting, description, roles } = this.state;
+    const {
+      rollupId,
+      rollupIdError,
+      submitError,
+      isSubmitting,
+      description,
+      roles,
+      onChangeRoles,
+      roleOptions,
+      onChangeDescription,
+      onChange,
+    } = this.props;
 
     return (
       <div style={{ padding: "25px 50px" }}>
@@ -136,13 +126,13 @@ export default class CreateRollup extends Component<CreateRollupProps, CreateRol
               rollupId={rollupId}
               rollupIdError={rollupIdError}
               description={description}
-              onChange={this.onChange}
-              onChangeDescription={this.onChangeDescription}
+              onChange={onChange}
+              onChangeDescription={onChangeDescription}
             />
             <EuiSpacer />
             <RollupIndices rollupId={rollupId} rollupIdError={rollupIdError} onChange={this.onChange} />
             <EuiSpacer />
-            <Roles rollupId={rollupId} rollupIdError={rollupIdError} onChange={this.onChangeRoles} roles={roles} roleOptions={options} />
+            <Roles rollupId={rollupId} rollupIdError={rollupIdError} onChange={onChangeRoles} roles={roles} roleOptions={options} />
             {submitError && (
               <EuiCallOut title="Sorry, there was an error" color="danger" iconType="alert">
                 <p>{submitError}</p>
