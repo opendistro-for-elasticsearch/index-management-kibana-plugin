@@ -30,14 +30,14 @@ import { CalenderTimeunitOptions, FixedTimeunitOptions, TimezoneOptions } from "
 
 interface TimeAggregationProps {
   intervalType: string;
-  timestampOptions: EuiComboBoxOptionOption<String>[];
   selectedTimestamp: EuiComboBoxOptionOption<String>[];
+  timestampOptions: EuiComboBoxOptionOption<String>[];
+  timeunit: string;
+  timezone: string;
   onChangeIntervalType: (optionId: string) => void;
   onChangeTimestamp: (options: EuiComboBoxOptionOption<String>[]) => void;
-  onChangeTimezone: (e: ChangeEvent<HTMLSelectElement>) => void;
   onChangeTimeunit: (e: ChangeEvent<HTMLSelectElement>) => void;
-  timezone: string;
-  timeunit: string;
+  onChangeTimezone: (e: ChangeEvent<HTMLSelectElement>) => void;
 }
 
 const radios = [
@@ -58,14 +58,14 @@ export default class TimeAggregation extends Component<TimeAggregationProps> {
   render() {
     const {
       intervalType,
-      timestampOptions,
       selectedTimestamp,
-      timezone,
+      timestampOptions,
       timeunit,
-      onChangeTimestamp,
-      onChangeTimezone,
+      timezone,
       onChangeIntervalType,
+      onChangeTimestamp,
       onChangeTimeunit,
+      onChangeTimezone,
     } = this.props;
     return (
       <ContentPanel bodyStyles={{ padding: "initial" }} title="Time aggregation" titleSize="s">
