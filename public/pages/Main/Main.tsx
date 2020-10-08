@@ -156,30 +156,6 @@ export default class Main extends Component<MainProps, object> {
                         </div>
                       )}
                     />
-                    {/*<Route*/}
-                    {/*  path={ROUTES.CREATE_ROLLUP_STEP2}*/}
-                    {/*  render={(props: RouteComponentProps) => (*/}
-                    {/*    <div style={{ padding: "25px 25px" }}>*/}
-                    {/*      <CreateRollupStep2 {...props} rollupService={services.rollupService} />*/}
-                    {/*    </div>*/}
-                    {/*  )}*/}
-                    {/*/>*/}
-                    {/*<Route*/}
-                    {/*  path={ROUTES.CREATE_ROLLUP_STEP3}*/}
-                    {/*  render={(props: RouteComponentProps) => (*/}
-                    {/*    <div style={{ padding: "25px 25px" }}>*/}
-                    {/*      <CreateRollupStep3 {...props} rollupService={services.rollupService} />*/}
-                    {/*    </div>*/}
-                    {/*  )}*/}
-                    {/*/>*/}
-                    {/*<Route*/}
-                    {/*  path={ROUTES.CREATE_ROLLUP_STEP4}*/}
-                    {/*  render={(props: RouteComponentProps) => (*/}
-                    {/*    <div style={{ padding: "25px 25px" }}>*/}
-                    {/*      <CreateRollupStep4 {...props} rollupService={services.rollupService} />*/}
-                    {/*    </div>*/}
-                    {/*  )}*/}
-                    {/*/>*/}
                     <Redirect from="/" to={ROUTES.INDEX_POLICIES} />
                   </Switch>
                 </EuiPageBody>

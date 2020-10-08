@@ -167,6 +167,7 @@ export default class CreateRollupForm extends Component<CreateRollupFormProps, C
     this.setState({ roles: selectedOptions });
   };
 
+  //TODO: Complete submit logistic
   onSubmit = async (): Promise<void> => {
     const { rollupId } = this.state;
     this.setState({ submitError: "", isSubmitting: true, hasSubmitted: true });
