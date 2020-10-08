@@ -14,16 +14,7 @@
  */
 
 import React, { ChangeEvent, Component } from "react";
-import {
-  EuiSpacer,
-  EuiTitle,
-  EuiFlexGroup,
-  EuiFlexItem,
-  EuiButton,
-  EuiButtonEmpty,
-  EuiCallOut,
-  EuiComboBoxOptionOption,
-} from "@elastic/eui";
+import { EuiSpacer, EuiTitle, EuiFlexGroup, EuiFlexItem, EuiCallOut, EuiComboBoxOptionOption } from "@elastic/eui";
 import chrome from "ui/chrome";
 import { RouteComponentProps } from "react-router-dom";
 import { RollupService } from "../../../../services";
@@ -48,6 +39,7 @@ interface CreateRollupProps extends RouteComponentProps {
   onChangeDescription: (value: ChangeEvent<HTMLTextAreaElement>) => void;
   roleOptions: EuiComboBoxOptionOption<String>[];
   onChange: (e: ChangeEvent<HTMLInputElement>) => void;
+  currentStep: number;
 }
 
 const options: EuiComboBoxOptionOption<String>[] = [
@@ -93,11 +85,14 @@ export default class CreateRollup extends Component<CreateRollupProps> {
   };
 
   onNext = (): void => {
-    console.log(this.state);
     this.props.history.push(ROUTES.CREATE_ROLLUP_STEP2);
   };
 
   render() {
+    if (this.props.currentStep !== 1) {
+      // Prop: The current step
+      return null;
+    }
     const {
       rollupId,
       rollupIdError,
@@ -141,19 +136,6 @@ export default class CreateRollup extends Component<CreateRollupProps> {
           </EuiFlexItem>
         </EuiFlexGroup>
         <EuiSpacer />
-
-        <EuiFlexGroup alignItems="center" justifyContent="flexEnd">
-          <EuiFlexItem grow={false}>
-            <EuiButtonEmpty onClick={this.onCancel} data-test-subj="createRollupCancelButton">
-              Cancel
-            </EuiButtonEmpty>
-          </EuiFlexItem>
-          <EuiFlexItem grow={false}>
-            <EuiButton fill onClick={this.onNext} isLoading={isSubmitting} data-test-subj="createRollupStep1NextButton">
-              {"Next"}
-            </EuiButton>
-          </EuiFlexItem>
-        </EuiFlexGroup>
       </div>
     );
   }

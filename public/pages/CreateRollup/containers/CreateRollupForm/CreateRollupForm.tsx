@@ -14,7 +14,7 @@
  */
 
 import React, { ChangeEvent, Component } from "react";
-import { EuiComboBoxOptionOption } from "@elastic/eui";
+import { EuiButton, EuiButtonEmpty, EuiComboBoxOptionOption, EuiFlexGroup, EuiFlexItem } from "@elastic/eui";
 import chrome from "ui/chrome";
 import { RouteComponentProps } from "react-router-dom";
 import { RollupService } from "../../../../services";
@@ -27,6 +27,8 @@ import { toastNotifications } from "ui/notify";
 import { Rollup } from "../../../../../models/interfaces";
 import { getErrorMessage } from "../../../../utils/helpers";
 import { DEFAULT_ROLLUP } from "../../utils/constants";
+import CreateRollupStep3 from "../CreateRollupStep3";
+import CreateRollupStep4 from "../CreateRollupStep4";
 
 interface CreateRollupFormProps extends RouteComponentProps {
   rollupService: RollupService;
@@ -121,19 +123,6 @@ export default class CreateRollupForm extends Component<CreateRollupFormProps, C
     return null;
   }
 
-  get nextButton() {
-    let currentStep = this.state.currentStep;
-    // If the current step is not 3, then render the "next" button
-    if (currentStep < 4) {
-      return (
-        <button className="btn btn-primary float-right" type="button" onClick={this._next}>
-          Next
-        </button>
-      );
-    }
-    return null;
-  }
-
   //TODO: Go back to rollup jobs page when cancelled
   onCancel = (): void => {
     this.props.history.push(ROUTES.ROLLUPS);
@@ -187,7 +176,7 @@ export default class CreateRollupForm extends Component<CreateRollupFormProps, C
       } else {
         //TODO: Build JSON string here
         const rollup = DEFAULT_ROLLUP;
-        await this.onCreate(rollupId, rollup);
+        // await this.onCreate(rollupId, rollup);
       }
     } catch (err) {
       toastNotifications.addDanger("Invalid Policy JSON");
@@ -198,7 +187,7 @@ export default class CreateRollupForm extends Component<CreateRollupFormProps, C
   };
 
   render() {
-    const { rollupId, rollupIdError, submitError, isSubmitting, hasSubmitted, description, roles } = this.state;
+    const { rollupId, rollupIdError, submitError, isSubmitting, hasSubmitted, description, roles, currentStep } = this.state;
     return (
       <form onSubmit={this.onSubmit}>
         <CreateRollup
@@ -214,10 +203,39 @@ export default class CreateRollupForm extends Component<CreateRollupFormProps, C
           roleOptions={options}
           onChangeDescription={this.onChangeDescription}
           onChange={this.onChangeName}
+          currentStep={this.state.currentStep}
         />
-        <CreateRollupStep2 {...this.props} />
-        {this.previousButton}
-        {this.nextButton}
+        <CreateRollupStep2 {...this.props} currentStep={this.state.currentStep} />
+        <CreateRollupStep3 {...this.props} currentStep={this.state.currentStep} />
+        <CreateRollupStep4 {...this.props} currentStep={this.state.currentStep} />
+        <EuiFlexGroup alignItems="center" justifyContent="flexEnd">
+          <EuiFlexItem grow={false}>
+            <EuiButtonEmpty onClick={this.onCancel} data-test-subj="createRollupCancelButton">
+              Cancel
+            </EuiButtonEmpty>
+          </EuiFlexItem>
+          {currentStep != 1 && (
+            <EuiFlexItem grow={false}>
+              <EuiButton fill onClick={this._prev} isLoading={isSubmitting} data-test-subj="createRollupPreviousButton">
+                {"Previous"}
+              </EuiButton>
+            </EuiFlexItem>
+          )}
+
+          {currentStep == 4 ? (
+            <EuiFlexItem grow={false}>
+              <EuiButton fill onClick={this.onSubmit} isLoading={isSubmitting} data-test-subj="createRollupSubmitButton">
+                {"Submit"}
+              </EuiButton>
+            </EuiFlexItem>
+          ) : (
+            <EuiFlexItem grow={false}>
+              <EuiButton fill onClick={this._next} isLoading={isSubmitting} data-test-subj="createRollupNextButton">
+                {"Next"}
+              </EuiButton>
+            </EuiFlexItem>
+          )}
+        </EuiFlexGroup>
       </form>
     );
   }
