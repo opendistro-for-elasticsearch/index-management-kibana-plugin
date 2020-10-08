@@ -35,21 +35,13 @@ import MetricsCalculation from "../../components/MetricsCalculation";
 
 interface CreateRollupProps extends RouteComponentProps {
   rollupService: RollupService;
-}
-
-interface CreateRollupState {
-  rollupId: string;
-  rollupIdError: string;
-  rollupSeqNo: number | null;
-  rollupPrimaryTerm: number | null;
-  submitError: string;
-  isSubmitting: boolean;
-  hasSubmitted: boolean;
   timestamp: EuiComboBoxOptionOption<String>[];
   intervalType: string;
   timezone: string;
   timeunit: string;
 }
+
+interface CreateRollupState {}
 
 //TODO: Fetch actual timestamp options from backend
 const options: EuiComboBoxOptionOption<String>[] = [
@@ -92,13 +84,6 @@ export default class CreateRollupStep2 extends Component<CreateRollupProps, Crea
     this.props.history.push(ROUTES.ROLLUPS);
   };
 
-  onChange = (e: ChangeEvent<HTMLInputElement>): void => {
-    const { hasSubmitted } = this.state;
-    const rollupId = e.target.value;
-    if (hasSubmitted) this.setState({ rollupId, rollupIdError: rollupId ? "" : "Required" });
-    else this.setState({ rollupId });
-  };
-
   onChangeIntervalType = (optionId: string): void => {
     this.setState({ intervalType: optionId });
   };
@@ -120,7 +105,7 @@ export default class CreateRollupStep2 extends Component<CreateRollupProps, Crea
   };
 
   render() {
-    const { rollupId, rollupIdError, submitError, isSubmitting, intervalType, timestamp, timezone, timeunit } = this.state;
+    const { intervalType, timestamp, timezone, timeunit } = this.props;
 
     return (
       <div style={{ padding: "25px 50px" }}>
@@ -142,7 +127,6 @@ export default class CreateRollupStep2 extends Component<CreateRollupProps, Crea
             </EuiCallOut>
             <EuiSpacer />
             <TimeAggregation
-              onChange={this.onChange}
               onChangeTimestamp={this.onChangeTimestamp}
               timestampOptions={options}
               onChangeIntervalType={this.onChangeIntervalType}
@@ -154,14 +138,9 @@ export default class CreateRollupStep2 extends Component<CreateRollupProps, Crea
               onChangeTimeunit={this.onChangeTimeunit}
             />
             <EuiSpacer />
-            <AdvancedAggregation rollupId={rollupId} rollupIdError={rollupIdError} onChange={this.onChange} />
+            <AdvancedAggregation onChange={this.onChange} />
             <EuiSpacer />
-            <MetricsCalculation rollupId={rollupId} rollupIdError={rollupIdError} onChange={this.onChange} />
-            {submitError && (
-              <EuiCallOut title="Sorry, there was an error" color="danger" iconType="alert">
-                <p>{submitError}</p>
-              </EuiCallOut>
-            )}
+            <MetricsCalculation onChange={this.onChange} />
           </EuiFlexItem>
         </EuiFlexGroup>
         <EuiSpacer />
