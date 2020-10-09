@@ -28,4 +28,11 @@ export type PoliciesSort = {
   "policy.policy.last_updated_time": "policy.last_updated_time";
 };
 
+export type RollupsSort = {
+  [sortField: string]: string;
+  id: "rollup.rollup_id.keyword";
+  "rollup.rollup.description": "rollup.description.keyword";
+  "rollup.rollup.last_updated_time": "rollup.last_updated_time";
+};
+
 export type ServerResponse<T> = { ok: false; error: string } | { ok: true; response: T };

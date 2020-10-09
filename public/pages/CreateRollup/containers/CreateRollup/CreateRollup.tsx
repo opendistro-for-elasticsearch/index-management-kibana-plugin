@@ -15,10 +15,8 @@
 
 import React, { ChangeEvent, Component } from "react";
 import { EuiSpacer, EuiTitle, EuiFlexGroup, EuiFlexItem, EuiCallOut, EuiComboBoxOptionOption } from "@elastic/eui";
-import chrome from "ui/chrome";
 import { RouteComponentProps } from "react-router-dom";
 import { RollupService } from "../../../../services";
-import { BREADCRUMBS, ROUTES } from "../../../../utils/constants";
 import ConfigureRollup from "../../components/ConfigureRollup";
 import RollupIndices from "../../components/RollupIndices";
 import CreateRollupSteps from "../../components/CreateRollupSteps";
@@ -59,31 +57,6 @@ export default class CreateRollup extends Component<CreateRollupProps> {
     super(props);
   }
 
-  componentDidMount = async (): Promise<void> => {
-    chrome.breadcrumbs.set([BREADCRUMBS.INDEX_MANAGEMENT, BREADCRUMBS.ROLLUPS]);
-    chrome.breadcrumbs.push(BREADCRUMBS.CREATE_ROLLUP);
-  };
-
-  onCancel = (): void => {
-    this.props.history.push(ROUTES.ROLLUPS);
-  };
-
-  onChange = (e: ChangeEvent<HTMLInputElement>): void => {
-    const { hasSubmitted } = this.props;
-    const rollupId = e.target.value;
-    if (hasSubmitted) this.setState({ rollupId, rollupIdError: rollupId ? "" : "Required" });
-    else this.setState({ rollupId });
-  };
-
-  onChangeDescription = (e: ChangeEvent<HTMLTextAreaElement>): void => {
-    const description = e.target.value;
-    this.setState({ description });
-  };
-
-  onChangeRoles = (selectedOptions: EuiComboBoxOptionOption<String>[]): void => {
-    this.setState({ roles: selectedOptions });
-  };
-
   render() {
     if (this.props.currentStep !== 1) {
       // Prop: The current step
@@ -100,6 +73,7 @@ export default class CreateRollup extends Component<CreateRollupProps> {
       roleOptions,
       onChangeDescription,
       onChange,
+      indexService,
     } = this.props;
 
     return (
@@ -120,7 +94,8 @@ export default class CreateRollup extends Component<CreateRollupProps> {
               onChangeDescription={onChangeDescription}
             />
             <EuiSpacer />
-            <RollupIndices rollupId={rollupId} rollupIdError={rollupIdError} onChange={onChange} />
+            {/*TODO: Add props to RollupIndices component and fetch indices inside*/}
+            {/*<RollupIndices  indexService={indexService} sourceIndex={} targetIndex={}/>*/}
             <EuiSpacer />
             <Roles rollupId={rollupId} rollupIdError={rollupIdError} onChange={onChangeRoles} roles={roles} roleOptions={options} />
             {submitError && (
