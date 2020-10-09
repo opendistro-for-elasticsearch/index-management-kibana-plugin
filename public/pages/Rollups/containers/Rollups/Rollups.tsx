@@ -39,7 +39,6 @@ import {
   EuiFieldSearch,
   EuiPagination,
   EuiFlexGroup,
-  EuiButton,
 } from "@elastic/eui";
 import { rollupsColumns } from "../../utils/constants";
 import { RollupService } from "../../../../services";
@@ -239,6 +238,13 @@ export default class Rollups extends Component<RollupsProps, RollupsState> {
 
   onClickCreate = (): void => {
     this.props.history.push(ROUTES.CREATE_ROLLUP);
+  };
+
+  onClickEdit = (): void => {
+    const {
+      selectedItems: [{ _id }],
+    } = this.state;
+    if (_id) this.props.history.push(`${ROUTES.EDIT_ROLLUP}?id=${_id}`);
   };
 
   //TODO: Complete this function to disable selected rollup jobs

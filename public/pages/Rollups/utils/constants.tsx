@@ -37,11 +37,7 @@ export const rollupsColumns: EuiTableFieldDataColumnType<RollupItem>[] = [
     sortable: true,
     textOnly: true,
     truncateText: true,
-    render: (name) => (
-      <EuiLink href={"opendistro_index_management_kibana#/edit-rollup?" + name} target="_blank" external={false}>
-        {name}
-      </EuiLink>
-    ),
+    render: (_id) => <EuiLink href={"opendistro_index_management_kibana#/edit-rollup?" + _id}>{_id}</EuiLink>,
   },
   {
     field: "rollup.source_index",
