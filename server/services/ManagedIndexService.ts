@@ -57,6 +57,8 @@ export default class ManagedIndexService {
   };
 
   getManagedIndices = async (req: Request, h: ResponseToolkit): Promise<ServerResponse<GetManagedIndicesResponse>> => {
+    // console.log('get managedindices request', req);
+
     try {
       const { from, size, search, sortDirection, sortField } = req.query as {
         from: string;
@@ -66,51 +68,51 @@ export default class ManagedIndexService {
         sortField: string;
       };
 
+      console.log(`check variables: ${from}, ${size}, ${search}, ${sortDirection}, ${sortField}`);
+
       const managedIndexSorts: ManagedIndicesSort = { index: "managed_index.index", policyId: "managed_index.policy_id" };
-      const searchParams: RequestParams.Search = {
-        index: INDEX.OPENDISTRO_ISM_CONFIG,
-        seq_no_primary_term: true,
-        body: {
-          size,
-          from,
-          sort: managedIndexSorts[sortField] ? [{ [managedIndexSorts[sortField]]: sortDirection }] : [],
-          query: {
-            bool: {
-              filter: [{ exists: { field: "managed_index" } }],
-              must: getMustQuery("managed_index.name", search),
-            },
-          },
-        },
+
+      const explainParams = {
+        size,
+        from,
+        sortField: sortField ? managedIndexSorts[sortField] : null,
+        sortOrder: sortDirection,
+        queryString: search ? `*${search.split(" ").join("* *")}*` : null,
       };
 
-      const { callWithRequest } = await this.esDriver.getCluster(CLUSTER.DATA);
-      const searchResponse: SearchResponse<any> = await callWithRequest(req, "search", searchParams);
+      const { callWithRequest: ismExplainRequest } = await this.esDriver.getCluster(CLUSTER.ISM);
+      const explainResponse: ExplainResponse = await ismExplainRequest(req, "ism.explainAll", explainParams);
 
-      const indices = searchResponse.hits.hits.map(hit => hit._source.managed_index.index);
-      const totalManagedIndices = _.get(searchResponse, "hits.total.value", 0);
+      console.log(`see new explain response: ${explainResponse}`);
 
-      if (!indices.length) {
-        return { ok: true, response: { managedIndices: [], totalManagedIndices: 0 } };
+      const managedIndices = [];
+      for (const index in explainResponse) {
+        const explain = explainResponse[index];
+
+        const { callWithRequest: ismGetPolicyRequest } = await this.esDriver.getCluster(CLUSTER.ISM);
+        const params = { policyId: explain.policy_id };
+        const getResponse = await ismGetPolicyRequest(req, "ism.getPolicy", params);
+        const policy = _.get(getResponse, "policy", null);
+        const seqNo = _.get(getResponse, "_seq_no");
+        const primaryTerm = _.get(getResponse, "_primary_term");
+
+        console.log(`policy id ${explain["index.opendistro.index_state_management.policy_id"]}`);
+        console.log(`index ${explain.index}`);
+        console.log(`policy id 2 ${explain.policy_id}`);
+
+        managedIndices.push({
+          index,
+          indexUuid: explain.index_uuid,
+          policyId: explain.policy_id,
+          policySeqNo: seqNo,
+          policyPrimaryTerm: primaryTerm,
+          policy,
+          enabled: true,
+          managedIndexMetaData: transformManagedIndexMetaData(explainResponse[index]),
+        });
       }
 
-      const explainParams = { index: indices.join(",") };
-      const { callWithRequest: ismCallWithRequest } = await this.esDriver.getCluster(CLUSTER.ISM);
-      const explainResponse: ExplainResponse = await ismCallWithRequest(req, "ism.explain", explainParams);
-      const managedIndices = searchResponse.hits.hits.map(hit => {
-        const index = hit._source.managed_index.index;
-        return {
-          index,
-          indexUuid: hit._source.managed_index.index_uuid,
-          policyId: hit._source.managed_index.policy_id,
-          policySeqNo: hit._source.managed_index.policy_seq_no,
-          policyPrimaryTerm: hit._source.managed_index.policy_primary_term,
-          policy: hit._source.managed_index.policy,
-          enabled: hit._source.managed_index.enabled,
-          managedIndexMetaData: transformManagedIndexMetaData(explainResponse[index]), // this will be undefined if we are initializing
-        };
-      });
-
-      return { ok: true, response: { managedIndices, totalManagedIndices } };
+      return { ok: true, response: { managedIndices, totalManagedIndices: 0 } };
     } catch (err) {
       if (err.statusCode === 404 && err.body.error.type === "index_not_found_exception") {
         return { ok: true, response: { managedIndices: [], totalManagedIndices: 0 } };
@@ -134,7 +136,7 @@ export default class ManagedIndexService {
           updatedIndices: retryResponse.updated_indices,
           // TODO: remove ternary after fixing retry API to return empty array even if no failures
           failedIndices: retryResponse.failed_indices
-            ? retryResponse.failed_indices.map(failedIndex => ({
+            ? retryResponse.failed_indices.map((failedIndex) => ({
                 indexName: failedIndex.index_name,
                 indexUuid: failedIndex.index_uuid,
                 reason: failedIndex.reason,
@@ -164,7 +166,7 @@ export default class ManagedIndexService {
         response: {
           failures: changeResponse.failures,
           updatedIndices: changeResponse.updated_indices,
-          failedIndices: changeResponse.failed_indices.map(failedIndex => ({
+          failedIndices: changeResponse.failed_indices.map((failedIndex) => ({
             indexName: failedIndex.index_name,
             indexUuid: failedIndex.index_uuid,
             reason: failedIndex.reason,
@@ -188,7 +190,7 @@ export default class ManagedIndexService {
         response: {
           failures: addResponse.failures,
           updatedIndices: addResponse.updated_indices,
-          failedIndices: addResponse.failed_indices.map(failedIndex => ({
+          failedIndices: addResponse.failed_indices.map((failedIndex) => ({
             indexName: failedIndex.index_name,
             indexUuid: failedIndex.index_uuid,
             reason: failedIndex.reason,

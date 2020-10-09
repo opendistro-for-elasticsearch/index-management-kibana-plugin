@@ -30,7 +30,7 @@ export interface SearchResponse<T> {
 }
 
 export interface ExplainResponse {
-  [index: string]: ExplainAPIManagedIndexMetaData | undefined;
+  [index: string]: ExplainAPIManagedIndexMetaData;
 }
 
 export interface GetManagedIndicesResponse {
@@ -126,10 +126,10 @@ export interface FailedIndex {
 }
 
 export interface ExplainAPIManagedIndexMetaData {
-  "opendistro.index_state_management.policy_id": string | null;
-  index?: string;
-  index_uuid?: string;
-  policy_id?: string;
+  "index.opendistro.index_state_management.policy_id": string | null;
+  index: string;
+  index_uuid: string;
+  policy_id: string;
   policy_seq_no?: number;
   policy_primary_term?: number;
   policy_completed?: boolean;
