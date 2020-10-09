@@ -1,5 +1,5 @@
 /*
- * Copyright 2019 Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ * Copyright 2020 Amazon.com, Inc. or its affiliates. All Rights Reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License").
  * You may not use this file except in compliance with the License.
@@ -362,7 +362,7 @@ export default class Rollups extends Component<RollupsProps, RollupsState> {
         <EuiBasicTable
           columns={rollupsColumns}
           isSelectable={true}
-          itemId="id"
+          itemId="_id"
           items={rollups}
           noItemsMessage={<RollupEmptyPrompt filterIsApplied={filterIsApplied} loading={loadingRollups} resetFilters={this.resetFilters} />}
           onChange={this.onTableChange}
