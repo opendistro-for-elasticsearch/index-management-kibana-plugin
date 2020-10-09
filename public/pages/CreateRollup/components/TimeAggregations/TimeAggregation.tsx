@@ -59,7 +59,7 @@ export default class TimeAggregation extends Component<TimeAggregationProps> {
   render() {
     const { timestampOptions, intervalType, timezone, timeunit, onChangeTimezone, onChangeIntervalType, onChangeTimeunit } = this.props;
     return (
-      <ContentPanel bodyStyles={{ padding: "initial" }} title="Time aggregation" titleSize="s">
+      <ContentPanel bodyStyles={{ padding: "initial" }} title="Time aggregation" titleSize="m">
         <div style={{ paddingLeft: "10px" }}>
           <EuiSpacer size="s" />
           <EuiFormRow label="Timestamp field">

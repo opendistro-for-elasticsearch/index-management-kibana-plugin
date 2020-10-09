@@ -29,7 +29,7 @@ interface RollupIndicesProps {
 }
 
 const RollupIndices = ({ onChange, indicesOptions, sourceIndex, targetIndex, onCreateIndex }: RollupIndicesProps) => (
-  <ContentPanel bodyStyles={{ padding: "initial" }} title="Indices" titleSize="s">
+  <ContentPanel bodyStyles={{ padding: "initial" }} title="Indices" titleSize="m">
     <div style={{ paddingLeft: "10px" }}>
       <EuiSpacer size="s" />
       <EuiCallOut color="warning">

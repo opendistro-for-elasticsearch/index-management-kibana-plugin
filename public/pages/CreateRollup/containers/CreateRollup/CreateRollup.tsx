@@ -103,7 +103,7 @@ export default class CreateRollup extends Component<CreateRollupProps> {
     } = this.props;
 
     return (
-      <div style={{ padding: "25px 50px" }}>
+      <div style={{ padding: "5px 50px" }}>
         <EuiFlexGroup>
           <EuiFlexItem style={{ maxWidth: 300 }} grow={false}>
             <CreateRollupSteps step={1} />

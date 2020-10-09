@@ -209,7 +209,7 @@ export default class CreateRollupForm extends Component<CreateRollupFormProps, C
           currentStep={this.state.currentStep}
           onChangeStep={this.onChangeStep}
         />
-        <EuiFlexGroup alignItems="center" justifyContent="flexEnd" style={{ padding: "25px 50px" }}>
+        <EuiFlexGroup alignItems="center" justifyContent="flexEnd" style={{ padding: "5px 50px" }}>
           <EuiFlexItem grow={false}>
             <EuiButtonEmpty onClick={this.onCancel} data-test-subj="createRollupCancelButton">
               Cancel

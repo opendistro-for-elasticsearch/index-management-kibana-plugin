@@ -337,6 +337,7 @@ export default class Rollups extends Component<RollupsProps, RollupsState> {
           pagination={pagination}
           selection={selection}
           sorting={sorting}
+          tableLayout={"auto"}
         />
       </ContentPanel>
     );

@@ -28,19 +28,14 @@ import {
   EuiFlexGroup,
   EuiFlexItem,
   EuiForm,
-  EuiFormRow,
   EuiFieldSearch,
   EuiComboBox,
   EuiComboBoxOptionOption,
-  Pagination,
-  EuiTableSortingType,
   EuiTableSelectionType,
 } from "@elastic/eui";
 import { ContentPanel, ContentPanelActions } from "../../../../components/ContentPanel";
-import { DEFAULT_PAGE_SIZE_OPTIONS } from "../../../Indices/utils/constants";
 import { ManagedCatIndex } from "../../../../../server/models/interfaces";
 import { ModalConsumer } from "../../../../components/Modal";
-import ApplyPolicyModal from "../../../Indices/components/ApplyPolicyModal";
 
 interface AdvancedAggregationProps {
   rollupId: string;
@@ -201,10 +196,16 @@ export default class AdvancedAggregation extends Component<AdvancedAggregationPr
         }
         bodyStyles={{ padding: "initial" }}
         title="Additional aggregations - optional"
-        titleSize="s"
+        titleSize="m"
       >
         <div style={{ paddingLeft: "10px" }}>
-          <EuiBasicTable items={[]} rowHeader="fieldName" columns={aggregationColumns} noItemsMessage="No field added for aggregation" />
+          <EuiBasicTable
+            items={[]}
+            rowHeader="fieldName"
+            columns={aggregationColumns}
+            noItemsMessage="No field added for aggregation"
+            tableLayout={"auto"}
+          />
           <EuiSpacer size="s" />
           {isModalVisible && (
             <EuiOverlayMask>

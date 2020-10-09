@@ -27,7 +27,7 @@ interface ConfigureRollupProps {
 
 //TODO: Define the allowed characters for rollup job name.
 const ConfigureRollup = ({ rollupId, rollupIdError, onChange, onChangeDescription, description }: ConfigureRollupProps) => (
-  <ContentPanel bodyStyles={{ padding: "initial" }} title="Job name and description" titleSize="s">
+  <ContentPanel bodyStyles={{ padding: "initial" }} title="Job name and description" titleSize="m">
     <div style={{ paddingLeft: "10px" }}>
       <EuiSpacer size="s" />
       <EuiFormRow
