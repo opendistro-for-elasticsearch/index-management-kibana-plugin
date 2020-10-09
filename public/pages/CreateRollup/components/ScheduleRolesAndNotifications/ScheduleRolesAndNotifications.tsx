@@ -13,15 +13,14 @@
  * permissions and limitations under the License.
  */
 
-import React, { ChangeEvent, Component } from "react";
-import { EuiSpacer } from "@elastic/eui";
+import React, { Component } from "react";
+import { EuiFlexGrid, EuiFlexItem, EuiSpacer, EuiText } from "@elastic/eui";
 import { ContentPanel, ContentPanelActions } from "../../../../components/ContentPanel";
 import { ModalConsumer } from "../../../../components/Modal";
 
 interface ScheduleRolesAndNotificationsProps {
   rollupId: string;
   rollupIdError: string;
-  onChange: (value: ChangeEvent<HTMLInputElement>) => void;
   onChangeStep: (step: number) => void;
 }
 
@@ -51,10 +50,37 @@ export default class ScheduleRolesAndNotifications extends Component<ScheduleRol
         }
         bodyStyles={{ padding: "initial" }}
         title="Schedule"
-        titleSize="s"
+        titleSize="m"
       >
         <div style={{ paddingLeft: "10px" }}>
-          <EuiSpacer size="s" />
+          <EuiSpacer size={"s"} />
+          <EuiFlexGrid columns={4}>
+            <EuiFlexItem>
+              <EuiText size={"xs"}>
+                <dt>Enabled by default</dt>
+                <dd>{}</dd>
+              </EuiText>
+            </EuiFlexItem>
+            <EuiFlexItem>
+              <EuiText size={"xs"}>
+                <dt>Schedule</dt>
+                <dd>{}</dd>
+              </EuiText>
+            </EuiFlexItem>
+            <EuiFlexItem>
+              <EuiText size={"xs"}>
+                <dt>Pages per execution</dt>
+                <dd>{}</dd>
+              </EuiText>
+            </EuiFlexItem>
+            <EuiFlexItem>
+              <EuiText size={"xs"}>
+                <dt>Execution delay</dt>
+                <dd>{}</dd>
+              </EuiText>
+            </EuiFlexItem>
+          </EuiFlexGrid>
+          <EuiSpacer size={"s"} />
         </div>
       </ContentPanel>
     );

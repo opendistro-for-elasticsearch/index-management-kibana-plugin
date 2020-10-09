@@ -13,7 +13,7 @@
  * permissions and limitations under the License.
  */
 
-import React, { ChangeEvent, Component } from "react";
+import React, { Component } from "react";
 import { EuiSpacer, EuiTitle, EuiFlexGroup, EuiFlexItem } from "@elastic/eui";
 import chrome from "ui/chrome";
 import { toastNotifications } from "ui/notify";
@@ -26,16 +26,16 @@ import CreateRollupSteps from "../../components/CreateRollupSteps";
 import HistogramAndMetrics from "../../components/HistogramAndMetrics";
 import JobNameAndIndices from "../../components/JobNameAndIndices";
 import ScheduleRolesAndNotifications from "../../components/ScheduleRolesAndNotifications";
-import Metrics from "../../components/Metrics";
 
 interface CreateRollupProps extends RouteComponentProps {
   rollupService: RollupService;
   currentStep: number;
   onChangeStep: (step: number) => void;
+  rollupId: string;
+  description: string;
 }
 
 interface CreateRollupState {
-  rollupId: string;
   rollupIdError: string;
   jsonString: string;
   rollupSeqNo: number | null;
@@ -52,7 +52,6 @@ export default class CreateRollupStep4 extends Component<CreateRollupProps, Crea
     this.state = {
       rollupSeqNo: null,
       rollupPrimaryTerm: null,
-      rollupId: "",
       rollupIdError: "",
       submitError: "",
       jsonString: "",
@@ -104,17 +103,10 @@ export default class CreateRollupStep4 extends Component<CreateRollupProps, Crea
     this.props.history.push(ROUTES.ROLLUPS);
   };
 
-  onChange = (e: ChangeEvent<HTMLInputElement>): void => {
-    const { hasSubmitted } = this.state;
-    const rollupId = e.target.value;
-    if (hasSubmitted) this.setState({ rollupId, rollupIdError: rollupId ? "" : "Required" });
-    else this.setState({ rollupId });
-  };
-
   render() {
     if (this.props.currentStep != 4) return null;
-    const { onChangeStep } = this.props;
-    const { rollupId, rollupIdError } = this.state;
+    const { rollupId, description, onChangeStep } = this.props;
+    const { rollupIdError } = this.state;
 
     return (
       <div style={{ padding: "25px 50px" }}>
@@ -127,16 +119,11 @@ export default class CreateRollupStep4 extends Component<CreateRollupProps, Crea
               <h1>Review and create</h1>
             </EuiTitle>
             <EuiSpacer />
-            <JobNameAndIndices rollupId={rollupId} rollupIdError={rollupIdError} onChange={this.onChange} onChangeStep={onChangeStep} />
+            <JobNameAndIndices rollupId={rollupId} description={description} rollupIdError={rollupIdError} onChangeStep={onChangeStep} />
             <EuiSpacer />
-            <HistogramAndMetrics rollupId={rollupId} rollupIdError={rollupIdError} onChange={this.onChange} onChangeStep={onChangeStep} />
+            <HistogramAndMetrics rollupId={rollupId} rollupIdError={rollupIdError} onChangeStep={onChangeStep} />
             <EuiSpacer />
-            <ScheduleRolesAndNotifications
-              rollupId={rollupId}
-              rollupIdError={rollupIdError}
-              onChange={this.onChange}
-              onChangeStep={onChangeStep}
-            />
+            <ScheduleRolesAndNotifications rollupId={rollupId} rollupIdError={rollupIdError} onChangeStep={onChangeStep} />
           </EuiFlexItem>
         </EuiFlexGroup>
         <EuiSpacer />

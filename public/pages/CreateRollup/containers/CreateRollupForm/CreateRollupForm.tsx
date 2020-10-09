@@ -202,7 +202,13 @@ export default class CreateRollupForm extends Component<CreateRollupFormProps, C
         />
         <CreateRollupStep2 {...this.props} currentStep={this.state.currentStep} />
         <CreateRollupStep3 {...this.props} currentStep={this.state.currentStep} />
-        <CreateRollupStep4 {...this.props} currentStep={this.state.currentStep} onChangeStep={this.onChangeStep} />
+        <CreateRollupStep4
+          {...this.props}
+          rollupId={rollupId}
+          description={description}
+          currentStep={this.state.currentStep}
+          onChangeStep={this.onChangeStep}
+        />
         <EuiFlexGroup alignItems="center" justifyContent="flexEnd" style={{ padding: "25px 50px" }}>
           <EuiFlexItem grow={false}>
             <EuiButtonEmpty onClick={this.onCancel} data-test-subj="createRollupCancelButton">

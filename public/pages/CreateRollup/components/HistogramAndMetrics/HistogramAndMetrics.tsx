@@ -13,15 +13,14 @@
  * permissions and limitations under the License.
  */
 
-import React, { ChangeEvent, Component } from "react";
-import { EuiSpacer } from "@elastic/eui";
+import React, { Component } from "react";
+import { EuiFlexGrid, EuiFlexItem, EuiSpacer, EuiText } from "@elastic/eui";
 import { ContentPanel, ContentPanelActions } from "../../../../components/ContentPanel";
 import { ModalConsumer } from "../../../../components/Modal";
 
 interface HistogramAndMetricsProps {
   rollupId: string;
   rollupIdError: string;
-  onChange: (value: ChangeEvent<HTMLInputElement>) => void;
   onChangeStep: (step: number) => void;
 }
 
@@ -29,6 +28,7 @@ export default class HistogramAndMetrics extends Component<HistogramAndMetricsPr
   constructor(props: HistogramAndMetricsProps) {
     super(props);
   }
+
   render() {
     const { onChangeStep } = this.props;
     return (
@@ -51,10 +51,47 @@ export default class HistogramAndMetrics extends Component<HistogramAndMetricsPr
         }
         bodyStyles={{ padding: "initial" }}
         title="Aggregation and metrics setting"
-        titleSize="s"
+        titleSize="m"
       >
         <div style={{ paddingLeft: "10px" }}>
-          <EuiSpacer size="s" />
+          <EuiSpacer size={"s"} />
+          <EuiText>
+            <h3>Time aggregation</h3>
+          </EuiText>
+          <EuiSpacer size={"s"} />
+          <EuiFlexGrid columns={3}>
+            <EuiFlexItem>
+              <EuiText size={"xs"}>
+                <dt>Timestamp</dt>
+                <dd>{}</dd>
+              </EuiText>
+            </EuiFlexItem>
+            <EuiFlexItem>
+              <EuiText size={"xs"}>
+                <dt>Interval</dt>
+                <dd>{}</dd>
+              </EuiText>
+            </EuiFlexItem>
+            <EuiFlexItem>
+              <EuiText size={"xs"}>
+                <dt>Timezone</dt>
+                <dd>{}</dd>
+              </EuiText>
+            </EuiFlexItem>
+          </EuiFlexGrid>
+          <EuiSpacer size={"m"} />
+
+          <EuiText>
+            <h3>Additional aggregations</h3>
+          </EuiText>
+
+          <EuiSpacer size={"m"} />
+
+          <EuiText>
+            <h3>Additional metrics</h3>
+          </EuiText>
+
+          <EuiSpacer size={"s"} />
         </div>
       </ContentPanel>
     );
