@@ -1,5 +1,5 @@
 /*
- * Copyright 2019 Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ * Copyright 2020 Amazon.com, Inc. or its affiliates. All Rights Reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License").
  * You may not use this file except in compliance with the License.
@@ -19,7 +19,6 @@ import {
   EuiCheckbox,
   EuiRadioGroup,
   EuiFormRow,
-  EuiDatePicker,
   EuiSelect,
   EuiFieldNumber,
   EuiFlexGroup,
@@ -27,8 +26,7 @@ import {
   EuiTextArea,
   EuiFormHelpText,
 } from "@elastic/eui";
-import moment, { Moment } from "moment";
-import { FixedTimeunitOptions, TimezoneOptions } from "../../utils/constants";
+import { CalenderTimeunitOptions, FixedTimeunitOptions } from "../../utils/constants";
 import { ContentPanel } from "../../../../components/ContentPanel";
 
 interface ScheduleProps {
@@ -41,9 +39,8 @@ interface ScheduleState {
   jobEnabledByDefault: boolean;
   recurringJob: string;
   recurringDefinition: string;
-  startDate: Moment;
-  endDate: Moment | null;
-  timezone: string;
+  interval: number;
+  intervalTimeunit: string;
   cronExpression: string;
   pageSize: number;
   delayTime: number | undefined;
@@ -61,53 +58,39 @@ const radios = [
   },
 ];
 
-const jobStartSelect = (
-  startDate: Moment,
-  timezone: string,
-  handleDateChange: (value: Moment) => void,
-  onChangeTimezone: (value: ChangeEvent<HTMLSelectElement>) => void
+const selectInterval = (
+  interval: number,
+  intervalTimeunit: string,
+  onChangeInterval: (e: ChangeEvent<HTMLInputElement>) => void,
+  onChangeTimeunit: (value: ChangeEvent<HTMLSelectElement>) => void
 ) => (
   <React.Fragment>
-    <EuiFormRow label="Job starts on" isInvalid={startDate.isBefore(moment())} error={"Start date should be later than current time."}>
-      <EuiDatePicker showTimeSelect selected={startDate} onChange={handleDateChange} isInvalid={startDate.isBefore(moment())} />
-    </EuiFormRow>
-
-    <EuiSpacer size="m" />
-
-    <EuiFormRow label={"Timezone"}>
-      <EuiSelect id="timezone" options={TimezoneOptions} value={timezone} onChange={onChangeTimezone} />
-    </EuiFormRow>
-
-    <EuiSpacer size="m" />
-  </React.Fragment>
-);
-
-const jobEndSelect = (startDate: Moment, endDate: Moment | null, handleDateChange: (value: Moment | null) => void) => (
-  <React.Fragment>
-    <EuiFormRow
-      label="Job ends on - optional"
-      isInvalid={endDate != null && startDate.isAfter(endDate)}
-      error={"End date should be later than start date"}
-    >
-      <EuiDatePicker
-        showTimeSelect
-        selected={endDate}
-        onChange={handleDateChange}
-        onClear={() => handleDateChange(null)}
-        isInvalid={endDate != null && startDate.isAfter(endDate)}
-      />
-    </EuiFormRow>
-
-    <EuiSpacer size="m" />
+    <EuiFlexGroup style={{ maxWidth: 400 }}>
+      <EuiFlexItem grow={false} style={{ width: 200 }}>
+        <EuiFormRow label="Rollup interval">
+          <EuiFieldNumber value={interval} onChange={onChangeInterval} />
+        </EuiFormRow>
+      </EuiFlexItem>
+      <EuiFlexItem>
+        <EuiFormRow hasEmptyLabelSpace={true}>
+          <EuiSelect
+            id="selectIntervalTimeunit"
+            options={CalenderTimeunitOptions}
+            value={intervalTimeunit}
+            onChange={onChangeTimeunit}
+            isInvalid={interval == undefined || interval <= 0}
+          />
+        </EuiFormRow>
+      </EuiFlexItem>
+    </EuiFlexGroup>
   </React.Fragment>
 );
 
 const defineCron = (cronExpression: string, onChangeCron: (value: ChangeEvent<HTMLTextAreaElement>) => void) => (
   <React.Fragment>
-    <EuiFormRow label="Cron expression">
+    <EuiFormRow label="Define by cron expression">
       <EuiTextArea value={cronExpression} onChange={onChangeCron} compressed={true} />
     </EuiFormRow>
-    <EuiSpacer size="m" />
   </React.Fragment>
 );
 
@@ -118,10 +101,9 @@ export default class Schedule extends Component<ScheduleProps, ScheduleState> {
     this.state = {
       jobEnabledByDefault: false,
       recurringJob: "no",
-      recurringDefinition: "date",
-      startDate: moment().add(30, "minutes"),
-      endDate: null,
-      timezone: "-7",
+      recurringDefinition: "fixed",
+      interval: 2,
+      intervalTimeunit: "M",
       cronExpression: "",
       pageSize: 1000,
       delayTime: undefined,
@@ -154,20 +136,12 @@ export default class Schedule extends Component<ScheduleProps, ScheduleState> {
     this.setState({ recurringJob: optionId });
   };
 
-  onChangeTimezone = (e: ChangeEvent<HTMLSelectElement>): void => {
-    this.setState({ timezone: e.target.value });
-  };
-
-  onChangeTimeunit = (e: ChangeEvent<HTMLSelectElement>): void => {
+  onChangeDelayTimeunit = (e: ChangeEvent<HTMLSelectElement>): void => {
     this.setState({ delayTimeunit: e.target.value });
   };
 
-  handleStartDateChange = (date: Moment): void => {
-    this.setState({ startDate: date });
-  };
-
-  handleEndDateChange = (date: Moment | null): void => {
-    this.setState({ endDate: date });
+  onChangeIntervalTimeunit = (e: ChangeEvent<HTMLSelectElement>): void => {
+    this.setState({ intervalTimeunit: e.target.value });
   };
 
   render() {
@@ -175,9 +149,8 @@ export default class Schedule extends Component<ScheduleProps, ScheduleState> {
       jobEnabledByDefault,
       recurringJob,
       recurringDefinition,
-      startDate,
-      endDate,
-      timezone,
+      interval,
+      intervalTimeunit,
       cronExpression,
       pageSize,
       delayTime,
@@ -198,27 +171,23 @@ export default class Schedule extends Component<ScheduleProps, ScheduleState> {
           </EuiFormRow>
           <EuiSpacer size="m" />
 
-          {/*Hide this part if the rollup job is not recurring*/}
-          {recurringJob == "yes" && (
-            <EuiFormRow label={"Recurring definition"}>
-              <EuiSelect
-                id="recurringDefinition"
-                options={[
-                  { value: "date", text: "Choose date and time" },
-                  { value: "cron", text: "Cron expression" },
-                ]}
-                value={recurringDefinition}
-                onChange={this.onChangeRecurringDefinition}
-              />
-            </EuiFormRow>
-          )}
+          <EuiFormRow label={"Rollup execution frequency"}>
+            <EuiSelect
+              id="recurringDefinition"
+              options={[
+                { value: "fixed", text: "Define by fixed interval" },
+                { value: "cron", text: "Define by cron expression" },
+              ]}
+              value={recurringDefinition}
+              onChange={this.onChangeRecurringDefinition}
+            />
+          </EuiFormRow>
+          <EuiSpacer size="m" />
 
-          {/*Hide this part if is recurring job and defined by cron expression*/}
-          {(recurringJob == "no" || (recurringJob == "yes" && recurringDefinition == "date")) &&
-            jobStartSelect(startDate, timezone, this.handleStartDateChange, this.onChangeTimezone)}
+          {recurringDefinition == "fixed"
+            ? selectInterval(interval, intervalTimeunit, this.onChangeDelayTime, this.onChangeIntervalTimeunit)
+            : defineCron(cronExpression, this.onChangeCron)}
 
-          {recurringJob == "yes" && recurringDefinition == "date" && jobEndSelect(startDate, endDate, this.handleEndDateChange)}
-          {recurringJob == "yes" && recurringDefinition == "cron" && defineCron(cronExpression, this.onChangeCron)}
           <EuiSpacer size="m" />
 
           <EuiFormRow
@@ -240,8 +209,7 @@ export default class Schedule extends Component<ScheduleProps, ScheduleState> {
                   id="selectTimeunit"
                   options={FixedTimeunitOptions}
                   value={delayTimeunit}
-                  onChange={this.onChangeTimeunit}
-                  disabled={delayTime == undefined}
+                  onChange={this.onChangeDelayTimeunit}
                   isInvalid={delayTime != undefined && delayTime <= 0}
                 />
               </EuiFormRow>
