@@ -18,7 +18,7 @@ import { EuiLink, EuiTableFieldDataColumnType } from "@elastic/eui";
 import { ROUTES, SortDirection } from "../../../utils/constants";
 import { renderTime } from "../../Policies/utils/helpers";
 import { RollupItem } from "../models/interfaces";
-import { renderEnabled } from "./helpers";
+import { renderContinuous, renderEnabled } from "./helpers";
 
 export const DEFAULT_PAGE_SIZE_OPTIONS = [5, 10, 20, 50];
 
@@ -32,7 +32,7 @@ export const DEFAULT_QUERY_PARAMS = {
 
 export const rollupsColumns: EuiTableFieldDataColumnType<RollupItem>[] = [
   {
-    field: "id",
+    field: "_id",
     name: "Name",
     sortable: true,
     textOnly: true,
@@ -66,31 +66,24 @@ export const rollupsColumns: EuiTableFieldDataColumnType<RollupItem>[] = [
     render: renderEnabled,
   },
   {
-    field: "currentWindow",
-    name: "Current rollup window",
+    field: "rollup.continuous",
+    name: "Continuous",
+    sortable: true,
+    textOnly: true,
+    truncateText: true,
+    render: renderContinuous,
+  },
+  {
+    field: "nextWindow",
+    name: "Next rollup window",
     sortable: true,
     textOnly: true,
     truncateText: true,
   },
   {
     field: "status",
-    name: "Status",
+    name: "Job status",
     sortable: true,
     textOnly: true,
-  },
-  {
-    field: "recurring",
-    name: "Recurring",
-    sortable: true,
-    textOnly: true,
-    truncateText: true,
-  },
-  {
-    field: "master_timeout",
-    name: "Next execution",
-    sortable: true,
-    textOnly: true,
-    render: renderTime,
-    dataType: "date",
   },
 ];

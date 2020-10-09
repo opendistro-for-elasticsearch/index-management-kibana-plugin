@@ -65,85 +65,117 @@ interface RollupsState {
 
 let SampleGetRollupJobs: RollupItem[] = [
   {
-    id: "rollup-job-1",
-    seqNo: 1,
-    primaryTerm: 1,
+    _id: "sample_job1",
+    _version: 1,
+    _seq_no: 0,
+    _primary_term: 1,
     rollup: {
-      source_index: "stats-*",
-      target_index: "rollup-stats",
+      enabled: false,
       schedule: {
         interval: {
+          start_time: 1553112384,
           period: 1,
           unit: "Days",
         },
       },
-      run_as_user: "dbbaughe",
-      roles: ["admin"],
+      last_updated_time: 1602191791392,
+      enabled_time: null,
       description: "Rolls up our daily indices into monthly summarized views",
-      enabled: true,
-      error_notification: {
-        destination: { slack: { url: "..." } },
-        message_template: { source: "..." },
-      },
+      schema_version: 5,
+      source_index: "kibana_sample_data_flights",
+      target_index: "rollup-stats",
+      metadata_id: null,
+      roles: [],
       page_size: 200,
-      delay: "6h",
-      dimensions: {
-        date_histogram: {
-          field: "timestamp",
-          fixed_interval: "30d",
-          timezone: "America/Los_Angeles",
-        },
-        terms: {
-          fields: ["customer_city"],
-        },
-      },
-      metrics: [
+      delay: 10,
+      continuous: false,
+      dimensions: [
         {
-          field: "price",
-          metric_aggregations: ["avg", "min", "max", "sum"],
+          date_histogram: {
+            fixed_interval: "30d",
+            source_field: "timestamp",
+            target_field: "timestamp",
+            timezone: "America/Los_Angeles",
+          },
         },
       ],
+      metrics: [],
     },
   },
   {
-    id: "rollup-job-2",
-    seqNo: 2,
-    primaryTerm: 2,
+    _id: "sample_job2",
+    _version: 1,
+    _seq_no: 1,
+    _primary_term: 1,
     rollup: {
-      source_index: "Pricehistory",
-      target_index: "All-history",
+      enabled: false,
       schedule: {
         interval: {
+          start_time: 1553112384,
           period: 1,
           unit: "Days",
         },
       },
-      run_as_user: "dbbaughe",
-      roles: ["admin"],
+      last_updated_time: 1602191837182,
+      enabled_time: null,
       description: "Rolls up our daily indices into monthly summarized views",
-      enabled: false,
-      error_notification: {
-        destination: { slack: { url: "..." } },
-        message_template: { source: "..." },
-      },
+      schema_version: 5,
+      source_index: "kibana_sample_data_flights",
+      target_index: "rollup-stats",
+      metadata_id: null,
+      roles: [],
       page_size: 200,
-      delay: "6h",
-      dimensions: {
-        date_histogram: {
-          field: "timestamp",
-          fixed_interval: "30d",
-          timezone: "America/Los_Angeles",
-        },
-        terms: {
-          fields: ["customer_city"],
-        },
-      },
-      metrics: [
+      delay: 10,
+      continuous: false,
+      dimensions: [
         {
-          field: "price",
-          metric_aggregations: ["avg", "min", "max", "sum"],
+          date_histogram: {
+            fixed_interval: "30d",
+            source_field: "timestamp",
+            target_field: "timestamp",
+            timezone: "America/Los_Angeles",
+          },
         },
       ],
+      metrics: [],
+    },
+  },
+  {
+    _id: "sample_job3",
+    _version: 1,
+    _seq_no: 2,
+    _primary_term: 1,
+    rollup: {
+      enabled: false,
+      schedule: {
+        interval: {
+          start_time: 1553112384,
+          period: 1,
+          unit: "Days",
+        },
+      },
+      last_updated_time: 1602191874405,
+      enabled_time: null,
+      description: "Rolls up our daily indices into monthly summarized views",
+      schema_version: 5,
+      source_index: "kibana_sample_data_flights",
+      target_index: "new-index",
+      metadata_id: null,
+      roles: [],
+      page_size: 200,
+      delay: 10,
+      continuous: false,
+      dimensions: [
+        {
+          date_histogram: {
+            fixed_interval: "30d",
+            source_field: "timestamp",
+            target_field: "timestamp",
+            timezone: "America/Los_Angeles",
+          },
+        },
+      ],
+      metrics: [],
     },
   },
 ];
