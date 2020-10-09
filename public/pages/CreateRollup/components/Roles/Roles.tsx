@@ -1,5 +1,5 @@
 /*
- * Copyright 2019 Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ * Copyright 2020 Amazon.com, Inc. or its affiliates. All Rights Reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License").
  * You may not use this file except in compliance with the License.
@@ -13,57 +13,34 @@
  * permissions and limitations under the License.
  */
 
-import React, { ChangeEvent, Component } from "react";
+import React, { Component } from "react";
 import { EuiSpacer, EuiFormRow, EuiComboBox, EuiComboBoxOptionOption } from "@elastic/eui";
 import { ContentPanel } from "../../../../components/ContentPanel";
 
 interface RolesProps {
   rollupId: string;
   rollupIdError: string;
-  onChange: (value: ChangeEvent<HTMLInputElement>) => void;
-}
-
-interface RolesStates {
+  onChange: (selectedOptions: EuiComboBoxOptionOption<String>[]) => void;
   roles: EuiComboBoxOptionOption<String>[];
+  roleOptions: EuiComboBoxOptionOption<String>[];
 }
 
-//TODO: Fetch roles from backend to fill in options
-const options = [
-  {
-    label: "Role1",
-  },
-  {
-    label: "Role2",
-  },
-  {
-    label: "Role3",
-  },
-];
-export default class Roles extends Component<RolesProps, RolesStates> {
+export default class Roles extends Component<RolesProps> {
   constructor(props: RolesProps) {
     super(props);
-
-    this.state = {
-      roles: [{ label: "Role1" }],
-    };
   }
 
-  onChange = (selectedOptions: EuiComboBoxOptionOption<String>[]): void => {
-    this.setState({ roles: selectedOptions });
-  };
-
   render() {
-    const { roles } = this.state;
     return (
-      <ContentPanel bodyStyles={{ padding: "initial" }} title="Roles" titleSize="s">
+      <ContentPanel bodyStyles={{ padding: "initial" }} title="Roles" titleSize="m">
         <div style={{ paddingLeft: "10px" }}>
           <EuiSpacer size="s" />
           <EuiFormRow label="Roles" helpText="Security roles have access to this rollup job.">
             <EuiComboBox
               placeholder="Select for roles"
-              options={options}
-              selectedOptions={roles}
-              onChange={this.onChange}
+              options={this.props.roleOptions}
+              selectedOptions={this.props.roles}
+              onChange={this.props.onChange}
               isClearable={true}
             />
           </EuiFormRow>

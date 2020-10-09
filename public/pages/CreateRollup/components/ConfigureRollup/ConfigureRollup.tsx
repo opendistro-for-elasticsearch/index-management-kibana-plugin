@@ -1,5 +1,5 @@
 /*
- * Copyright 2019 Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ * Copyright 2020 Amazon.com, Inc. or its affiliates. All Rights Reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License").
  * You may not use this file except in compliance with the License.
@@ -21,10 +21,13 @@ interface ConfigureRollupProps {
   rollupId: string;
   rollupIdError: string;
   onChange: (value: ChangeEvent<HTMLInputElement>) => void;
+  onChangeDescription: (value: ChangeEvent<HTMLTextAreaElement>) => void;
+  description: string;
 }
 
-const ConfigureRollup = ({ rollupId, rollupIdError, onChange }: ConfigureRollupProps) => (
-  <ContentPanel bodyStyles={{ padding: "initial" }} title="Job name and description" titleSize="s">
+//TODO: Define the allowed characters for rollup job name.
+const ConfigureRollup = ({ rollupId, rollupIdError, onChange, onChangeDescription, description }: ConfigureRollupProps) => (
+  <ContentPanel bodyStyles={{ padding: "initial" }} title="Job name and description" titleSize="m">
     <div style={{ paddingLeft: "10px" }}>
       <EuiSpacer size="s" />
       <EuiFormRow
@@ -36,13 +39,8 @@ const ConfigureRollup = ({ rollupId, rollupIdError, onChange }: ConfigureRollupP
         <EuiFieldText isInvalid={!!rollupIdError} placeholder="my-rollupjob1" value={rollupId} onChange={onChange} />
       </EuiFormRow>
 
-      <EuiFormRow
-        label="Description - optional"
-        helpText="Describe details about this rollup job."
-        isInvalid={!!rollupIdError}
-        error={rollupIdError}
-      >
-        <EuiTextArea isInvalid={!!rollupIdError} compressed={true} />
+      <EuiFormRow label="Description - optional" helpText="Describe details about this rollup job.">
+        <EuiTextArea compressed={true} value={description} onChange={onChangeDescription} />
       </EuiFormRow>
     </div>
   </ContentPanel>

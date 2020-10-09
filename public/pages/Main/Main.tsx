@@ -27,10 +27,9 @@ import { ModalProvider, ModalRoot } from "../../components/Modal";
 import { ServicesConsumer } from "../../services";
 import { BrowserServices } from "../../models/interfaces";
 import { ROUTES } from "../../utils/constants";
-import CreateRollup from "../CreateRollup";
-import CreateRollupStep2 from "../CreateRollup/containers/CreateRollupStep2";
 import CreateRollupStep3 from "../CreateRollup/containers/CreateRollupStep3";
 import CreateRollupStep4 from "../CreateRollup/containers/CreateRollupStep4";
+import CreateRollupForm from "../CreateRollup/containers/CreateRollupForm";
 
 enum Navigation {
   IndexManagement = "Index Management",
@@ -153,31 +152,7 @@ export default class Main extends Component<MainProps, object> {
                       path={ROUTES.CREATE_ROLLUP}
                       render={(props: RouteComponentProps) => (
                         <div style={{ padding: "25px 25px" }}>
-                          <CreateRollup {...props} rollupService={services.rollupService} />
-                        </div>
-                      )}
-                    />
-                    <Route
-                      path={ROUTES.CREATE_ROLLUP_STEP2}
-                      render={(props: RouteComponentProps) => (
-                        <div style={{ padding: "25px 25px" }}>
-                          <CreateRollupStep2 {...props} rollupService={services.rollupService} />
-                        </div>
-                      )}
-                    />
-                    <Route
-                      path={ROUTES.CREATE_ROLLUP_STEP3}
-                      render={(props: RouteComponentProps) => (
-                        <div style={{ padding: "25px 25px" }}>
-                          <CreateRollupStep3 {...props} rollupService={services.rollupService} />
-                        </div>
-                      )}
-                    />
-                    <Route
-                      path={ROUTES.CREATE_ROLLUP_STEP4}
-                      render={(props: RouteComponentProps) => (
-                        <div style={{ padding: "25px 25px" }}>
-                          <CreateRollupStep4 {...props} rollupService={services.rollupService} />
+                          <CreateRollupForm {...props} rollupService={services.rollupService} indexService={services.indexService} />
                         </div>
                       )}
                     />

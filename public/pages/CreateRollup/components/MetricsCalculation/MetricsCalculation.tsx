@@ -196,7 +196,7 @@ export default class MetricsCalculation extends Component<MetricsCalculationProp
           </ModalConsumer>
         }
         title="Additional metrics - optional"
-        titleSize="s"
+        titleSize="m"
       >
         <div style={{ paddingLeft: "10px" }}>
           <EuiBasicTable
@@ -204,6 +204,7 @@ export default class MetricsCalculation extends Component<MetricsCalculationProp
             rowHeader="numericField"
             columns={metricsColumns}
             noItemsMessage="No field added for metrics calculation"
+            tableLayout={"auto"}
           />
           <EuiSpacer size="s" />
           {isModalVisible && (
