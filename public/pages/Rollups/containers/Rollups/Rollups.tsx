@@ -39,6 +39,15 @@ import {
   EuiFieldSearch,
   EuiPagination,
   EuiFlexGroup,
+  EuiPanel,
+  EuiTitle,
+  EuiButton,
+  EuiPopover,
+  EuiContextMenu,
+  EuiContextMenuItem,
+  EuiContextMenuPanel,
+  EuiText,
+  EuiTextColor,
 } from "@elastic/eui";
 import { rollupsColumns } from "../../utils/constants";
 import { RollupService } from "../../../../services";
@@ -60,6 +69,7 @@ interface RollupsState {
   selectedItems: RollupItem[];
   rollups: RollupItem[];
   loadingRollups: boolean;
+  isPopoverOpen: boolean;
 }
 
 let SampleGetRollupJobs: RollupItem[] = [
@@ -195,6 +205,7 @@ export default class Rollups extends Component<RollupsProps, RollupsState> {
       selectedItems: [],
       rollups: SampleGetRollupJobs,
       loadingRollups: false,
+      isPopoverOpen: false,
     };
 
     this.getRollups = _.debounce(this.getRollups, 500, { leading: true });
@@ -216,6 +227,26 @@ export default class Rollups extends Component<RollupsProps, RollupsState> {
   static getQueryObjectFromState({ from, size, search, sortField, sortDirection }: RollupsState): RollupsQueryParams {
     return { from, size, search, sortField, sortDirection };
   }
+
+  panels = [
+    {
+      id: 0,
+      items: [
+        {
+          name: "Edit",
+          onClick: () => {
+            this.closePopover();
+            this.onClickEdit();
+          },
+        },
+        {
+          name: "Delete",
+          href: "http://elastic.co",
+          target: "_blank",
+        },
+      ],
+    },
+  ];
 
   getRollups = async (): Promise<void> => {
     this.setState({ loadingRollups: true });
@@ -260,6 +291,7 @@ export default class Rollups extends Component<RollupsProps, RollupsState> {
 
   onSelectionChange = (selectedItems: RollupItem[]): void => {
     this.setState({ selectedItems });
+    console.log(this.state);
   };
 
   onSearchChange = (e: React.ChangeEvent<HTMLInputElement>): void => {
@@ -275,8 +307,27 @@ export default class Rollups extends Component<RollupsProps, RollupsState> {
     this.setState({ search: DEFAULT_QUERY_PARAMS.search });
   };
 
+  onActionButtonClick = (): void => {
+    this.setState({ isPopoverOpen: !this.state.isPopoverOpen });
+  };
+
+  closePopover = (): void => {
+    this.setState({ isPopoverOpen: false });
+  };
+
   render() {
-    const { totalRollups, from, size, search, sortField, sortDirection, selectedItems, rollups, loadingRollups } = this.state;
+    const {
+      totalRollups,
+      from,
+      size,
+      search,
+      sortField,
+      sortDirection,
+      selectedItems,
+      rollups,
+      loadingRollups,
+      isPopoverOpen,
+    } = this.state;
 
     const filterIsApplied = !!search;
     const page = Math.floor(from / size);
@@ -296,88 +347,117 @@ export default class Rollups extends Component<RollupsProps, RollupsState> {
       },
     };
 
+    const actionButton = (
+      <EuiButton iconType={"arrowDown"} iconSide={"right"} disabled={!selectedItems.length} onClick={this.onActionButtonClick}>
+        Actions
+      </EuiButton>
+    );
+
     const selection: EuiTableSelectionType<RollupItem> = {
       onSelectionChange: this.onSelectionChange,
     };
 
+    const items = [
+      <EuiContextMenuItem
+        key="Edit"
+        icon="empty"
+        disabled={selectedItems.length != 1}
+        onClick={() => {
+          this.closePopover();
+          this.onClickEdit();
+        }}
+      >
+        Edit
+      </EuiContextMenuItem>,
+      <EuiContextMenuItem
+        key="Delete"
+        icon="empty"
+        onClick={() => {
+          this.closePopover();
+        }}
+      >
+        <EuiTextColor color={"danger"}>Delete</EuiTextColor>
+      </EuiContextMenuItem>,
+    ];
+
     //TODO: Add action buttons here
     return (
-      <ContentPanel
-        actions={
-          <ModalConsumer>
-            {({ onShow }) => (
-              <ContentPanelActions
-                actions={[
-                  {
-                    text: "Disable",
-                    buttonProps: {
-                      disabled: !selectedItems.length,
-                      onClick: () => this.onDisable,
-                    },
-                  },
-                  {
-                    text: "Enable",
-                    buttonProps: {
-                      disabled: !selectedItems.length,
-                      onClick: () => this.onEnable,
-                    },
-                  },
-                  {
-                    text: "Actions",
-                    buttonProps: {
-                      iconType: "arrowDown",
-                      iconSide: "right",
-                      disabled: !selectedItems.length,
-                      // onClick: () => onShow(ApplyPolicyModal, { indices: selectedItems.map((item: RollupItem) => item.id) }),
-                    },
-                  },
-
-                  {
-                    text: "Create rollup job",
-                    buttonProps: {
-                      onClick: () => this.onClickCreate(),
-                      fill: true,
-                    },
-                  },
-                ]}
-              />
-            )}
-          </ModalConsumer>
-        }
-        bodyStyles={{ padding: "initial" }}
-        title="Rollup jobs"
-      >
-        <EuiFlexGroup style={{ padding: "0px 5px" }}>
+      <EuiPanel style={{ paddingLeft: "0px", paddingRight: "0px" }}>
+        <EuiFlexGroup style={{ padding: "0px 10px" }} justifyContent="spaceBetween" alignItems="center">
           <EuiFlexItem>
-            <EuiFieldSearch fullWidth={true} value={search} placeholder="Search" onChange={this.onSearchChange} />
+            <EuiTitle size={"m"}>
+              <h3>Rollup jobs</h3>
+            </EuiTitle>
           </EuiFlexItem>
-          {pageCount > 1 && (
-            <EuiFlexItem grow={false} style={{ justifyContent: "center" }}>
-              <EuiPagination
-                pageCount={pageCount}
-                activePage={page}
-                onPageClick={this.onPageClick}
-                data-test-subj="indexControlsPagination"
-              />
-            </EuiFlexItem>
-          )}
+          <EuiFlexItem grow={false}>
+            <EuiFlexGroup alignItems="center" gutterSize="s">
+              <EuiFlexItem grow={false}>
+                <EuiButton disabled={!selectedItems.length} onClick={this.onDisable}>
+                  Disable
+                </EuiButton>
+              </EuiFlexItem>
+              <EuiFlexItem grow={false}>
+                <EuiButton disabled={!selectedItems.length} onClick={this.onEnable}>
+                  Enable
+                </EuiButton>
+              </EuiFlexItem>
+              <EuiFlexItem grow={false}>
+                <EuiPopover
+                  id="action"
+                  button={actionButton}
+                  isOpen={isPopoverOpen}
+                  closePopover={this.closePopover}
+                  panelPaddingSize="none"
+                  anchorPosition="downLeft"
+                >
+                  {/*<EuiContextMenu initialPanelId={0} panels={this.panels} />*/}
+                  <EuiContextMenuPanel items={items} />
+                </EuiPopover>
+              </EuiFlexItem>
+              <EuiFlexItem grow={false}>
+                <EuiButton onClick={this.onClickCreate} fill={true}>
+                  Create Rollup Job
+                </EuiButton>
+              </EuiFlexItem>
+            </EuiFlexGroup>
+          </EuiFlexItem>
         </EuiFlexGroup>
 
-        <EuiHorizontalRule margin="xs" />
+        <div style={{ padding: "initial" }}>
+          <EuiFlexGroup style={{ padding: "0px 5px" }}>
+            <EuiFlexItem>
+              <EuiFieldSearch fullWidth={true} value={search} placeholder="Search" onChange={this.onSearchChange} />
+            </EuiFlexItem>
+            {pageCount > 1 && (
+              <EuiFlexItem grow={false} style={{ justifyContent: "center" }}>
+                <EuiPagination
+                  pageCount={pageCount}
+                  activePage={page}
+                  onPageClick={this.onPageClick}
+                  data-test-subj="indexControlsPagination"
+                />
+              </EuiFlexItem>
+            )}
+          </EuiFlexGroup>
 
-        <EuiBasicTable
-          columns={rollupsColumns}
-          isSelectable={true}
-          itemId="_id"
-          items={rollups}
-          noItemsMessage={<RollupEmptyPrompt filterIsApplied={filterIsApplied} loading={loadingRollups} resetFilters={this.resetFilters} />}
-          onChange={this.onTableChange}
-          pagination={pagination}
-          selection={selection}
-          sorting={sorting}
-          tableLayout={"auto"}
-        />
-      </ContentPanel>
+          <EuiHorizontalRule margin="xs" />
+
+          <EuiBasicTable
+            columns={rollupsColumns}
+            isSelectable={true}
+            itemId="_id"
+            items={rollups}
+            noItemsMessage={
+              <RollupEmptyPrompt filterIsApplied={filterIsApplied} loading={loadingRollups} resetFilters={this.resetFilters} />
+            }
+            onChange={this.onTableChange}
+            pagination={pagination}
+            selection={selection}
+            sorting={sorting}
+            tableLayout={"auto"}
+          />
+        </div>
+      </EuiPanel>
     );
   }
 }
