@@ -117,11 +117,10 @@ export default class CreateRollup extends Component<CreateRollupProps> {
               rollupId={rollupId}
               rollupIdError={rollupIdError}
               description={description}
-              onChange={onChange}
               onChangeDescription={onChangeDescription}
             />
             <EuiSpacer />
-            <RollupIndices rollupId={rollupId} rollupIdError={rollupIdError} onChange={this.onChange} />
+            <RollupIndices rollupId={rollupId} rollupIdError={rollupIdError} onChange={onChange} />
             <EuiSpacer />
             <Roles rollupId={rollupId} rollupIdError={rollupIdError} onChange={onChangeRoles} roles={roles} roleOptions={options} />
             {submitError && (

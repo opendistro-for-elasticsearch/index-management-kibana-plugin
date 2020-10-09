@@ -14,8 +14,8 @@
  */
 
 import React from "react";
-import { EuiTableFieldDataColumnType } from "@elastic/eui";
-import { SortDirection } from "../../../utils/constants";
+import { EuiLink, EuiTableFieldDataColumnType } from "@elastic/eui";
+import { ROUTES, SortDirection } from "../../../utils/constants";
 import { renderTime } from "../../Policies/utils/helpers";
 import { RollupItem } from "../models/interfaces";
 import { renderEnabled } from "./helpers";
@@ -37,6 +37,11 @@ export const rollupsColumns: EuiTableFieldDataColumnType<RollupItem>[] = [
     sortable: true,
     textOnly: true,
     truncateText: true,
+    render: (name) => (
+      <EuiLink href={"opendistro_index_management_kibana#/edit-rollup"} target="_blank" external={false}>
+        {name}
+      </EuiLink>
+    ),
   },
   {
     field: "rollup.source_index",

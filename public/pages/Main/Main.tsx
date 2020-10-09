@@ -27,9 +27,8 @@ import { ModalProvider, ModalRoot } from "../../components/Modal";
 import { ServicesConsumer } from "../../services";
 import { BrowserServices } from "../../models/interfaces";
 import { ROUTES } from "../../utils/constants";
-import CreateRollupStep3 from "../CreateRollup/containers/CreateRollupStep3";
-import CreateRollupStep4 from "../CreateRollup/containers/CreateRollupStep4";
 import CreateRollupForm from "../CreateRollup/containers/CreateRollupForm";
+import EditRollup from "../EditRollup/containers";
 
 enum Navigation {
   IndexManagement = "Index Management",
@@ -153,6 +152,14 @@ export default class Main extends Component<MainProps, object> {
                       render={(props: RouteComponentProps) => (
                         <div style={{ padding: "25px 25px" }}>
                           <CreateRollupForm {...props} rollupService={services.rollupService} indexService={services.indexService} />
+                        </div>
+                      )}
+                    />
+                    <Route
+                      path={ROUTES.EDIT_ROLLUP}
+                      render={(props: RouteComponentProps) => (
+                        <div style={{ padding: "25px 25px" }}>
+                          <EditRollup {...props} rollupService={services.rollupService} />
                         </div>
                       )}
                     />
