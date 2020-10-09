@@ -16,7 +16,6 @@
 import React, { ChangeEvent, Component } from "react";
 import _ from "lodash";
 import chrome from "ui/chrome";
-import { BREADCRUMBS, ROUTES } from "../../../../utils/constants";
 import { RouteComponentProps } from "react-router-dom";
 import {
   EuiFlexItem,
@@ -30,12 +29,14 @@ import {
 } from "@elastic/eui";
 import { RollupService } from "../../../../services";
 import { RollupItem } from "../../models/interfaces";
-import CreateRollupSteps from "../../CreateRollup/components/CreateRollupSteps";
 import ConfigureRollup from "../../CreateRollup/components/ConfigureRollup";
 import Roles from "../../CreateRollup/components/Roles";
 import Schedule from "../../CreateRollup/components/Schedule";
 import { DEFAULT_ROLLUP } from "../../CreateRollup/utils/constants";
 import { toastNotifications } from "ui/notify";
+import queryString from "query-string";
+import { getErrorMessage } from "../../../utils/helpers";
+import { BREADCRUMBS, ROUTES } from "../../../utils/constants";
 
 interface EditRollupProps extends RouteComponentProps {
   rollupService: RollupService;
@@ -44,6 +45,8 @@ interface EditRollupProps extends RouteComponentProps {
 interface EditRollupState {
   rollupId: string;
   rollupIdError: string;
+  rollupSeqNo: number | null;
+  rollupPrimaryTerm: number | null;
   submitError: string;
   isSubmitting: boolean;
   hasSubmitted: boolean;
@@ -64,91 +67,6 @@ const options: EuiComboBoxOptionOption<String>[] = [
   },
 ];
 
-let SampleGetRollupJobs: RollupItem[] = [
-  {
-    id: "rollup-job-1",
-    seqNo: 1,
-    primaryTerm: 1,
-    rollup: {
-      source_index: "stats-*",
-      target_index: "rollup-stats",
-      schedule: {
-        interval: {
-          period: 1,
-          unit: "Days",
-        },
-      },
-      run_as_user: "dbbaughe",
-      roles: ["admin"],
-      description: "Rolls up our daily indices into monthly summarized views",
-      enabled: true,
-      error_notification: {
-        destination: { slack: { url: "..." } },
-        message_template: { source: "..." },
-      },
-      page_size: 200,
-      delay: "6h",
-      dimensions: {
-        date_histogram: {
-          field: "timestamp",
-          fixed_interval: "30d",
-          timezone: "America/Los_Angeles",
-        },
-        terms: {
-          fields: ["customer_city"],
-        },
-      },
-      metrics: [
-        {
-          field: "price",
-          metric_aggregations: ["avg", "min", "max", "sum"],
-        },
-      ],
-    },
-  },
-  {
-    id: "rollup-job-2",
-    seqNo: 2,
-    primaryTerm: 2,
-    rollup: {
-      source_index: "Pricehistory",
-      target_index: "All-history",
-      schedule: {
-        interval: {
-          period: 1,
-          unit: "Days",
-        },
-      },
-      run_as_user: "dbbaughe",
-      roles: ["admin"],
-      description: "Rolls up our daily indices into monthly summarized views",
-      enabled: false,
-      error_notification: {
-        destination: { slack: { url: "..." } },
-        message_template: { source: "..." },
-      },
-      page_size: 200,
-      delay: "6h",
-      dimensions: {
-        date_histogram: {
-          field: "timestamp",
-          fixed_interval: "30d",
-          timezone: "America/Los_Angeles",
-        },
-        terms: {
-          fields: ["customer_city"],
-        },
-      },
-      metrics: [
-        {
-          field: "price",
-          metric_aggregations: ["avg", "min", "max", "sum"],
-        },
-      ],
-    },
-  },
-];
-
 export default class EditRollup extends Component<EditRollupProps, EditRollupState> {
   //TODO: Get actual rollupId etc. here
   constructor(props: EditRollupProps) {
@@ -156,6 +74,8 @@ export default class EditRollup extends Component<EditRollupProps, EditRollupSta
     this.state = {
       rollupId: "",
       rollupIdError: "",
+      rollupSeqNo: null,
+      rollupPrimaryTerm: null,
       submitError: "",
       isSubmitting: false,
       hasSubmitted: false,
@@ -166,7 +86,40 @@ export default class EditRollup extends Component<EditRollupProps, EditRollupSta
 
   componentDidMount = async (): Promise<void> => {
     chrome.breadcrumbs.set([BREADCRUMBS.INDEX_MANAGEMENT, BREADCRUMBS.ROLLUPS]);
-    chrome.breadcrumbs.push(BREADCRUMBS.EDIT_ROLLUP);
+    const { id } = queryString.parse(this.props.location.search);
+    console.log(id);
+    if (typeof id === "string" && !!id) {
+      chrome.breadcrumbs.push(BREADCRUMBS.EDIT_ROLLUP);
+      console.log("Push 1");
+      chrome.breadcrumbs.push({ text: id });
+
+      await this.getRollupToEdit(id);
+    } else {
+      toastNotifications.addDanger(`Invalid rollup id: ${id}`);
+      this.props.history.push(ROUTES.ROLLUPS);
+    }
+  };
+
+  getRollupToEdit = async (rollupId: string): Promise<void> => {
+    try {
+      const { rollupService } = this.props;
+      const response = await rollupService.getRollup(rollupId);
+      if (response.ok) {
+        this.setState({
+          rollupSeqNo: response.response.seqNo,
+          rollupPrimaryTerm: response.response.primaryTerm,
+          rollupId: response.response.id,
+          description: response.response.rollup.description,
+        });
+      } else {
+        toastNotifications.addDanger(`Could not load the rollup job: ${response.error}`);
+        this.props.history.push(ROUTES.ROLLUPS);
+      }
+      console.log(response);
+    } catch (err) {
+      toastNotifications.addDanger(getErrorMessage(err, "Could not load the rollup job"));
+      this.props.history.push(ROUTES.ROLLUPS);
+    }
   };
 
   onCancel = (): void => {
@@ -183,7 +136,6 @@ export default class EditRollup extends Component<EditRollupProps, EditRollupSta
   onChangeDescription = (e: ChangeEvent<HTMLTextAreaElement>): void => {
     const description = e.target.value;
     this.setState({ description });
-    console.log(this.state);
   };
 
   onChangeName = (e: ChangeEvent<HTMLInputElement>): void => {
