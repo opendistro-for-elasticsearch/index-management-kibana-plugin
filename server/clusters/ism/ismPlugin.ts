@@ -200,7 +200,7 @@ export default function ismPlugin(Client: any, config: any, components: any) {
 
   ism.putRollup = ca({
     url: {
-      fmt: `${API.ROLLUP_JOBS_BASE}/<%=rollupId%>?refresh=wait_for`,
+      fmt: `${API.ROLLUP_JOBS_BASE}/<%=rollupId%>`,
       req: {
         rollupId: {
           type: "string",

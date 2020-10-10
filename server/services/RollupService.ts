@@ -93,7 +93,7 @@ export default class RollupService {
       const { id } = req.params;
       const { seqNo, primaryTerm } = req.query as { seqNo?: string; primaryTerm?: string };
       let method = "ism.putRollup";
-      let params: PutRollupParams = { rollupId: id, ifSeqNo: seqNo, ifPrimaryTerm: primaryTerm, body: JSON.stringify(req.payload) };
+      let params: PutRollupParams = { rollupId: id, if_seq_no: seqNo, if_primary_term: primaryTerm, body: JSON.stringify(req.payload) };
       if (seqNo === undefined || primaryTerm === undefined) {
         method = "ism.createRollup";
         params = { rollupId: id, body: JSON.stringify(req.payload) };

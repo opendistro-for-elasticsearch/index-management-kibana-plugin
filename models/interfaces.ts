@@ -75,7 +75,35 @@ export interface State {
 }
 
 export interface Rollup {
-  description: string;
-  default_state: string;
-  states: State[];
+  id: string;
+  seq_no: number;
+  primary_Term: number;
+  rollup: {
+    source_index: string;
+    target_index: string;
+    schedule: {
+      interval: {
+        start_time: number;
+        period: number;
+        unit: string;
+      };
+    };
+    delay: number;
+    description: string;
+    enabled: boolean;
+    last_updated_time: number;
+    page_size: number;
+    dimensions: [
+      {
+        date_histogram: [
+          {
+            source_field: string;
+            fixed_interval: string;
+            timezone: string;
+          }
+        ];
+      }
+    ];
+    metrics: [];
+  };
 }

@@ -37,6 +37,7 @@ import { toastNotifications } from "ui/notify";
 import queryString from "query-string";
 import { getErrorMessage } from "../../../utils/helpers";
 import { BREADCRUMBS, ROUTES } from "../../../utils/constants";
+import { Policy, Rollup } from "../../../../models/interfaces";
 
 interface EditRollupProps extends RouteComponentProps {
   rollupService: RollupService;
@@ -157,15 +158,35 @@ export default class EditRollup extends Component<EditRollupProps, EditRollupSta
         this.setState({ rollupIdError: "Required" });
       } else {
         //TODO: Build JSON string here
-        const rollup = DEFAULT_ROLLUP;
-        // await this.onCreate(rollupId, rollup);
+        const rollup = JSON.parse(DEFAULT_ROLLUP);
+        await this.onUpdate(rollupId, rollup);
       }
     } catch (err) {
-      toastNotifications.addDanger("Invalid Policy JSON");
+      toastNotifications.addDanger("Invalid Rollup JSON");
       console.error(err);
     }
 
     this.setState({ isSubmitting: false });
+  };
+
+  onUpdate = async (rollupId: string, rollup: Rollup): Promise<void> => {
+    try {
+      const { rollupService } = this.props;
+      const { rollupPrimaryTerm, rollupSeqNo } = this.state;
+      if (rollupSeqNo == null || rollupPrimaryTerm == null) {
+        toastNotifications.addDanger("Could not update rollup without seqNo and primaryTerm");
+        return;
+      }
+      const response = await rollupService.putRollup(rollup, rollupId, rollupSeqNo, rollupPrimaryTerm);
+      if (response.ok) {
+        toastNotifications.addSuccess(`Updated rollup: ${response.response._id}`);
+        this.props.history.push(ROUTES.ROLLUPS);
+      } else {
+        this.setState({ submitError: response.error });
+      }
+    } catch (err) {
+      this.setState({ submitError: getErrorMessage(err, "There was a problem updating the rollup") });
+    }
   };
 
   render() {

@@ -113,8 +113,8 @@ export interface DeleteRollupParams {
 
 export interface PutRollupParams {
   rollupId: string;
-  ifSeqNo?: string;
-  ifPrimaryTerm?: string;
+  if_seq_no?: string;
+  if_primary_term?: string;
   body: string;
 }
 
