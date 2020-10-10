@@ -35,6 +35,8 @@ export default class IndexService {
     try {
       const { query, index, size = 0 } = req.payload as { query: object; index: string; size?: number };
       const params: RequestParams.Search = { index, size, body: query };
+      console.log("SEARCH POLICIES THING");
+      console.log(JSON.stringify(params));
       const { callWithRequest } = this.esDriver.getCluster(CLUSTER.DATA);
       const results: SearchResponse<any> = await callWithRequest(req, "search", params);
       return { ok: true, response: results };

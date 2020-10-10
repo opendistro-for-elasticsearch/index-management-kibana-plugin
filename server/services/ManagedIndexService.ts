@@ -43,6 +43,7 @@ export default class ManagedIndexService {
   }
 
   // TODO: Not finished, need UI page that uses this first
+  // TODO: Need to call rest API instead for config index stuff
   getManagedIndex = async (req: Request, h: ResponseToolkit): Promise<ServerResponse<any>> => {
     try {
       const { id } = req.params;
@@ -86,7 +87,7 @@ export default class ManagedIndexService {
       const { callWithRequest } = await this.esDriver.getCluster(CLUSTER.DATA);
       const searchResponse: SearchResponse<any> = await callWithRequest(req, "search", searchParams);
 
-      const indices = searchResponse.hits.hits.map(hit => hit._source.managed_index.index);
+      const indices = searchResponse.hits.hits.map((hit) => hit._source.managed_index.index);
       const totalManagedIndices = _.get(searchResponse, "hits.total.value", 0);
 
       if (!indices.length) {
@@ -96,7 +97,7 @@ export default class ManagedIndexService {
       const explainParams = { index: indices.join(",") };
       const { callWithRequest: ismCallWithRequest } = await this.esDriver.getCluster(CLUSTER.ISM);
       const explainResponse: ExplainResponse = await ismCallWithRequest(req, "ism.explain", explainParams);
-      const managedIndices = searchResponse.hits.hits.map(hit => {
+      const managedIndices = searchResponse.hits.hits.map((hit) => {
         const index = hit._source.managed_index.index;
         return {
           index,
@@ -134,7 +135,7 @@ export default class ManagedIndexService {
           updatedIndices: retryResponse.updated_indices,
           // TODO: remove ternary after fixing retry API to return empty array even if no failures
           failedIndices: retryResponse.failed_indices
-            ? retryResponse.failed_indices.map(failedIndex => ({
+            ? retryResponse.failed_indices.map((failedIndex) => ({
                 indexName: failedIndex.index_name,
                 indexUuid: failedIndex.index_uuid,
                 reason: failedIndex.reason,
@@ -164,7 +165,7 @@ export default class ManagedIndexService {
         response: {
           failures: changeResponse.failures,
           updatedIndices: changeResponse.updated_indices,
-          failedIndices: changeResponse.failed_indices.map(failedIndex => ({
+          failedIndices: changeResponse.failed_indices.map((failedIndex) => ({
             indexName: failedIndex.index_name,
             indexUuid: failedIndex.index_uuid,
             reason: failedIndex.reason,
@@ -188,7 +189,7 @@ export default class ManagedIndexService {
         response: {
           failures: addResponse.failures,
           updatedIndices: addResponse.updated_indices,
-          failedIndices: addResponse.failed_indices.map(failedIndex => ({
+          failedIndices: addResponse.failed_indices.map((failedIndex) => ({
             indexName: failedIndex.index_name,
             indexUuid: failedIndex.index_uuid,
             reason: failedIndex.reason,
