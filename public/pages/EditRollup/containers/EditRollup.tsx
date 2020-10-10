@@ -17,18 +17,8 @@ import React, { ChangeEvent, Component } from "react";
 import _ from "lodash";
 import chrome from "ui/chrome";
 import { RouteComponentProps } from "react-router-dom";
-import {
-  EuiFlexItem,
-  EuiFlexGroup,
-  EuiButton,
-  EuiTitle,
-  EuiSpacer,
-  EuiCallOut,
-  EuiButtonEmpty,
-  EuiComboBoxOptionOption,
-} from "@elastic/eui";
+import { EuiFlexItem, EuiFlexGroup, EuiButton, EuiTitle, EuiSpacer, EuiButtonEmpty, EuiComboBoxOptionOption } from "@elastic/eui";
 import { RollupService } from "../../../../services";
-import { RollupItem } from "../../models/interfaces";
 import ConfigureRollup from "../../CreateRollup/components/ConfigureRollup";
 import Roles from "../../CreateRollup/components/Roles";
 import Schedule from "../../CreateRollup/components/Schedule";
@@ -37,7 +27,7 @@ import { toastNotifications } from "ui/notify";
 import queryString from "query-string";
 import { getErrorMessage } from "../../../utils/helpers";
 import { BREADCRUMBS, ROUTES } from "../../../utils/constants";
-import { Policy, Rollup } from "../../../../models/interfaces";
+import { Rollup } from "../../../../models/interfaces";
 
 interface EditRollupProps extends RouteComponentProps {
   rollupService: RollupService;
@@ -53,6 +43,7 @@ interface EditRollupState {
   hasSubmitted: boolean;
   description: string;
   roles: EuiComboBoxOptionOption<String>[];
+  rollupJSON: any;
 }
 
 //TODO: Fetch actual roles from backend
@@ -82,6 +73,7 @@ export default class EditRollup extends Component<EditRollupProps, EditRollupSta
       hasSubmitted: false,
       description: "",
       roles: [],
+      rollupJSON: `{"rollup":{}}`,
     };
   }
 
@@ -91,7 +83,6 @@ export default class EditRollup extends Component<EditRollupProps, EditRollupSta
     console.log(id);
     if (typeof id === "string" && !!id) {
       chrome.breadcrumbs.push(BREADCRUMBS.EDIT_ROLLUP);
-      console.log("Push 1");
       chrome.breadcrumbs.push({ text: id });
 
       await this.getRollupToEdit(id);
@@ -105,18 +96,21 @@ export default class EditRollup extends Component<EditRollupProps, EditRollupSta
     try {
       const { rollupService } = this.props;
       const response = await rollupService.getRollup(rollupId);
+
       if (response.ok) {
+        let newJSON = JSON.parse(this.state.rollupJSON);
+        newJSON.rollup = response.response.rollup;
         this.setState({
           rollupSeqNo: response.response.seqNo,
           rollupPrimaryTerm: response.response.primaryTerm,
           rollupId: response.response.id,
           description: response.response.rollup.description,
+          rollupJSON: newJSON,
         });
       } else {
         toastNotifications.addDanger(`Could not load the rollup job: ${response.error}`);
         this.props.history.push(ROUTES.ROLLUPS);
       }
-      console.log(response);
     } catch (err) {
       toastNotifications.addDanger(getErrorMessage(err, "Could not load the rollup job"));
       this.props.history.push(ROUTES.ROLLUPS);
@@ -136,7 +130,9 @@ export default class EditRollup extends Component<EditRollupProps, EditRollupSta
 
   onChangeDescription = (e: ChangeEvent<HTMLTextAreaElement>): void => {
     const description = e.target.value;
-    this.setState({ description });
+    let newJSON = this.state.rollupJSON;
+    newJSON.rollup.description = description;
+    this.setState({ description: description, rollupJSON: newJSON });
   };
 
   onChangeName = (e: ChangeEvent<HTMLInputElement>): void => {
@@ -151,15 +147,15 @@ export default class EditRollup extends Component<EditRollupProps, EditRollupSta
   };
 
   onSubmit = async (): Promise<void> => {
-    const { rollupId } = this.state;
+    const { rollupId, rollupJSON } = this.state;
     this.setState({ submitError: "", isSubmitting: true, hasSubmitted: true });
     try {
       if (!rollupId) {
         this.setState({ rollupIdError: "Required" });
       } else {
         //TODO: Build JSON string here
-        const rollup = JSON.parse(DEFAULT_ROLLUP);
-        await this.onUpdate(rollupId, rollup);
+        // const rollup = JSON.parse(rollupJSON);
+        await this.onUpdate(rollupId, rollupJSON);
       }
     } catch (err) {
       toastNotifications.addDanger("Invalid Rollup JSON");
@@ -179,6 +175,7 @@ export default class EditRollup extends Component<EditRollupProps, EditRollupSta
       }
       const response = await rollupService.putRollup(rollup, rollupId, rollupSeqNo, rollupPrimaryTerm);
       if (response.ok) {
+        console.log("Submit success.");
         toastNotifications.addSuccess(`Updated rollup: ${response.response._id}`);
         this.props.history.push(ROUTES.ROLLUPS);
       } else {
@@ -190,7 +187,7 @@ export default class EditRollup extends Component<EditRollupProps, EditRollupSta
   };
 
   render() {
-    const { rollupId, rollupIdError, submitError, isSubmitting, hasSubmitted, roles, description } = this.state;
+    const { rollupId, rollupIdError, submitError, isSubmitting, hasSubmitted, roles, description, rollupJSON } = this.state;
     return (
       <div style={{ padding: "25px 50px" }}>
         <EuiTitle size="l">

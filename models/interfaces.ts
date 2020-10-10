@@ -79,20 +79,9 @@ export interface Rollup {
   seq_no: number;
   primary_Term: number;
   rollup: {
-    source_index: string;
-    target_index: string;
-    schedule: {
-      interval: {
-        start_time: number;
-        period: number;
-        unit: string;
-      };
-    };
+    continuous: boolean;
     delay: number;
     description: string;
-    enabled: boolean;
-    last_updated_time: number;
-    page_size: number;
     dimensions: [
       {
         date_histogram: [
@@ -104,6 +93,22 @@ export interface Rollup {
         ];
       }
     ];
+    enabled: boolean;
+    enabled_time?: number;
+    last_updated_time: number;
+    metadata_id?: number;
     metrics: [];
+    page_size: number;
+    roles: [];
+    schedule: {
+      interval: {
+        start_time: number;
+        period: number;
+        unit: string;
+      };
+    };
+    schema_version: number;
+    source_index: string;
+    target_index: string;
   };
 }

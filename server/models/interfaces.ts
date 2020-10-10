@@ -55,7 +55,7 @@ export interface PutRollupResponse {
   _version: number;
   _primary_term: number;
   _seq_no: number;
-  policy: { policy: object };
+  rollup: { rollup: object };
 }
 
 export interface DeleteRollupResponse {

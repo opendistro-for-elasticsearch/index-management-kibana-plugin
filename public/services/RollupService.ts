@@ -55,6 +55,7 @@ export default class RollupService {
     const queryParamsString = queryString.stringify({ seqNo, primaryTerm });
     let url = `..${NODE_API.ROLLUPS}/${rollupId}`;
     if (queryParamsString) url += `?${queryParamsString}`;
+    console.log(rollup);
     const response = (await this.httpClient.put(url, rollup)) as IHttpResponse<ServerResponse<PutRollupResponse>>;
     return response.data;
   };
