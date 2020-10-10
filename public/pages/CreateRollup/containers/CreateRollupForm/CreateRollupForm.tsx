@@ -29,6 +29,7 @@ import { getErrorMessage } from "../../../../utils/helpers";
 import { DEFAULT_ROLLUP } from "../../utils/constants";
 import CreateRollupStep3 from "../CreateRollupStep3";
 import CreateRollupStep4 from "../CreateRollupStep4";
+import Schedule from "../../components/Schedule";
 
 interface CreateRollupFormProps extends RouteComponentProps {
   rollupService: RollupService;
@@ -49,6 +50,17 @@ interface CreateRollupFormState {
   totalIndices: number;
   description: string;
   roles: EuiComboBoxOptionOption<String>[];
+
+  jobEnabledByDefault: boolean;
+  recurringJob: string;
+  recurringDefinition: string;
+  interval: number;
+  intervalTimeunit: string;
+  cronExpression: string;
+  pageSize: number;
+  delayTime: number | undefined;
+  delayTimeunit: string;
+  rollupJSON: any;
 }
 
 //TODO: Fetch actual roles from backend
@@ -82,6 +94,17 @@ export default class CreateRollupForm extends Component<CreateRollupFormProps, C
       totalIndices: 0,
       description: "",
       roles: [],
+
+      jobEnabledByDefault: false,
+      recurringJob: "no",
+      recurringDefinition: "fixed",
+      interval: 2,
+      intervalTimeunit: "M",
+      cronExpression: "",
+      pageSize: 1000,
+      delayTime: undefined,
+      delayTimeunit: "MINUTES",
+      rollupJSON: `{"rollup":{}}`,
     };
     this._next = this._next.bind(this);
     this._prev = this._prev.bind(this);
@@ -158,7 +181,66 @@ export default class CreateRollupForm extends Component<CreateRollupFormProps, C
   };
 
   onChangeRoles = (selectedOptions: EuiComboBoxOptionOption<String>[]): void => {
-    this.setState({ roles: selectedOptions });
+    let newJSON = this.state.rollupJSON;
+    newJSON.rollup.roles = selectedOptions.map(function (option) {
+      return option.label;
+    });
+    this.setState({ roles: selectedOptions, rollupJSON: newJSON });
+  };
+
+  onChangeJobEnabledByDefault = (): void => {
+    const checked = this.state.jobEnabledByDefault;
+    let newJSON = this.state.rollupJSON;
+    newJSON.rollup.enabled = checked;
+    this.setState({ jobEnabledByDefault: !checked, rollupJSON: newJSON });
+  };
+
+  onChangeCron = (e: ChangeEvent<HTMLTextAreaElement>): void => {
+    let newJSON = this.state.rollupJSON;
+    newJSON.rollup.schedule.cron.expression = e.target.value;
+    this.setState({ cronExpression: e.target.value, rollupJSON: newJSON });
+  };
+
+  //TODO: Figure out the correct format of delay time, do we need to convert the value along with timeunit?
+  onChangeDelayTime = (e: ChangeEvent<HTMLInputElement>): void => {
+    let newJSON = this.state.rollupJSON;
+    newJSON.rollup.delay = e.target.value;
+    this.setState({ delayTime: e.target.valueAsNumber, rollupJSON: newJSON });
+  };
+
+  onChangeIntervalTime = (e: ChangeEvent<HTMLInputElement>): void => {
+    let newJSON = this.state.rollupJSON;
+    newJSON.rollup.schedule.interval.period = e.target.value;
+    this.setState({ interval: e.target.valueAsNumber, rollupJSON: newJSON });
+  };
+
+  onChangePage = (e: ChangeEvent<HTMLInputElement>): void => {
+    let newJSON = this.state.rollupJSON;
+    newJSON.rollup.page_size = e.target.value;
+    this.setState({ pageSize: e.target.valueAsNumber, rollupJSON: newJSON });
+  };
+
+  //Trying to clear interval field when cron expression is defined
+  onChangeRecurringDefinition = (e: ChangeEvent<HTMLSelectElement>): void => {
+    let newJSON = this.state.rollupJSON;
+    this.setState({ recurringDefinition: e.target.value, rollupJSON: newJSON });
+  };
+
+  onChangeRecurringJob = (optionId: string): void => {
+    let newJSON = this.state.rollupJSON;
+    newJSON.rollup.continuous = optionId == "yes";
+    this.setState({ recurringJob: optionId, rollupJSON: newJSON });
+  };
+
+  //Update delay field in JSON if delay value is defined.
+  onChangeDelayTimeunit = (e: ChangeEvent<HTMLSelectElement>): void => {
+    this.setState({ delayTimeunit: e.target.value });
+  };
+
+  onChangeIntervalTimeunit = (e: ChangeEvent<HTMLSelectElement>): void => {
+    let newJSON = this.state.rollupJSON;
+    newJSON.rollup.schedule.interval.unit = e.target.value;
+    this.setState({ intervalTimeunit: e.target.value, rollupJSON: newJSON });
   };
 
   //TODO: Complete submit logistic
@@ -182,7 +264,25 @@ export default class CreateRollupForm extends Component<CreateRollupFormProps, C
   };
 
   render() {
-    const { rollupId, rollupIdError, submitError, isSubmitting, hasSubmitted, description, roles, currentStep } = this.state;
+    const {
+      rollupId,
+      rollupIdError,
+      submitError,
+      isSubmitting,
+      hasSubmitted,
+      description,
+      roles,
+      currentStep,
+      jobEnabledByDefault,
+      recurringJob,
+      recurringDefinition,
+      interval,
+      intervalTimeunit,
+      cronExpression,
+      pageSize,
+      delayTime,
+      delayTimeunit,
+    } = this.state;
     return (
       <form onSubmit={this.onSubmit}>
         <CreateRollup
@@ -201,7 +301,28 @@ export default class CreateRollupForm extends Component<CreateRollupFormProps, C
           currentStep={this.state.currentStep}
         />
         <CreateRollupStep2 {...this.props} currentStep={this.state.currentStep} />
-        <CreateRollupStep3 {...this.props} currentStep={this.state.currentStep} />
+        <CreateRollupStep3
+          {...this.props}
+          currentStep={this.state.currentStep}
+          jobEnabledByDefault={jobEnabledByDefault}
+          recurringJob={recurringJob}
+          recurringDefinition={recurringDefinition}
+          interval={interval}
+          intervalTimeunit={intervalTimeunit}
+          cronExpression={cronExpression}
+          pageSize={pageSize}
+          delayTime={delayTime}
+          delayTimeunit={delayTimeunit}
+          onChangeJobEnabledByDefault={this.onChangeJobEnabledByDefault}
+          onChangeCron={this.onChangeCron}
+          onChangeDelayTime={this.onChangeDelayTime}
+          onChangeIntervalTime={this.onChangeIntervalTime}
+          onChangePage={this.onChangePage}
+          onChangeRecurringDefinition={this.onChangeRecurringDefinition}
+          onChangeRecurringJob={this.onChangeRecurringJob}
+          onChangeDelayTimeunit={this.onChangeDelayTimeunit}
+          onChangeIntervalTimeunit={this.onChangeIntervalTimeunit}
+        />
         <CreateRollupStep4
           {...this.props}
           rollupId={rollupId}

@@ -80,8 +80,8 @@ export interface Rollup {
   primary_Term: number;
   rollup: {
     continuous: boolean;
-    delay: number;
-    description: string;
+    delay?: number;
+    description?: string;
     dimensions: [
       {
         date_histogram: [
@@ -101,10 +101,14 @@ export interface Rollup {
     page_size: number;
     roles: [];
     schedule: {
-      interval: {
+      interval?: {
         start_time: number;
         period: number;
         unit: string;
+      };
+      cron?: {
+        expression: string;
+        timezone?: string;
       };
     };
     schema_version: number;

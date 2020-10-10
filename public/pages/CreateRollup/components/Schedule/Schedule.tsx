@@ -26,16 +26,13 @@ import {
   EuiTextArea,
   EuiFormHelpText,
 } from "@elastic/eui";
-import { CalenderTimeunitOptions, FixedTimeunitOptions } from "../../utils/constants";
+import { CalenderTimeunitOptions, DelayTimeunitOptions } from "../../utils/constants";
 import { ContentPanel } from "../../../../components/ContentPanel";
 
 interface ScheduleProps {
+  isEdit: boolean;
   rollupId: string;
   rollupIdError: string;
-  onChange: (value: ChangeEvent<HTMLInputElement>) => void;
-}
-
-interface ScheduleState {
   jobEnabledByDefault: boolean;
   recurringJob: string;
   recurringDefinition: string;
@@ -45,6 +42,15 @@ interface ScheduleState {
   pageSize: number;
   delayTime: number | undefined;
   delayTimeunit: string;
+  onChangeJobEnabledByDefault: () => void;
+  onChangeCron: (e: ChangeEvent<HTMLTextAreaElement>) => void;
+  onChangeDelayTime: (e: ChangeEvent<HTMLInputElement>) => void;
+  onChangeIntervalTime: (e: ChangeEvent<HTMLInputElement>) => void;
+  onChangePage: (e: ChangeEvent<HTMLInputElement>) => void;
+  onChangeRecurringDefinition: (e: ChangeEvent<HTMLSelectElement>) => void;
+  onChangeRecurringJob: (optionId: string) => void;
+  onChangeDelayTimeunit: (e: ChangeEvent<HTMLSelectElement>) => void;
+  onChangeIntervalTimeunit: (e: ChangeEvent<HTMLSelectElement>) => void;
 }
 
 const radios = [
@@ -86,6 +92,15 @@ const selectInterval = (
   </React.Fragment>
 );
 
+const isRecurring = (recurringJob: string, onChangeRecurringJob: (optionId: string) => void) => (
+  <React.Fragment>
+    <EuiFormRow label="Recurring job">
+      <EuiRadioGroup options={radios} idSelected={recurringJob} onChange={(id) => onChangeRecurringJob(id)} name="recurringJob" />
+    </EuiFormRow>
+    <EuiSpacer size="m" />
+  </React.Fragment>
+);
+
 const defineCron = (cronExpression: string, onChangeCron: (value: ChangeEvent<HTMLTextAreaElement>) => void) => (
   <React.Fragment>
     <EuiFormRow label="Define by cron expression">
@@ -94,58 +109,14 @@ const defineCron = (cronExpression: string, onChangeCron: (value: ChangeEvent<HT
   </React.Fragment>
 );
 
-export default class Schedule extends Component<ScheduleProps, ScheduleState> {
+export default class Schedule extends Component<ScheduleProps> {
   constructor(props: ScheduleProps) {
     super(props);
-
-    this.state = {
-      jobEnabledByDefault: false,
-      recurringJob: "no",
-      recurringDefinition: "fixed",
-      interval: 2,
-      intervalTimeunit: "M",
-      cronExpression: "",
-      pageSize: 1000,
-      delayTime: undefined,
-      delayTimeunit: "m",
-    };
   }
-
-  onChangeCheck = (): void => {
-    const checked = this.state.jobEnabledByDefault;
-    this.setState({ jobEnabledByDefault: !checked });
-  };
-
-  onChangeCron = (e: ChangeEvent<HTMLTextAreaElement>): void => {
-    this.setState({ cronExpression: e.target.value });
-  };
-
-  onChangeDelayTime = (e: ChangeEvent<HTMLInputElement>): void => {
-    this.setState({ delayTime: e.target.valueAsNumber });
-  };
-
-  onChangePage = (e: ChangeEvent<HTMLInputElement>): void => {
-    this.setState({ pageSize: e.target.valueAsNumber });
-  };
-
-  onChangeRecurringDefinition = (e: ChangeEvent<HTMLSelectElement>): void => {
-    this.setState({ recurringDefinition: e.target.value });
-  };
-
-  onChangeRadio = (optionId: string): void => {
-    this.setState({ recurringJob: optionId });
-  };
-
-  onChangeDelayTimeunit = (e: ChangeEvent<HTMLSelectElement>): void => {
-    this.setState({ delayTimeunit: e.target.value });
-  };
-
-  onChangeIntervalTimeunit = (e: ChangeEvent<HTMLSelectElement>): void => {
-    this.setState({ intervalTimeunit: e.target.value });
-  };
 
   render() {
     const {
+      isEdit,
       jobEnabledByDefault,
       recurringJob,
       recurringDefinition,
@@ -155,7 +126,16 @@ export default class Schedule extends Component<ScheduleProps, ScheduleState> {
       pageSize,
       delayTime,
       delayTimeunit,
-    } = this.state;
+      onChangeJobEnabledByDefault,
+      onChangeCron,
+      onChangeDelayTime,
+      onChangeIntervalTime,
+      onChangePage,
+      onChangeRecurringDefinition,
+      onChangeRecurringJob,
+      onChangeDelayTimeunit,
+      onChangeIntervalTimeunit,
+    } = this.props;
     return (
       <ContentPanel bodyStyles={{ padding: "initial" }} title="Schedule" titleSize="s">
         <div style={{ paddingLeft: "10px" }}>
@@ -163,13 +143,10 @@ export default class Schedule extends Component<ScheduleProps, ScheduleState> {
             id="jobEnabledByDefault"
             label="Job enabled by default"
             checked={jobEnabledByDefault}
-            onChange={this.onChangeCheck}
+            onChange={onChangeJobEnabledByDefault}
           />
           <EuiSpacer size="m" />
-          <EuiFormRow label="Recurring job">
-            <EuiRadioGroup options={radios} idSelected={recurringJob} onChange={(id) => this.onChangeRadio(id)} name="recurringJob" />
-          </EuiFormRow>
-          <EuiSpacer size="m" />
+          {!isEdit && isRecurring(recurringJob, onChangeRecurringJob)}
 
           <EuiFormRow label={"Rollup execution frequency"}>
             <EuiSelect
@@ -179,14 +156,14 @@ export default class Schedule extends Component<ScheduleProps, ScheduleState> {
                 { value: "cron", text: "Define by cron expression" },
               ]}
               value={recurringDefinition}
-              onChange={this.onChangeRecurringDefinition}
+              onChange={onChangeRecurringDefinition}
             />
           </EuiFormRow>
           <EuiSpacer size="m" />
 
           {recurringDefinition == "fixed"
-            ? selectInterval(interval, intervalTimeunit, this.onChangeDelayTime, this.onChangeIntervalTimeunit)
-            : defineCron(cronExpression, this.onChangeCron)}
+            ? selectInterval(interval, intervalTimeunit, onChangeIntervalTime, onChangeIntervalTimeunit)
+            : defineCron(cronExpression, onChangeCron)}
 
           <EuiSpacer size="m" />
 
@@ -194,24 +171,18 @@ export default class Schedule extends Component<ScheduleProps, ScheduleState> {
             label="Page per execution"
             helpText={"The number of pages every execution processes. A larger number means faster execution and more cost on memory."}
           >
-            <EuiFieldNumber min={1} placeholder={"1000"} value={pageSize} onChange={this.onChangePage} />
+            <EuiFieldNumber min={1} placeholder={"1000"} value={pageSize} onChange={onChangePage} />
           </EuiFormRow>
           <EuiSpacer size="m" />
           <EuiFlexGroup style={{ maxWidth: 400 }}>
             <EuiFlexItem grow={false} style={{ width: 200 }}>
               <EuiFormRow label="Execution delay - optional">
-                <EuiFieldNumber value={delayTime} onChange={this.onChangeDelayTime} />
+                <EuiFieldNumber value={delayTime} onChange={onChangeDelayTime} />
               </EuiFormRow>
             </EuiFlexItem>
             <EuiFlexItem>
               <EuiFormRow hasEmptyLabelSpace={true}>
-                <EuiSelect
-                  id="selectTimeunit"
-                  options={FixedTimeunitOptions}
-                  value={delayTimeunit}
-                  onChange={this.onChangeDelayTimeunit}
-                  isInvalid={delayTime != undefined && delayTime <= 0}
-                />
+                <EuiSelect id="selectTimeunit" options={DelayTimeunitOptions} value={delayTimeunit} onChange={onChangeDelayTimeunit} />
               </EuiFormRow>
             </EuiFlexItem>
           </EuiFlexGroup>

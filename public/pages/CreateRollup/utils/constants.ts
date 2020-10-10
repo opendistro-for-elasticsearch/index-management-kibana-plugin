@@ -49,14 +49,17 @@ export const FixedTimeunitOptions = [
   { value: "d", text: "Day(s)" },
 ];
 
+export const DelayTimeunitOptions = [
+  { value: "SECONDS", text: "Second(s)" },
+  { value: "MINUTES", text: "Minute(s)" },
+  { value: "HOURS", text: "Hour(s)" },
+  { value: "DAYS", text: "Day(s)" },
+];
+
 export const CalenderTimeunitOptions = [
-  { value: "m", text: "Minute(s)" },
-  { value: "h", text: "Hour(s)" },
-  { value: "d", text: "Day(s)" },
-  { value: "w", text: "Week(s)" },
-  { value: "M", text: "Month(s)" },
-  { value: "q", text: "Quarter(s)" },
-  { value: "y", text: "Year(s)" },
+  { value: "MINUTES", text: "Minute(s)" },
+  { value: "HOURS", text: "Hour(s)" },
+  { value: "DAYS", text: "Day(s)" },
 ];
 
 export const TimezoneOptions = [
