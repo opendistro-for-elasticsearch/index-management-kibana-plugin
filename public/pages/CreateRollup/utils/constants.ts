@@ -15,41 +15,30 @@
 
 export const DEFAULT_ROLLUP = JSON.stringify({
   rollup: {
-    source_index: "stats-*",
-    target_index: "rollup-stats",
+    source_index: "kibana_sample_data_flights",
+    target_index: "new-index",
     schedule: {
       interval: {
+        start_time: 1553112384,
         period: 1,
         unit: "Days",
       },
     },
-    run_as_user: "dbbaughe",
-    roles: ["admin"],
-    description: "Rolls up our daily indices into monthly summarized views",
-    enabled: true,
-    error_notification: {
-      destination: { slack: { url: "..." } },
-    },
-    message_template: { source: "..." },
+    delay: 10,
+    description: "newwwwww description!!!",
+    enabled: false,
+    last_updated_time: 1553112384,
+    page_size: 200,
+    dimensions: [
+      {
+        date_histogram: {
+          source_field: "timestamp",
+          fixed_interval: "30d",
+          timezone: "America/Los_Angeles",
+        },
+      },
+    ],
   },
-  page_size: 200,
-  delay: "6h",
-  dimensions: {
-    date_histogram: {
-      field: "timestamp",
-      fixed_interval: "30d",
-      timezone: "America/Los_Angeles",
-    },
-    terms: {
-      fields: ["customer_city"],
-    },
-  },
-  metrics: [
-    {
-      field: "price",
-      metric_aggregations: ["avg", "min", "max", "sum"],
-    },
-  ],
 });
 
 export const FixedTimeunitOptions = [
@@ -60,14 +49,17 @@ export const FixedTimeunitOptions = [
   { value: "d", text: "Day(s)" },
 ];
 
+export const DelayTimeunitOptions = [
+  { value: "SECONDS", text: "Second(s)" },
+  { value: "MINUTES", text: "Minute(s)" },
+  { value: "HOURS", text: "Hour(s)" },
+  { value: "DAYS", text: "Day(s)" },
+];
+
 export const CalenderTimeunitOptions = [
-  { value: "m", text: "Minute(s)" },
-  { value: "h", text: "Hour(s)" },
-  { value: "d", text: "Day(s)" },
-  { value: "w", text: "Week(s)" },
-  { value: "M", text: "Month(s)" },
-  { value: "q", text: "Quarter(s)" },
-  { value: "y", text: "Year(s)" },
+  { value: "MINUTES", text: "Minute(s)" },
+  { value: "HOURS", text: "Hour(s)" },
+  { value: "DAYS", text: "Day(s)" },
 ];
 
 export const TimezoneOptions = [

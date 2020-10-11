@@ -17,8 +17,8 @@ import { resolve } from "path";
 import { existsSync } from "fs";
 
 import { createISMCluster } from "./server/clusters";
-import { PolicyService, ManagedIndexService, IndexService } from "./server/services";
-import { indices, policies, managedIndices } from "./server/routes";
+import { PolicyService, ManagedIndexService, IndexService, RollupService } from "./server/services";
+import { indices, policies, managedIndices, rollups } from "./server/routes";
 import { DEFAULT_APP_CATEGORIES } from "../../src/core/utils";
 
 export default function (kibana) {
@@ -51,12 +51,14 @@ export default function (kibana) {
       const indexService = new IndexService(esDriver);
       const policyService = new PolicyService(esDriver);
       const managedIndexService = new ManagedIndexService(esDriver);
-      const services = { indexService, policyService, managedIndexService };
+      const rollupService = new RollupService(esDriver);
+      const services = { indexService, policyService, managedIndexService, rollupService };
 
       // Add server routes
       indices(server, services);
       policies(server, services);
       managedIndices(server, services);
+      rollups(server, services);
     },
   });
 }
