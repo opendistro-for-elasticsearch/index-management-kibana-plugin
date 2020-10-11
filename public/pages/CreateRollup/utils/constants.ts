@@ -13,6 +13,42 @@
  * permissions and limitations under the License.
  */
 
+export const EMPTY_ROLLUP = JSON.stringify({
+  id: "",
+  rollup: {
+    continuous: false,
+    delay: {},
+    description: "",
+    dimensions: [
+      {
+        date_histogram: {
+          source_field: "",
+          fixed_interval: "2ms",
+          timezone: "America/Los_Angeles",
+        },
+      },
+    ],
+    enabled: false,
+    enabled_time: {},
+    last_updated_time: {},
+    metadata_id: {},
+    metrics: [],
+    page_size: 1000,
+    roles: [],
+    schedule: {
+      interval: {
+        start_time: {},
+        period: {},
+        unit: "MINUTES",
+      },
+      cron: {},
+    },
+    schema_version: {},
+    source_index: "",
+    target_index: "",
+  },
+});
+
 export const DEFAULT_ROLLUP = JSON.stringify({
   rollup: {
     source_index: "kibana_sample_data_flights",

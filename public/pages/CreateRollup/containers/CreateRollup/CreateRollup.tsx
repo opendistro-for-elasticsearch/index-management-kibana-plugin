@@ -91,6 +91,7 @@ export default class CreateRollup extends Component<CreateRollupProps> {
               rollupId={rollupId}
               rollupIdError={rollupIdError}
               description={description}
+              onChange={onChange}
               onChangeDescription={onChangeDescription}
             />
             <EuiSpacer />

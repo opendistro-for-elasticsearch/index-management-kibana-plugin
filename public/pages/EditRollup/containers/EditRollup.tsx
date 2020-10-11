@@ -27,7 +27,6 @@ import queryString from "query-string";
 import { getErrorMessage } from "../../../utils/helpers";
 import { BREADCRUMBS, ROUTES } from "../../../utils/constants";
 import { Rollup } from "../../../../models/interfaces";
-import { forEach } from "vega-lite/build/src/encoding";
 
 interface EditRollupProps extends RouteComponentProps {
   rollupService: RollupService;

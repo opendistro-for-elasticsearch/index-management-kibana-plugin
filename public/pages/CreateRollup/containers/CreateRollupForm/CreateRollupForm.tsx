@@ -26,7 +26,7 @@ import CreateRollupStep2 from "../CreateRollupStep2";
 import { toastNotifications } from "ui/notify";
 import { Rollup } from "../../../../../models/interfaces";
 import { getErrorMessage } from "../../../../utils/helpers";
-import { DEFAULT_ROLLUP } from "../../utils/constants";
+import { DEFAULT_ROLLUP, EMPTY_ROLLUP } from "../../utils/constants";
 import CreateRollupStep3 from "../CreateRollupStep3";
 import CreateRollupStep4 from "../CreateRollupStep4";
 import Schedule from "../../components/Schedule";
@@ -104,7 +104,7 @@ export default class CreateRollupForm extends Component<CreateRollupFormProps, C
       pageSize: 1000,
       delayTime: undefined,
       delayTimeunit: "MINUTES",
-      rollupJSON: `{"rollup":{}}`,
+      rollupJSON: JSON.parse(EMPTY_ROLLUP),
     };
     this._next = this._next.bind(this);
     this._prev = this._prev.bind(this);
@@ -169,7 +169,9 @@ export default class CreateRollupForm extends Component<CreateRollupFormProps, C
 
   onChangeDescription = (e: ChangeEvent<HTMLTextAreaElement>): void => {
     const description = e.target.value;
-    this.setState({ description });
+    let newJSON = this.state.rollupJSON;
+    newJSON.rollup.description = description;
+    this.setState({ description: description, rollupJSON: newJSON });
     console.log(this.state);
   };
 
