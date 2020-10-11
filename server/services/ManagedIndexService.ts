@@ -20,6 +20,7 @@ import { CLUSTER, INDEX } from "../utils/constants";
 import { getMustQuery, transformManagedIndexMetaData } from "../utils/helpers";
 import {
   ChangePolicyResponse,
+  ExplainAPIManagedIndexMetaData,
   ExplainResponse,
   GetManagedIndicesResponse,
   RemovePolicyResponse,
@@ -83,36 +84,39 @@ export default class ManagedIndexService {
       const { callWithRequest: ismExplainRequest } = await this.esDriver.getCluster(CLUSTER.ISM);
       const explainResponse: ExplainResponse = await ismExplainRequest(req, "ism.explainAll", explainParams);
 
-      console.log(`see new explain response: ${explainResponse}`);
-
       const managedIndices = [];
       for (const index in explainResponse) {
-        const explain = explainResponse[index];
+        console.log(`index ${index}`);
+        if (index === "totalManagedIndices") {
+          break;
+        }
 
+        const explain = explainResponse[index] as ExplainAPIManagedIndexMetaData;
+        console.log(`explain index: ${explain.index}`);
+        console.log(`policy id:  ${explain.policy_id}`);
+
+        let policy, seqNo, primaryTerm;
         const { callWithRequest: ismGetPolicyRequest } = await this.esDriver.getCluster(CLUSTER.ISM);
+        // explain all call only return managed index, so policyId always exist
         const params = { policyId: explain.policy_id };
         const getResponse = await ismGetPolicyRequest(req, "ism.getPolicy", params);
-        const policy = _.get(getResponse, "policy", null);
-        const seqNo = _.get(getResponse, "_seq_no");
-        const primaryTerm = _.get(getResponse, "_primary_term");
-
-        console.log(`policy id ${explain["index.opendistro.index_state_management.policy_id"]}`);
-        console.log(`index ${explain.index}`);
-        console.log(`policy id 2 ${explain.policy_id}`);
+        policy = _.get(getResponse, "policy", null);
+        seqNo = _.get(getResponse, "_seq_no");
+        primaryTerm = _.get(getResponse, "_primary_term");
 
         managedIndices.push({
-          index,
+          index: index,
           indexUuid: explain.index_uuid,
           policyId: explain.policy_id,
+          policy: policy,
           policySeqNo: seqNo,
           policyPrimaryTerm: primaryTerm,
-          policy,
           enabled: true,
-          managedIndexMetaData: transformManagedIndexMetaData(explainResponse[index]),
+          managedIndexMetaData: transformManagedIndexMetaData(explain),
         });
       }
 
-      return { ok: true, response: { managedIndices, totalManagedIndices: 0 } };
+      return { ok: true, response: { managedIndices, totalManagedIndices: explainResponse.totalManagedIndices } };
     } catch (err) {
       if (err.statusCode === 404 && err.body.error.type === "index_not_found_exception") {
         return { ok: true, response: { managedIndices: [], totalManagedIndices: 0 } };

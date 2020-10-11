@@ -30,7 +30,8 @@ export interface SearchResponse<T> {
 }
 
 export interface ExplainResponse {
-  [index: string]: ExplainAPIManagedIndexMetaData;
+  [index: string]: ExplainAPIManagedIndexMetaData | number;
+  totalManagedIndices: number;
 }
 
 export interface GetManagedIndicesResponse {
@@ -139,6 +140,7 @@ export interface ExplainAPIManagedIndexMetaData {
   action?: { name: string; start_time: number; index: number; failed: boolean; consumed_retries: number };
   retry_info?: { failed: boolean; consumed_retries: number };
   info?: object;
+  enabled: boolean;
 }
 
 export interface IndexManagementApi {
