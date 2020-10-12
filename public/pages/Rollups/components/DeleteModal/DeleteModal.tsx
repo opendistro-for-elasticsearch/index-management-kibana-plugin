@@ -13,12 +13,13 @@
  * permissions and limitations under the License.
  */
 
-import React, { Component } from "react";
-import { EuiConfirmModal, EuiForm, EuiFormRow, EuiFieldText, EuiOverlayMask } from "@elastic/eui";
+import React from "react";
+import { EuiConfirmModal, EuiForm, EuiFormRow, EuiFieldText, EuiOverlayMask, EuiSpacer } from "@elastic/eui";
 
 interface DeleteModalProps {
   rollupId: string;
   closeDeleteModal: (event?: any) => void;
+  // onConfirmDelete: (event?: any) => void;
 }
 
 const DeleteModal = ({ rollupId, closeDeleteModal }: DeleteModalProps) => (
@@ -33,8 +34,13 @@ const DeleteModal = ({ rollupId, closeDeleteModal }: DeleteModalProps) => (
       defaultFocusedButton="confirm"
     >
       <EuiForm>
+        <EuiFormRow
+          helpText={`By deleting this "${rollupId}", all future scheduled rollup execution will be canceled and any rollup history will be removed. However, your target index will remain as it is.`}
+        >
+          <EuiSpacer size={"s"} />
+        </EuiFormRow>
         <EuiFormRow helpText={"To confirm deletion, enter delete in the text field"}>
-          <EuiFieldText></EuiFieldText>
+          <EuiFieldText placeholder={"delete"} />
         </EuiFormRow>
       </EuiForm>
     </EuiConfirmModal>
