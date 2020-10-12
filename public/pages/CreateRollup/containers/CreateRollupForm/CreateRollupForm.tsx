@@ -50,6 +50,7 @@ interface CreateRollupFormState {
 
   description: string;
   sourceIndex: { label: string; value?: IndexItem }[];
+  sourceIndexError: string;
   targetIndex: { label: string; value?: IndexItem }[];
   roles: EuiComboBoxOptionOption<String>[];
 
@@ -97,6 +98,7 @@ export default class CreateRollupForm extends Component<CreateRollupFormProps, C
 
       description: "",
       sourceIndex: [],
+      sourceIndexError: "",
       targetIndex: [],
       roles: [],
 
@@ -123,8 +125,24 @@ export default class CreateRollupForm extends Component<CreateRollupFormProps, C
 
   _next() {
     let currentStep = this.state.currentStep;
+    //Verification here
+    if (currentStep == 1) {
+      const { rollupId, sourceIndex, targetIndex } = this.state;
+      if (!rollupId) {
+        this.setState({ submitError: "Job name is required." });
+        return;
+      } else if (sourceIndex.length == 0) {
+        this.setState({ submitError: "Source index is required." });
+        return;
+      } else if (targetIndex.length == 0) {
+        this.setState({ submitError: "Target index is required." });
+        return;
+      }
+    }
     currentStep = currentStep >= 3 ? 4 : currentStep + 1;
+
     this.setState({
+      submitError: "",
       currentStep: currentStep,
     });
   }
@@ -149,13 +167,6 @@ export default class CreateRollupForm extends Component<CreateRollupFormProps, C
   onCancel = (): void => {
     this.props.history.push(ROUTES.ROLLUPS);
   };
-
-  // onChange = (e: ChangeEvent<HTMLInputElement>): void => {
-  //   const {name, value} = e.target;
-  //   this.setState({
-  //     [name]: value,
-  //   });
-  // };
 
   onCreate = async (rollupId: string, rollup: Rollup): Promise<void> => {
     const { rollupService } = this.props;
@@ -193,10 +204,10 @@ export default class CreateRollupForm extends Component<CreateRollupFormProps, C
     let sourceIndex = options.map(function (option) {
       return option.label;
     });
-    const rollupError = sourceIndex.length ? "" : "Required";
+    const sourceIndexError = sourceIndex.length ? "" : "Required";
 
     newJSON.rollup.sourceIndex = sourceIndex[0];
-    this.setState({ sourceIndex: options, rollupJSON: newJSON, rollupIdError: rollupError });
+    this.setState({ sourceIndex: options, rollupJSON: newJSON, sourceIndexError: sourceIndexError });
   };
 
   onChangeTargetIndex = (options: EuiComboBoxOptionOption<IndexItem>[]): void => {
@@ -302,6 +313,7 @@ export default class CreateRollupForm extends Component<CreateRollupFormProps, C
       hasSubmitted,
       description,
       sourceIndex,
+      sourceIndexError,
       targetIndex,
       roles,
       currentStep,
@@ -326,6 +338,7 @@ export default class CreateRollupForm extends Component<CreateRollupFormProps, C
           hasSubmitted={hasSubmitted}
           description={description}
           sourceIndex={sourceIndex}
+          sourceIndexError={sourceIndexError}
           targetIndex={targetIndex}
           roles={roles}
           onChangeRoles={this.onChangeRoles}
@@ -365,6 +378,7 @@ export default class CreateRollupForm extends Component<CreateRollupFormProps, C
           description={description}
           currentStep={this.state.currentStep}
           onChangeStep={this.onChangeStep}
+          submitError={submitError}
         />
         <EuiFlexGroup alignItems="center" justifyContent="flexEnd" style={{ padding: "5px 50px" }}>
           <EuiFlexItem grow={false}>

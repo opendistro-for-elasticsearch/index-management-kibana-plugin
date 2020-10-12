@@ -24,6 +24,7 @@ import IndexService from "../../../../services/IndexService";
 interface RollupIndicesProps {
   indexService: IndexService;
   sourceIndex: { label: string; value?: IndexItem }[];
+  sourceIndexError: string;
   targetIndex: { label: string; value?: IndexItem }[];
   onChangeSourceIndex: (options: EuiComboBoxOptionOption<IndexItem>[]) => void;
   onChangeTargetIndex: (options: EuiComboBoxOptionOption<IndexItem>[]) => void;
@@ -34,27 +35,6 @@ interface RollupIndicesState {
   indexOptions: { label: string; value?: IndexItem }[];
   targetIndexOptions: { label: string; value?: IndexItem }[];
 }
-
-const sampleIndexOptions = [
-  {
-    label: "kibana_sample_data_flights",
-  },
-  {
-    label: "Mimas",
-  },
-  {
-    label: "Dione",
-  },
-  {
-    label: "Iapetus",
-  },
-  {
-    label: "Phoebe",
-  },
-  {
-    label: "Rhea",
-  },
-];
 
 //TODO: Add error message
 //TODO: Implement onChangeIndex
@@ -98,12 +78,6 @@ export default class RollupIndices extends Component<RollupIndicesProps, RollupI
     this.setState({ isLoading: false });
   };
 
-  onCreateIndex = (searchValue: string): void => {
-    const options = searchValue.trim() ? [{ label: `${searchValue}*` }] : [];
-    options.concat(this.state.indexOptions);
-    this.setState({ targetIndexOptions: options });
-  };
-
   onCreateOption = (searchValue: string, flattenedOptions: { label: string; value?: IndexItem }[]): void => {
     const { targetIndexOptions } = this.state;
     const { onChangeTargetIndex } = this.props;
@@ -126,7 +100,7 @@ export default class RollupIndices extends Component<RollupIndicesProps, RollupI
   };
 
   render() {
-    const { sourceIndex, targetIndex, onChangeSourceIndex, onChangeTargetIndex } = this.props;
+    const { sourceIndex, sourceIndexError, targetIndex, onChangeSourceIndex, onChangeTargetIndex } = this.props;
     const { isLoading, indexOptions, targetIndexOptions } = this.state;
     return (
       <ContentPanel bodyStyles={{ padding: "initial" }} title="Indices" titleSize="s">
@@ -138,6 +112,7 @@ export default class RollupIndices extends Component<RollupIndicesProps, RollupI
           <EuiSpacer size="m" />
           <EuiFormRow
             label="Source index"
+            error={sourceIndexError}
             helpText="The index where this rollup job is performed on. Type in * as wildcard for index pattern."
           >
             <EuiComboBox

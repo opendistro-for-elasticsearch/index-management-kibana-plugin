@@ -34,6 +34,7 @@ interface CreateRollupProps extends RouteComponentProps {
   hasSubmitted: boolean;
   description: string;
   sourceIndex: { label: string; value?: IndexItem }[];
+  sourceIndexError: string;
   targetIndex: { label: string; value?: IndexItem }[];
   roles: EuiComboBoxOptionOption<String>[];
   onChangeName: (e: ChangeEvent<HTMLInputElement>) => void;
@@ -74,6 +75,7 @@ export default class CreateRollup extends Component<CreateRollupProps> {
       isSubmitting,
       description,
       sourceIndex,
+      sourceIndexError,
       targetIndex,
       roles,
       roleOptions,
@@ -108,6 +110,7 @@ export default class CreateRollup extends Component<CreateRollupProps> {
             <RollupIndices
               indexService={indexService}
               sourceIndex={sourceIndex}
+              sourceIndexError={sourceIndexError}
               targetIndex={targetIndex}
               onChangeSourceIndex={onChangeSourceIndex}
               onChangeTargetIndex={onChangeTargetIndex}
