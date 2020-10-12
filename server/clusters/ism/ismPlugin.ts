@@ -211,5 +211,31 @@ export default function ismPlugin(Client: any, config: any, components: any) {
     method: "PUT",
   });
 
+  ism.startRollup = ca({
+    url: {
+      fmt: `${API.ROLLUP_JOBS_BASE}/<%=rollupId%>/_start`,
+      req: {
+        rollupId: {
+          type: "string",
+          required: true,
+        },
+      },
+    },
+    method: "POST",
+  });
+
+  ism.stopRollup = ca({
+    url: {
+      fmt: `${API.ROLLUP_JOBS_BASE}/<%=rollupId%>/_stop`,
+      req: {
+        rollupId: {
+          type: "string",
+          required: true,
+        },
+      },
+    },
+    method: "POST",
+  });
+
   // TODO add new APIs as they are being implemented: status, stop, start
 }

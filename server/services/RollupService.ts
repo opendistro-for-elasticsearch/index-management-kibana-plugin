@@ -126,10 +126,46 @@ export default class RollupService {
     }
   };
 
+  startRollup = async (req: Request, h: ResponseToolkit): Promise<ServerResponse<boolean>> => {
+    try {
+      const { id } = req.params;
+      const params = { rollupId: id };
+      const { callWithRequest } = await this.esDriver.getCluster(CLUSTER.ISM);
+      const getResponse = await callWithRequest(req, "ism.startRollup", params);
+      const acknowledged = _.get(getResponse, "acknowledged");
+      console.log(getResponse);
+      if (acknowledged) {
+        return { ok: true, response: true };
+      } else {
+        return { ok: false, error: "Failed to start rollup" };
+      }
+    } catch (err) {
+      console.error("Index Management - RollupService - startRollup:", err);
+      return { ok: false, error: err.message };
+    }
+  };
+
+  stopRollup = async (req: Request, h: ResponseToolkit): Promise<ServerResponse<boolean>> => {
+    try {
+      const { id } = req.params;
+      const params = { rollupId: id };
+      const { callWithRequest } = await this.esDriver.getCluster(CLUSTER.ISM);
+      const getResponse = await callWithRequest(req, "ism.stopRollup", params);
+      const acknowledged = _.get(getResponse, "acknowledged");
+      if (acknowledged) {
+        return { ok: true, response: true };
+      } else {
+        return { ok: false, error: "Failed to stop rollup" };
+      }
+    } catch (err) {
+      console.error("Index Management - RollupService - stopRollup:", err);
+      return { ok: false, error: err.message };
+    }
+  };
+
   /**
    * Calls backend Get Rollup API
    */
-  //TODO: Figure out the part for DocumentPolicy
   getRollup = async (req: Request, h: ResponseToolkit): Promise<ServerResponse<DocumentRollup>> => {
     try {
       const { id } = req.params;

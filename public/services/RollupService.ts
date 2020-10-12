@@ -21,7 +21,7 @@ import { ServerResponse } from "../../server/models/types";
 import { NODE_API } from "../../utils/constants";
 import queryString from "query-string";
 import { DocumentRollup, Rollup } from "../../models/interfaces";
-import { INDEX } from "../../server/utils/constants";
+import { API, INDEX } from "../../server/utils/constants";
 
 export default class RollupService {
   httpClient: IHttpService;
@@ -55,7 +55,6 @@ export default class RollupService {
     const queryParamsString = queryString.stringify({ seqNo, primaryTerm });
     let url = `..${NODE_API.ROLLUPS}/${rollupId}`;
     if (queryParamsString) url += `?${queryParamsString}`;
-    console.log(rollup);
     const response = (await this.httpClient.put(url, rollup)) as IHttpResponse<ServerResponse<PutRollupResponse>>;
     return response.data;
   };
@@ -69,6 +68,21 @@ export default class RollupService {
   deleteRollup = async (rollupId: string): Promise<ServerResponse<boolean>> => {
     const url = `..${NODE_API.ROLLUPS}/${rollupId}`;
     const response = (await this.httpClient.delete(url)) as IHttpResponse<ServerResponse<boolean>>;
+    return response.data;
+  };
+
+  startRollup = async (rollupId: string): Promise<ServerResponse<boolean>> => {
+    const url = `..${NODE_API.ROLLUPS}/${rollupId}/_start`;
+    const body = "";
+    const response = (await this.httpClient.post(url, body)) as IHttpResponse<ServerResponse<boolean>>;
+    console.log(response);
+    return response.data;
+  };
+
+  stopRollup = async (rollupId: string): Promise<ServerResponse<boolean>> => {
+    const url = `..${NODE_API.ROLLUPS}/${rollupId}/_stop`;
+    const body = "";
+    const response = (await this.httpClient.post(url, body)) as IHttpResponse<ServerResponse<boolean>>;
     return response.data;
   };
 

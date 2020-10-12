@@ -22,8 +22,6 @@ import { toastNotifications } from "ui/notify";
 import { getErrorMessage } from "../../../../utils/helpers";
 import { ManagedCatIndex } from "../../../../../server/models/interfaces";
 import { DEFAULT_PAGE_SIZE_OPTIONS, DEFAULT_QUERY_PARAMS } from "../../../Indices/utils/constants";
-import { ContentPanel, ContentPanelActions } from "../../../../components/ContentPanel";
-import { ModalConsumer } from "../../../../components/Modal";
 import { RouteComponentProps } from "react-router-dom";
 import {
   EuiBasicTable,
@@ -43,10 +41,8 @@ import {
   EuiTitle,
   EuiButton,
   EuiPopover,
-  EuiContextMenu,
   EuiContextMenuItem,
   EuiContextMenuPanel,
-  EuiText,
   EuiTextColor,
 } from "@elastic/eui";
 import { rollupsColumns } from "../../utils/constants";
@@ -241,8 +237,10 @@ export default class Rollups extends Component<RollupsProps, RollupsState> {
         },
         {
           name: "Delete",
-          href: "http://elastic.co",
-          target: "_blank",
+          onClick: () => {
+            this.closePopover();
+            this.onClickDelete();
+          },
         },
       ],
     },
@@ -278,10 +276,71 @@ export default class Rollups extends Component<RollupsProps, RollupsState> {
     if (_id) this.props.history.push(`${ROUTES.EDIT_ROLLUP}?id=${_id}`);
   };
 
-  //TODO: Complete this function to disable selected rollup jobs
-  onDisable = (): void => {};
+  onClickDelete = async (): Promise<void> => {
+    const { rollupService } = this.props;
+    const { selectedItems } = this.state;
+    var item;
+    for (item of selectedItems) {
+      const rollupId = item._id;
+      try {
+        const response = await rollupService.stopRollup(rollupId);
 
-  onEnable = (): void => {};
+        if (response.ok) {
+          //TODO: Update status or pull jobs again
+          //Show success message
+          toastNotifications.addSuccess(`${rollupId} is disabled`);
+        } else {
+          toastNotifications.addDanger(`Could not stop the rollup job "${rollupId}" : ${response.error}`);
+        }
+      } catch (err) {
+        toastNotifications.addDanger(getErrorMessage(err, "Could not stop the rollup job"));
+      }
+    }
+  };
+
+  onDisable = async (): Promise<void> => {
+    const { rollupService } = this.props;
+    const { selectedItems } = this.state;
+    var item;
+    for (item of selectedItems) {
+      const rollupId = item._id;
+      try {
+        const response = await rollupService.stopRollup(rollupId);
+
+        if (response.ok) {
+          //TODO: Update status or pull jobs again
+          //Show success message
+          toastNotifications.addSuccess(`${rollupId} is disabled`);
+        } else {
+          toastNotifications.addDanger(`Could not stop the rollup job "${rollupId}" : ${response.error}`);
+        }
+      } catch (err) {
+        toastNotifications.addDanger(getErrorMessage(err, "Could not stop the rollup job"));
+      }
+    }
+  };
+
+  onEnable = async (): Promise<void> => {
+    const { rollupService } = this.props;
+    const { selectedItems } = this.state;
+    var item;
+    for (item of selectedItems) {
+      const rollupId = item._id;
+      try {
+        const response = await rollupService.startRollup(rollupId);
+
+        if (response.ok) {
+          //TODO: Update status or pull jobs again
+          //Show success message
+          toastNotifications.addSuccess(`${rollupId} is enabled`);
+        } else {
+          toastNotifications.addDanger(`Could not start the rollup job "${rollupId}" : ${response.error}`);
+        }
+      } catch (err) {
+        toastNotifications.addDanger(getErrorMessage(err, "Could not start the rollup job"));
+      }
+    }
+  };
 
   onTableChange = ({ page: tablePage, sort }: Criteria<ManagedCatIndex>): void => {
     const { index: page, size } = tablePage;
@@ -357,7 +416,7 @@ export default class Rollups extends Component<RollupsProps, RollupsState> {
       onSelectionChange: this.onSelectionChange,
     };
 
-    const items = [
+    const actionItems = [
       <EuiContextMenuItem
         key="Edit"
         icon="empty"
@@ -372,6 +431,7 @@ export default class Rollups extends Component<RollupsProps, RollupsState> {
       <EuiContextMenuItem
         key="Delete"
         icon="empty"
+        disabled={selectedItems.length != 1}
         onClick={() => {
           this.closePopover();
         }}
@@ -410,8 +470,7 @@ export default class Rollups extends Component<RollupsProps, RollupsState> {
                   panelPaddingSize="none"
                   anchorPosition="downLeft"
                 >
-                  {/*<EuiContextMenu initialPanelId={0} panels={this.panels} />*/}
-                  <EuiContextMenuPanel items={items} />
+                  <EuiContextMenuPanel items={actionItems} />
                 </EuiPopover>
               </EuiFlexItem>
               <EuiFlexItem grow={false}>
