@@ -30,12 +30,7 @@ const ConfigureRollup = ({ rollupId, rollupIdError, onChangeName, onChangeDescri
   <ContentPanel bodyStyles={{ padding: "initial" }} title="Job name and description" titleSize="m">
     <div style={{ paddingLeft: "10px" }}>
       <EuiSpacer size="s" />
-      <EuiFormRow
-        label="Name"
-        helpText="Specify a unique and descriptive name. Allowed characters are... Name cannot be changed after creation."
-        isInvalid={!!rollupIdError}
-        error={rollupIdError}
-      >
+      <EuiFormRow label="Name" helpText="Specify a unique and descriptive name." isInvalid={!!rollupIdError} error={rollupIdError}>
         <EuiFieldText isInvalid={!!rollupIdError} placeholder="my-rollupjob1" value={rollupId} onChange={onChangeName} />
       </EuiFormRow>
 
