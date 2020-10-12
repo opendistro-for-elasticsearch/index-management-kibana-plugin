@@ -76,18 +76,14 @@ export default class IndexService {
       const fromNumber = parseInt(from, 10);
       const sizeNumber = parseInt(size, 10);
       const paginatedIndices = indicesResponse.slice(fromNumber, fromNumber + sizeNumber);
-      const indexUuids = paginatedIndices.map((value: CatIndex) => value.uuid);
       const indexNames = paginatedIndices.map((value: CatIndex) => value.index);
 
-      const managedStatus = await this._getManagedStatus(req, indexUuids);
-      // const managedStatus = await this._getManagedStatus2(req, indexNames);
+      const managedStatus = await this._getManagedStatus(req, indexNames);
 
       return {
         ok: true,
         response: {
-          indices: paginatedIndices.map((catIndex: CatIndex) => ({ ...catIndex, managed: managedStatus[catIndex.uuid] || "N/A" })),
-          // indices: paginatedIndices.map((catIndex: CatIndex) => ({ ...catIndex, managed: managedStatus[catIndex.index] || "N/A" })),
-
+          indices: paginatedIndices.map((catIndex: CatIndex) => ({ ...catIndex, managed: managedStatus[catIndex.index] || "N/A" })),
           totalIndices: indicesResponse.length,
         },
       };
@@ -101,38 +97,8 @@ export default class IndexService {
     }
   };
 
-  // given a list of indexUuids return the managed status of each (true, false, N/A)
-  _getManagedStatus = async (req: Request, indexUuids: string[]): Promise<{ [indexUuid: string]: string }> => {
-    try {
-      const searchParams: RequestParams.Search = {
-        index: INDEX.OPENDISTRO_ISM_CONFIG,
-        size: indexUuids.length,
-        body: { _source: "_id", query: { ids: { values: indexUuids } } },
-      };
-
-      const { callWithRequest: searchCallWithRequest } = this.esDriver.getCluster(CLUSTER.DATA);
-      const results: SearchResponse<any> = await searchCallWithRequest(req, "search", searchParams);
-      const managed: { [indexUuid: string]: string } = results.hits.hits.reduce(
-        (accu: object, hit: { _id: string }) => ({ ...accu, [hit._id]: "Yes" }),
-        {}
-      );
-
-      let result1 = indexUuids.reduce((accu: object, value: string) => ({ ...accu, [value]: managed[value] || "No" }), {});
-      console.log(JSON.stringify(result1));
-      return result1;
-    } catch (err) {
-      // If the config index does not exist then nothing is being managed
-      if (err.statusCode === 404 && err.body.error.type === "index_not_found_exception") {
-        return indexUuids.reduce((accu, value) => ({ ...accu, [value]: "No" }), {});
-      }
-      // otherwise it could be an unauthorized access error to config index or some other error
-      // in which case we will return managed status N/A
-      console.error("Index Management - IndexService - _getManagedStatus:", err);
-      return indexUuids.reduce((accu, value) => ({ ...accu, [value]: "N/A" }), {});
-    }
-  };
-
-  _getManagedStatus2 = async (req: Request, indexNames: string[]): Promise<{ [indexName: string]: string }> => {
+  // given a list of indexNames return the managed status of each (true, false, N/A)
+  _getManagedStatus = async (req: Request, indexNames: string[]): Promise<{ [indexName: string]: string }> => {
     try {
       const explainParamas = { index: indexNames.toString() };
       const { callWithRequest: ismExplainRequest } = await this.esDriver.getCluster(CLUSTER.ISM);
@@ -148,7 +114,6 @@ export default class IndexService {
           managed[indexName] = "Yes";
         }
       }
-      console.log(`managed ${JSON.stringify(managed)}`);
 
       return managed;
     } catch (err) {

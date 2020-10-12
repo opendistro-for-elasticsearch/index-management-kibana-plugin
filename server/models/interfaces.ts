@@ -140,7 +140,7 @@ export interface ExplainAPIManagedIndexMetaData {
   action?: { name: string; start_time: number; index: number; failed: boolean; consumed_retries: number };
   retry_info?: { failed: boolean; consumed_retries: number };
   info?: object;
-  enabled: boolean;
+  enabled?: boolean;
 }
 
 export interface IndexManagementApi {
