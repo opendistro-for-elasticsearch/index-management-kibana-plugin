@@ -75,7 +75,6 @@ export default class RollupService {
     const url = `..${NODE_API.ROLLUPS}/${rollupId}/_start`;
     const body = "";
     const response = (await this.httpClient.post(url, body)) as IHttpResponse<ServerResponse<boolean>>;
-    console.log(response);
     return response.data;
   };
 

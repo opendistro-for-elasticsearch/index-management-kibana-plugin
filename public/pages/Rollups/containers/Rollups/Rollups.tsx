@@ -44,12 +44,16 @@ import {
   EuiContextMenuItem,
   EuiContextMenuPanel,
   EuiTextColor,
+  EuiOverlayMask,
+  EuiConfirmModal,
 } from "@elastic/eui";
 import { rollupsColumns } from "../../utils/constants";
 import { RollupService } from "../../../../services";
 import RollupEmptyPrompt from "../../components/RollupEmptyPrompt";
 import { RollupItem, RollupsQueryParams } from "../../models/interfaces";
 import { getURLQueryParams } from "../../utils/helpers";
+import { EuiForm } from "@elastic/eui/src/components/form/form";
+import DeleteModal from "../../components/DeleteModal";
 
 interface RollupsProps extends RouteComponentProps {
   rollupService: RollupService;
@@ -66,6 +70,7 @@ interface RollupsState {
   rollups: RollupItem[];
   loadingRollups: boolean;
   isPopoverOpen: boolean;
+  isDeleteModalVisible: boolean;
 }
 
 let SampleGetRollupJobs: RollupItem[] = [
@@ -202,6 +207,7 @@ export default class Rollups extends Component<RollupsProps, RollupsState> {
       rollups: SampleGetRollupJobs,
       loadingRollups: false,
       isPopoverOpen: false,
+      isDeleteModalVisible: false,
     };
 
     this.getRollups = _.debounce(this.getRollups, 500, { leading: true });
@@ -223,28 +229,6 @@ export default class Rollups extends Component<RollupsProps, RollupsState> {
   static getQueryObjectFromState({ from, size, search, sortField, sortDirection }: RollupsState): RollupsQueryParams {
     return { from, size, search, sortField, sortDirection };
   }
-
-  panels = [
-    {
-      id: 0,
-      items: [
-        {
-          name: "Edit",
-          onClick: () => {
-            this.closePopover();
-            this.onClickEdit();
-          },
-        },
-        {
-          name: "Delete",
-          onClick: () => {
-            this.closePopover();
-            this.onClickDelete();
-          },
-        },
-      ],
-    },
-  ];
 
   getRollups = async (): Promise<void> => {
     this.setState({ loadingRollups: true });
@@ -374,6 +358,14 @@ export default class Rollups extends Component<RollupsProps, RollupsState> {
     this.setState({ isPopoverOpen: false });
   };
 
+  closeDeleteModal = (): void => {
+    this.setState({ isDeleteModalVisible: false });
+  };
+
+  showDeleteModal = (): void => {
+    this.setState({ isDeleteModalVisible: true });
+  };
+
   render() {
     const {
       totalRollups,
@@ -386,6 +378,7 @@ export default class Rollups extends Component<RollupsProps, RollupsState> {
       rollups,
       loadingRollups,
       isPopoverOpen,
+      isDeleteModalVisible,
     } = this.state;
 
     const filterIsApplied = !!search;
@@ -434,6 +427,7 @@ export default class Rollups extends Component<RollupsProps, RollupsState> {
         disabled={selectedItems.length != 1}
         onClick={() => {
           this.closePopover();
+          this.showDeleteModal();
         }}
       >
         <EuiTextColor color={"danger"}>Delete</EuiTextColor>
@@ -515,6 +509,9 @@ export default class Rollups extends Component<RollupsProps, RollupsState> {
             sorting={sorting}
             tableLayout={"auto"}
           />
+          {isDeleteModalVisible && (
+            <DeleteModal rollupId={selectedItems.length ? selectedItems[0]._id : ""} closeDeleteModal={this.closeDeleteModal} />
+          )}
         </div>
       </EuiPanel>
     );
