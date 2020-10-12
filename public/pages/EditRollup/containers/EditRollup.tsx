@@ -14,29 +14,25 @@
  */
 
 import React, { ChangeEvent, Component } from "react";
-import { EuiButton, EuiButtonEmpty, EuiComboBoxOptionOption, EuiFlexGroup, EuiFlexItem } from "@elastic/eui";
+import _ from "lodash";
 import chrome from "ui/chrome";
 import { RouteComponentProps } from "react-router-dom";
+import { EuiFlexItem, EuiFlexGroup, EuiButton, EuiTitle, EuiSpacer, EuiButtonEmpty, EuiComboBoxOptionOption } from "@elastic/eui";
 import { RollupService } from "../../../../services";
-import { BREADCRUMBS, ROUTES } from "../../../../utils/constants";
-import IndexService from "../../../../services/IndexService";
-import { ManagedCatIndex } from "../../../../../server/models/interfaces";
-import CreateRollup from "../CreateRollup";
-import CreateRollupStep2 from "../CreateRollupStep2";
+import ConfigureRollup from "../../CreateRollup/components/ConfigureRollup";
+import Roles from "../../CreateRollup/components/Roles";
+import Schedule from "../../CreateRollup/components/Schedule";
 import { toastNotifications } from "ui/notify";
-import { IndexItem, Rollup } from "../../../../../models/interfaces";
-import { getErrorMessage } from "../../../../utils/helpers";
-import { EMPTY_ROLLUP } from "../../utils/constants";
-import CreateRollupStep3 from "../CreateRollupStep3";
-import CreateRollupStep4 from "../CreateRollupStep4";
+import queryString from "query-string";
+import { getErrorMessage } from "../../../utils/helpers";
+import { BREADCRUMBS, ROUTES } from "../../../utils/constants";
+import { Rollup } from "../../../../models/interfaces";
 
-interface CreateRollupFormProps extends RouteComponentProps {
+interface EditRollupProps extends RouteComponentProps {
   rollupService: RollupService;
-  indexService: IndexService;
 }
 
-interface CreateRollupFormState {
-  currentStep: number;
+interface EditRollupState {
   rollupId: string;
   rollupIdError: string;
   rollupSeqNo: number | null;
@@ -44,16 +40,8 @@ interface CreateRollupFormState {
   submitError: string;
   isSubmitting: boolean;
   hasSubmitted: boolean;
-  loadingIndices: boolean;
-  indices: ManagedCatIndex[];
-  totalIndices: number;
-
   description: string;
-  sourceIndex: { label: string; value?: IndexItem }[];
-  sourceIndexError: string;
-  targetIndex: { label: string; value?: IndexItem }[];
   roles: EuiComboBoxOptionOption<String>[];
-
   jobEnabledByDefault: boolean;
   recurringJob: string;
   recurringDefinition: string;
@@ -79,29 +67,20 @@ const options: EuiComboBoxOptionOption<String>[] = [
   },
 ];
 
-export default class CreateRollupForm extends Component<CreateRollupFormProps, CreateRollupFormState> {
-  constructor(props: CreateRollupFormProps) {
+export default class EditRollup extends Component<EditRollupProps, EditRollupState> {
+  //TODO: Get actual rollupId etc. here
+  constructor(props: EditRollupProps) {
     super(props);
-
     this.state = {
-      currentStep: 1,
-      rollupSeqNo: null,
-      rollupPrimaryTerm: null,
       rollupId: "",
       rollupIdError: "",
+      rollupSeqNo: null,
+      rollupPrimaryTerm: null,
       submitError: "",
       isSubmitting: false,
       hasSubmitted: false,
-      loadingIndices: true,
-      indices: [],
-      totalIndices: 0,
-
       description: "",
-      sourceIndex: [],
-      sourceIndexError: "",
-      targetIndex: [],
       roles: [],
-
       jobEnabledByDefault: false,
       recurringJob: "no",
       recurringDefinition: "fixed",
@@ -111,76 +90,77 @@ export default class CreateRollupForm extends Component<CreateRollupFormProps, C
       pageSize: 1000,
       delayTime: undefined,
       delayTimeunit: "MINUTES",
-      rollupJSON: JSON.parse(EMPTY_ROLLUP),
+      rollupJSON: `{"rollup":{}}`,
     };
-    this._next = this._next.bind(this);
-    this._prev = this._prev.bind(this);
-    // this.onChange = this.onChange.bind(this);
   }
 
   componentDidMount = async (): Promise<void> => {
     chrome.breadcrumbs.set([BREADCRUMBS.INDEX_MANAGEMENT, BREADCRUMBS.ROLLUPS]);
-    chrome.breadcrumbs.push(BREADCRUMBS.CREATE_ROLLUP);
-  };
+    const { id } = queryString.parse(this.props.location.search);
+    console.log(id);
+    if (typeof id === "string" && !!id) {
+      chrome.breadcrumbs.push(BREADCRUMBS.EDIT_ROLLUP);
+      chrome.breadcrumbs.push({ text: id });
 
-  _next() {
-    let currentStep = this.state.currentStep;
-    //Verification here
-    if (currentStep == 1) {
-      const { rollupId, sourceIndex, targetIndex } = this.state;
-      if (!rollupId) {
-        this.setState({ submitError: "Job name is required." });
-        return;
-      } else if (sourceIndex.length == 0) {
-        this.setState({ submitError: "Source index is required." });
-        return;
-      } else if (targetIndex.length == 0) {
-        this.setState({ submitError: "Target index is required." });
-        return;
-      }
+      await this.getRollupToEdit(id);
+    } else {
+      toastNotifications.addDanger(`Invalid rollup id: ${id}`);
+      this.props.history.push(ROUTES.ROLLUPS);
     }
-    currentStep = currentStep >= 3 ? 4 : currentStep + 1;
-
-    this.setState({
-      submitError: "",
-      currentStep: currentStep,
-    });
-  }
-
-  _prev() {
-    let currentStep = this.state.currentStep;
-    // If the current step is 2 or 3, then subtract one on "previous" button click
-    currentStep = currentStep <= 1 ? 1 : currentStep - 1;
-    this.setState({
-      currentStep: currentStep,
-    });
-  }
-
-  onChangeStep = (step: number): void => {
-    if (step > 3) return;
-    this.setState({
-      currentStep: step,
-    });
   };
 
-  //TODO: Go back to rollup jobs page when cancelled
+  getRollupToEdit = async (rollupId: string): Promise<void> => {
+    try {
+      const { rollupService } = this.props;
+      const response = await rollupService.getRollup(rollupId);
+
+      if (response.ok) {
+        let newJSON = JSON.parse(this.state.rollupJSON);
+        newJSON.rollup = response.response.rollup;
+        let roles: EuiComboBoxOptionOption<String>[] = [];
+        var i;
+        for (i = 0; i < response.response.rollup.roles.length; i++) {
+          roles.push({ label: response.response.rollup.roles[i] });
+        }
+
+        this.setState({
+          rollupSeqNo: response.response.seqNo,
+          rollupPrimaryTerm: response.response.primaryTerm,
+          rollupId: response.response.id,
+          description: response.response.rollup.description,
+          roles: roles,
+          jobEnabledByDefault: response.response.rollup.enabled,
+          pageSize: response.response.rollup.page_size,
+          delayTime: response.response.rollup.delay,
+          rollupJSON: newJSON,
+        });
+        if (response.response.rollup.schedule.cron == undefined) {
+          this.setState({
+            interval: response.response.rollup.schedule.interval.period,
+            intervalTimeunit: response.response.rollup.schedule.interval.unit,
+          });
+        } else {
+          this.setState({ cronExpression: response.response.rollup.schedule.cron.expression });
+        }
+      } else {
+        toastNotifications.addDanger(`Could not load the rollup job: ${response.error}`);
+        this.props.history.push(ROUTES.ROLLUPS);
+      }
+    } catch (err) {
+      toastNotifications.addDanger(getErrorMessage(err, "Could not load the rollup job"));
+      this.props.history.push(ROUTES.ROLLUPS);
+    }
+  };
+
   onCancel = (): void => {
     this.props.history.push(ROUTES.ROLLUPS);
   };
 
-  onCreate = async (rollupId: string, rollup: Rollup): Promise<void> => {
-    const { rollupService } = this.props;
-    try {
-      const response = await rollupService.putRollup(rollup, rollupId);
-      if (response.ok) {
-        toastNotifications.addSuccess(`Created rollup: ${response.response._id}`);
-        this.props.history.push(ROUTES.ROLLUPS);
-      } else {
-        this.setState({ submitError: response.error });
-      }
-    } catch (err) {
-      this.setState({ submitError: getErrorMessage(err, "There was a problem creating the rollup job") });
-    }
+  onChange = (e: ChangeEvent<HTMLInputElement>): void => {
+    const { hasSubmitted } = this.state;
+    const rollupId = e.target.value;
+    if (hasSubmitted) this.setState({ rollupId, rollupIdError: rollupId ? "" : "Required" });
+    else this.setState({ rollupId });
   };
 
   onChangeDescription = (e: ChangeEvent<HTMLTextAreaElement>): void => {
@@ -188,38 +168,15 @@ export default class CreateRollupForm extends Component<CreateRollupFormProps, C
     let newJSON = this.state.rollupJSON;
     newJSON.rollup.description = description;
     this.setState({ description: description, rollupJSON: newJSON });
-    console.log(this.state);
   };
 
   onChangeName = (e: ChangeEvent<HTMLInputElement>): void => {
     const { hasSubmitted } = this.state;
     const rollupId = e.target.value;
+    let newJSON = this.state.rollupJSON;
+    newJSON.rollup.rollupId = rollupId;
     if (hasSubmitted) this.setState({ rollupId, rollupIdError: rollupId ? "" : "Required" });
-    else this.setState({ rollupId });
-  };
-
-  onChangeSourceIndex = (options: EuiComboBoxOptionOption<IndexItem>[]): void => {
-    //Try to get label text from option from the only array element in options if exists
-    let newJSON = this.state.rollupJSON;
-    let sourceIndex = options.map(function (option) {
-      return option.label;
-    });
-    const sourceIndexError = sourceIndex.length ? "" : "Required";
-
-    newJSON.rollup.source_index = sourceIndex[0];
-    this.setState({ sourceIndex: options, rollupJSON: newJSON, sourceIndexError: sourceIndexError });
-  };
-
-  onChangeTargetIndex = (options: EuiComboBoxOptionOption<IndexItem>[]): void => {
-    //Try to get label text from option from the only array element in options if exists
-    let newJSON = this.state.rollupJSON;
-    let targetIndex = options.map(function (option) {
-      return option.label;
-    });
-    const rollupError = targetIndex.length ? "" : "Required";
-
-    newJSON.rollup.target_index = targetIndex[0];
-    this.setState({ targetIndex: options, rollupJSON: newJSON, rollupIdError: rollupError });
+    else this.setState({ rollupId: rollupId, rollupJSON: newJSON });
   };
 
   onChangeRoles = (selectedOptions: EuiComboBoxOptionOption<String>[]): void => {
@@ -285,7 +242,6 @@ export default class CreateRollupForm extends Component<CreateRollupFormProps, C
     this.setState({ intervalTimeunit: e.target.value, rollupJSON: newJSON });
   };
 
-  //TODO: Complete submit logistic
   onSubmit = async (): Promise<void> => {
     const { rollupId, rollupJSON } = this.state;
     this.setState({ submitError: "", isSubmitting: true, hasSubmitted: true });
@@ -293,15 +249,36 @@ export default class CreateRollupForm extends Component<CreateRollupFormProps, C
       if (!rollupId) {
         this.setState({ rollupIdError: "Required" });
       } else {
-        //TODO: Build JSON string here
-        await this.onCreate(rollupId, rollupJSON);
+        //Build JSON string here
+        await this.onUpdate(rollupId, rollupJSON);
       }
     } catch (err) {
-      toastNotifications.addDanger("Invalid Policy JSON");
+      toastNotifications.addDanger("Invalid Rollup JSON");
       console.error(err);
     }
 
     this.setState({ isSubmitting: false });
+  };
+
+  onUpdate = async (rollupId: string, rollup: Rollup): Promise<void> => {
+    try {
+      const { rollupService } = this.props;
+      const { rollupPrimaryTerm, rollupSeqNo } = this.state;
+      if (rollupSeqNo == null || rollupPrimaryTerm == null) {
+        toastNotifications.addDanger("Could not update rollup without seqNo and primaryTerm");
+        return;
+      }
+      const response = await rollupService.putRollup(rollup, rollupId, rollupSeqNo, rollupPrimaryTerm);
+      if (response.ok) {
+        console.log("Submit success.");
+        toastNotifications.addSuccess(`Updated rollup: ${response.response._id}`);
+        this.props.history.push(ROUTES.ROLLUPS);
+      } else {
+        this.setState({ submitError: response.error });
+      }
+    } catch (err) {
+      this.setState({ submitError: getErrorMessage(err, "There was a problem updating the rollup") });
+    }
   };
 
   render() {
@@ -311,12 +288,8 @@ export default class CreateRollupForm extends Component<CreateRollupFormProps, C
       submitError,
       isSubmitting,
       hasSubmitted,
-      description,
-      sourceIndex,
-      sourceIndexError,
-      targetIndex,
       roles,
-      currentStep,
+      description,
       jobEnabledByDefault,
       recurringJob,
       recurringDefinition,
@@ -328,31 +301,26 @@ export default class CreateRollupForm extends Component<CreateRollupFormProps, C
       delayTimeunit,
     } = this.state;
     return (
-      <form onSubmit={this.onSubmit}>
-        <CreateRollup
-          {...this.props}
+      <div style={{ padding: "25px 50px" }}>
+        <EuiTitle size="l">
+          <h1>Edit rollup job</h1>
+        </EuiTitle>
+        <EuiSpacer />
+        <ConfigureRollup
           rollupId={rollupId}
           rollupIdError={rollupIdError}
-          submitError={submitError}
-          isSubmitting={isSubmitting}
-          hasSubmitted={hasSubmitted}
-          description={description}
-          sourceIndex={sourceIndex}
-          sourceIndexError={sourceIndexError}
-          targetIndex={targetIndex}
-          roles={roles}
-          onChangeRoles={this.onChangeRoles}
-          roleOptions={options}
-          onChangeName={this.onChangeName}
           onChangeDescription={this.onChangeDescription}
-          onChangeSourceIndex={this.onChangeSourceIndex}
-          onChangeTargetIndex={this.onChangeTargetIndex}
-          currentStep={this.state.currentStep}
+          description={description}
+          onChange={this.onChange}
         />
-        <CreateRollupStep2 {...this.props} currentStep={this.state.currentStep} />
-        <CreateRollupStep3
-          {...this.props}
-          currentStep={this.state.currentStep}
+        <EuiSpacer />
+
+        <Roles rollupId={rollupId} rollupIdError={rollupIdError} onChange={this.onChangeRoles} roleOptions={options} roles={roles} />
+        <EuiSpacer />
+        <Schedule
+          isEdit={true}
+          rollupId={rollupId}
+          rollupIdError={rollupIdError}
           jobEnabledByDefault={jobEnabledByDefault}
           recurringJob={recurringJob}
           recurringDefinition={recurringDefinition}
@@ -372,43 +340,22 @@ export default class CreateRollupForm extends Component<CreateRollupFormProps, C
           onChangeDelayTimeunit={this.onChangeDelayTimeunit}
           onChangeIntervalTimeunit={this.onChangeIntervalTimeunit}
         />
-        <CreateRollupStep4
-          {...this.props}
-          rollupId={rollupId}
-          description={description}
-          currentStep={this.state.currentStep}
-          onChangeStep={this.onChangeStep}
-          submitError={submitError}
-        />
-        <EuiFlexGroup alignItems="center" justifyContent="flexEnd" style={{ padding: "5px 50px" }}>
+
+        <EuiSpacer />
+
+        <EuiFlexGroup alignItems="center" justifyContent="flexEnd">
           <EuiFlexItem grow={false}>
-            <EuiButtonEmpty onClick={this.onCancel} data-test-subj="createRollupCancelButton">
+            <EuiButtonEmpty onClick={this.onCancel} data-test-subj="editRollupCancelButton">
               Cancel
             </EuiButtonEmpty>
           </EuiFlexItem>
-          {currentStep != 1 && (
-            <EuiFlexItem grow={false}>
-              <EuiButton fill onClick={this._prev} isLoading={isSubmitting} data-test-subj="createRollupPreviousButton">
-                {"Previous"}
-              </EuiButton>
-            </EuiFlexItem>
-          )}
-
-          {currentStep == 4 ? (
-            <EuiFlexItem grow={false}>
-              <EuiButton fill onClick={this.onSubmit} isLoading={isSubmitting} data-test-subj="createRollupSubmitButton">
-                {"Submit"}
-              </EuiButton>
-            </EuiFlexItem>
-          ) : (
-            <EuiFlexItem grow={false}>
-              <EuiButton fill onClick={this._next} isLoading={isSubmitting} data-test-subj="createRollupNextButton">
-                {"Next"}
-              </EuiButton>
-            </EuiFlexItem>
-          )}
+          <EuiFlexItem grow={false}>
+            <EuiButton fill onClick={this.onSubmit} isLoading={isSubmitting} data-test-subj="editRollupSaveChangesButton">
+              {"Save changes"}
+            </EuiButton>
+          </EuiFlexItem>
         </EuiFlexGroup>
-      </form>
+      </div>
     );
   }
 }

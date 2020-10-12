@@ -30,7 +30,7 @@ export interface ManagedIndexMetaData {
 }
 
 /**
- * ManagedIndex item shown in the Managed RollupIndices table
+ * ManagedIndex item shown in the Managed Indices table
  */
 export interface ManagedIndexItem {
   index: string;
@@ -43,6 +43,10 @@ export interface ManagedIndexItem {
   managedIndexMetaData: ManagedIndexMetaData | null;
 }
 
+export interface IndexItem {
+  index: string;
+}
+
 /**
  * Interface what the Policy Elasticsearch Document
  */
@@ -51,6 +55,13 @@ export interface DocumentPolicy {
   primaryTerm: number;
   seqNo: number;
   policy: Policy;
+}
+
+export interface DocumentRollup {
+  id: string;
+  primaryTerm: number;
+  seqNo: number;
+  rollup: Rollup;
 }
 
 // TODO: Fill out when needed
@@ -68,7 +79,44 @@ export interface State {
 }
 
 export interface Rollup {
-  description: string;
-  default_state: string;
-  states: State[];
+  id: string;
+  seq_no: number;
+  primary_Term: number;
+  rollup: {
+    continuous: boolean;
+    delay?: number;
+    description?: string;
+    dimensions: [
+      {
+        date_histogram: [
+          {
+            source_field: string;
+            fixed_interval: string;
+            timezone: string;
+          }
+        ];
+      }
+    ];
+    enabled: boolean;
+    enabled_time?: number;
+    last_updated_time: number;
+    metadata_id?: number;
+    metrics: [];
+    page_size: number;
+    roles: [];
+    schedule: {
+      interval?: {
+        start_time: number;
+        period: number;
+        unit: string;
+      };
+      cron?: {
+        expression: string;
+        timezone?: string;
+      };
+    };
+    schema_version: number;
+    source_index: string;
+    target_index: string;
+  };
 }

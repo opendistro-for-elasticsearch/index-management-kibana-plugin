@@ -28,6 +28,24 @@ import Schedule from "../../components/Schedule";
 interface CreateRollupProps extends RouteComponentProps {
   rollupService: RollupService;
   currentStep: number;
+  jobEnabledByDefault: boolean;
+  recurringJob: string;
+  recurringDefinition: string;
+  interval: number;
+  intervalTimeunit: string;
+  cronExpression: string;
+  pageSize: number;
+  delayTime: number | undefined;
+  delayTimeunit: string;
+  onChangeJobEnabledByDefault: () => void;
+  onChangeCron: (e: ChangeEvent<HTMLTextAreaElement>) => void;
+  onChangeDelayTime: (e: ChangeEvent<HTMLInputElement>) => void;
+  onChangeIntervalTime: (e: ChangeEvent<HTMLInputElement>) => void;
+  onChangePage: (e: ChangeEvent<HTMLInputElement>) => void;
+  onChangeRecurringDefinition: (e: ChangeEvent<HTMLSelectElement>) => void;
+  onChangeRecurringJob: (optionId: string) => void;
+  onChangeDelayTimeunit: (e: ChangeEvent<HTMLSelectElement>) => void;
+  onChangeIntervalTimeunit: (e: ChangeEvent<HTMLSelectElement>) => void;
 }
 
 interface CreateRollupState {
@@ -59,7 +77,6 @@ export default class CreateRollupStep3 extends Component<CreateRollupProps, Crea
 
   componentDidMount = async (): Promise<void> => {
     chrome.breadcrumbs.set([BREADCRUMBS.INDEX_MANAGEMENT, BREADCRUMBS.ROLLUPS]);
-    chrome.breadcrumbs.push(BREADCRUMBS.CREATE_ROLLUP_STEP3);
   };
 
   onCreate = async (rollupId: string, rollup: Rollup): Promise<void> => {
@@ -108,16 +125,31 @@ export default class CreateRollupStep3 extends Component<CreateRollupProps, Crea
     else this.setState({ rollupId });
   };
 
-  onNext = (): void => {
-    this.props.history.push(ROUTES.CREATE_ROLLUP_STEP4);
-  };
-
   render() {
     if (this.props.currentStep != 3) return null;
-
-    const { rollupId, rollupIdError, submitError, isSubmitting } = this.state;
+    const {
+      jobEnabledByDefault,
+      recurringJob,
+      recurringDefinition,
+      interval,
+      intervalTimeunit,
+      cronExpression,
+      pageSize,
+      delayTime,
+      delayTimeunit,
+      onChangeJobEnabledByDefault,
+      onChangeCron,
+      onChangeDelayTime,
+      onChangeIntervalTime,
+      onChangePage,
+      onChangeRecurringDefinition,
+      onChangeRecurringJob,
+      onChangeDelayTimeunit,
+      onChangeIntervalTimeunit,
+    } = this.props;
+    const { rollupId, rollupIdError } = this.state;
     return (
-      <div style={{ padding: "25px 50px" }}>
+      <div style={{ padding: "5px 50px" }}>
         <EuiFlexGroup>
           <EuiFlexItem style={{ maxWidth: 300 }} grow={false}>
             <CreateRollupSteps step={3} />
@@ -127,13 +159,30 @@ export default class CreateRollupStep3 extends Component<CreateRollupProps, Crea
               <h1>Specify schedules</h1>
             </EuiTitle>
             <EuiSpacer />
-            <Schedule rollupId={rollupId} rollupIdError={rollupIdError} onChange={this.onChange} />
+            <Schedule
+              isEdit={true}
+              rollupId={rollupId}
+              rollupIdError={rollupIdError}
+              jobEnabledByDefault={jobEnabledByDefault}
+              recurringJob={recurringJob}
+              recurringDefinition={recurringDefinition}
+              interval={interval}
+              intervalTimeunit={intervalTimeunit}
+              cronExpression={cronExpression}
+              pageSize={pageSize}
+              delayTime={delayTime}
+              delayTimeunit={delayTimeunit}
+              onChangeJobEnabledByDefault={onChangeJobEnabledByDefault}
+              onChangeCron={onChangeCron}
+              onChangeDelayTime={onChangeDelayTime}
+              onChangeIntervalTime={onChangeIntervalTime}
+              onChangePage={onChangePage}
+              onChangeRecurringDefinition={onChangeRecurringDefinition}
+              onChangeRecurringJob={onChangeRecurringJob}
+              onChangeDelayTimeunit={onChangeDelayTimeunit}
+              onChangeIntervalTimeunit={onChangeIntervalTimeunit}
+            />
             <EuiSpacer />
-            {submitError && (
-              <EuiCallOut title="Sorry, there was an error" color="danger" iconType="alert">
-                <p>{submitError}</p>
-              </EuiCallOut>
-            )}
           </EuiFlexItem>
         </EuiFlexGroup>
         <EuiSpacer />

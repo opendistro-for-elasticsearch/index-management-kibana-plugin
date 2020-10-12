@@ -21,7 +21,7 @@ import {
   DeletePolicyResponse,
   GetPoliciesResponse,
   PutPolicyParams,
-  PutPolicyResponse,
+  PutRollupResponse,
   SearchResponse,
 } from "../models/interfaces";
 import { getMustQuery } from "../utils/helpers";
@@ -42,7 +42,7 @@ export default class PolicyService {
   /**
    * Calls backend Put Policy API
    */
-  putPolicy = async (req: Request, h: ResponseToolkit): Promise<ServerResponse<PutPolicyResponse>> => {
+  putPolicy = async (req: Request, h: ResponseToolkit): Promise<ServerResponse<PutRollupResponse>> => {
     try {
       const { id } = req.params;
       const { seqNo, primaryTerm } = req.query as { seqNo?: string; primaryTerm?: string };
@@ -141,7 +141,7 @@ export default class PolicyService {
       const searchResponse: SearchResponse<any> = await callWithRequest(req, "search", params);
 
       const totalPolicies = searchResponse.hits.total.value;
-      const policies = searchResponse.hits.hits.map(hit => ({
+      const policies = searchResponse.hits.hits.map((hit) => ({
         seqNo: hit._seq_no as number,
         primaryTerm: hit._primary_term as number,
         id: hit._id,

@@ -30,6 +30,7 @@ export default class IndexService {
     let url = `..${NODE_API._INDICES}`;
     if (queryParamsString) url += `?${queryParamsString}`;
     const response = (await this.httpClient.get(url)) as IHttpResponse<ServerResponse<GetIndicesResponse>>;
+    console.log(response.data);
     return response.data;
   };
 

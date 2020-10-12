@@ -156,5 +156,60 @@ export default function ismPlugin(Client: any, config: any, components: any) {
     method: "POST",
   });
 
+  //TODO: See if anything different needs to be done when removing rollup jobs
+  ism.getRollup = ca({
+    url: {
+      fmt: `${API.ROLLUP_JOBS_BASE}/<%=rollupId%>`,
+      req: {
+        rollupId: {
+          type: "string",
+          required: true,
+        },
+      },
+    },
+    needBody: true,
+    method: "GET",
+  });
+
+  ism.createRollup = ca({
+    url: {
+      fmt: `${API.ROLLUP_JOBS_BASE}/<%=rollupId%>?refresh=wait_for`,
+      req: {
+        rollupId: {
+          type: "string",
+          required: true,
+        },
+      },
+    },
+    needBody: true,
+    method: "PUT",
+  });
+
+  ism.deleteRollup = ca({
+    url: {
+      fmt: `${API.ROLLUP_JOBS_BASE}/<%=rollupId%>?refresh=wait_for`,
+      req: {
+        rollupId: {
+          type: "string",
+          required: true,
+        },
+      },
+    },
+    method: "DELETE",
+  });
+
+  ism.putRollup = ca({
+    url: {
+      fmt: `${API.ROLLUP_JOBS_BASE}/<%=rollupId%>`,
+      req: {
+        rollupId: {
+          type: "string",
+          required: true,
+        },
+      },
+    },
+    method: "PUT",
+  });
+
   // TODO add new APIs as they are being implemented: status, stop, start
 }

@@ -32,7 +32,7 @@ export default class Roles extends Component<RolesProps> {
 
   render() {
     return (
-      <ContentPanel bodyStyles={{ padding: "initial" }} title="Roles" titleSize="s">
+      <ContentPanel bodyStyles={{ padding: "initial" }} title="Roles" titleSize="m">
         <div style={{ paddingLeft: "10px" }}>
           <EuiSpacer size="s" />
           <EuiFormRow label="Roles" helpText="Security roles have access to this rollup job.">

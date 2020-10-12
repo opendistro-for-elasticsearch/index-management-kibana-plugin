@@ -15,8 +15,10 @@
 
 import React, { ChangeEvent, Component } from "react";
 import { EuiSpacer, EuiTitle, EuiFlexGroup, EuiFlexItem, EuiCallOut, EuiComboBoxOptionOption } from "@elastic/eui";
+import chrome from "ui/chrome";
 import { RouteComponentProps } from "react-router-dom";
 import { RollupService } from "../../../../services";
+import { BREADCRUMBS, ROUTES } from "../../../../utils/constants";
 import CreateRollupSteps from "../../components/CreateRollupSteps";
 import TimeAggregation from "../../components/TimeAggregations";
 import AdvancedAggregation from "../../components/AdvancedAggregation";
@@ -25,13 +27,18 @@ import MetricsCalculation from "../../components/MetricsCalculation";
 interface CreateRollupProps extends RouteComponentProps {
   rollupService: RollupService;
   currentStep: number;
+}
+
+interface CreateRollupState {
+  rollupId: string;
+  rollupIdError: string;
+  rollupSeqNo: number | null;
+  rollupPrimaryTerm: number | null;
+  submitError: string;
+  isSubmitting: boolean;
+  hasSubmitted: boolean;
+  timestamp: EuiComboBoxOptionOption<String>[];
   intervalType: string;
-  timestampOptions: EuiComboBoxOptionOption<String>[];
-  selectedTimestamp: EuiComboBoxOptionOption<String>[];
-  onChangeIntervalType: (optionId: string) => void;
-  onChangeTimestamp: (options: EuiComboBoxOptionOption<String>[]) => void;
-  onChangeTimezone: (e: ChangeEvent<HTMLSelectElement>) => void;
-  onChangeTimeunit: (e: ChangeEvent<HTMLSelectElement>) => void;
   timezone: string;
   timeunit: string;
 }
@@ -49,10 +56,39 @@ const options: EuiComboBoxOptionOption<String>[] = [
   },
 ];
 
-export default class CreateRollupStep2 extends Component<CreateRollupProps> {
+export default class CreateRollupStep2 extends Component<CreateRollupProps, CreateRollupState> {
   constructor(props: CreateRollupProps) {
     super(props);
+
+    this.state = {
+      rollupSeqNo: null,
+      rollupPrimaryTerm: null,
+      rollupId: "",
+      rollupIdError: "",
+      submitError: "",
+      isSubmitting: false,
+      hasSubmitted: false,
+      timestamp: [],
+      intervalType: "fixed",
+      timezone: "-7",
+      timeunit: "ms",
+    };
   }
+
+  componentDidMount = async (): Promise<void> => {
+    chrome.breadcrumbs.set([BREADCRUMBS.INDEX_MANAGEMENT, BREADCRUMBS.ROLLUPS]);
+  };
+
+  onCancel = (): void => {
+    this.props.history.push(ROUTES.ROLLUPS);
+  };
+
+  onChange = (e: ChangeEvent<HTMLInputElement>): void => {
+    const { hasSubmitted } = this.state;
+    const rollupId = e.target.value;
+    if (hasSubmitted) this.setState({ rollupId, rollupIdError: rollupId ? "" : "Required" });
+    else this.setState({ rollupId });
+  };
 
   onChangeIntervalType = (optionId: string): void => {
     this.setState({ intervalType: optionId });
@@ -73,19 +109,10 @@ export default class CreateRollupStep2 extends Component<CreateRollupProps> {
   render() {
     if (this.props.currentStep !== 2) return null;
 
-    const {
-      intervalType,
-      selectedTimestamp,
-      timezone,
-      timeunit,
-      onChangeTimestamp,
-      onChangeTimezone,
-      onChangeIntervalType,
-      onChangeTimeunit,
-    } = this.props;
+    const { rollupId, rollupIdError, submitError, intervalType, timestamp, timezone, timeunit } = this.state;
 
     return (
-      <div style={{ padding: "25px 50px" }}>
+      <div style={{ padding: "5px 50px" }}>
         <EuiFlexGroup>
           <EuiFlexItem style={{ maxWidth: 300 }} grow={false}>
             <CreateRollupSteps step={2} />
@@ -104,20 +131,26 @@ export default class CreateRollupStep2 extends Component<CreateRollupProps> {
             </EuiCallOut>
             <EuiSpacer />
             <TimeAggregation
-              onChangeTimestamp={onChangeTimestamp}
+              onChange={this.onChange}
+              onChangeTimestamp={this.onChangeTimestamp}
               timestampOptions={options}
-              onChangeIntervalType={onChangeIntervalType}
+              onChangeIntervalType={this.onChangeIntervalType}
               intervalType={intervalType}
-              selectedTimestamp={selectedTimestamp}
+              selectedTimestamp={timestamp}
               timezone={timezone}
               timeunit={timeunit}
-              onChangeTimezone={onChangeTimezone}
-              onChangeTimeunit={onChangeTimeunit}
+              onChangeTimezone={this.onChangeTimezone}
+              onChangeTimeunit={this.onChangeTimeunit}
             />
             <EuiSpacer />
-            <AdvancedAggregation {...this.props} />
+            <AdvancedAggregation rollupId={rollupId} rollupIdError={rollupIdError} onChange={this.onChange} />
             <EuiSpacer />
-            <MetricsCalculation {...this.props} />
+            <MetricsCalculation rollupId={rollupId} rollupIdError={rollupIdError} onChange={this.onChange} />
+            {submitError && (
+              <EuiCallOut title="Sorry, there was an error" color="danger" iconType="alert">
+                <p>{submitError}</p>
+              </EuiCallOut>
+            )}
           </EuiFlexItem>
         </EuiFlexGroup>
         <EuiSpacer />

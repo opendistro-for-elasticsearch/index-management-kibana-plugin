@@ -192,10 +192,16 @@ export default class AdvancedAggregation extends Component<AdvancedAggregationPr
         }
         bodyStyles={{ padding: "initial" }}
         title="Additional aggregations - optional"
-        titleSize="s"
+        titleSize="m"
       >
         <div style={{ paddingLeft: "10px" }}>
-          <EuiBasicTable items={[]} rowHeader="fieldName" columns={aggregationColumns} noItemsMessage="No field added for aggregation" />
+          <EuiBasicTable
+            items={[]}
+            rowHeader="fieldName"
+            columns={aggregationColumns}
+            noItemsMessage="No field added for aggregation"
+            tableLayout={"auto"}
+          />
           <EuiSpacer size="s" />
           {isModalVisible && (
             <EuiOverlayMask>

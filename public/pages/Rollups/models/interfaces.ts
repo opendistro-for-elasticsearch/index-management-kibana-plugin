@@ -16,9 +16,10 @@
 import { Direction } from "@elastic/eui";
 
 export interface RollupItem {
-  id: string;
-  seqNo: number;
-  primaryTerm: number;
+  _id: string;
+  _version: number;
+  _seq_no: number;
+  _primary_term: number;
   rollup: object; // only dumped to view as JSON as of now, don't need to type
 }
 
