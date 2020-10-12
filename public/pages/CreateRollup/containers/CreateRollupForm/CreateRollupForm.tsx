@@ -24,12 +24,11 @@ import { ManagedCatIndex } from "../../../../../server/models/interfaces";
 import CreateRollup from "../CreateRollup";
 import CreateRollupStep2 from "../CreateRollupStep2";
 import { toastNotifications } from "ui/notify";
-import { Rollup } from "../../../../../models/interfaces";
+import { IndexItem, Rollup } from "../../../../../models/interfaces";
 import { getErrorMessage } from "../../../../utils/helpers";
-import { DEFAULT_ROLLUP, EMPTY_ROLLUP } from "../../utils/constants";
+import { EMPTY_ROLLUP } from "../../utils/constants";
 import CreateRollupStep3 from "../CreateRollupStep3";
 import CreateRollupStep4 from "../CreateRollupStep4";
-import Schedule from "../../components/Schedule";
 
 interface CreateRollupFormProps extends RouteComponentProps {
   rollupService: RollupService;
@@ -48,7 +47,10 @@ interface CreateRollupFormState {
   loadingIndices: boolean;
   indices: ManagedCatIndex[];
   totalIndices: number;
+
   description: string;
+  sourceIndex: { label: string; value?: IndexItem }[];
+  targetIndex: { label: string; value?: IndexItem }[];
   roles: EuiComboBoxOptionOption<String>[];
 
   jobEnabledByDefault: boolean;
@@ -92,7 +94,10 @@ export default class CreateRollupForm extends Component<CreateRollupFormProps, C
       loadingIndices: true,
       indices: [],
       totalIndices: 0,
+
       description: "",
+      sourceIndex: [],
+      targetIndex: [],
       roles: [],
 
       jobEnabledByDefault: false,
@@ -182,6 +187,30 @@ export default class CreateRollupForm extends Component<CreateRollupFormProps, C
     else this.setState({ rollupId });
   };
 
+  onChangeSourceIndex = (options: EuiComboBoxOptionOption<IndexItem>[]): void => {
+    //Try to get label text from option from the only array element in options if exists
+    let newJSON = this.state.rollupJSON;
+    let sourceIndex = options.map(function (option) {
+      return option.label;
+    });
+    const rollupError = sourceIndex.length ? "" : "Required";
+
+    newJSON.rollup.sourceIndex = sourceIndex[0];
+    this.setState({ sourceIndex: options, rollupJSON: newJSON, rollupIdError: rollupError });
+  };
+
+  onChangeTargetIndex = (options: EuiComboBoxOptionOption<IndexItem>[]): void => {
+    //Try to get label text from option from the only array element in options if exists
+    let newJSON = this.state.rollupJSON;
+    let targetIndex = options.map(function (option) {
+      return option.label;
+    });
+    const rollupError = targetIndex.length ? "" : "Required";
+
+    newJSON.rollup.targetIndex = targetIndex[0];
+    this.setState({ targetIndex: options, rollupJSON: newJSON, rollupIdError: rollupError });
+  };
+
   onChangeRoles = (selectedOptions: EuiComboBoxOptionOption<String>[]): void => {
     let newJSON = this.state.rollupJSON;
     newJSON.rollup.roles = selectedOptions.map(function (option) {
@@ -247,15 +276,14 @@ export default class CreateRollupForm extends Component<CreateRollupFormProps, C
 
   //TODO: Complete submit logistic
   onSubmit = async (): Promise<void> => {
-    const { rollupId } = this.state;
+    const { rollupId, rollupJSON } = this.state;
     this.setState({ submitError: "", isSubmitting: true, hasSubmitted: true });
     try {
       if (!rollupId) {
         this.setState({ rollupIdError: "Required" });
       } else {
         //TODO: Build JSON string here
-        const rollup = DEFAULT_ROLLUP;
-        // await this.onCreate(rollupId, rollup);
+        await this.onCreate(rollupId, rollupJSON);
       }
     } catch (err) {
       toastNotifications.addDanger("Invalid Policy JSON");
@@ -273,6 +301,8 @@ export default class CreateRollupForm extends Component<CreateRollupFormProps, C
       isSubmitting,
       hasSubmitted,
       description,
+      sourceIndex,
+      targetIndex,
       roles,
       currentStep,
       jobEnabledByDefault,
@@ -295,11 +325,15 @@ export default class CreateRollupForm extends Component<CreateRollupFormProps, C
           isSubmitting={isSubmitting}
           hasSubmitted={hasSubmitted}
           description={description}
+          sourceIndex={sourceIndex}
+          targetIndex={targetIndex}
           roles={roles}
           onChangeRoles={this.onChangeRoles}
           roleOptions={options}
+          onChangeName={this.onChangeName}
           onChangeDescription={this.onChangeDescription}
-          onChange={this.onChangeName}
+          onChangeSourceIndex={this.onChangeSourceIndex}
+          onChangeTargetIndex={this.onChangeTargetIndex}
           currentStep={this.state.currentStep}
         />
         <CreateRollupStep2 {...this.props} currentStep={this.state.currentStep} />

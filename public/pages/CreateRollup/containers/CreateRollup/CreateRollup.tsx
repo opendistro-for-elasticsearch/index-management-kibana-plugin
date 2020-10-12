@@ -22,6 +22,7 @@ import RollupIndices from "../../components/RollupIndices";
 import CreateRollupSteps from "../../components/CreateRollupSteps";
 import Roles from "../../components/Roles";
 import IndexService from "../../../../services/IndexService";
+import { IndexItem } from "../../../../../models/interfaces";
 
 interface CreateRollupProps extends RouteComponentProps {
   rollupService: RollupService;
@@ -32,11 +33,15 @@ interface CreateRollupProps extends RouteComponentProps {
   isSubmitting: boolean;
   hasSubmitted: boolean;
   description: string;
+  sourceIndex: { label: string; value?: IndexItem }[];
+  targetIndex: { label: string; value?: IndexItem }[];
   roles: EuiComboBoxOptionOption<String>[];
-  onChangeRoles: (selectedOptions: EuiComboBoxOptionOption<String>[]) => void;
+  onChangeName: (e: ChangeEvent<HTMLInputElement>) => void;
   onChangeDescription: (value: ChangeEvent<HTMLTextAreaElement>) => void;
   roleOptions: EuiComboBoxOptionOption<String>[];
-  onChange: (e: ChangeEvent<HTMLInputElement>) => void;
+  onChangeSourceIndex: (options: EuiComboBoxOptionOption<IndexItem>[]) => void;
+  onChangeTargetIndex: (options: EuiComboBoxOptionOption<IndexItem>[]) => void;
+  onChangeRoles: (selectedOptions: EuiComboBoxOptionOption<String>[]) => void;
   currentStep: number;
 }
 
@@ -68,11 +73,15 @@ export default class CreateRollup extends Component<CreateRollupProps> {
       submitError,
       isSubmitting,
       description,
+      sourceIndex,
+      targetIndex,
       roles,
-      onChangeRoles,
       roleOptions,
+      onChangeName,
       onChangeDescription,
-      onChange,
+      onChangeSourceIndex,
+      onChangeTargetIndex,
+      onChangeRoles,
       indexService,
     } = this.props;
 
@@ -91,12 +100,18 @@ export default class CreateRollup extends Component<CreateRollupProps> {
               rollupId={rollupId}
               rollupIdError={rollupIdError}
               description={description}
-              onChange={onChange}
+              onChangeName={onChangeName}
               onChangeDescription={onChangeDescription}
             />
             <EuiSpacer />
             {/*TODO: Add props to RollupIndices component and fetch indices inside*/}
-            {/*<RollupIndices  indexService={indexService} sourceIndex={} targetIndex={}/>*/}
+            <RollupIndices
+              indexService={indexService}
+              sourceIndex={sourceIndex}
+              targetIndex={targetIndex}
+              onChangeSourceIndex={onChangeSourceIndex}
+              onChangeTargetIndex={onChangeTargetIndex}
+            />
             <EuiSpacer />
             <Roles rollupId={rollupId} rollupIdError={rollupIdError} onChange={onChangeRoles} roles={roles} roleOptions={options} />
             {submitError && (

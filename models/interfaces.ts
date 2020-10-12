@@ -30,7 +30,7 @@ export interface ManagedIndexMetaData {
 }
 
 /**
- * ManagedIndex item shown in the Managed RollupIndices table
+ * ManagedIndex item shown in the Managed Indices table
  */
 export interface ManagedIndexItem {
   index: string;
@@ -41,6 +41,10 @@ export interface ManagedIndexItem {
   policy: Policy | null;
   enabled: boolean;
   managedIndexMetaData: ManagedIndexMetaData | null;
+}
+
+export interface IndexItem {
+  index: string;
 }
 
 /**

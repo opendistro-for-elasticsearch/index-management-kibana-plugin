@@ -14,7 +14,6 @@
  */
 
 export const EMPTY_ROLLUP = JSON.stringify({
-  id: "",
   rollup: {
     continuous: false,
     delay: {},

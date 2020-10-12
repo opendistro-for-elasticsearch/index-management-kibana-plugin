@@ -16,25 +16,45 @@
 import React, { Component } from "react";
 import { EuiSpacer, EuiFormRow, EuiComboBox, EuiCallOut } from "@elastic/eui";
 import { ContentPanel } from "../../../../components/ContentPanel";
-import { ManagedCatIndex } from "../../../../../server/models/interfaces";
 import { EuiComboBoxOptionOption } from "@elastic/eui/src/components/combo_box/types";
-import { IndexOption } from "../../models/interfaces";
-import { Policy } from "../../../../../models/interfaces";
+import { IndexItem } from "../../../../../models/interfaces";
 import { toastNotifications } from "ui/notify";
 import IndexService from "../../../../services/IndexService";
 
 interface RollupIndicesProps {
   indexService: IndexService;
-  sourceIndex: IndexOption;
-  targetIndex: IndexOption;
-  onChange: (options: EuiComboBoxOptionOption<ManagedCatIndex>[]) => void;
-  onCreateIndex: (searchValue: string, options: EuiComboBoxOptionOption<ManagedCatIndex>[]) => boolean | void;
+  sourceIndex: { label: string; value?: IndexItem }[];
+  targetIndex: { label: string; value?: IndexItem }[];
+  onChangeSourceIndex: (options: EuiComboBoxOptionOption<IndexItem>[]) => void;
+  onChangeTargetIndex: (options: EuiComboBoxOptionOption<IndexItem>[]) => void;
 }
 
 interface RollupIndicesState {
   isLoading: boolean;
-  indexOptions: IndexOption[];
+  indexOptions: { label: string; value?: IndexItem }[];
+  targetIndexOptions: { label: string; value?: IndexItem }[];
 }
+
+const sampleIndexOptions = [
+  {
+    label: "kibana_sample_data_flights",
+  },
+  {
+    label: "Mimas",
+  },
+  {
+    label: "Dione",
+  },
+  {
+    label: "Iapetus",
+  },
+  {
+    label: "Phoebe",
+  },
+  {
+    label: "Rhea",
+  },
+];
 
 //TODO: Add error message
 //TODO: Implement onChangeIndex
@@ -44,6 +64,7 @@ export default class RollupIndices extends Component<RollupIndicesProps, RollupI
     this.state = {
       isLoading: true,
       indexOptions: [],
+      targetIndexOptions: [],
     };
   }
 
@@ -55,18 +76,19 @@ export default class RollupIndices extends Component<RollupIndicesProps, RollupI
     const { indexService } = this.props;
     this.setState({ isLoading: true, indexOptions: [] });
     try {
-      const searchIndicesResponse = await indexService.getIndices(searchValue, true);
-      if (searchIndicesResponse.ok) {
-        const policies = searchIndicesResponse.response.hits.hits.map((hit: { _id: string; _source: { policy: Policy } }) => ({
-          label: hit._id,
-          policy: hit._source.policy,
+      const queryParamsString = `from=0&size=10&search=${searchValue}&sortDirection=desc&sortField=index`;
+      const managedIndicesResponse = await indexService.getIndices(queryParamsString);
+      if (managedIndicesResponse.ok) {
+        const options = searchValue.trim() ? [{ label: `${searchValue}*` }] : [];
+        const managedIndices = managedIndicesResponse.response.indices.map((managedIndex: IndexItem) => ({
+          label: managedIndex.index,
         }));
-        this.setState({ indexOptions: policies });
+        this.setState({ indexOptions: options.concat(managedIndices), targetIndexOptions: managedIndices });
       } else {
-        if (searchIndicesResponse.error.startsWith("[index_not_found_exception]")) {
-          toastNotifications.addDanger("You have not created a policy yet");
+        if (managedIndicesResponse.error.startsWith("[index_not_found_exception]")) {
+          toastNotifications.addDanger("You have not created a managed index yet");
         } else {
-          toastNotifications.addDanger(searchIndicesResponse.error);
+          toastNotifications.addDanger(managedIndicesResponse.error);
         }
       }
     } catch (err) {
@@ -76,9 +98,36 @@ export default class RollupIndices extends Component<RollupIndicesProps, RollupI
     this.setState({ isLoading: false });
   };
 
+  onCreateIndex = (searchValue: string): void => {
+    const options = searchValue.trim() ? [{ label: `${searchValue}*` }] : [];
+    options.concat(this.state.indexOptions);
+    this.setState({ targetIndexOptions: options });
+  };
+
+  onCreateOption = (searchValue: string, flattenedOptions: { label: string; value?: IndexItem }[]): void => {
+    const { targetIndexOptions } = this.state;
+    const { onChangeTargetIndex } = this.props;
+    const normalizedSearchValue = searchValue.trim();
+
+    if (!normalizedSearchValue) {
+      return;
+    }
+
+    const newOption = {
+      label: searchValue,
+    };
+
+    // Create the option if it doesn't exist.
+    if (flattenedOptions.findIndex((option) => option.label.trim() === normalizedSearchValue) === -1) {
+      targetIndexOptions.concat(newOption);
+      this.setState({ targetIndexOptions: targetIndexOptions });
+    }
+    onChangeTargetIndex([newOption]);
+  };
+
   render() {
-    const { sourceIndex, targetIndex, onCreateIndex, onChange } = this.props;
-    const { isLoading, indexOptions } = this.state;
+    const { sourceIndex, targetIndex, onChangeSourceIndex, onChangeTargetIndex } = this.props;
+    const { isLoading, indexOptions, targetIndexOptions } = this.state;
     return (
       <ContentPanel bodyStyles={{ padding: "initial" }} title="Indices" titleSize="s">
         <div style={{ paddingLeft: "10px" }}>
@@ -94,10 +143,10 @@ export default class RollupIndices extends Component<RollupIndicesProps, RollupI
             <EuiComboBox
               placeholder="Select source index"
               options={indexOptions}
-              selectedOptions={sourceIndex ? [sourceIndex] : []}
-              onChange={onChange}
+              selectedOptions={sourceIndex}
+              onChange={onChangeSourceIndex}
               singleSelection={true}
-              onSearchChange={onIndexSearchChange}
+              onSearchChange={this.onIndexSearchChange}
               isLoading={isLoading}
             />
           </EuiFormRow>
@@ -108,12 +157,12 @@ export default class RollupIndices extends Component<RollupIndicesProps, RollupI
           >
             <EuiComboBox
               placeholder="Select or create target index"
-              options={indexOptions}
-              selectedOptions={targetIndex ? [targetIndex] : []}
-              onChange={onChange}
-              onCreateOption={onCreateIndex}
+              options={targetIndexOptions}
+              selectedOptions={targetIndex}
+              onChange={onChangeTargetIndex}
+              onCreateOption={this.onCreateOption}
               singleSelection={true}
-              onSearchChange={onIndexSearchChange}
+              onSearchChange={this.onIndexSearchChange}
               isLoading={isLoading}
             />
           </EuiFormRow>
