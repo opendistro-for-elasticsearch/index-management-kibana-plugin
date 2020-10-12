@@ -13,38 +13,60 @@
  * permissions and limitations under the License.
  */
 
-import React from "react";
+import React, { ChangeEvent, Component } from "react";
 import { EuiConfirmModal, EuiForm, EuiFormRow, EuiFieldText, EuiOverlayMask, EuiSpacer } from "@elastic/eui";
 
 interface DeleteModalProps {
   rollupId: string;
   closeDeleteModal: (event?: any) => void;
-  // onConfirmDelete: (event?: any) => void;
+  onClickDelete: (event?: any) => void;
 }
 
-const DeleteModal = ({ rollupId, closeDeleteModal }: DeleteModalProps) => (
-  <EuiOverlayMask>
-    <EuiConfirmModal
-      title={`Delete job "${rollupId}"`}
-      onCancel={closeDeleteModal}
-      onConfirm={closeDeleteModal}
-      cancelButtonText="Cancel"
-      confirmButtonText="Delete"
-      buttonColor="danger"
-      defaultFocusedButton="confirm"
-    >
-      <EuiForm>
-        <EuiFormRow
-          helpText={`By deleting this "${rollupId}", all future scheduled rollup execution will be canceled and any rollup history will be removed. However, your target index will remain as it is.`}
-        >
-          <EuiSpacer size={"s"} />
-        </EuiFormRow>
-        <EuiFormRow helpText={"To confirm deletion, enter delete in the text field"}>
-          <EuiFieldText placeholder={"delete"} />
-        </EuiFormRow>
-      </EuiForm>
-    </EuiConfirmModal>
-  </EuiOverlayMask>
-);
+interface DeleteModalState {
+  confirmDeleteText: string;
+}
 
-export default DeleteModal;
+export default class DeleteModal extends Component<DeleteModalProps, DeleteModalState> {
+  constructor(props: DeleteModalProps) {
+    super(props);
+
+    this.state = {
+      confirmDeleteText: "",
+    };
+  }
+
+  onChange = (e: ChangeEvent<HTMLInputElement>): void => {
+    this.setState({ confirmDeleteText: e.target.value });
+  };
+
+  render() {
+    const { rollupId, closeDeleteModal, onClickDelete } = this.props;
+    const { confirmDeleteText } = this.state;
+
+    return (
+      <EuiOverlayMask>
+        <EuiConfirmModal
+          title={`Delete job "${rollupId}"`}
+          onCancel={closeDeleteModal}
+          onConfirm={onClickDelete}
+          cancelButtonText="Cancel"
+          confirmButtonText="Delete"
+          buttonColor="danger"
+          defaultFocusedButton="confirm"
+          confirmButtonDisabled={confirmDeleteText != "delete"}
+        >
+          <EuiForm>
+            <EuiFormRow
+              helpText={`By deleting this "${rollupId}", all future scheduled rollup execution will be canceled and any rollup history will be removed. However, your target index will remain as it is.`}
+            >
+              <EuiSpacer size={"s"} />
+            </EuiFormRow>
+            <EuiFormRow helpText={"To confirm deletion, enter delete in the text field"}>
+              <EuiFieldText value={confirmDeleteText} placeholder={"delete"} onChange={this.onChange} />
+            </EuiFormRow>
+          </EuiForm>
+        </EuiConfirmModal>
+      </EuiOverlayMask>
+    );
+  }
+}

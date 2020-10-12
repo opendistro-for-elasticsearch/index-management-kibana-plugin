@@ -267,17 +267,18 @@ export default class Rollups extends Component<RollupsProps, RollupsState> {
     for (item of selectedItems) {
       const rollupId = item._id;
       try {
-        const response = await rollupService.stopRollup(rollupId);
+        const response = await rollupService.deleteRollup(rollupId);
 
         if (response.ok) {
+          this.closeDeleteModal();
           //TODO: Update status or pull jobs again
           //Show success message
-          toastNotifications.addSuccess(`${rollupId} is disabled`);
+          toastNotifications.addSuccess(`${rollupId} is deleted`);
         } else {
-          toastNotifications.addDanger(`Could not stop the rollup job "${rollupId}" : ${response.error}`);
+          toastNotifications.addDanger(`Could not delete the rollup job "${rollupId}" : ${response.error}`);
         }
       } catch (err) {
-        toastNotifications.addDanger(getErrorMessage(err, "Could not stop the rollup job"));
+        toastNotifications.addDanger(getErrorMessage(err, "Could not delete the rollup job"));
       }
     }
   };
@@ -510,7 +511,11 @@ export default class Rollups extends Component<RollupsProps, RollupsState> {
             tableLayout={"auto"}
           />
           {isDeleteModalVisible && (
-            <DeleteModal rollupId={selectedItems.length ? selectedItems[0]._id : ""} closeDeleteModal={this.closeDeleteModal} />
+            <DeleteModal
+              rollupId={selectedItems.length ? selectedItems[0]._id : ""}
+              closeDeleteModal={this.closeDeleteModal}
+              onClickDelete={this.onClickDelete}
+            />
           )}
         </div>
       </EuiPanel>
