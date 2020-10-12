@@ -13,51 +13,136 @@
  * permissions and limitations under the License.
  */
 
-import React from "react";
+import React, { Component } from "react";
 import { EuiSpacer, EuiFormRow, EuiComboBox, EuiCallOut } from "@elastic/eui";
 import { ContentPanel } from "../../../../components/ContentPanel";
-import { ManagedCatIndex } from "../../../../../server/models/interfaces";
 import { EuiComboBoxOptionOption } from "@elastic/eui/src/components/combo_box/types";
-import { IndexOption } from "../../models/interfaces";
+import { IndexItem } from "../../../../../models/interfaces";
+import { toastNotifications } from "ui/notify";
+import IndexService from "../../../../services/IndexService";
 
 interface RollupIndicesProps {
-  indicesOptions: IndexOption[];
-  sourceIndex: IndexOption;
-  targetIndex: IndexOption;
-  onChange: (options: EuiComboBoxOptionOption<ManagedCatIndex>[]) => void;
-  onCreateIndex: (searchValue: string, options: EuiComboBoxOptionOption<ManagedCatIndex>[]) => boolean | void;
+  indexService: IndexService;
+  sourceIndex: { label: string; value?: IndexItem }[];
+  sourceIndexError: string;
+  targetIndex: { label: string; value?: IndexItem }[];
+  onChangeSourceIndex: (options: EuiComboBoxOptionOption<IndexItem>[]) => void;
+  onChangeTargetIndex: (options: EuiComboBoxOptionOption<IndexItem>[]) => void;
 }
 
-const RollupIndices = ({ onChange, indicesOptions, sourceIndex, targetIndex, onCreateIndex }: RollupIndicesProps) => (
-  <ContentPanel bodyStyles={{ padding: "initial" }} title="Indices" titleSize="m">
-    <div style={{ paddingLeft: "10px" }}>
-      <EuiSpacer size="s" />
-      <EuiCallOut color="warning">
-        <p>Indices cannot be changed once the job is created. Please ensure that you have correct spellings.</p>
-      </EuiCallOut>
-      <EuiSpacer size="m" />
-      <EuiFormRow label="Source index" helpText="The index where this rollup job is performed on. Type in * as wildcard for index pattern.">
-        <EuiComboBox
-          placeholder="Select source index"
-          options={indicesOptions}
-          selectedOptions={sourceIndex ? [sourceIndex] : []}
-          onChange={onChange}
-        />
-      </EuiFormRow>
+interface RollupIndicesState {
+  isLoading: boolean;
+  indexOptions: { label: string; value?: IndexItem }[];
+  targetIndexOptions: { label: string; value?: IndexItem }[];
+}
 
-      <EuiFormRow
-        label="Target index"
-        helpText="The index stores rollup results. You can look up or an existing index to reuse or type to create a new index."
-      >
-        <EuiComboBox
-          placeholder="Select or create target index"
-          options={indicesOptions}
-          selectedOptions={targetIndex ? [targetIndex] : []}
-          onChange={onChange}
-          onCreateOption={onCreateIndex}
-        />
-      </EuiFormRow>
-    </div>
-  </ContentPanel>
-);
-export default RollupIndices;
+//TODO: Add error message
+//TODO: Implement onChangeIndex
+export default class RollupIndices extends Component<RollupIndicesProps, RollupIndicesState> {
+  constructor(props: RollupIndicesProps) {
+    super(props);
+    this.state = {
+      isLoading: true,
+      indexOptions: [],
+      targetIndexOptions: [],
+    };
+  }
+
+  async componentDidMount(): Promise<void> {
+    await this.onIndexSearchChange("");
+  }
+
+  onIndexSearchChange = async (searchValue: string): Promise<void> => {
+    const { indexService } = this.props;
+    this.setState({ isLoading: true, indexOptions: [] });
+    try {
+      const queryParamsString = `from=0&size=10&search=${searchValue}&sortDirection=desc&sortField=index`;
+      const managedIndicesResponse = await indexService.getIndices(queryParamsString);
+      if (managedIndicesResponse.ok) {
+        const options = searchValue.trim() ? [{ label: `${searchValue}*` }] : [];
+        const managedIndices = managedIndicesResponse.response.indices.map((managedIndex: IndexItem) => ({
+          label: managedIndex.index,
+        }));
+        this.setState({ indexOptions: options.concat(managedIndices), targetIndexOptions: managedIndices });
+      } else {
+        if (managedIndicesResponse.error.startsWith("[index_not_found_exception]")) {
+          toastNotifications.addDanger("You have not created a managed index yet");
+        } else {
+          toastNotifications.addDanger(managedIndicesResponse.error);
+        }
+      }
+    } catch (err) {
+      toastNotifications.addDanger(err.message);
+    }
+
+    this.setState({ isLoading: false });
+  };
+
+  onCreateOption = (searchValue: string, flattenedOptions: { label: string; value?: IndexItem }[]): void => {
+    const { targetIndexOptions } = this.state;
+    const { onChangeTargetIndex } = this.props;
+    const normalizedSearchValue = searchValue.trim();
+
+    if (!normalizedSearchValue) {
+      return;
+    }
+
+    const newOption = {
+      label: searchValue,
+    };
+
+    // Create the option if it doesn't exist.
+    if (flattenedOptions.findIndex((option) => option.label.trim() === normalizedSearchValue) === -1) {
+      targetIndexOptions.concat(newOption);
+      this.setState({ targetIndexOptions: targetIndexOptions });
+    }
+    onChangeTargetIndex([newOption]);
+  };
+
+  render() {
+    const { sourceIndex, sourceIndexError, targetIndex, onChangeSourceIndex, onChangeTargetIndex } = this.props;
+    const { isLoading, indexOptions, targetIndexOptions } = this.state;
+    return (
+      <ContentPanel bodyStyles={{ padding: "initial" }} title="Indices" titleSize="s">
+        <div style={{ paddingLeft: "10px" }}>
+          <EuiSpacer size="s" />
+          <EuiCallOut color="warning">
+            <p>Indices cannot be changed once the job is created. Please ensure that you have correct spellings.</p>
+          </EuiCallOut>
+          <EuiSpacer size="m" />
+          <EuiFormRow
+            label="Source index"
+            error={sourceIndexError}
+            helpText="The index where this rollup job is performed on. Type in * as wildcard for index pattern."
+          >
+            <EuiComboBox
+              placeholder="Select source index"
+              options={indexOptions}
+              selectedOptions={sourceIndex}
+              onChange={onChangeSourceIndex}
+              singleSelection={true}
+              onSearchChange={this.onIndexSearchChange}
+              isLoading={isLoading}
+            />
+          </EuiFormRow>
+
+          <EuiFormRow
+            label="Target index"
+            helpText="The index stores rollup results. You can look up or an existing index to reuse or type to create a new index."
+          >
+            <EuiComboBox
+              placeholder="Select or create target index"
+              options={targetIndexOptions}
+              selectedOptions={targetIndex}
+              onChange={onChangeTargetIndex}
+              onCreateOption={this.onCreateOption}
+              singleSelection={true}
+              onSearchChange={this.onIndexSearchChange}
+              isLoading={isLoading}
+            />
+          </EuiFormRow>
+        </div>
+      </ContentPanel>
+    );
+  }
+}

@@ -16,5 +16,6 @@
 import indices from "./indices";
 import policies from "./policies";
 import managedIndices from "./managedIndices";
+import rollups from "./rollups";
 
-export { indices, policies, managedIndices };
+export { indices, policies, managedIndices, rollups };

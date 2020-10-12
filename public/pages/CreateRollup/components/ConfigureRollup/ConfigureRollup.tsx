@@ -20,23 +20,18 @@ import { ContentPanel } from "../../../../components/ContentPanel";
 interface ConfigureRollupProps {
   rollupId: string;
   rollupIdError: string;
-  onChange: (value: ChangeEvent<HTMLInputElement>) => void;
+  onChangeName: (value: ChangeEvent<HTMLInputElement>) => void;
   onChangeDescription: (value: ChangeEvent<HTMLTextAreaElement>) => void;
   description: string;
 }
 
 //TODO: Define the allowed characters for rollup job name.
-const ConfigureRollup = ({ rollupId, rollupIdError, onChange, onChangeDescription, description }: ConfigureRollupProps) => (
+const ConfigureRollup = ({ rollupId, rollupIdError, onChangeName, onChangeDescription, description }: ConfigureRollupProps) => (
   <ContentPanel bodyStyles={{ padding: "initial" }} title="Job name and description" titleSize="m">
     <div style={{ paddingLeft: "10px" }}>
       <EuiSpacer size="s" />
-      <EuiFormRow
-        label="Name"
-        helpText="Specify a unique and descriptive name. Allowed characters are... Name cannot be changed after creation."
-        isInvalid={!!rollupIdError}
-        error={rollupIdError}
-      >
-        <EuiFieldText isInvalid={!!rollupIdError} placeholder="my-rollupjob1" value={rollupId} onChange={onChange} />
+      <EuiFormRow label="Name" helpText="Specify a unique and descriptive name." isInvalid={!!rollupIdError} error={rollupIdError}>
+        <EuiFieldText isInvalid={!!rollupIdError} placeholder="my-rollupjob1" value={rollupId} onChange={onChangeName} />
       </EuiFormRow>
 
       <EuiFormRow label="Description - optional" helpText="Describe details about this rollup job.">

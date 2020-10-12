@@ -16,26 +16,17 @@
 import React, { ChangeEvent, Component } from "react";
 import _ from "lodash";
 import chrome from "ui/chrome";
-import { BREADCRUMBS, ROUTES } from "../../../../utils/constants";
 import { RouteComponentProps } from "react-router-dom";
-import {
-  EuiFlexItem,
-  EuiFlexGroup,
-  EuiButton,
-  EuiTitle,
-  EuiSpacer,
-  EuiCallOut,
-  EuiButtonEmpty,
-  EuiComboBoxOptionOption,
-} from "@elastic/eui";
+import { EuiFlexItem, EuiFlexGroup, EuiButton, EuiTitle, EuiSpacer, EuiButtonEmpty, EuiComboBoxOptionOption } from "@elastic/eui";
 import { RollupService } from "../../../../services";
-import { RollupItem } from "../../models/interfaces";
-import CreateRollupSteps from "../../CreateRollup/components/CreateRollupSteps";
 import ConfigureRollup from "../../CreateRollup/components/ConfigureRollup";
 import Roles from "../../CreateRollup/components/Roles";
 import Schedule from "../../CreateRollup/components/Schedule";
-import { DEFAULT_ROLLUP } from "../../CreateRollup/utils/constants";
 import { toastNotifications } from "ui/notify";
+import queryString from "query-string";
+import { getErrorMessage } from "../../../utils/helpers";
+import { BREADCRUMBS, ROUTES } from "../../../utils/constants";
+import { Rollup } from "../../../../models/interfaces";
 
 interface EditRollupProps extends RouteComponentProps {
   rollupService: RollupService;
@@ -44,11 +35,23 @@ interface EditRollupProps extends RouteComponentProps {
 interface EditRollupState {
   rollupId: string;
   rollupIdError: string;
+  rollupSeqNo: number | null;
+  rollupPrimaryTerm: number | null;
   submitError: string;
   isSubmitting: boolean;
   hasSubmitted: boolean;
   description: string;
   roles: EuiComboBoxOptionOption<String>[];
+  jobEnabledByDefault: boolean;
+  recurringJob: string;
+  recurringDefinition: string;
+  interval: number;
+  intervalTimeunit: string;
+  cronExpression: string;
+  pageSize: number;
+  delayTime: number | undefined;
+  delayTimeunit: string;
+  rollupJSON: any;
 }
 
 //TODO: Fetch actual roles from backend
@@ -64,91 +67,6 @@ const options: EuiComboBoxOptionOption<String>[] = [
   },
 ];
 
-let SampleGetRollupJobs: RollupItem[] = [
-  {
-    id: "rollup-job-1",
-    seqNo: 1,
-    primaryTerm: 1,
-    rollup: {
-      source_index: "stats-*",
-      target_index: "rollup-stats",
-      schedule: {
-        interval: {
-          period: 1,
-          unit: "Days",
-        },
-      },
-      run_as_user: "dbbaughe",
-      roles: ["admin"],
-      description: "Rolls up our daily indices into monthly summarized views",
-      enabled: true,
-      error_notification: {
-        destination: { slack: { url: "..." } },
-        message_template: { source: "..." },
-      },
-      page_size: 200,
-      delay: "6h",
-      dimensions: {
-        date_histogram: {
-          field: "timestamp",
-          fixed_interval: "30d",
-          timezone: "America/Los_Angeles",
-        },
-        terms: {
-          fields: ["customer_city"],
-        },
-      },
-      metrics: [
-        {
-          field: "price",
-          metric_aggregations: ["avg", "min", "max", "sum"],
-        },
-      ],
-    },
-  },
-  {
-    id: "rollup-job-2",
-    seqNo: 2,
-    primaryTerm: 2,
-    rollup: {
-      source_index: "Pricehistory",
-      target_index: "All-history",
-      schedule: {
-        interval: {
-          period: 1,
-          unit: "Days",
-        },
-      },
-      run_as_user: "dbbaughe",
-      roles: ["admin"],
-      description: "Rolls up our daily indices into monthly summarized views",
-      enabled: false,
-      error_notification: {
-        destination: { slack: { url: "..." } },
-        message_template: { source: "..." },
-      },
-      page_size: 200,
-      delay: "6h",
-      dimensions: {
-        date_histogram: {
-          field: "timestamp",
-          fixed_interval: "30d",
-          timezone: "America/Los_Angeles",
-        },
-        terms: {
-          fields: ["customer_city"],
-        },
-      },
-      metrics: [
-        {
-          field: "price",
-          metric_aggregations: ["avg", "min", "max", "sum"],
-        },
-      ],
-    },
-  },
-];
-
 export default class EditRollup extends Component<EditRollupProps, EditRollupState> {
   //TODO: Get actual rollupId etc. here
   constructor(props: EditRollupProps) {
@@ -156,17 +74,82 @@ export default class EditRollup extends Component<EditRollupProps, EditRollupSta
     this.state = {
       rollupId: "",
       rollupIdError: "",
+      rollupSeqNo: null,
+      rollupPrimaryTerm: null,
       submitError: "",
       isSubmitting: false,
       hasSubmitted: false,
       description: "",
       roles: [],
+      jobEnabledByDefault: false,
+      recurringJob: "no",
+      recurringDefinition: "fixed",
+      interval: 2,
+      intervalTimeunit: "M",
+      cronExpression: "",
+      pageSize: 1000,
+      delayTime: undefined,
+      delayTimeunit: "MINUTES",
+      rollupJSON: `{"rollup":{}}`,
     };
   }
 
   componentDidMount = async (): Promise<void> => {
     chrome.breadcrumbs.set([BREADCRUMBS.INDEX_MANAGEMENT, BREADCRUMBS.ROLLUPS]);
-    chrome.breadcrumbs.push(BREADCRUMBS.EDIT_ROLLUP);
+    const { id } = queryString.parse(this.props.location.search);
+    console.log(id);
+    if (typeof id === "string" && !!id) {
+      chrome.breadcrumbs.push(BREADCRUMBS.EDIT_ROLLUP);
+      chrome.breadcrumbs.push({ text: id });
+
+      await this.getRollupToEdit(id);
+    } else {
+      toastNotifications.addDanger(`Invalid rollup id: ${id}`);
+      this.props.history.push(ROUTES.ROLLUPS);
+    }
+  };
+
+  getRollupToEdit = async (rollupId: string): Promise<void> => {
+    try {
+      const { rollupService } = this.props;
+      const response = await rollupService.getRollup(rollupId);
+
+      if (response.ok) {
+        let newJSON = JSON.parse(this.state.rollupJSON);
+        newJSON.rollup = response.response.rollup;
+        let roles: EuiComboBoxOptionOption<String>[] = [];
+        var i;
+        for (i = 0; i < response.response.rollup.roles.length; i++) {
+          roles.push({ label: response.response.rollup.roles[i] });
+        }
+
+        this.setState({
+          rollupSeqNo: response.response.seqNo,
+          rollupPrimaryTerm: response.response.primaryTerm,
+          rollupId: response.response.id,
+          description: response.response.rollup.description,
+          roles: roles,
+          jobEnabledByDefault: response.response.rollup.enabled,
+          pageSize: response.response.rollup.page_size,
+          delayTime: response.response.rollup.delay,
+          rollupJSON: newJSON,
+        });
+        if (response.response.rollup.schedule.cron == undefined) {
+          this.setState({
+            interval: response.response.rollup.schedule.interval.period,
+            intervalTimeunit: response.response.rollup.schedule.interval.unit,
+          });
+        } else {
+          this.setState({ cronExpression: response.response.rollup.schedule.cron.expression });
+        }
+      } else {
+        toastNotifications.addDanger(`Could not load the rollup job: ${response.error}`);
+        this.props.history.push(ROUTES.ROLLUPS);
+      }
+    } catch (err) {
+      toastNotifications.addDanger(getErrorMessage(err, "Could not load the rollup job"));
+      this.props.history.push(ROUTES.ROLLUPS);
+    }
   };
 
   onCancel = (): void => {
@@ -182,42 +165,141 @@ export default class EditRollup extends Component<EditRollupProps, EditRollupSta
 
   onChangeDescription = (e: ChangeEvent<HTMLTextAreaElement>): void => {
     const description = e.target.value;
-    this.setState({ description });
-    console.log(this.state);
+    let newJSON = this.state.rollupJSON;
+    newJSON.rollup.description = description;
+    this.setState({ description: description, rollupJSON: newJSON });
   };
 
   onChangeName = (e: ChangeEvent<HTMLInputElement>): void => {
     const { hasSubmitted } = this.state;
     const rollupId = e.target.value;
+    let newJSON = this.state.rollupJSON;
+    newJSON.rollup.rollupId = rollupId;
     if (hasSubmitted) this.setState({ rollupId, rollupIdError: rollupId ? "" : "Required" });
-    else this.setState({ rollupId });
+    else this.setState({ rollupId: rollupId, rollupJSON: newJSON });
   };
 
   onChangeRoles = (selectedOptions: EuiComboBoxOptionOption<String>[]): void => {
-    this.setState({ roles: selectedOptions });
+    let newJSON = this.state.rollupJSON;
+    newJSON.rollup.roles = selectedOptions.map(function (option) {
+      return option.label;
+    });
+    this.setState({ roles: selectedOptions, rollupJSON: newJSON });
+  };
+
+  onChangeJobEnabledByDefault = (): void => {
+    const checked = this.state.jobEnabledByDefault;
+    let newJSON = this.state.rollupJSON;
+    newJSON.rollup.enabled = checked;
+    this.setState({ jobEnabledByDefault: !checked, rollupJSON: newJSON });
+  };
+
+  onChangeCron = (e: ChangeEvent<HTMLTextAreaElement>): void => {
+    let newJSON = this.state.rollupJSON;
+    newJSON.rollup.schedule.cron.expression = e.target.value;
+    this.setState({ cronExpression: e.target.value, rollupJSON: newJSON });
+  };
+
+  //TODO: Figure out the correct format of delay time, do we need to convert the value along with timeunit?
+  onChangeDelayTime = (e: ChangeEvent<HTMLInputElement>): void => {
+    let newJSON = this.state.rollupJSON;
+    newJSON.rollup.delay = e.target.value;
+    this.setState({ delayTime: e.target.valueAsNumber, rollupJSON: newJSON });
+  };
+
+  onChangeIntervalTime = (e: ChangeEvent<HTMLInputElement>): void => {
+    let newJSON = this.state.rollupJSON;
+    newJSON.rollup.schedule.interval.period = e.target.value;
+    this.setState({ interval: e.target.valueAsNumber, rollupJSON: newJSON });
+  };
+
+  onChangePage = (e: ChangeEvent<HTMLInputElement>): void => {
+    let newJSON = this.state.rollupJSON;
+    newJSON.rollup.page_size = e.target.value;
+    this.setState({ pageSize: e.target.valueAsNumber, rollupJSON: newJSON });
+  };
+
+  //Trying to clear interval field when cron expression is defined
+  onChangeRecurringDefinition = (e: ChangeEvent<HTMLSelectElement>): void => {
+    let newJSON = this.state.rollupJSON;
+    this.setState({ recurringDefinition: e.target.value, rollupJSON: newJSON });
+  };
+
+  onChangeRecurringJob = (optionId: string): void => {
+    let newJSON = this.state.rollupJSON;
+    newJSON.rollup.continuous = optionId == "yes";
+    this.setState({ recurringJob: optionId, rollupJSON: newJSON });
+  };
+
+  //Update delay field in JSON if delay value is defined.
+  onChangeDelayTimeunit = (e: ChangeEvent<HTMLSelectElement>): void => {
+    this.setState({ delayTimeunit: e.target.value });
+  };
+
+  onChangeIntervalTimeunit = (e: ChangeEvent<HTMLSelectElement>): void => {
+    let newJSON = this.state.rollupJSON;
+    newJSON.rollup.schedule.interval.unit = e.target.value;
+    this.setState({ intervalTimeunit: e.target.value, rollupJSON: newJSON });
   };
 
   onSubmit = async (): Promise<void> => {
-    const { rollupId } = this.state;
+    const { rollupId, rollupJSON } = this.state;
     this.setState({ submitError: "", isSubmitting: true, hasSubmitted: true });
     try {
       if (!rollupId) {
         this.setState({ rollupIdError: "Required" });
       } else {
-        //TODO: Build JSON string here
-        const rollup = DEFAULT_ROLLUP;
-        // await this.onCreate(rollupId, rollup);
+        //Build JSON string here
+        await this.onUpdate(rollupId, rollupJSON);
       }
     } catch (err) {
-      toastNotifications.addDanger("Invalid Policy JSON");
+      toastNotifications.addDanger("Invalid Rollup JSON");
       console.error(err);
     }
 
     this.setState({ isSubmitting: false });
   };
 
+  onUpdate = async (rollupId: string, rollup: Rollup): Promise<void> => {
+    try {
+      const { rollupService } = this.props;
+      const { rollupPrimaryTerm, rollupSeqNo } = this.state;
+      if (rollupSeqNo == null || rollupPrimaryTerm == null) {
+        toastNotifications.addDanger("Could not update rollup without seqNo and primaryTerm");
+        return;
+      }
+      const response = await rollupService.putRollup(rollup, rollupId, rollupSeqNo, rollupPrimaryTerm);
+      if (response.ok) {
+        console.log("Submit success.");
+        toastNotifications.addSuccess(`Updated rollup: ${response.response._id}`);
+        this.props.history.push(ROUTES.ROLLUPS);
+      } else {
+        this.setState({ submitError: response.error });
+      }
+    } catch (err) {
+      this.setState({ submitError: getErrorMessage(err, "There was a problem updating the rollup") });
+    }
+  };
+
   render() {
-    const { rollupId, rollupIdError, submitError, isSubmitting, hasSubmitted, roles, description } = this.state;
+    const {
+      rollupId,
+      rollupIdError,
+      submitError,
+      isSubmitting,
+      hasSubmitted,
+      roles,
+      description,
+      jobEnabledByDefault,
+      recurringJob,
+      recurringDefinition,
+      interval,
+      intervalTimeunit,
+      cronExpression,
+      pageSize,
+      delayTime,
+      delayTimeunit,
+    } = this.state;
     return (
       <div style={{ padding: "25px 50px" }}>
         <EuiTitle size="l">
@@ -235,7 +317,29 @@ export default class EditRollup extends Component<EditRollupProps, EditRollupSta
 
         <Roles rollupId={rollupId} rollupIdError={rollupIdError} onChange={this.onChangeRoles} roleOptions={options} roles={roles} />
         <EuiSpacer />
-        <Schedule rollupId={rollupId} rollupIdError={rollupIdError} onChange={this.onChange} />
+        <Schedule
+          isEdit={true}
+          rollupId={rollupId}
+          rollupIdError={rollupIdError}
+          jobEnabledByDefault={jobEnabledByDefault}
+          recurringJob={recurringJob}
+          recurringDefinition={recurringDefinition}
+          interval={interval}
+          intervalTimeunit={intervalTimeunit}
+          cronExpression={cronExpression}
+          pageSize={pageSize}
+          delayTime={delayTime}
+          delayTimeunit={delayTimeunit}
+          onChangeJobEnabledByDefault={this.onChangeJobEnabledByDefault}
+          onChangeCron={this.onChangeCron}
+          onChangeDelayTime={this.onChangeDelayTime}
+          onChangeIntervalTime={this.onChangeIntervalTime}
+          onChangePage={this.onChangePage}
+          onChangeRecurringDefinition={this.onChangeRecurringDefinition}
+          onChangeRecurringJob={this.onChangeRecurringJob}
+          onChangeDelayTimeunit={this.onChangeDelayTimeunit}
+          onChangeIntervalTimeunit={this.onChangeIntervalTimeunit}
+        />
 
         <EuiSpacer />
 

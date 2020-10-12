@@ -14,7 +14,7 @@
  */
 
 import React, { Component } from "react";
-import { EuiSpacer, EuiTitle, EuiFlexGroup, EuiFlexItem } from "@elastic/eui";
+import { EuiSpacer, EuiTitle, EuiFlexGroup, EuiFlexItem, EuiCallOut } from "@elastic/eui";
 import chrome from "ui/chrome";
 import { toastNotifications } from "ui/notify";
 import { RouteComponentProps } from "react-router-dom";
@@ -33,6 +33,7 @@ interface CreateRollupProps extends RouteComponentProps {
   onChangeStep: (step: number) => void;
   rollupId: string;
   description: string;
+  submitError: string;
 }
 
 interface CreateRollupState {
@@ -105,7 +106,7 @@ export default class CreateRollupStep4 extends Component<CreateRollupProps, Crea
 
   render() {
     if (this.props.currentStep != 4) return null;
-    const { rollupId, description, onChangeStep } = this.props;
+    const { rollupId, description, onChangeStep, submitError } = this.props;
     const { rollupIdError } = this.state;
 
     return (
@@ -124,6 +125,11 @@ export default class CreateRollupStep4 extends Component<CreateRollupProps, Crea
             <HistogramAndMetrics rollupId={rollupId} rollupIdError={rollupIdError} onChangeStep={onChangeStep} />
             <EuiSpacer />
             <ScheduleRolesAndNotifications rollupId={rollupId} rollupIdError={rollupIdError} onChangeStep={onChangeStep} />
+            {submitError && (
+              <EuiCallOut title="Sorry, there was an error" color="danger" iconType="alert">
+                <p>{submitError}</p>
+              </EuiCallOut>
+            )}
           </EuiFlexItem>
         </EuiFlexGroup>
         <EuiSpacer />
