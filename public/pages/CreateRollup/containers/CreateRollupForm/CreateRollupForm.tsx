@@ -206,7 +206,7 @@ export default class CreateRollupForm extends Component<CreateRollupFormProps, C
     });
     const sourceIndexError = sourceIndex.length ? "" : "Required";
 
-    newJSON.rollup.sourceIndex = sourceIndex[0];
+    newJSON.rollup.source_index = sourceIndex[0];
     this.setState({ sourceIndex: options, rollupJSON: newJSON, sourceIndexError: sourceIndexError });
   };
 
@@ -218,7 +218,7 @@ export default class CreateRollupForm extends Component<CreateRollupFormProps, C
     });
     const rollupError = targetIndex.length ? "" : "Required";
 
-    newJSON.rollup.targetIndex = targetIndex[0];
+    newJSON.rollup.target_index = targetIndex[0];
     this.setState({ targetIndex: options, rollupJSON: newJSON, rollupIdError: rollupError });
   };
 
