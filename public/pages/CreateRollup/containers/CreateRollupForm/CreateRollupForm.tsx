@@ -54,6 +54,12 @@ interface CreateRollupFormState {
   targetIndex: { label: string; value?: IndexItem }[];
   roles: EuiComboBoxOptionOption<String>[];
 
+  timestamp: EuiComboBoxOptionOption<String>[];
+  intervalType: string;
+  intervalValue: number;
+  timezone: string;
+  timeunit: string;
+
   jobEnabledByDefault: boolean;
   recurringJob: string;
   recurringDefinition: string;
@@ -101,6 +107,12 @@ export default class CreateRollupForm extends Component<CreateRollupFormProps, C
       sourceIndexError: "",
       targetIndex: [],
       roles: [],
+
+      timestamp: [],
+      intervalType: "fixed",
+      intervalValue: 1,
+      timezone: "-7",
+      timeunit: "ms",
 
       jobEnabledByDefault: false,
       recurringJob: "no",
@@ -163,26 +175,6 @@ export default class CreateRollupForm extends Component<CreateRollupFormProps, C
     });
   };
 
-  //TODO: Go back to rollup jobs page when cancelled
-  onCancel = (): void => {
-    this.props.history.push(ROUTES.ROLLUPS);
-  };
-
-  onCreate = async (rollupId: string, rollup: Rollup): Promise<void> => {
-    const { rollupService } = this.props;
-    try {
-      const response = await rollupService.putRollup(rollup, rollupId);
-      if (response.ok) {
-        toastNotifications.addSuccess(`Created rollup: ${response.response._id}`);
-        this.props.history.push(ROUTES.ROLLUPS);
-      } else {
-        this.setState({ submitError: response.error });
-      }
-    } catch (err) {
-      this.setState({ submitError: getErrorMessage(err, "There was a problem creating the rollup job") });
-    }
-  };
-
   onChangeDescription = (e: ChangeEvent<HTMLTextAreaElement>): void => {
     const description = e.target.value;
     let newJSON = this.state.rollupJSON;
@@ -228,6 +220,42 @@ export default class CreateRollupForm extends Component<CreateRollupFormProps, C
       return option.label;
     });
     this.setState({ roles: selectedOptions, rollupJSON: newJSON });
+  };
+
+  onChangeIntervalType = (optionId: string): void => {
+    this.setState({ intervalType: optionId });
+    this.setDateHistogram();
+  };
+
+  onChangeIntervalValue = (e: ChangeEvent<HTMLInputElement>): void => {
+    this.setState({ intervalValue: e.target.valueAsNumber });
+    this.setDateHistogram();
+  };
+
+  onChangeTimeunit = (e: ChangeEvent<HTMLSelectElement>): void => {
+    this.setState({ timeunit: e.target.value });
+    this.setDateHistogram();
+  };
+
+  //TODO: Clear the other field?
+  setDateHistogram = (): void => {
+    const { intervalType, intervalValue, timeunit } = this.state;
+    let newJSON = this.state.rollupJSON;
+    if (intervalType == "calender") {
+      newJSON.dimensions.date_histogram.calender_interval = `1${timeunit}`;
+    } else {
+      newJSON.rollup.dimensions.date_histogram.fixed_interval = `${intervalValue}${timeunit}`;
+    }
+    this.setState({ rollupJSON: newJSON });
+  };
+
+  onChangeTimestamp = (selectedOptions: EuiComboBoxOptionOption<String>[]): void => {
+    //newJSON.dimensions.date_histogram.field
+    this.setState({ timestamp: selectedOptions });
+  };
+
+  onChangeTimezone = (e: ChangeEvent<HTMLSelectElement>): void => {
+    this.setState({ timezone: e.target.value });
   };
 
   onChangeJobEnabledByDefault = (): void => {
@@ -297,11 +325,31 @@ export default class CreateRollupForm extends Component<CreateRollupFormProps, C
         await this.onCreate(rollupId, rollupJSON);
       }
     } catch (err) {
-      toastNotifications.addDanger("Invalid Policy JSON");
+      toastNotifications.addDanger("Invalid Rollup JSON");
       console.error(err);
     }
 
     this.setState({ isSubmitting: false });
+  };
+
+  //TODO: Go back to rollup jobs page when cancelled
+  onCancel = (): void => {
+    this.props.history.push(ROUTES.ROLLUPS);
+  };
+
+  onCreate = async (rollupId: string, rollup: Rollup): Promise<void> => {
+    const { rollupService } = this.props;
+    try {
+      const response = await rollupService.putRollup(rollup, rollupId);
+      if (response.ok) {
+        toastNotifications.addSuccess(`Created rollup: ${response.response._id}`);
+        this.props.history.push(ROUTES.ROLLUPS);
+      } else {
+        this.setState({ submitError: response.error });
+      }
+    } catch (err) {
+      this.setState({ submitError: getErrorMessage(err, "There was a problem creating the rollup job") });
+    }
   };
 
   render() {
@@ -317,6 +365,11 @@ export default class CreateRollupForm extends Component<CreateRollupFormProps, C
       targetIndex,
       roles,
       currentStep,
+      timestamp,
+      intervalValue,
+      intervalType,
+      timezone,
+      timeunit,
       jobEnabledByDefault,
       recurringJob,
       recurringDefinition,
@@ -349,7 +402,20 @@ export default class CreateRollupForm extends Component<CreateRollupFormProps, C
           onChangeTargetIndex={this.onChangeTargetIndex}
           currentStep={this.state.currentStep}
         />
-        <CreateRollupStep2 {...this.props} currentStep={this.state.currentStep} />
+        <CreateRollupStep2
+          {...this.props}
+          currentStep={this.state.currentStep}
+          intervalType={intervalType}
+          intervalValue={intervalValue}
+          timestamp={timestamp}
+          timeunit={timeunit}
+          timezone={timezone}
+          onChangeIntervalType={this.onChangeIntervalType}
+          onChangeIntervalValue={this.onChangeIntervalValue}
+          onChangeTimestamp={this.onChangeTimestamp}
+          onChangeTimeunit={this.onChangeTimeunit}
+          onChangeTimezone={this.onChangeTimezone}
+        />
         <CreateRollupStep3
           {...this.props}
           currentStep={this.state.currentStep}

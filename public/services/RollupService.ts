@@ -1,5 +1,5 @@
 /*
- * Copyright 2019 Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ * Copyright 2020 Amazon.com, Inc. or its affiliates. All Rights Reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License").
  * You may not use this file except in compliance with the License.
@@ -21,7 +21,7 @@ import { ServerResponse } from "../../server/models/types";
 import { NODE_API } from "../../utils/constants";
 import queryString from "query-string";
 import { DocumentRollup, Rollup } from "../../models/interfaces";
-import { API, INDEX } from "../../server/utils/constants";
+import { INDEX } from "../../server/utils/constants";
 
 export default class RollupService {
   httpClient: IHttpService;

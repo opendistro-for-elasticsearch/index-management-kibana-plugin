@@ -13,10 +13,10 @@
  * permissions and limitations under the License.
  */
 
+//Removed delay for now to see if acceptable
 export const EMPTY_ROLLUP = JSON.stringify({
   rollup: {
     continuous: false,
-    delay: {},
     description: "",
     dimensions: [
       {

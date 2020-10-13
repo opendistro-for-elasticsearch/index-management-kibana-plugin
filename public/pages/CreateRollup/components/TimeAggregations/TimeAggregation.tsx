@@ -27,17 +27,24 @@ import {
 } from "@elastic/eui";
 import { ContentPanel } from "../../../../components/ContentPanel";
 import { CalenderTimeunitOptions, FixedTimeunitOptions, TimezoneOptions } from "../../utils/constants";
+import { RollupService } from "../../../../services";
 
 interface TimeAggregationProps {
+  rollupService: RollupService;
+  intervalValue: number;
   intervalType: string;
   selectedTimestamp: EuiComboBoxOptionOption<String>[];
-  timestampOptions: EuiComboBoxOptionOption<String>[];
   timeunit: string;
   timezone: string;
   onChangeIntervalType: (optionId: string) => void;
+  onChangeIntervalValue: (e: ChangeEvent<HTMLInputElement>) => void;
   onChangeTimestamp: (options: EuiComboBoxOptionOption<String>[]) => void;
   onChangeTimeunit: (e: ChangeEvent<HTMLSelectElement>) => void;
   onChangeTimezone: (e: ChangeEvent<HTMLSelectElement>) => void;
+}
+
+interface TimeAggregationState {
+  timestampOptions: EuiComboBoxOptionOption<String>[];
 }
 
 const radios = [
@@ -50,23 +57,44 @@ const radios = [
     label: "Calender",
   },
 ];
-export default class TimeAggregation extends Component<TimeAggregationProps> {
+
+//TODO: Fetch actual timestamp options from backend
+const options: EuiComboBoxOptionOption<String>[] = [
+  {
+    label: "timestamp1",
+  },
+  {
+    label: "timestamp2",
+  },
+  {
+    label: "timestamp3",
+  },
+];
+export default class TimeAggregation extends Component<TimeAggregationProps, TimeAggregationState> {
   constructor(props: TimeAggregationProps) {
     super(props);
+
+    this.state = {
+      timestampOptions: options,
+    };
   }
 
   render() {
     const {
       intervalType,
+      intervalValue,
       selectedTimestamp,
-      timestampOptions,
       timeunit,
       timezone,
       onChangeIntervalType,
+      onChangeIntervalValue,
       onChangeTimestamp,
       onChangeTimeunit,
       onChangeTimezone,
     } = this.props;
+
+    const { timestampOptions } = this.state;
+
     return (
       <ContentPanel bodyStyles={{ padding: "initial" }} title="Time aggregation" titleSize="m">
         <div style={{ paddingLeft: "10px" }}>
@@ -88,7 +116,12 @@ export default class TimeAggregation extends Component<TimeAggregationProps> {
           <EuiFlexGroup style={{ maxWidth: 300 }}>
             <EuiFlexItem grow={false} style={{ width: 100 }}>
               <EuiFormRow label="Interval">
-                <EuiFieldNumber min={1} placeholder="2" />
+                <EuiFieldNumber
+                  min={1}
+                  value={intervalType == "fixed" ? intervalValue : 1}
+                  disabled={intervalType == "calender"}
+                  onChange={onChangeIntervalValue}
+                />
               </EuiFormRow>
             </EuiFlexItem>
             <EuiFlexItem>

@@ -44,15 +44,12 @@ import {
   EuiContextMenuItem,
   EuiContextMenuPanel,
   EuiTextColor,
-  EuiOverlayMask,
-  EuiConfirmModal,
 } from "@elastic/eui";
 import { rollupsColumns } from "../../utils/constants";
 import { RollupService } from "../../../../services";
 import RollupEmptyPrompt from "../../components/RollupEmptyPrompt";
 import { RollupItem, RollupsQueryParams } from "../../models/interfaces";
 import { getURLQueryParams } from "../../utils/helpers";
-import { EuiForm } from "@elastic/eui/src/components/form/form";
 import DeleteModal from "../../components/DeleteModal";
 
 interface RollupsProps extends RouteComponentProps {
@@ -273,7 +270,7 @@ export default class Rollups extends Component<RollupsProps, RollupsState> {
           this.closeDeleteModal();
           //TODO: Update status or pull jobs again
           //Show success message
-          toastNotifications.addSuccess(`${rollupId} is deleted`);
+          toastNotifications.addSuccess(`"${rollupId}" successfully deleted!`);
         } else {
           toastNotifications.addDanger(`Could not delete the rollup job "${rollupId}" : ${response.error}`);
         }
