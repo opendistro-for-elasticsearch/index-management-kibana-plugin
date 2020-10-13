@@ -24,7 +24,6 @@ import CreateRollupSteps from "../../components/CreateRollupSteps";
 import HistogramAndMetrics from "../../components/HistogramAndMetrics";
 import JobNameAndIndices from "../../components/JobNameAndIndices";
 import ScheduleRolesAndNotifications from "../../components/ScheduleRolesAndNotifications";
-import CreateRollup from "../CreateRollup";
 
 interface CreateRollupProps extends RouteComponentProps {
   rollupService: RollupService;
@@ -79,7 +78,20 @@ export default class CreateRollupStep4 extends Component<CreateRollupProps> {
 
   render() {
     if (this.props.currentStep != 4) return null;
-    const { rollupId, description, onChangeStep, submitError, sourceIndex, targetIndex, roles } = this.props;
+    const {
+      rollupId,
+      description,
+      onChangeStep,
+      submitError,
+      sourceIndex,
+      targetIndex,
+      roles,
+      intervalType,
+      intervalValue,
+      timestamp,
+      timezone,
+      timeunit,
+    } = this.props;
 
     return (
       <div style={{ padding: "5px 50px" }}>
@@ -101,7 +113,15 @@ export default class CreateRollupStep4 extends Component<CreateRollupProps> {
               onChangeStep={onChangeStep}
             />
             <EuiSpacer />
-            <HistogramAndMetrics rollupId={rollupId} onChangeStep={onChangeStep} />
+            <HistogramAndMetrics
+              rollupId={rollupId}
+              intervalType={intervalType}
+              intervalValue={intervalValue}
+              timestamp={timestamp}
+              timeunit={timeunit}
+              timezone={timezone}
+              onChangeStep={onChangeStep}
+            />
             <EuiSpacer />
             <ScheduleRolesAndNotifications rollupId={rollupId} onChangeStep={onChangeStep} />
             {submitError && (
