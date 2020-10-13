@@ -277,9 +277,7 @@ export default class EditRollup extends Component<EditRollupProps, EditRollupSta
     const {
       rollupId,
       rollupIdError,
-      submitError,
       isSubmitting,
-      hasSubmitted,
       roles,
       description,
       jobEnabledByDefault,
