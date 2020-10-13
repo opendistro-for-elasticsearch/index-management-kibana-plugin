@@ -124,9 +124,12 @@ export const TimezoneOptions = [
 
 export const TimezoneOptionsByRegion = [
   { text: "UTC +13 / +14 - Pacific/Apia", value: "Pacific/Apia" },
+  { text: "UTC +13", value: "UTC +13" },
+  { text: "UTC +12", value: "UTC +12" },
   { text: "UTC +12 / +13 - Pacific/Auckland", value: "Pacific/Auckland" },
   { text: "UTC +11 - Pacific/Guadalcanal", value: "Pacific/Guadalcanal" },
   { text: "UTC +10:00 / +11:00 - Australia/Sydney", value: "Australia/Sydney" },
+  { text: "UTC +10", value: "UTC +10" },
   { text: "UTC +9:30 / +10:30 - Australia/Darwin", value: "Australia/Darwin" },
   { text: "UTC +9 - Asia/Tokyo", value: "Asia/Tokyo" },
   { text: "UTC +8 - Asia/Shanghai", value: "Asia/Shanghai" },
@@ -137,10 +140,11 @@ export const TimezoneOptionsByRegion = [
   { text: "UTC +4 Asia/Yerevan", value: "Asia/Yerevan" },
   { text: "UTC +3 - Africa/Addis Ababa", value: "Africa/Addis_Ababa" },
   { text: "UTC +2 - Africa/Cairo", value: "Africa/Cairo" },
-  { text: "UTC +2 - Africa/Harare", value: "Africa/Harare" },
   { text: "UTC +1 / +2 - Europe/Paris", value: "Europe/Paris" },
+  { text: "UTC +0 - Europe/London", value: "UTC +0" },
+  { text: "UTC -1 ", value: "UTC -1" },
+  { text: "UTC -2 ", value: "UTC -2" },
   { text: "UTC -2:30 / -3:30 - America/St Johns", value: "America/St_Johns" },
-  { text: "UTC -3 - America/Argentina/Buenos Aires", value: "America/Argentina/Buenos_Aires" },
   { text: "UTC -3 - America/Sao Paulo", value: "America/Sao_Paulo" },
   { text: "UTC -4 - America/Puerto Rico", value: "America/Puerto_Rico" },
   { text: "UTC -4 /-5 - America/Indiana/Indianapolis", value: "America/Indiana/Indianapolis" },
@@ -151,4 +155,6 @@ export const TimezoneOptionsByRegion = [
   { text: "UTC -7 / -8 - America/Los Angeles", value: "America/Los_Angeles" },
   { text: "UTC -8 / -9 - America/Anchorage", value: "America/Anchorage" },
   { text: "UTC -10", value: "-10:00" },
+  { text: "UTC -11", value: "UTC -11" },
+  { text: "UTC -12", value: "UTC -12" },
 ];
