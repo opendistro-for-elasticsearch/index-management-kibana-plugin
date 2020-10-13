@@ -470,6 +470,23 @@ export default class CreateRollupForm extends Component<CreateRollupFormProps, C
           {...this.props}
           rollupId={rollupId}
           description={description}
+          sourceIndex={sourceIndex}
+          targetIndex={targetIndex}
+          roles={roles}
+          intervalType={intervalType}
+          intervalValue={intervalValue}
+          timestamp={timestamp}
+          timeunit={timeunit}
+          timezone={timezone}
+          jobEnabledByDefault={jobEnabledByDefault}
+          recurringJob={recurringJob}
+          recurringDefinition={recurringDefinition}
+          interval={interval}
+          intervalTimeunit={intervalTimeunit}
+          cronExpression={cronExpression}
+          pageSize={pageSize}
+          delayTime={delayTime}
+          delayTimeunit={delayTimeunit}
           currentStep={this.state.currentStep}
           onChangeStep={this.onChangeStep}
           submitError={submitError}

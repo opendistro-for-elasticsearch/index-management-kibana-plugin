@@ -20,7 +20,6 @@ import { ModalConsumer } from "../../../../components/Modal";
 
 interface HistogramAndMetricsProps {
   rollupId: string;
-  rollupIdError: string;
   onChangeStep: (step: number) => void;
 }
 

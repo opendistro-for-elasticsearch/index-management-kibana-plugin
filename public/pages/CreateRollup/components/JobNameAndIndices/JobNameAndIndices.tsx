@@ -14,14 +14,17 @@
  */
 
 import React, { Component } from "react";
-import { EuiFlexGrid, EuiSpacer, EuiFlexItem, EuiText } from "@elastic/eui";
+import { EuiFlexGrid, EuiSpacer, EuiFlexItem, EuiText, EuiComboBoxOptionOption } from "@elastic/eui";
 import { ContentPanel, ContentPanelActions } from "../../../../components/ContentPanel";
 import { ModalConsumer } from "../../../../components/Modal";
+import { IndexItem } from "../../../../../models/interfaces";
 
 interface JobNameAndIndicesProps {
   rollupId: string;
-  rollupIdError: string;
   description: string;
+  sourceIndex: { label: string; value?: IndexItem }[];
+  targetIndex: { label: string; value?: IndexItem }[];
+  roles: EuiComboBoxOptionOption<String>[];
   onChangeStep: (step: number) => void;
 }
 
@@ -29,8 +32,16 @@ export default class JobNameAndIndices extends Component<JobNameAndIndicesProps>
   constructor(props: JobNameAndIndicesProps) {
     super(props);
   }
+
   render() {
-    const { rollupId, description, onChangeStep } = this.props;
+    const { rollupId, description, onChangeStep, sourceIndex, targetIndex, roles } = this.props;
+
+    //Process roles to a string here.
+    const rolesText = roles.map(function (option) {
+      return option.label;
+    });
+
+    console.log("Original: " + rolesText + "Values: " + rolesText.values());
 
     return (
       <ContentPanel
@@ -66,13 +77,13 @@ export default class JobNameAndIndices extends Component<JobNameAndIndicesProps>
             <EuiFlexItem>
               <EuiText size={"xs"}>
                 <dt>Source Index</dt>
-                <dd>{}</dd>
+                <dd>{sourceIndex[0].label}</dd>
               </EuiText>
             </EuiFlexItem>
             <EuiFlexItem>
               <EuiText size={"xs"}>
                 <dt>Roles</dt>
-                <dd>{}</dd>
+                <dd>{rolesText.toString()}</dd>
               </EuiText>
             </EuiFlexItem>
             <EuiFlexItem>
@@ -84,7 +95,7 @@ export default class JobNameAndIndices extends Component<JobNameAndIndicesProps>
             <EuiFlexItem>
               <EuiText size={"xs"}>
                 <dt>Target index</dt>
-                <dd>{}</dd>
+                <dd>{targetIndex[0].label}</dd>
               </EuiText>
             </EuiFlexItem>
           </EuiFlexGrid>
