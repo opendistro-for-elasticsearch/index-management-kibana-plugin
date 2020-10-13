@@ -111,7 +111,7 @@ export default class CreateRollupForm extends Component<CreateRollupFormProps, C
       timestamp: [],
       intervalType: "fixed",
       intervalValue: 1,
-      timezone: "-7",
+      timezone: "America/Los_Angeles",
       timeunit: "ms",
 
       jobEnabledByDefault: false,

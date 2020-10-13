@@ -26,7 +26,7 @@ import {
   EuiComboBoxOptionOption,
 } from "@elastic/eui";
 import { ContentPanel } from "../../../../components/ContentPanel";
-import { CalenderTimeunitOptions, FixedTimeunitOptions, TimezoneOptions } from "../../utils/constants";
+import { CalenderTimeunitOptions, FixedTimeunitOptions, TimezoneOptions, TimezoneOptionsByRegion } from "../../utils/constants";
 import { RollupService } from "../../../../services";
 
 interface TimeAggregationProps {
@@ -137,7 +137,7 @@ export default class TimeAggregation extends Component<TimeAggregationProps, Tim
           </EuiFlexGroup>
           <EuiSpacer size="m" />
           <EuiFormRow label="Timezone">
-            <EuiSelect id="timezone" options={TimezoneOptions} value={timezone} onChange={onChangeTimezone} />
+            <EuiSelect id="timezone" options={TimezoneOptionsByRegion} value={timezone} onChange={onChangeTimezone} />
           </EuiFormRow>
         </div>
       </ContentPanel>
