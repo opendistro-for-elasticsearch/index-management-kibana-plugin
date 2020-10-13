@@ -47,7 +47,7 @@ export default class JobNameAndIndices extends Component<JobNameAndIndicesProps>
       <ContentPanel
         actions={
           <ModalConsumer>
-            {({ onShow }) => (
+            {() => (
               <ContentPanelActions
                 actions={[
                   {
