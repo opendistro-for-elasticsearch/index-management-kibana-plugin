@@ -22,7 +22,6 @@ interface HistogramAndMetricsProps {
   rollupId: string;
   onChangeStep: (step: number) => void;
   timestamp: EuiComboBoxOptionOption<String>[];
-  intervalType: string;
   intervalValue: number;
   timezone: string;
   timeunit: string;

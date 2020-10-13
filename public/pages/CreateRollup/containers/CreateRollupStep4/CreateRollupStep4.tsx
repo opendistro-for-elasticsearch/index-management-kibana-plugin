@@ -115,7 +115,6 @@ export default class CreateRollupStep4 extends Component<CreateRollupProps> {
             <EuiSpacer />
             <HistogramAndMetrics
               rollupId={rollupId}
-              intervalType={intervalType}
               intervalValue={intervalValue}
               timestamp={timestamp}
               timeunit={timeunit}
