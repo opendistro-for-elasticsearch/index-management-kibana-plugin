@@ -143,7 +143,6 @@ export default class RollupService {
 
   getMappings = async (req: Request, h: ResponseToolkit): Promise<ServerResponse<GetFieldsResponse>> => {
     try {
-      console.log("reached node");
       const { index } = req.params;
       const { callWithRequest } = this.esDriver.getCluster(CLUSTER.DATA);
       const mappings = await callWithRequest(req, "indices.getMapping", { index });

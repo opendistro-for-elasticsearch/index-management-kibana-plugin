@@ -54,6 +54,8 @@ interface CreateRollupFormState {
   targetIndex: { label: string; value?: IndexItem }[];
   roles: EuiComboBoxOptionOption<String>[];
 
+  mappings: any;
+  fields: any;
   timestamp: EuiComboBoxOptionOption<String>[];
   intervalType: string;
   intervalValue: number;
@@ -102,6 +104,8 @@ export default class CreateRollupForm extends Component<CreateRollupFormProps, C
       indices: [],
       totalIndices: 0,
 
+      mappings: "",
+      fields: undefined,
       description: "",
       sourceIndex: [],
       sourceIndexError: "",
@@ -139,10 +143,15 @@ export default class CreateRollupForm extends Component<CreateRollupFormProps, C
   getMappings = async (): Promise<void> => {
     try {
       const { rollupService } = this.props;
+      const { sourceIndex } = this.state;
       const response = await rollupService.getMappings("kibana_sample_data_flights");
       console.log(response);
       if (response.ok) {
-        // this.setState({});
+        //Set mapping when there is source index selected.
+        this.setState({
+          mappings: response.response,
+          fields: sourceIndex.length ? `response.response.${sourceIndex[0].label}.mappings.properties` : undefined,
+        });
       } else {
         toastNotifications.addDanger(`Could not load fields: ${response.error}`);
       }
@@ -150,6 +159,7 @@ export default class CreateRollupForm extends Component<CreateRollupFormProps, C
       toastNotifications.addDanger(getErrorMessage(err, "Could not load fields"));
     }
   };
+
   _next() {
     let currentStep = this.state.currentStep;
     //Verification here
@@ -206,15 +216,18 @@ export default class CreateRollupForm extends Component<CreateRollupFormProps, C
   };
 
   onChangeSourceIndex = (options: EuiComboBoxOptionOption<IndexItem>[]): void => {
+    const { mappings } = this.state;
     //Try to get label text from option from the only array element in options if exists
     let newJSON = this.state.rollupJSON;
     let sourceIndex = options.map(function (option) {
       return option.label;
     });
     const sourceIndexError = sourceIndex.length ? "" : "Source index is required";
-
-    newJSON.rollup.source_index = sourceIndex[0];
+    const srcIndexText = sourceIndex.length ? sourceIndex[0] : "";
+    newJSON.rollup.source_index = srcIndexText;
     this.setState({ sourceIndex: options, rollupJSON: newJSON, sourceIndexError: sourceIndexError });
+    //Update fields
+    this.setState({ fields: sourceIndex.length ? mappings[srcIndexText].mappings.properties : undefined });
   };
 
   onChangeTargetIndex = (options: EuiComboBoxOptionOption<IndexItem>[]): void => {

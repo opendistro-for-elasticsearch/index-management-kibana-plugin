@@ -88,7 +88,6 @@ export default class RollupService {
   getMappings = async (index: string): Promise<ServerResponse<GetFieldsResponse>> => {
     const url = `..${NODE_API._MAPPINGS}`;
     const response = (await this.httpClient.post(url, { index })) as IHttpResponse<ServerResponse<GetFieldsResponse>>;
-    console.log("Mapping: " + response);
     return response.data;
   };
 }
