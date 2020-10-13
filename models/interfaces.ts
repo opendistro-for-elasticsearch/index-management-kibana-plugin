@@ -88,13 +88,12 @@ export interface Rollup {
     description?: string;
     dimensions: [
       {
-        date_histogram: [
-          {
-            source_field: string;
-            fixed_interval: string;
-            timezone: string;
-          }
-        ];
+        date_histogram: {
+          source_field: string;
+          fixed_interval?: string;
+          calendar_interval?: string;
+          timezone: string;
+        };
       }
     ];
     enabled: boolean;

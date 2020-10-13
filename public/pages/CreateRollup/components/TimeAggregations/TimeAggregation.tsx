@@ -26,7 +26,7 @@ import {
   EuiComboBoxOptionOption,
 } from "@elastic/eui";
 import { ContentPanel } from "../../../../components/ContentPanel";
-import { CalenderTimeunitOptions, FixedTimeunitOptions, TimezoneOptions, TimezoneOptionsByRegion } from "../../utils/constants";
+import { CalendarTimeunitOptions, FixedTimeunitOptions, TimezoneOptionsByRegion } from "../../utils/constants";
 import { RollupService } from "../../../../services";
 
 interface TimeAggregationProps {
@@ -53,15 +53,15 @@ const radios = [
     label: "Fixed",
   },
   {
-    id: "calender",
-    label: "Calender",
+    id: "calendar",
+    label: "Calendar",
   },
 ];
 
 //TODO: Fetch actual timestamp options from backend
 const options: EuiComboBoxOptionOption<String>[] = [
   {
-    label: "timestamp1",
+    label: "timestamp",
   },
   {
     label: "timestamp2",
@@ -119,7 +119,7 @@ export default class TimeAggregation extends Component<TimeAggregationProps, Tim
                 <EuiFieldNumber
                   min={1}
                   value={intervalType == "fixed" ? intervalValue : 1}
-                  disabled={intervalType == "calender"}
+                  disabled={intervalType == "calendar"}
                   onChange={onChangeIntervalValue}
                 />
               </EuiFormRow>
@@ -128,7 +128,7 @@ export default class TimeAggregation extends Component<TimeAggregationProps, Tim
               <EuiFormRow hasEmptyLabelSpace={true}>
                 <EuiSelect
                   id="selectTimeunit"
-                  options={intervalType == "fixed" ? FixedTimeunitOptions : CalenderTimeunitOptions}
+                  options={intervalType == "fixed" ? FixedTimeunitOptions : CalendarTimeunitOptions}
                   value={timeunit}
                   onChange={onChangeTimeunit}
                 />

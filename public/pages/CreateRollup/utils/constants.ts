@@ -13,7 +13,8 @@
  * permissions and limitations under the License.
  */
 
-//Removed delay for now to see if acceptable
+//Added last_updated_time and start_time to avoid error, but they should be system generated.
+//Added a delay as 0, but this should be optional, so null should be fine.
 export const EMPTY_ROLLUP = JSON.stringify({
   rollup: {
     continuous: false,
@@ -28,23 +29,19 @@ export const EMPTY_ROLLUP = JSON.stringify({
       },
     ],
     enabled: false,
-    enabled_time: {},
-    last_updated_time: {},
-    metadata_id: {},
     metrics: [],
     page_size: 1000,
     roles: [],
     schedule: {
       interval: {
-        start_time: {},
-        period: {},
+        start_time: 1553112384,
         unit: "MINUTES",
       },
-      cron: {},
     },
-    schema_version: {},
     source_index: "",
     target_index: "",
+    last_updated_time: 1553112384,
+    delay: 0,
   },
 });
 
@@ -91,7 +88,7 @@ export const DelayTimeunitOptions = [
   { value: "DAYS", text: "Day(s)" },
 ];
 
-export const CalenderTimeunitOptions = [
+export const CalendarTimeunitOptions = [
   { value: "MINUTES", text: "Minute(s)" },
   { value: "HOURS", text: "Hour(s)" },
   { value: "DAYS", text: "Day(s)" },
@@ -126,32 +123,32 @@ export const TimezoneOptions = [
 ];
 
 export const TimezoneOptionsByRegion = [
-  { text: "UTC +9:30 / +10:30 - Australia/Darwin", value: "Australia/Darwin" },
-  { text: "UTC +10:00 / +11:00 - Australia/Sydney", value: "Australia/Sydney" },
-  { text: "UTC -3 - America/Argentina/Buenos Aires", value: "America/Argentina/Buenos_Aires" },
-  { text: "UTC +2 - Africa/Cairo", value: "Africa/Cairo" },
-  { text: "UTC -8 / -9 - America/Anchorage", value: "America/Anchorage" },
-  { text: "UTC -3 - America/Sao Paulo", value: "America/Sao_Paulo" },
-  { text: "UTC +6 - Asia/Dhaka", value: "Asia/Dhaka" },
-  { text: "UTC +2 - Africa/Harare", value: "Africa/Harare" },
-  { text: "UTC -2:30 / -3:30 - America/St Johns", value: "America/St_Johns" },
-  { text: "UTC -5/ -6 - America/Chicago", value: "America/Chicago" },
-  { text: "UTC +8 - Asia/Shanghai", value: "Asia/Shanghai" },
-  { text: "UTC +3 - Africa/Addis Ababa", value: "Africa/Addis_Ababa" },
-  { text: "UTC +1 / +2 - Europe/Paris", value: "Europe/Paris" },
-  { text: "UTC -4 /-5 - America/Indiana/Indianapolis", value: "America/Indiana/Indianapolis" },
-  { text: "UTC +5:30 - Asia/Kolkata", value: "Asia/Kolkata" },
-  { text: "UTC +9 - Asia/Tokyo", value: "Asia/Tokyo" },
   { text: "UTC +13 / +14 - Pacific/Apia", value: "Pacific/Apia" },
-  { text: "UTC +4 Asia/Yerevan", value: "Asia/Yerevan" },
   { text: "UTC +12 / +13 - Pacific/Auckland", value: "Pacific/Auckland" },
-  { text: "UTC +5 - Asia/Karachi", value: "Asia/Karachi" },
-  { text: "UTC -7 - America/Phoenix", value: "America/Phoenix" },
-  { text: "UTC -4 - America/Puerto Rico", value: "America/Puerto_Rico" },
-  { text: "UTC -7 / -8 - America/Los Angeles", value: "America/Los_Angeles" },
   { text: "UTC +11 - Pacific/Guadalcanal", value: "Pacific/Guadalcanal" },
+  { text: "UTC +10:00 / +11:00 - Australia/Sydney", value: "Australia/Sydney" },
+  { text: "UTC +9:30 / +10:30 - Australia/Darwin", value: "Australia/Darwin" },
+  { text: "UTC +9 - Asia/Tokyo", value: "Asia/Tokyo" },
+  { text: "UTC +8 - Asia/Shanghai", value: "Asia/Shanghai" },
   { text: "UTC +7 - Asia/Ho Chi Minh", value: "Asia/Ho_Chi_Minh" },
+  { text: "UTC +6 - Asia/Dhaka", value: "Asia/Dhaka" },
+  { text: "UTC +5:30 - Asia/Kolkata", value: "Asia/Kolkata" },
+  { text: "UTC +5 - Asia/Karachi", value: "Asia/Karachi" },
+  { text: "UTC +4 Asia/Yerevan", value: "Asia/Yerevan" },
+  { text: "UTC +3 - Africa/Addis Ababa", value: "Africa/Addis_Ababa" },
+  { text: "UTC +2 - Africa/Cairo", value: "Africa/Cairo" },
+  { text: "UTC +2 - Africa/Harare", value: "Africa/Harare" },
+  { text: "UTC +1 / +2 - Europe/Paris", value: "Europe/Paris" },
+  { text: "UTC -2:30 / -3:30 - America/St Johns", value: "America/St_Johns" },
+  { text: "UTC -3 - America/Argentina/Buenos Aires", value: "America/Argentina/Buenos_Aires" },
+  { text: "UTC -3 - America/Sao Paulo", value: "America/Sao_Paulo" },
+  { text: "UTC -4 - America/Puerto Rico", value: "America/Puerto_Rico" },
+  { text: "UTC -4 /-5 - America/Indiana/Indianapolis", value: "America/Indiana/Indianapolis" },
   { text: "UTC -5", value: "-05:00" },
+  { text: "UTC -5/ -6 - America/Chicago", value: "America/Chicago" },
+  { text: "UTC -7 - America/Phoenix", value: "America/Phoenix" },
   { text: "UTC -7", value: "-07:00" },
+  { text: "UTC -7 / -8 - America/Los Angeles", value: "America/Los_Angeles" },
+  { text: "UTC -8 / -9 - America/Anchorage", value: "America/Anchorage" },
   { text: "UTC -10", value: "-10:00" },
 ];
