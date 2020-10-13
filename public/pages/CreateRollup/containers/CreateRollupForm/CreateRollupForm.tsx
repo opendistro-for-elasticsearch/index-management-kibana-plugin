@@ -473,7 +473,6 @@ export default class CreateRollupForm extends Component<CreateRollupFormProps, C
           sourceIndex={sourceIndex}
           targetIndex={targetIndex}
           roles={roles}
-          intervalType={intervalType}
           intervalValue={intervalValue}
           timestamp={timestamp}
           timeunit={timeunit}

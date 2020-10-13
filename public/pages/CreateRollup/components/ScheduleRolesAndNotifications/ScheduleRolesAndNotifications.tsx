@@ -21,19 +21,48 @@ import { ModalConsumer } from "../../../../components/Modal";
 interface ScheduleRolesAndNotificationsProps {
   rollupId: string;
   onChangeStep: (step: number) => void;
+  jobEnabledByDefault: boolean;
+  recurringJob: string;
+  recurringDefinition: string;
+  interval: number;
+  intervalTimeunit: string;
+  cronExpression: string;
+  pageSize: number;
+  delayTime: number | undefined;
+  delayTimeunit: string;
 }
 
 export default class ScheduleRolesAndNotifications extends Component<ScheduleRolesAndNotificationsProps> {
   constructor(props: ScheduleRolesAndNotificationsProps) {
     super(props);
   }
+
   render() {
-    const { onChangeStep } = this.props;
+    const {
+      onChangeStep,
+      jobEnabledByDefault,
+      recurringJob,
+      recurringDefinition,
+      interval,
+      intervalTimeunit,
+      cronExpression,
+      pageSize,
+      delayTime,
+      delayTimeunit,
+    } = this.props;
+
+    let scheduleText = recurringJob ? "Continuous, " : "Not continuous, ";
+    if (recurringDefinition == "fixed") {
+      scheduleText += "every " + interval + " " + intervalTimeunit;
+    } else {
+      scheduleText += "defined by cron expression: " + cronExpression;
+    }
+
     return (
       <ContentPanel
         actions={
           <ModalConsumer>
-            {({ onShow }) => (
+            {() => (
               <ContentPanelActions
                 actions={[
                   {
@@ -57,25 +86,25 @@ export default class ScheduleRolesAndNotifications extends Component<ScheduleRol
             <EuiFlexItem>
               <EuiText size={"xs"}>
                 <dt>Enabled by default</dt>
-                <dd>{}</dd>
+                <dd>{jobEnabledByDefault ? "Yes" : "No"}</dd>
               </EuiText>
             </EuiFlexItem>
             <EuiFlexItem>
               <EuiText size={"xs"}>
                 <dt>Schedule</dt>
-                <dd>{}</dd>
+                <dd>{scheduleText}</dd>
               </EuiText>
             </EuiFlexItem>
             <EuiFlexItem>
               <EuiText size={"xs"}>
                 <dt>Pages per execution</dt>
-                <dd>{}</dd>
+                <dd>{pageSize}</dd>
               </EuiText>
             </EuiFlexItem>
             <EuiFlexItem>
               <EuiText size={"xs"}>
                 <dt>Execution delay</dt>
-                <dd>{}</dd>
+                <dd>{delayTime == 0 || delayTime == undefined ? "-" : delayTime + " " + delayTimeunit}</dd>
               </EuiText>
             </EuiFlexItem>
           </EuiFlexGrid>

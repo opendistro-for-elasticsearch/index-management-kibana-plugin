@@ -37,7 +37,6 @@ interface CreateRollupProps extends RouteComponentProps {
   roles: EuiComboBoxOptionOption<String>[];
 
   timestamp: EuiComboBoxOptionOption<String>[];
-  intervalType: string;
   intervalValue: number;
   timezone: string;
   timeunit: string;
@@ -86,11 +85,19 @@ export default class CreateRollupStep4 extends Component<CreateRollupProps> {
       sourceIndex,
       targetIndex,
       roles,
-      intervalType,
       intervalValue,
       timestamp,
       timezone,
       timeunit,
+      jobEnabledByDefault,
+      recurringJob,
+      recurringDefinition,
+      interval,
+      intervalTimeunit,
+      cronExpression,
+      pageSize,
+      delayTime,
+      delayTimeunit,
     } = this.props;
 
     return (
@@ -122,7 +129,19 @@ export default class CreateRollupStep4 extends Component<CreateRollupProps> {
               onChangeStep={onChangeStep}
             />
             <EuiSpacer />
-            <ScheduleRolesAndNotifications rollupId={rollupId} onChangeStep={onChangeStep} />
+            <ScheduleRolesAndNotifications
+              rollupId={rollupId}
+              jobEnabledByDefault={jobEnabledByDefault}
+              recurringJob={recurringJob}
+              recurringDefinition={recurringDefinition}
+              interval={interval}
+              intervalTimeunit={intervalTimeunit}
+              cronExpression={cronExpression}
+              pageSize={pageSize}
+              delayTime={delayTime}
+              delayTimeunit={delayTimeunit}
+              onChangeStep={onChangeStep}
+            />
             {submitError && (
               <EuiCallOut title="Sorry, there was an error" color="danger" iconType="alert">
                 <p>{submitError}</p>
