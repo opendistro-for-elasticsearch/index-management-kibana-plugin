@@ -133,8 +133,23 @@ export default class CreateRollupForm extends Component<CreateRollupFormProps, C
   componentDidMount = async (): Promise<void> => {
     chrome.breadcrumbs.set([BREADCRUMBS.INDEX_MANAGEMENT, BREADCRUMBS.ROLLUPS]);
     chrome.breadcrumbs.push(BREADCRUMBS.CREATE_ROLLUP);
+    await this.getMappings();
   };
 
+  getMappings = async (): Promise<void> => {
+    try {
+      const { rollupService } = this.props;
+      const response = await rollupService.getMappings("kibana_sample_data_flights");
+      console.log(response);
+      if (response.ok) {
+        // this.setState({});
+      } else {
+        toastNotifications.addDanger(`Could not load fields: ${response.error}`);
+      }
+    } catch (err) {
+      toastNotifications.addDanger(getErrorMessage(err, "Could not load fields"));
+    }
+  };
   _next() {
     let currentStep = this.state.currentStep;
     //Verification here
@@ -265,7 +280,6 @@ export default class CreateRollupForm extends Component<CreateRollupFormProps, C
 
   onChangeTimezone = (e: ChangeEvent<HTMLSelectElement>): void => {
     let newJSON = this.state.rollupJSON;
-    console.log("Timezone value: " + e.target.value);
     newJSON.rollup.dimensions[0].date_histogram.timezone = e.target.value;
     this.setState({ timezone: e.target.value, rollupJSON: newJSON });
     //Also update the timezone field in cron expression if needed.
@@ -433,6 +447,7 @@ export default class CreateRollupForm extends Component<CreateRollupFormProps, C
         <CreateRollupStep2
           {...this.props}
           currentStep={this.state.currentStep}
+          sourceIndex={sourceIndex}
           intervalType={intervalType}
           intervalValue={intervalValue}
           timestamp={timestamp}

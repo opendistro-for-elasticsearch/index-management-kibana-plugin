@@ -23,10 +23,14 @@ import CreateRollupSteps from "../../components/CreateRollupSteps";
 import TimeAggregation from "../../components/TimeAggregations";
 import AdvancedAggregation from "../../components/AdvancedAggregation";
 import MetricsCalculation from "../../components/MetricsCalculation";
+import { toastNotifications } from "ui/notify";
+import { getErrorMessage } from "../../../../utils/helpers";
+import { IndexItem } from "../../../../../models/interfaces";
 
 interface CreateRollupProps extends RouteComponentProps {
   rollupService: RollupService;
   currentStep: number;
+  sourceIndex: { label: string; value?: IndexItem }[];
   timestamp: EuiComboBoxOptionOption<String>[];
   intervalValue: number;
   intervalType: string;
@@ -58,6 +62,22 @@ export default class CreateRollupStep2 extends Component<CreateRollupProps, Crea
 
   componentDidMount = async (): Promise<void> => {
     chrome.breadcrumbs.set([BREADCRUMBS.INDEX_MANAGEMENT, BREADCRUMBS.ROLLUPS]);
+    // await this.getMappings();
+  };
+
+  getMappings = async (): Promise<void> => {
+    try {
+      const { rollupService } = this.props;
+      const response = await rollupService.getMappings("kibana_sample_data_flights");
+      console.log(response);
+      if (response.ok) {
+        // this.setState({});
+      } else {
+        toastNotifications.addDanger(`Could not load fields: ${response.error}`);
+      }
+    } catch (err) {
+      toastNotifications.addDanger(getErrorMessage(err, "Could not load fields"));
+    }
   };
 
   onCancel = (): void => {

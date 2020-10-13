@@ -301,6 +301,7 @@ export default class EditRollup extends Component<EditRollupProps, EditRollupSta
           rollupId={rollupId}
           rollupIdError={rollupIdError}
           onChangeDescription={this.onChangeDescription}
+          onChangeName={this.onChangeName}
           description={description}
         />
         <EuiSpacer />

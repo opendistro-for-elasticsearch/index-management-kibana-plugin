@@ -41,8 +41,6 @@ export default class JobNameAndIndices extends Component<JobNameAndIndicesProps>
       return option.label;
     });
 
-    console.log("Original: " + rolesText + "Values: " + rolesText.values());
-
     return (
       <ContentPanel
         actions={

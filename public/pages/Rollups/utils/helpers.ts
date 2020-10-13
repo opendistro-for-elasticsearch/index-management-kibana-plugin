@@ -17,7 +17,7 @@ import queryString from "query-string";
 // @ts-ignore
 import moment from "moment";
 import { DEFAULT_QUERY_PARAMS } from "./constants";
-import { PoliciesQueryParams } from "../models/interfaces";
+import { PoliciesQueryParams } from "../../Policies/models/interfaces";
 
 export function getURLQueryParams(location: { search: string }): PoliciesQueryParams {
   const { from, size, search, sortField, sortDirection } = queryString.parse(location.search);
