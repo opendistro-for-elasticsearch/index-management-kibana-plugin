@@ -552,7 +552,7 @@ export default class CreateRollupForm extends Component<CreateRollupFormProps, C
           </EuiFlexItem>
           {currentStep != 1 && (
             <EuiFlexItem grow={false}>
-              <EuiButton fill onClick={this._prev} isLoading={isSubmitting} data-test-subj="createRollupPreviousButton">
+              <EuiButton onClick={this._prev} isLoading={isSubmitting} data-test-subj="createRollupPreviousButton">
                 {"Previous"}
               </EuiButton>
             </EuiFlexItem>

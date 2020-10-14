@@ -123,7 +123,7 @@ export default class TimeAggregation extends Component<TimeAggregationProps, Tim
             </EuiFlexItem>
           </EuiFlexGroup>
           <EuiSpacer size="m" />
-          <EuiFormRow label="Timezone">
+          <EuiFormRow label="Timezone" helpText={"A day/week/month starts from 00:00:00 on the specified timezone."}>
             <EuiSelect id="timezone" options={TimezoneOptionsByRegion} value={timezone} onChange={onChangeTimezone} />
           </EuiFormRow>
         </div>

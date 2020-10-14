@@ -161,7 +161,7 @@ export default class MetricsCalculation extends Component<MetricsCalculationProp
         bodyStyles={{ padding: "initial" }}
         actions={
           <ModalConsumer>
-            {({ onShow }) => (
+            {() => (
               <ContentPanelActions
                 actions={[
                   {
@@ -181,7 +181,7 @@ export default class MetricsCalculation extends Component<MetricsCalculationProp
                     },
                   },
                   {
-                    text: "Add field",
+                    text: "Add fields",
                     buttonProps: {
                       onClick: () => this.showModal(),
                     },
@@ -191,7 +191,7 @@ export default class MetricsCalculation extends Component<MetricsCalculationProp
             )}
           </ModalConsumer>
         }
-        title="Additional metrics - optional"
+        title={`Additional metrics - optional (0)`}
         titleSize="m"
       >
         <div style={{ paddingLeft: "10px" }}>
@@ -211,7 +211,38 @@ export default class MetricsCalculation extends Component<MetricsCalculationProp
                 </EuiModalHeader>
 
                 <EuiModalBody>
-                  {addFields(searchText, this.onChangeSearch, selectedFieldType, this.onChangeFieldType, selection)}
+                  <EuiForm title={"Add fields"}>
+                    <EuiFlexGroup>
+                      <EuiFlexItem grow={2}>
+                        <EuiFieldSearch
+                          placeholder="Search field name"
+                          value={searchText}
+                          onChange={this.onChangeSearch}
+                          isClearable={true}
+                        />
+                      </EuiFlexItem>
+                      <EuiFlexItem grow={1}>
+                        <EuiComboBox
+                          placeholder="Field type"
+                          options={tempFieldTypeOptions}
+                          selectedOptions={selectedFieldType}
+                          onChange={this.onChangeFieldType}
+                          isClearable={true}
+                          singleSelection={true}
+                        />
+                      </EuiFlexItem>
+                    </EuiFlexGroup>
+                    {/*TODO: create fake list of items, and figure out how to retrieve the selections for table*/}
+                    <EuiBasicTable
+                      items={[]}
+                      rowHeader="fieldName"
+                      columns={addFieldsColumns}
+                      noItemsMessage="No field added for aggregation"
+                      isSelectable={true}
+                      selection={selection}
+                      tableLayout={"auto"}
+                    />
+                  </EuiForm>
                 </EuiModalBody>
 
                 <EuiModalFooter>
