@@ -14,7 +14,7 @@
  */
 
 import React, { Component } from "react";
-import { EuiSpacer, EuiTitle, EuiComboBoxOptionOption } from "@elastic/eui";
+import { EuiSpacer, EuiTitle, EuiComboBoxOptionOption, EuiPanel, EuiFlexGroup, EuiFlexItem, EuiButton } from "@elastic/eui";
 import chrome from "ui/chrome";
 import { RouteComponentProps } from "react-router-dom";
 import { RollupService } from "../../../../services";
@@ -24,6 +24,8 @@ import queryString from "query-string";
 import { getErrorMessage } from "../../../../utils/helpers";
 import { EMPTY_ROLLUP } from "../../../CreateRollup/utils/constants";
 import GeneralInformation from "../../Components/GeneralInformation/GeneralInformation";
+import { ModalConsumer } from "../../../../components/Modal";
+import { ContentPanel, ContentPanelActions } from "../../../../components/ContentPanel";
 
 interface RollupDetailsProps extends RouteComponentProps {
   rollupService: RollupService;
@@ -123,6 +125,42 @@ export default class RollupDetails extends Component<RollupDetailsProps, RollupD
       this.props.history.push(ROUTES.ROLLUPS);
     }
   };
+  onDisable = async (): Promise<void> => {
+    const { rollupService } = this.props;
+    const { rollupId } = this.state;
+    try {
+      const response = await rollupService.stopRollup(rollupId);
+
+      if (response.ok) {
+        //TODO: Update status or pull jobs again
+        //Show success message
+        toastNotifications.addSuccess(`${rollupId} is disabled`);
+      } else {
+        toastNotifications.addDanger(`Could not stop the rollup job "${rollupId}" : ${response.error}`);
+      }
+    } catch (err) {
+      toastNotifications.addDanger(getErrorMessage(err, "Could not stop the rollup job: " + rollupId));
+    }
+  };
+
+  onEnable = async (): Promise<void> => {
+    const { rollupService } = this.props;
+    const { rollupId } = this.state;
+
+    try {
+      const response = await rollupService.startRollup(rollupId);
+
+      if (response.ok) {
+        //TODO: Update status or pull jobs again
+        //Show success message
+        toastNotifications.addSuccess(`${rollupId} is enabled`);
+      } else {
+        toastNotifications.addDanger(`Could not start the rollup job "${rollupId}" : ${response.error}`);
+      }
+    } catch (err) {
+      toastNotifications.addDanger(getErrorMessage(err, "Could not start the rollup job: " + rollupId));
+    }
+  };
 
   onEdit = (): void => {
     const { rollupId } = this.state;
@@ -154,9 +192,35 @@ export default class RollupDetails extends Component<RollupDetailsProps, RollupD
 
     return (
       <div style={{ padding: "5px 50px" }}>
-        <EuiTitle size="l">
-          <h1>Review and create</h1>
-        </EuiTitle>
+        <EuiFlexGroup style={{ padding: "0px 10px" }} justifyContent="spaceBetween" alignItems="center">
+          <EuiFlexItem>
+            <EuiTitle size={"m"}>
+              <h3>{rollupId}</h3>
+            </EuiTitle>
+          </EuiFlexItem>
+          <EuiFlexItem grow={false}>
+            <EuiFlexGroup alignItems="center" gutterSize="s">
+              <EuiFlexItem grow={false}>
+                <EuiButton onClick={this.onDisable}>Disable</EuiButton>
+              </EuiFlexItem>
+              <EuiFlexItem grow={false}>
+                <EuiButton disabled={true} onClick={this.onEnable}>
+                  Enable
+                </EuiButton>
+              </EuiFlexItem>
+              <EuiFlexItem grow={false}>
+                <EuiButton>View JSON</EuiButton>
+              </EuiFlexItem>
+              <EuiFlexItem grow={false}>
+                <EuiButton color={"danger"}>Delete</EuiButton>
+              </EuiFlexItem>
+              <EuiFlexItem grow={false}>
+                <EuiButton fill={true}>Export target index</EuiButton>
+              </EuiFlexItem>
+            </EuiFlexGroup>
+          </EuiFlexItem>
+        </EuiFlexGroup>
+
         <EuiSpacer />
         <GeneralInformation
           rollupId={rollupId}

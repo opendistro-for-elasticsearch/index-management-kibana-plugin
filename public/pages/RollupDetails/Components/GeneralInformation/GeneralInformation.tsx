@@ -54,12 +54,12 @@ export default class GeneralInformation extends Component<GeneralInformationProp
           </ModalConsumer>
         }
         bodyStyles={{ padding: "initial" }}
-        title="Job name and indices"
+        title="General Information"
         titleSize="m"
       >
         <div style={{ paddingLeft: "10px" }}>
           <EuiSpacer size={"s"} />
-          <EuiFlexGrid columns={3}>
+          <EuiFlexGrid columns={4}>
             <EuiFlexItem>
               <EuiText size={"xs"}>
                 <dt>Name</dt>
@@ -74,8 +74,14 @@ export default class GeneralInformation extends Component<GeneralInformationProp
             </EuiFlexItem>
             <EuiFlexItem>
               <EuiText size={"xs"}>
-                <dt>Roles</dt>
-                <dd>{roles}</dd>
+                <dt>Target index</dt>
+                <dd>{targetIndex}</dd>
+              </EuiText>
+            </EuiFlexItem>
+            <EuiFlexItem>
+              <EuiText size={"xs"}>
+                <dt>Schedule</dt>
+                <dd></dd>
               </EuiText>
             </EuiFlexItem>
             <EuiFlexItem>
@@ -86,8 +92,20 @@ export default class GeneralInformation extends Component<GeneralInformationProp
             </EuiFlexItem>
             <EuiFlexItem>
               <EuiText size={"xs"}>
-                <dt>Target index</dt>
-                <dd>{targetIndex}</dd>
+                <dt>Roles</dt>
+                <dd>{roles}</dd>
+              </EuiText>
+            </EuiFlexItem>
+            <EuiFlexItem>
+              <EuiText size={"xs"}>
+                <dt>Last updated</dt>
+                <dd></dd>
+              </EuiText>
+            </EuiFlexItem>
+            <EuiFlexItem>
+              <EuiText size={"xs"}>
+                <dt>Pages per execution</dt>
+                <dd></dd>
               </EuiText>
             </EuiFlexItem>
           </EuiFlexGrid>
