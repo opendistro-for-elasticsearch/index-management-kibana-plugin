@@ -71,7 +71,7 @@ const aggregationColumns = [
     sortable: true,
   },
   {
-    field: "fieldname",
+    field: "fieldName",
     name: "Field Name",
   },
   {
@@ -86,10 +86,37 @@ const aggregationColumns = [
   {
     field: "interval",
     name: "Interval",
+    dataType: "number",
+    render: (interval: null | number) => {
+      if (interval == null) return "-";
+      else return `${interval}`;
+    },
   },
   {
     field: "actions",
     name: "Actions",
+  },
+];
+
+const sampleDimenionItems: DimensionItem[] = [
+  {
+    sequence: 1,
+    fieldName: "Dest",
+    fieldType: "keyword",
+    aggregationMethod: "terms",
+  },
+  {
+    sequence: 2,
+    fieldName: "FlightDelayMin",
+    fieldType: "integer",
+    aggregationMethod: "histogram",
+    interval: 10,
+  },
+  {
+    sequence: 3,
+    fieldName: "FlightNum",
+    fieldType: "keyword",
+    aggregationMethod: "terms",
   },
 ];
 
@@ -196,7 +223,7 @@ export default class AdvancedAggregation extends Component<AdvancedAggregationPr
         <div style={{ paddingLeft: "10px" }}>
           {/*Need to create array of dimension items after selection*/}
           <EuiBasicTable
-            items={selectedDimensionField}
+            items={sampleDimenionItems}
             rowHeader="fieldName"
             columns={aggregationColumns}
             noItemsMessage="No field added for aggregation"

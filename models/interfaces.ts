@@ -54,7 +54,7 @@ export interface FieldItem {
 export interface DimensionItem {
   sequence: number;
   fieldName: string;
-  fieldType: string;
+  fieldType?: string;
   aggregationMethod: string;
   interval?: number;
 }
