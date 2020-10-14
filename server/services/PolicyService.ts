@@ -21,7 +21,7 @@ import {
   DeletePolicyResponse,
   GetPoliciesResponse,
   PutPolicyParams,
-  PutRollupResponse,
+  PutPolicyResponse,
   SearchResponse,
 } from "../models/interfaces";
 import { getMustQuery } from "../utils/helpers";
@@ -42,7 +42,7 @@ export default class PolicyService {
   /**
    * Calls backend Put Policy API
    */
-  putPolicy = async (req: Request, h: ResponseToolkit): Promise<ServerResponse<PutRollupResponse>> => {
+  putPolicy = async (req: Request, h: ResponseToolkit): Promise<ServerResponse<PutPolicyResponse>> => {
     try {
       const { id } = req.params;
       const { seqNo, primaryTerm } = req.query as { seqNo?: string; primaryTerm?: string };
