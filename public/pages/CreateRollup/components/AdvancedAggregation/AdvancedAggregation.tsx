@@ -162,13 +162,13 @@ export default class AdvancedAggregation extends Component<AdvancedAggregationPr
     this.setState({ selectedFieldType: options });
   };
 
-  onSelectionChange = (selectedFields: FieldItem[]): void => {
+  onSelectionChange = (selectedItems: FieldItem[]): void => {
     console.log("We are inside onSelectionChange");
-    this.setState({ selectedFields });
+    this.setState({ selectedFields: selectedItems });
   };
 
   //TODO: Save the fields to selectedDimensionsField as DimensionItem
-  onClickSave() {}
+  onClickAdd() {}
 
   // onTableChange = ({ page: tablePage , sort)}: Criteria<{ label: string; value?: FieldItem }>) => {
   //   const { index: page, size} = tablePage;
@@ -194,7 +194,9 @@ export default class AdvancedAggregation extends Component<AdvancedAggregationPr
     //   },
     // };
 
+    //TODO: make selection working, currently limiting selection to certain tyoe
     const selection: EuiTableSelectionType<FieldItem> = {
+      selectable: (field) => field.type == "keyword",
       onSelectionChange: this.onSelectionChange,
     };
 
@@ -262,6 +264,7 @@ export default class AdvancedAggregation extends Component<AdvancedAggregationPr
                     <EuiBasicTable
                       columns={addFieldsColumns}
                       items={fieldsOption}
+                      itemId={"label"}
                       rowHeader={"fieldName"}
                       noItemsMessage={"No fields available"}
                       isSelectable={true}
@@ -276,25 +279,27 @@ export default class AdvancedAggregation extends Component<AdvancedAggregationPr
 
                 <EuiModalFooter>
                   <EuiButtonEmpty onClick={this.closeModal}>Cancel</EuiButtonEmpty>
-
-                  <EuiButton onClick={this.closeModal}>Add</EuiButton>
+                  <EuiButton fill onClick={this.closeModal}>
+                    Add
+                  </EuiButton>
                 </EuiModalFooter>
               </EuiModal>
             </EuiOverlayMask>
           )}
-          <EuiFlexGroup alignItems="center">
-            <EuiFlexItem>
-              <EuiSpacer />
-            </EuiFlexItem>
-            <EuiFlexItem grow={false}>
-              <EuiButton fill onClick={this.showModal}>
-                Add fields
-              </EuiButton>
-            </EuiFlexItem>
-            <EuiFlexItem>
-              <EuiSpacer />
-            </EuiFlexItem>
-          </EuiFlexGroup>
+          {/*TODO: Hide the empty option message when selectedDimension.length!=0*/}
+          {
+            <EuiFlexGroup alignItems="center">
+              <EuiFlexItem>
+                <EuiSpacer />
+              </EuiFlexItem>
+              <EuiFlexItem grow={false}>
+                <EuiButton onClick={this.showModal}>Add fields</EuiButton>
+              </EuiFlexItem>
+              <EuiFlexItem>
+                <EuiSpacer />
+              </EuiFlexItem>
+            </EuiFlexGroup>
+          }
         </div>
       </ContentPanel>
     );

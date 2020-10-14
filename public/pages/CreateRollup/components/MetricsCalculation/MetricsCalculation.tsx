@@ -285,7 +285,6 @@ export default class MetricsCalculation extends Component<MetricsCalculationProp
 
                 <EuiModalFooter>
                   <EuiButtonEmpty onClick={this.closeModal}>Cancel</EuiButtonEmpty>
-
                   <EuiButton fill onClick={this.closeModal}>
                     Add
                   </EuiButton>
@@ -293,17 +292,20 @@ export default class MetricsCalculation extends Component<MetricsCalculationProp
               </EuiModal>
             </EuiOverlayMask>
           )}
-          <EuiFlexGroup alignItems="center">
-            <EuiFlexItem>
-              <EuiSpacer />
-            </EuiFlexItem>
-            <EuiFlexItem grow={false}>
-              <EuiButton onClick={this.showModal}>Add fields</EuiButton>
-            </EuiFlexItem>
-            <EuiFlexItem>
-              <EuiSpacer />
-            </EuiFlexItem>
-          </EuiFlexGroup>
+          {/*TODO: Hide the empty option message when selectedMetric.length!=0*/}
+          {
+            <EuiFlexGroup alignItems="center">
+              <EuiFlexItem>
+                <EuiSpacer />
+              </EuiFlexItem>
+              <EuiFlexItem grow={false}>
+                <EuiButton onClick={this.showModal}>Add fields</EuiButton>
+              </EuiFlexItem>
+              <EuiFlexItem>
+                <EuiSpacer />
+              </EuiFlexItem>
+            </EuiFlexGroup>
+          }
         </div>
       </ContentPanel>
     );
