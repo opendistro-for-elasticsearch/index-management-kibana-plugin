@@ -57,6 +57,7 @@ interface CreateRollupFormState {
   mappings: any;
   fields: any;
   selectedTerms: { label: string; value?: FieldItem }[];
+  selectedDimensionField: { label: string; value?: FieldItem }[];
   timestamp: EuiComboBoxOptionOption<String>[];
   intervalType: string;
   intervalValue: number;
@@ -110,6 +111,7 @@ export default class CreateRollupForm extends Component<CreateRollupFormProps, C
       fields: undefined,
       selectedFields: [],
       selectedTerms: [],
+      selectedDimensionField: [],
       description: "",
       sourceIndex: [],
       sourceIndexError: "",
@@ -441,6 +443,7 @@ export default class CreateRollupForm extends Component<CreateRollupFormProps, C
       timestamp,
       fields,
       selectedTerms,
+      selectedDimensionField,
       intervalValue,
       intervalType,
       timezone,
@@ -483,6 +486,7 @@ export default class CreateRollupForm extends Component<CreateRollupFormProps, C
           currentStep={this.state.currentStep}
           fields={fields}
           selectedTerms={selectedTerms}
+          selectedDimensionField={selectedDimensionField}
           intervalType={intervalType}
           intervalValue={intervalValue}
           timestamp={timestamp}
@@ -493,6 +497,7 @@ export default class CreateRollupForm extends Component<CreateRollupFormProps, C
           onChangeTimestamp={this.onChangeTimestamp}
           onChangeTimeunit={this.onChangeTimeunit}
           onChangeTimezone={this.onChangeTimezone}
+          onDimensionSelectionChange={this.onDimensionSelectionChange}
         />
         <CreateRollupStep3
           {...this.props}

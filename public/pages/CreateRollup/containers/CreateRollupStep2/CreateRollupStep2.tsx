@@ -23,15 +23,14 @@ import CreateRollupSteps from "../../components/CreateRollupSteps";
 import TimeAggregation from "../../components/TimeAggregations";
 import AdvancedAggregation from "../../components/AdvancedAggregation";
 import MetricsCalculation from "../../components/MetricsCalculation";
-import { toastNotifications } from "ui/notify";
-import { getErrorMessage } from "../../../../utils/helpers";
-import { FieldItem, IndexItem } from "../../../../../models/interfaces";
+import { FieldItem } from "../../../../../models/interfaces";
 
 interface CreateRollupProps extends RouteComponentProps {
   rollupService: RollupService;
   currentStep: number;
   fields: any;
   selectedTerms: { label: string; value?: FieldItem }[];
+  selectedDimensionField: { label: string; value?: FieldItem }[];
   timestamp: EuiComboBoxOptionOption<String>[];
   intervalValue: number;
   intervalType: string;
@@ -73,35 +72,21 @@ export default class CreateRollupStep2 extends Component<CreateRollupProps, Crea
   render() {
     if (this.props.currentStep !== 2) return null;
     const {
+      fields,
       intervalType,
       intervalValue,
       timestamp,
       timezone,
       timeunit,
+      selectedDimensionField,
       onChangeTimeunit,
       onChangeIntervalType,
       onChangeIntervalValue,
       onChangeTimestamp,
       onChangeTimezone,
-      fields,
       onDimensionSelectionChange,
     } = this.props;
     const { submitError } = this.state;
-
-    const options: { label: string; value?: FieldItem }[] = [
-      {
-        label: "timestamp",
-        value: { type: "date" },
-      },
-      {
-        label: "field1",
-        value: { type: "number" },
-      },
-      {
-        label: "fields2",
-        value: { type: "string" },
-      },
-    ];
 
     //Generate fields options
     var fieldsOption: { label: string; value: FieldItem }[] = [];
@@ -147,7 +132,12 @@ export default class CreateRollupStep2 extends Component<CreateRollupProps, Crea
               fieldsOption={fieldsOption}
             />
             <EuiSpacer />
-            <AdvancedAggregation fieldsOption={fieldsOption} onDimensionSelectionChange={onDimensionSelectionChange} />
+            <AdvancedAggregation
+              {...this.props}
+              fieldsOption={fieldsOption}
+              selectedDimensionField={selectedDimensionField}
+              onDimensionSelectionChange={onDimensionSelectionChange}
+            />
             <EuiSpacer />
             <MetricsCalculation />
             {submitError && (

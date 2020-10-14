@@ -35,7 +35,6 @@ interface TimeAggregationProps {
   intervalValue: number;
   intervalType: string;
   selectedTimestamp: EuiComboBoxOptionOption<String>[];
-  selectedTerms: { label: string; type: string }[];
   timeunit: string;
   timezone: string;
   fieldsOption: { label: string; value?: FieldItem }[];

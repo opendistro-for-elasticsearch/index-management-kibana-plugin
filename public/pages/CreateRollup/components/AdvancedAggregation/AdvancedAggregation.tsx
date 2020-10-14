@@ -31,15 +31,18 @@ import {
   EuiFieldSearch,
   EuiComboBox,
   EuiComboBoxOptionOption,
-  EuiTableSelectionType,
+  // @ts-ignore
+  Pagination,
+  EuiTableSortingType,
 } from "@elastic/eui";
 import { ContentPanel, ContentPanelActions } from "../../../../components/ContentPanel";
 import { ModalConsumer } from "../../../../components/Modal";
 import { FieldItem } from "../../../../../models/interfaces";
+import { DEFAULT_PAGE_SIZE_OPTIONS } from "../../../Rollups/utils/constants";
 
 interface AdvancedAggregationProps {
   fieldsOption: { label: string; value?: FieldItem }[];
-  selectedFields: { label: string; value?: FieldItem }[];
+  // selectedFields: { label: string; value?: FieldItem }[];
   onDimensionSelectionChange: (selectedFields: { label: string; value?: FieldItem }[]) => void;
   selectedDimensionField: { label: string; value?: FieldItem }[];
 }
@@ -48,11 +51,16 @@ interface AdvancedAggregationState {
   isModalVisible: boolean;
   searchText: string;
   selectedFieldType: EuiComboBoxOptionOption<String>[];
+  page: number;
+  size: number;
+  sortField: string;
+  sortDirection: string;
 }
 const fieldTypeOption = [
   { label: "string", value: "string" },
   { label: "number", value: "number" },
 ];
+
 const addFields = (
   searchText: string,
   onChangeSearch: (value: ChangeEvent<HTMLInputElement>) => void,
@@ -86,6 +94,7 @@ const addFields = (
       noItemsMessage="No field added for aggregation"
       isSelectable={true}
       selection={selectedDimensionField}
+      // onTableChange={}
     />
   </EuiForm>
 );
@@ -121,12 +130,12 @@ const aggregationColumns = [
 
 const addFieldsColumns = [
   {
-    field: "fieldname",
+    field: "label",
     name: "Field name",
     sortable: true,
   },
   {
-    field: "fieldType",
+    field: "value.type",
     name: "Field type",
   },
 ];
@@ -139,6 +148,10 @@ export default class AdvancedAggregation extends Component<AdvancedAggregationPr
       isModalVisible: false,
       searchText: "",
       selectedFieldType: [],
+      page: 1,
+      size: 10,
+      sortField: "label",
+      sortDirection: "desc",
     };
   }
 
@@ -158,22 +171,30 @@ export default class AdvancedAggregation extends Component<AdvancedAggregationPr
   //   this.setState({ selectedFields });
   // };
 
+  // onTableChange = ({ page = {}, sort = {} }) => {
+  //   const { index: pageIndex, size: pageSize } = page;
+  //
+  //   const { field: sortField, direction: sortDirection } = sort;
+  //   this.setState({page, size, sortField,sortDirection})
+  // };
+
   render() {
     const { fieldsOption, selectedDimensionField, onDimensionSelectionChange } = this.props;
-    const { isModalVisible, searchText, selectedFieldType } = this.state;
-    // const pagination: Pagination = {
-    //   pageIndex: page,
-    //   pageSize: size,
-    //   pageSizeOptions: DEFAULT_PAGE_SIZE_OPTIONS,
-    //   totalItemCount: totalIndices,
-    // };
-    //
-    // const sorting: EuiTableSortingType<ManagedCatIndex> = {
-    //   sort: {
-    //     direction: sortDirection,
-    //     field: sortField,
-    //   },
-    // };
+    const { isModalVisible, searchText, selectedFieldType, page, size, sortDirection, sortField } = this.state;
+    // @ts-ignore
+    const pagination: Pagination = {
+      pageIndex: page,
+      pageSize: size,
+      pageSizeOptions: DEFAULT_PAGE_SIZE_OPTIONS,
+      totalItemCount: selectedDimensionField.length,
+    };
+
+    const sorting: EuiTableSortingType<FieldItem> = {
+      sort: {
+        direction: sortDirection,
+        field: sortField,
+      },
+    };
 
     return (
       <ContentPanel
@@ -198,12 +219,15 @@ export default class AdvancedAggregation extends Component<AdvancedAggregationPr
         titleSize="m"
       >
         <div style={{ paddingLeft: "10px" }}>
+          {/*Need to create array of dimension items after selection*/}
           <EuiBasicTable
             items={[]}
             rowHeader="fieldName"
             columns={aggregationColumns}
             noItemsMessage="No field added for aggregation"
             tableLayout={"auto"}
+            // pagination={pagination}
+            // sorting={sorting}
           />
           <EuiSpacer size="s" />
           {isModalVisible && (
