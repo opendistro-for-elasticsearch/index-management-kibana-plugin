@@ -530,7 +530,7 @@ export default class Rollups extends Component<RollupsProps, RollupsState> {
               </EuiFlexItem>
               <EuiFlexItem grow={false}>
                 <EuiButton onClick={this.onClickCreate} fill={true}>
-                  Create Rollup Job
+                  Create rollup job
                 </EuiButton>
               </EuiFlexItem>
             </EuiFlexGroup>
