@@ -56,14 +56,14 @@ interface CreateRollupFormState {
 
   mappings: any;
   fields: any;
-  selectedTerms: { label: string; value?: FieldItem }[];
+  selectedTerms: FieldItem[];
   selectedDimensionField: DimensionItem[];
   timestamp: EuiComboBoxOptionOption<String>[];
   intervalType: string;
   intervalValue: number;
   timezone: string;
   timeunit: string;
-  selectedFields: { label: string; value?: FieldItem }[];
+  selectedFields: FieldItem[];
 
   jobEnabledByDefault: boolean;
   recurringJob: string;
@@ -211,15 +211,6 @@ export default class CreateRollupForm extends Component<CreateRollupFormProps, C
     newJSON.rollup.description = description;
     this.setState({ description: description, rollupJSON: newJSON });
     console.log(this.state);
-    const { fields } = this.state;
-    var temp: { label: string; value: FieldItem }[] = [];
-    for (var key in fields) {
-      if (fields.hasOwnProperty(key)) {
-        console.log(key + " -> " + fields[key]);
-        temp.push({ label: key, value: fields[key] });
-      }
-    }
-    console.log(temp);
   };
 
   onChangeName = (e: ChangeEvent<HTMLInputElement>): void => {

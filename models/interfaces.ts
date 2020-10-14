@@ -48,6 +48,7 @@ export interface IndexItem {
 }
 
 export interface FieldItem {
+  label: string;
   type?: string;
 }
 

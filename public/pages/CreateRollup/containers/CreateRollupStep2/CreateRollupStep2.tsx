@@ -29,7 +29,7 @@ interface CreateRollupProps extends RouteComponentProps {
   rollupService: RollupService;
   currentStep: number;
   fields: any;
-  selectedTerms: { label: string; value?: FieldItem }[];
+  selectedTerms: FieldItem[];
   selectedDimensionField: DimensionItem[];
   timestamp: EuiComboBoxOptionOption<String>[];
   intervalValue: number;
@@ -89,10 +89,10 @@ export default class CreateRollupStep2 extends Component<CreateRollupProps, Crea
     const { submitError } = this.state;
 
     //Generate fields options
-    var fieldsOption: { label: string; value: FieldItem }[] = [];
+    var fieldsOption: FieldItem[] = [];
     for (var key in fields) {
       if (fields.hasOwnProperty(key)) {
-        fieldsOption.push({ label: key, value: fields[key] });
+        fieldsOption.push({ label: key, type: fields[key].type ? fields[key].type : null });
       }
     }
 

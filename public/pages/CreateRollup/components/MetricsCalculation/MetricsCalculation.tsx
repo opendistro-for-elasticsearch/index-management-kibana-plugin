@@ -243,7 +243,7 @@ export default class MetricsCalculation extends Component<MetricsCalculationProp
           <EuiSpacer size="s" />
           {isModalVisible && (
             <EuiOverlayMask>
-              <EuiModal onClose={this.closeModal} maxWidth={700}>
+              <EuiModal onClose={this.closeModal} style={{ padding: "5px 30px" }}>
                 <EuiModalHeader>
                   <EuiModalHeaderTitle>Add fields</EuiModalHeaderTitle>
                 </EuiModalHeader>
@@ -286,7 +286,9 @@ export default class MetricsCalculation extends Component<MetricsCalculationProp
                 <EuiModalFooter>
                   <EuiButtonEmpty onClick={this.closeModal}>Cancel</EuiButtonEmpty>
 
-                  <EuiButton onClick={this.closeModal}>Save</EuiButton>
+                  <EuiButton fill onClick={this.closeModal}>
+                    Add
+                  </EuiButton>
                 </EuiModalFooter>
               </EuiModal>
             </EuiOverlayMask>

@@ -42,8 +42,8 @@ import { DimensionItem, FieldItem } from "../../../../../models/interfaces";
 import { DEFAULT_PAGE_SIZE_OPTIONS } from "../../../Rollups/utils/constants";
 
 interface AdvancedAggregationProps {
-  fieldsOption: { label: string; value?: FieldItem }[];
-  // selectedFields: { label: string; value?: FieldItem }[];
+  fieldsOption: FieldItem[];
+  // selectedFields: FieldItem [];
   onDimensionSelectionChange: (selectedFields: DimensionItem[]) => void;
   selectedDimensionField: DimensionItem[];
 }
@@ -52,7 +52,7 @@ interface AdvancedAggregationState {
   isModalVisible: boolean;
   searchText: string;
   selectedFieldType: EuiComboBoxOptionOption<String>[];
-  selectedFields: { label: string; value?: FieldItem }[];
+  selectedFields: FieldItem[];
   page: number;
   size: number;
   sortField: string;
@@ -72,11 +72,11 @@ const aggregationColumns = [
   },
   {
     field: "fieldName",
-    name: "Field Name",
+    name: "Field name",
   },
   {
     field: "fieldType",
-    name: "Field Type",
+    name: "Field type",
     truncateText: true,
   },
   {
@@ -98,7 +98,7 @@ const aggregationColumns = [
   },
 ];
 
-const sampleDimenionItems: DimensionItem[] = [
+const sampleDimensionItems: DimensionItem[] = [
   {
     sequence: 1,
     fieldName: "Dest",
@@ -127,7 +127,7 @@ const addFieldsColumns = [
     sortable: true,
   },
   {
-    field: "value.type",
+    field: "type",
     name: "Field type",
     sortable: true,
   },
@@ -162,7 +162,7 @@ export default class AdvancedAggregation extends Component<AdvancedAggregationPr
     this.setState({ selectedFieldType: options });
   };
 
-  onSelectionChange = (selectedFields: { label: string; value?: FieldItem }[]): void => {
+  onSelectionChange = (selectedFields: FieldItem[]): void => {
     console.log("We are inside onSelectionChange");
     this.setState({ selectedFields });
   };
@@ -180,21 +180,21 @@ export default class AdvancedAggregation extends Component<AdvancedAggregationPr
   render() {
     const { fieldsOption, selectedDimensionField, onDimensionSelectionChange } = this.props;
     const { isModalVisible, searchText, selectedFieldType, page, size, sortDirection, sortField } = this.state;
-    const pagination: Pagination = {
-      pageIndex: page,
-      pageSize: size,
-      pageSizeOptions: DEFAULT_PAGE_SIZE_OPTIONS,
-      totalItemCount: fieldsOption.length,
-    };
+    // const pagination: Pagination = {
+    //   pageIndex: page,
+    //   pageSize: size,
+    //   pageSizeOptions: DEFAULT_PAGE_SIZE_OPTIONS,
+    //   totalItemCount: fieldsOption.length,
+    // };
 
-    const sorting: EuiTableSortingType<{ label: string; value?: FieldItem }> = {
-      sort: {
-        direction: sortDirection,
-        field: sortField,
-      },
-    };
+    // const sorting: EuiTableSortingType<{ label: string; value?: FieldItem }> = {
+    //   sort: {
+    //     direction: sortDirection,
+    //     field: sortField,
+    //   },
+    // };
 
-    const selection: EuiTableSelectionType<{ label: string; value?: FieldItem }> = {
+    const selection: EuiTableSelectionType<FieldItem> = {
       onSelectionChange: this.onSelectionChange,
     };
 
@@ -217,22 +217,22 @@ export default class AdvancedAggregation extends Component<AdvancedAggregationPr
           </ModalConsumer>
         }
         bodyStyles={{ padding: "initial" }}
-        title={`Additional metrics - optional (${sampleDimenionItems.length})`}
+        title={`Additional metrics - optional (${sampleDimensionItems.length})`}
         titleSize="m"
       >
         <div style={{ paddingLeft: "10px" }}>
           {/*Need to create array of dimension items after selection*/}
           <EuiBasicTable
-            items={sampleDimenionItems}
-            rowHeader="fieldName"
+            items={sampleDimensionItems}
+            rowHeader={"fieldName"}
             columns={aggregationColumns}
-            noItemsMessage="No field added for aggregation"
+            noItemsMessage={"No field added for aggregation"}
             tableLayout={"auto"}
           />
           <EuiSpacer size="s" />
           {isModalVisible && (
             <EuiOverlayMask>
-              <EuiModal onClose={this.closeModal} maxWidth={700}>
+              <EuiModal onClose={this.closeModal} style={{ padding: "5px 30px" }}>
                 <EuiModalHeader>
                   <EuiModalHeaderTitle>Add fields</EuiModalHeaderTitle>
                 </EuiModalHeader>
@@ -242,7 +242,7 @@ export default class AdvancedAggregation extends Component<AdvancedAggregationPr
                     <EuiFlexGroup>
                       <EuiFlexItem grow={2}>
                         <EuiFieldSearch
-                          placeholder="Search field name"
+                          placeholder={"Search field name"}
                           value={searchText}
                           onChange={this.onChangeSearch}
                           isClearable={true}
@@ -250,7 +250,7 @@ export default class AdvancedAggregation extends Component<AdvancedAggregationPr
                       </EuiFlexItem>
                       <EuiFlexItem grow={1}>
                         <EuiComboBox
-                          placeholder="Field type"
+                          placeholder={"Field type"}
                           options={fieldTypeOption}
                           selectedOptions={selectedFieldType}
                           onChange={this.onChangeFieldType}
@@ -262,8 +262,8 @@ export default class AdvancedAggregation extends Component<AdvancedAggregationPr
                     <EuiBasicTable
                       columns={addFieldsColumns}
                       items={fieldsOption}
-                      rowHeader="fieldName"
-                      noItemsMessage="No fields available"
+                      rowHeader={"fieldName"}
+                      noItemsMessage={"No fields available"}
                       isSelectable={true}
                       selection={selection}
                       tableLayout={"auto"}
@@ -277,7 +277,7 @@ export default class AdvancedAggregation extends Component<AdvancedAggregationPr
                 <EuiModalFooter>
                   <EuiButtonEmpty onClick={this.closeModal}>Cancel</EuiButtonEmpty>
 
-                  <EuiButton onClick={this.closeModal}>Save</EuiButton>
+                  <EuiButton onClick={this.closeModal}>Add</EuiButton>
                 </EuiModalFooter>
               </EuiModal>
             </EuiOverlayMask>
@@ -287,7 +287,9 @@ export default class AdvancedAggregation extends Component<AdvancedAggregationPr
               <EuiSpacer />
             </EuiFlexItem>
             <EuiFlexItem grow={false}>
-              <EuiButton onClick={this.showModal}>Add fields</EuiButton>
+              <EuiButton fill onClick={this.showModal}>
+                Add fields
+              </EuiButton>
             </EuiFlexItem>
             <EuiFlexItem>
               <EuiSpacer />

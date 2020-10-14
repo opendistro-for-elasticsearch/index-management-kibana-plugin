@@ -28,7 +28,7 @@ import {
 import { ContentPanel } from "../../../../components/ContentPanel";
 import { CalendarTimeunitOptions, FixedTimeunitOptions, TimezoneOptionsByRegion } from "../../utils/constants";
 import { RollupService } from "../../../../services";
-import { FieldItem, IndexItem } from "../../../../../models/interfaces";
+import { FieldItem } from "../../../../../models/interfaces";
 
 interface TimeAggregationProps {
   rollupService: RollupService;
@@ -37,7 +37,7 @@ interface TimeAggregationProps {
   selectedTimestamp: EuiComboBoxOptionOption<String>[];
   timeunit: string;
   timezone: string;
-  fieldsOption: { label: string; value?: FieldItem }[];
+  fieldsOption: FieldItem[];
 
   onChangeIntervalType: (optionId: string) => void;
   onChangeIntervalValue: (e: ChangeEvent<HTMLInputElement>) => void;
@@ -80,7 +80,7 @@ export default class TimeAggregation extends Component<TimeAggregationProps, Tim
     } = this.props;
 
     // Filter options for date histogram
-    const dateFields = fieldsOption.filter((item) => item.value.type == "date");
+    const dateFields = fieldsOption.filter((item) => item.type == "date");
 
     return (
       <ContentPanel bodyStyles={{ padding: "initial" }} title="Time aggregation" titleSize="m">
