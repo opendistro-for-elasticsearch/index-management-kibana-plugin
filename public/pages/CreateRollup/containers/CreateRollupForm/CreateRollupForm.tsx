@@ -108,6 +108,7 @@ export default class CreateRollupForm extends Component<CreateRollupFormProps, C
 
       mappings: "",
       fields: undefined,
+      selectedFields: [],
       selectedTerms: [],
       description: "",
       sourceIndex: [],
@@ -311,7 +312,7 @@ export default class CreateRollupForm extends Component<CreateRollupFormProps, C
     this.updateSchedule();
   };
 
-  onSelectionChange = (selectedFields: { label: string; value?: FieldItem }[]): void => {
+  onDimensionSelectionChange = (selectedFields: { label: string; value?: FieldItem }[]): void => {
     this.setState({ selectedFields });
   };
 

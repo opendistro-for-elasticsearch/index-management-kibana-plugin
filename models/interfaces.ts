@@ -51,6 +51,14 @@ export interface FieldItem {
   type?: string;
 }
 
+export interface DimensionItem {
+  sequence: number;
+  fieldName: string;
+  fieldType: string;
+  aggregationMethod: string;
+  interval?: number;
+}
+
 export interface MetricItem {
   field: string;
   metric_aggregations: string[];

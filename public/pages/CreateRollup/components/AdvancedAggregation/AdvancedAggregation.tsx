@@ -1,5 +1,5 @@
 /*
- * Copyright 2019 Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ * Copyright 2020 Amazon.com, Inc. or its affiliates. All Rights Reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License").
  * You may not use this file except in compliance with the License.
@@ -34,26 +34,34 @@ import {
   EuiTableSelectionType,
 } from "@elastic/eui";
 import { ContentPanel, ContentPanelActions } from "../../../../components/ContentPanel";
-import { ManagedCatIndex } from "../../../../../server/models/interfaces";
 import { ModalConsumer } from "../../../../components/Modal";
+import { FieldItem } from "../../../../../models/interfaces";
 
-interface AdvancedAggregationProps {}
+interface AdvancedAggregationProps {
+  fieldsOption: { label: string; value?: FieldItem }[];
+  selectedFields: { label: string; value?: FieldItem }[];
+  onDimensionSelectionChange: (selectedFields: { label: string; value?: FieldItem }[]) => void;
+  selectedDimensionField: { label: string; value?: FieldItem }[];
+}
 
 interface AdvancedAggregationState {
   isModalVisible: boolean;
   searchText: string;
   selectedFieldType: EuiComboBoxOptionOption<String>[];
-  selectedFields: ManagedCatIndex[];
 }
-
-const tempFieldTypeOptions = [{ label: "string" }, { label: "location" }, { label: "number" }, { label: "timestamp" }];
-
+const fieldTypeOption = [
+  { label: "string", value: "string" },
+  { label: "number", value: "number" },
+];
 const addFields = (
   searchText: string,
   onChangeSearch: (value: ChangeEvent<HTMLInputElement>) => void,
   selectedFieldType: EuiComboBoxOptionOption<String>[],
   onChangeFieldType: (options: EuiComboBoxOptionOption<String>[]) => void,
-  selection: EuiTableSelectionType<ManagedCatIndex>
+  onDimensionSelectionChange: (selectedFields: { label: string; value?: FieldItem }[]) => void,
+  selectedDimensionField: { label: string; value?: FieldItem }[],
+  fieldsOption: { label: string; value?: FieldItem }[]
+  // fieldTypeOption: {label: string, value?: string}[]
 ) => (
   <EuiForm title={"Add fields"}>
     <EuiFlexGroup>
@@ -63,7 +71,7 @@ const addFields = (
       <EuiFlexItem grow={1}>
         <EuiComboBox
           placeholder="Field type"
-          options={tempFieldTypeOptions}
+          options={fieldTypeOption}
           selectedOptions={selectedFieldType}
           onChange={onChangeFieldType}
           isClearable={true}
@@ -71,14 +79,13 @@ const addFields = (
         />
       </EuiFlexItem>
     </EuiFlexGroup>
-    {/*TODO: create fake list of items, and figure out how to retrieve the selections for table*/}
     <EuiBasicTable
-      items={[]}
+      items={fieldsOption}
       rowHeader="fieldName"
       columns={addFieldsColumns}
       noItemsMessage="No field added for aggregation"
       isSelectable={true}
-      selection={selection}
+      selection={selectedDimensionField}
     />
   </EuiForm>
 );
@@ -132,7 +139,6 @@ export default class AdvancedAggregation extends Component<AdvancedAggregationPr
       isModalVisible: false,
       searchText: "",
       selectedFieldType: [],
-      selectedFields: [],
     };
   }
 
@@ -147,12 +153,13 @@ export default class AdvancedAggregation extends Component<AdvancedAggregationPr
   onChangeFieldType = (options: EuiComboBoxOptionOption<String>[]): void => {
     this.setState({ selectedFieldType: options });
   };
-
-  onSelectionChange = (selectedFields: ManagedCatIndex[]): void => {
-    this.setState({ selectedFields });
-  };
+  //
+  // onSelectionChange = (selectedFields: { label: string, value?: FieldItem }[]): void => {
+  //   this.setState({ selectedFields });
+  // };
 
   render() {
+    const { fieldsOption, selectedDimensionField, onDimensionSelectionChange } = this.props;
     const { isModalVisible, searchText, selectedFieldType } = this.state;
     // const pagination: Pagination = {
     //   pageIndex: page,
@@ -168,15 +175,11 @@ export default class AdvancedAggregation extends Component<AdvancedAggregationPr
     //   },
     // };
 
-    const selection: EuiTableSelectionType<ManagedCatIndex> = {
-      onSelectionChange: this.onSelectionChange,
-    };
-
     return (
       <ContentPanel
         actions={
           <ModalConsumer>
-            {({ onShow }) => (
+            {() => (
               <ContentPanelActions
                 actions={[
                   {
@@ -211,7 +214,15 @@ export default class AdvancedAggregation extends Component<AdvancedAggregationPr
                 </EuiModalHeader>
 
                 <EuiModalBody>
-                  {addFields(searchText, this.onChangeSearch, selectedFieldType, this.onChangeFieldType, selection)}
+                  {addFields(
+                    searchText,
+                    this.onChangeSearch,
+                    selectedFieldType,
+                    this.onChangeFieldType,
+                    onDimensionSelectionChange,
+                    selectedDimensionField,
+                    fieldsOption
+                  )}
                 </EuiModalBody>
 
                 <EuiModalFooter>

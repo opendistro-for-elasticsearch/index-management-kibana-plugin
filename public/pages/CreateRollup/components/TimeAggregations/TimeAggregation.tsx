@@ -60,21 +60,6 @@ const radios = [
   },
 ];
 
-//TODO: Fetch actual timestamp options from backend
-const options: { label: string; value?: FieldItem }[] = [
-  {
-    label: "timestamp",
-    value: { type: "date" },
-  },
-  {
-    label: "field1",
-    value: { type: "number" },
-  },
-  {
-    label: "fields2",
-    value: { type: "string" },
-  },
-];
 export default class TimeAggregation extends Component<TimeAggregationProps, TimeAggregationState> {
   constructor(props: TimeAggregationProps) {
     super(props);

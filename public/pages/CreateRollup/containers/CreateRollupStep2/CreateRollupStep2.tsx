@@ -42,6 +42,7 @@ interface CreateRollupProps extends RouteComponentProps {
   onChangeIntervalValue: (e: ChangeEvent<HTMLInputElement>) => void;
   onChangeTimeunit: (e: ChangeEvent<HTMLSelectElement>) => void;
   onChangeTimezone: (e: ChangeEvent<HTMLSelectElement>) => void;
+  onDimensionSelectionChange: (selectedFields: { label: string; value?: FieldItem }[]) => void;
 }
 
 interface CreateRollupState {
@@ -83,6 +84,7 @@ export default class CreateRollupStep2 extends Component<CreateRollupProps, Crea
       onChangeTimestamp,
       onChangeTimezone,
       fields,
+      onDimensionSelectionChange,
     } = this.props;
     const { submitError } = this.state;
 
@@ -145,7 +147,7 @@ export default class CreateRollupStep2 extends Component<CreateRollupProps, Crea
               fieldsOption={fieldsOption}
             />
             <EuiSpacer />
-            <AdvancedAggregation fieldsOption={fieldsOption} />
+            <AdvancedAggregation fieldsOption={fieldsOption} onDimensionSelectionChange={onDimensionSelectionChange} />
             <EuiSpacer />
             <MetricsCalculation />
             {submitError && (
