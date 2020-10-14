@@ -26,6 +26,8 @@ import { EMPTY_ROLLUP } from "../../../CreateRollup/utils/constants";
 import GeneralInformation from "../../Components/GeneralInformation/GeneralInformation";
 import { ModalConsumer } from "../../../../components/Modal";
 import { ContentPanel, ContentPanelActions } from "../../../../components/ContentPanel";
+import RollupStatus from "../../Components/RollupStatus/RollupStatus";
+import AggregationAndMetricsSettings from "../../Components/AggregationAndMetricsSettings/AggregationAndMetricsSettings";
 
 interface RollupDetailsProps extends RouteComponentProps {
   rollupService: RollupService;
@@ -75,7 +77,6 @@ export default class RollupDetails extends Component<RollupDetailsProps, RollupD
     const { id } = queryString.parse(this.props.location.search);
     console.log(id);
     if (typeof id === "string" && !!id) {
-      chrome.breadcrumbs.push(BREADCRUMBS.ROLLUP_DETAILS);
       chrome.breadcrumbs.push({ text: id });
 
       await this.getRollup(id);
@@ -231,6 +232,7 @@ export default class RollupDetails extends Component<RollupDetailsProps, RollupD
           onEdit={this.onEdit}
         />
         <EuiSpacer />
+        <RollupStatus />
         {/*<HistogramAndMetrics*/}
         {/*  rollupId={rollupId}*/}
         {/*  intervalValue={intervalValue}*/}
@@ -239,6 +241,7 @@ export default class RollupDetails extends Component<RollupDetailsProps, RollupD
         {/*  timezone={timezone}*/}
         {/*/>*/}
         <EuiSpacer />
+        <AggregationAndMetricsSettings />
         {/*<ScheduleRolesAndNotifications*/}
         {/*  rollupId={rollupId}*/}
         {/*  jobEnabledByDefault={jobEnabledByDefault}*/}
