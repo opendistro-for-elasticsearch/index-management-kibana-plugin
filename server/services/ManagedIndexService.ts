@@ -43,7 +43,6 @@ export default class ManagedIndexService {
   }
 
   // TODO: Not finished, need UI page that uses this first
-  // TODO: Need to call rest API instead for config index stuff
   getManagedIndex = async (req: Request, h: ResponseToolkit): Promise<ServerResponse<any>> => {
     try {
       const { id } = req.params;
