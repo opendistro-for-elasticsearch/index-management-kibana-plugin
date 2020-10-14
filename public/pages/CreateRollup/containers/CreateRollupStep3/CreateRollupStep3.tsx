@@ -156,7 +156,7 @@ export default class CreateRollupStep3 extends Component<CreateRollupProps, Crea
           </EuiFlexItem>
           <EuiFlexItem>
             <EuiTitle size="l">
-              <h1>Specify schedules</h1>
+              <h1>Specify schedule</h1>
             </EuiTitle>
             <EuiSpacer />
             <Schedule

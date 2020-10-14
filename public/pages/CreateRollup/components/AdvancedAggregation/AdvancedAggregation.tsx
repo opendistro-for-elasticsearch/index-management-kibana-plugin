@@ -206,7 +206,7 @@ export default class AdvancedAggregation extends Component<AdvancedAggregationPr
               <ContentPanelActions
                 actions={[
                   {
-                    text: "Add field",
+                    text: "Add fields",
                     buttonProps: {
                       onClick: () => this.showModal(),
                     },
@@ -217,7 +217,7 @@ export default class AdvancedAggregation extends Component<AdvancedAggregationPr
           </ModalConsumer>
         }
         bodyStyles={{ padding: "initial" }}
-        title="Additional aggregations - optional"
+        title={`Additional metrics - optional (${sampleDimenionItems.length})`}
         titleSize="m"
       >
         <div style={{ paddingLeft: "10px" }}>
@@ -266,6 +266,7 @@ export default class AdvancedAggregation extends Component<AdvancedAggregationPr
                       noItemsMessage="No fields available"
                       isSelectable={true}
                       selection={selection}
+                      tableLayout={"auto"}
                       // onChange={this.onTableChange}
                       // pagination={pagination}
                       // sorting={sorting}
