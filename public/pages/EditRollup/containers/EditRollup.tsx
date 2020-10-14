@@ -97,7 +97,6 @@ export default class EditRollup extends Component<EditRollupProps, EditRollupSta
   componentDidMount = async (): Promise<void> => {
     chrome.breadcrumbs.set([BREADCRUMBS.INDEX_MANAGEMENT, BREADCRUMBS.ROLLUPS]);
     const { id } = queryString.parse(this.props.location.search);
-    console.log(id);
     if (typeof id === "string" && !!id) {
       chrome.breadcrumbs.push(BREADCRUMBS.EDIT_ROLLUP);
       chrome.breadcrumbs.push({ text: id });
