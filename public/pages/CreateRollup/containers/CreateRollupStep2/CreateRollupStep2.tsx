@@ -23,55 +23,41 @@ import CreateRollupSteps from "../../components/CreateRollupSteps";
 import TimeAggregation from "../../components/TimeAggregations";
 import AdvancedAggregation from "../../components/AdvancedAggregation";
 import MetricsCalculation from "../../components/MetricsCalculation";
+import { DimensionItem, FieldItem } from "../../../../../models/interfaces";
 
 interface CreateRollupProps extends RouteComponentProps {
   rollupService: RollupService;
   currentStep: number;
-}
-
-interface CreateRollupState {
-  rollupId: string;
-  rollupIdError: string;
-  rollupSeqNo: number | null;
-  rollupPrimaryTerm: number | null;
-  submitError: string;
-  isSubmitting: boolean;
-  hasSubmitted: boolean;
+  fields: any;
+  selectedTerms: { label: string; value?: FieldItem }[];
+  selectedDimensionField: DimensionItem[];
   timestamp: EuiComboBoxOptionOption<String>[];
+  intervalValue: number;
   intervalType: string;
   timezone: string;
   timeunit: string;
+  onChangeTimestamp: (selectedOptions: EuiComboBoxOptionOption<String>[]) => void;
+  onChangeIntervalType: (optionId: string) => void;
+  onChangeIntervalValue: (e: ChangeEvent<HTMLInputElement>) => void;
+  onChangeTimeunit: (e: ChangeEvent<HTMLSelectElement>) => void;
+  onChangeTimezone: (e: ChangeEvent<HTMLSelectElement>) => void;
+  onDimensionSelectionChange: (selectedFields: DimensionItem[]) => void;
 }
 
-//TODO: Fetch actual timestamp options from backend
-const options: EuiComboBoxOptionOption<String>[] = [
-  {
-    label: "timestamp1",
-  },
-  {
-    label: "timestamp2",
-  },
-  {
-    label: "timestamp3",
-  },
-];
+interface CreateRollupState {
+  submitError: string;
+  isSubmitting: boolean;
+  hasSubmitted: boolean;
+}
 
 export default class CreateRollupStep2 extends Component<CreateRollupProps, CreateRollupState> {
   constructor(props: CreateRollupProps) {
     super(props);
 
     this.state = {
-      rollupSeqNo: null,
-      rollupPrimaryTerm: null,
-      rollupId: "",
-      rollupIdError: "",
       submitError: "",
       isSubmitting: false,
       hasSubmitted: false,
-      timestamp: [],
-      intervalType: "fixed",
-      timezone: "-7",
-      timeunit: "ms",
     };
   }
 
@@ -83,33 +69,32 @@ export default class CreateRollupStep2 extends Component<CreateRollupProps, Crea
     this.props.history.push(ROUTES.ROLLUPS);
   };
 
-  onChange = (e: ChangeEvent<HTMLInputElement>): void => {
-    const { hasSubmitted } = this.state;
-    const rollupId = e.target.value;
-    if (hasSubmitted) this.setState({ rollupId, rollupIdError: rollupId ? "" : "Required" });
-    else this.setState({ rollupId });
-  };
-
-  onChangeIntervalType = (optionId: string): void => {
-    this.setState({ intervalType: optionId });
-  };
-
-  onChangeTimestamp = (selectedOptions: EuiComboBoxOptionOption<String>[]): void => {
-    this.setState({ timestamp: selectedOptions });
-  };
-
-  onChangeTimeunit = (e: ChangeEvent<HTMLSelectElement>): void => {
-    this.setState({ timeunit: e.target.value });
-  };
-
-  onChangeTimezone = (e: ChangeEvent<HTMLSelectElement>): void => {
-    this.setState({ timezone: e.target.value });
-  };
-
   render() {
     if (this.props.currentStep !== 2) return null;
+    const {
+      fields,
+      intervalType,
+      intervalValue,
+      timestamp,
+      timezone,
+      timeunit,
+      selectedDimensionField,
+      onChangeTimeunit,
+      onChangeIntervalType,
+      onChangeIntervalValue,
+      onChangeTimestamp,
+      onChangeTimezone,
+      onDimensionSelectionChange,
+    } = this.props;
+    const { submitError } = this.state;
 
-    const { rollupId, rollupIdError, submitError, intervalType, timestamp, timezone, timeunit } = this.state;
+    //Generate fields options
+    var fieldsOption: { label: string; value: FieldItem }[] = [];
+    for (var key in fields) {
+      if (fields.hasOwnProperty(key)) {
+        fieldsOption.push({ label: key, value: fields[key] });
+      }
+    }
 
     return (
       <div style={{ padding: "5px 50px" }}>
@@ -131,21 +116,28 @@ export default class CreateRollupStep2 extends Component<CreateRollupProps, Crea
             </EuiCallOut>
             <EuiSpacer />
             <TimeAggregation
-              onChange={this.onChange}
-              onChangeTimestamp={this.onChangeTimestamp}
-              timestampOptions={options}
-              onChangeIntervalType={this.onChangeIntervalType}
+              {...this.props}
+              onChangeTimestamp={onChangeTimestamp}
+              onChangeIntervalType={onChangeIntervalType}
               intervalType={intervalType}
+              intervalValue={intervalValue}
               selectedTimestamp={timestamp}
               timezone={timezone}
               timeunit={timeunit}
-              onChangeTimezone={this.onChangeTimezone}
-              onChangeTimeunit={this.onChangeTimeunit}
+              onChangeTimezone={onChangeTimezone}
+              onChangeTimeunit={onChangeTimeunit}
+              onChangeIntervalValue={onChangeIntervalValue}
+              fieldsOption={fieldsOption}
             />
             <EuiSpacer />
-            <AdvancedAggregation rollupId={rollupId} rollupIdError={rollupIdError} onChange={this.onChange} />
+            <AdvancedAggregation
+              {...this.props}
+              fieldsOption={fieldsOption}
+              selectedDimensionField={selectedDimensionField}
+              onDimensionSelectionChange={onDimensionSelectionChange}
+            />
             <EuiSpacer />
-            <MetricsCalculation rollupId={rollupId} rollupIdError={rollupIdError} onChange={this.onChange} />
+            <MetricsCalculation />
             {submitError && (
               <EuiCallOut title="Sorry, there was an error" color="danger" iconType="alert">
                 <p>{submitError}</p>

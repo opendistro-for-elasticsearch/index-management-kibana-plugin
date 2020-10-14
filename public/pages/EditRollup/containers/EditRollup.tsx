@@ -156,13 +156,6 @@ export default class EditRollup extends Component<EditRollupProps, EditRollupSta
     this.props.history.push(ROUTES.ROLLUPS);
   };
 
-  onChange = (e: ChangeEvent<HTMLInputElement>): void => {
-    const { hasSubmitted } = this.state;
-    const rollupId = e.target.value;
-    if (hasSubmitted) this.setState({ rollupId, rollupIdError: rollupId ? "" : "Required" });
-    else this.setState({ rollupId });
-  };
-
   onChangeDescription = (e: ChangeEvent<HTMLTextAreaElement>): void => {
     const description = e.target.value;
     let newJSON = this.state.rollupJSON;
@@ -270,8 +263,7 @@ export default class EditRollup extends Component<EditRollupProps, EditRollupSta
       }
       const response = await rollupService.putRollup(rollup, rollupId, rollupSeqNo, rollupPrimaryTerm);
       if (response.ok) {
-        console.log("Submit success.");
-        toastNotifications.addSuccess(`Updated rollup: ${response.response._id}`);
+        toastNotifications.addSuccess(`Changes to "${response.response._id}" saved!`);
         this.props.history.push(ROUTES.ROLLUPS);
       } else {
         this.setState({ submitError: response.error });
@@ -285,9 +277,7 @@ export default class EditRollup extends Component<EditRollupProps, EditRollupSta
     const {
       rollupId,
       rollupIdError,
-      submitError,
       isSubmitting,
-      hasSubmitted,
       roles,
       description,
       jobEnabledByDefault,
@@ -306,12 +296,13 @@ export default class EditRollup extends Component<EditRollupProps, EditRollupSta
           <h1>Edit rollup job</h1>
         </EuiTitle>
         <EuiSpacer />
+        {/*TODO: Disable change name function*/}
         <ConfigureRollup
           rollupId={rollupId}
           rollupIdError={rollupIdError}
           onChangeDescription={this.onChangeDescription}
+          onChangeName={this.onChangeName}
           description={description}
-          onChange={this.onChange}
         />
         <EuiSpacer />
 

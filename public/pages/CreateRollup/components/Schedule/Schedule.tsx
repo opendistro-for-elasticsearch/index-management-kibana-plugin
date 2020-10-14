@@ -26,7 +26,7 @@ import {
   EuiTextArea,
   EuiFormHelpText,
 } from "@elastic/eui";
-import { CalenderTimeunitOptions, DelayTimeunitOptions } from "../../utils/constants";
+import { CalendarTimeunitOptions, DelayTimeunitOptions } from "../../utils/constants";
 import { ContentPanel } from "../../../../components/ContentPanel";
 
 interface ScheduleProps {
@@ -81,7 +81,7 @@ const selectInterval = (
         <EuiFormRow hasEmptyLabelSpace={true}>
           <EuiSelect
             id="selectIntervalTimeunit"
-            options={CalenderTimeunitOptions}
+            options={CalendarTimeunitOptions}
             value={intervalTimeunit}
             onChange={onChangeTimeunit}
             isInvalid={interval == undefined || interval <= 0}

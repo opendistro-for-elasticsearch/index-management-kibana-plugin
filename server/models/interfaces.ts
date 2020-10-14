@@ -66,6 +66,11 @@ export interface GetIndicesResponse {
   indices: ManagedCatIndex[];
   totalIndices: number;
 }
+
+export interface GetFieldsResponse {
+  result: string;
+}
+
 export interface GetRollupsResponse {
   rollups: RollupItem[];
   totalRollups: number;

@@ -47,6 +47,23 @@ export interface IndexItem {
   index: string;
 }
 
+export interface FieldItem {
+  type?: string;
+}
+
+export interface DimensionItem {
+  sequence: number;
+  fieldName: string;
+  fieldType?: string;
+  aggregationMethod: string;
+  interval?: number;
+}
+
+export interface MetricItem {
+  field: string;
+  metric_aggregations: string[];
+}
+
 /**
  * Interface what the Policy Elasticsearch Document
  */
@@ -88,13 +105,12 @@ export interface Rollup {
     description?: string;
     dimensions: [
       {
-        date_histogram: [
-          {
-            source_field: string;
-            fixed_interval: string;
-            timezone: string;
-          }
-        ];
+        date_histogram: {
+          source_field: string;
+          fixed_interval?: string;
+          calendar_interval?: string;
+          timezone: string;
+        };
       }
     ];
     enabled: boolean;

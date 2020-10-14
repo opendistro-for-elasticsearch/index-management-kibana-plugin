@@ -1,5 +1,5 @@
 /*
- * Copyright 2019 Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ * Copyright 2020 Amazon.com, Inc. or its affiliates. All Rights Reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License").
  * You may not use this file except in compliance with the License.
@@ -31,61 +31,38 @@ import {
   EuiFieldSearch,
   EuiComboBox,
   EuiComboBoxOptionOption,
+  // @ts-ignore
+  Pagination,
+  EuiTableSortingType,
   EuiTableSelectionType,
 } from "@elastic/eui";
 import { ContentPanel, ContentPanelActions } from "../../../../components/ContentPanel";
-import { ManagedCatIndex } from "../../../../../server/models/interfaces";
 import { ModalConsumer } from "../../../../components/Modal";
+import { DimensionItem, FieldItem } from "../../../../../models/interfaces";
+import { DEFAULT_PAGE_SIZE_OPTIONS } from "../../../Rollups/utils/constants";
 
 interface AdvancedAggregationProps {
-  rollupId: string;
-  rollupIdError: string;
-  onChange: (value: ChangeEvent<HTMLInputElement>) => void;
+  fieldsOption: { label: string; value?: FieldItem }[];
+  // selectedFields: { label: string; value?: FieldItem }[];
+  onDimensionSelectionChange: (selectedFields: DimensionItem[]) => void;
+  selectedDimensionField: DimensionItem[];
 }
 
 interface AdvancedAggregationState {
   isModalVisible: boolean;
   searchText: string;
   selectedFieldType: EuiComboBoxOptionOption<String>[];
-  selectedFields: ManagedCatIndex[];
+  selectedFields: { label: string; value?: FieldItem }[];
+  page: number;
+  size: number;
+  sortField: string;
+  sortDirection: string;
 }
 
-const tempFieldTypeOptions = [{ label: "string" }, { label: "location" }, { label: "number" }, { label: "timestamp" }];
-
-const addFields = (
-  searchText: string,
-  onChangeSearch: (value: ChangeEvent<HTMLInputElement>) => void,
-  selectedFieldType: EuiComboBoxOptionOption<String>[],
-  onChangeFieldType: (options: EuiComboBoxOptionOption<String>[]) => void,
-  selection: EuiTableSelectionType<ManagedCatIndex>
-) => (
-  <EuiForm title={"Add fields"}>
-    <EuiFlexGroup>
-      <EuiFlexItem grow={2}>
-        <EuiFieldSearch placeholder="Search field name" value={searchText} onChange={onChangeSearch} isClearable={true} />
-      </EuiFlexItem>
-      <EuiFlexItem grow={1}>
-        <EuiComboBox
-          placeholder="Field type"
-          options={tempFieldTypeOptions}
-          selectedOptions={selectedFieldType}
-          onChange={onChangeFieldType}
-          isClearable={true}
-          singleSelection={true}
-        />
-      </EuiFlexItem>
-    </EuiFlexGroup>
-    {/*TODO: create fake list of items, and figure out how to retrieve the selections for table*/}
-    <EuiBasicTable
-      items={[]}
-      rowHeader="fieldName"
-      columns={addFieldsColumns}
-      noItemsMessage="No field added for aggregation"
-      isSelectable={true}
-      selection={selection}
-    />
-  </EuiForm>
-);
+const fieldTypeOption = [
+  { label: "string", value: "string" },
+  { label: "number", value: "number" },
+];
 
 const aggregationColumns = [
   {
@@ -94,7 +71,7 @@ const aggregationColumns = [
     sortable: true,
   },
   {
-    field: "fieldname",
+    field: "fieldName",
     name: "Field Name",
   },
   {
@@ -109,6 +86,11 @@ const aggregationColumns = [
   {
     field: "interval",
     name: "Interval",
+    dataType: "number",
+    render: (interval: null | number) => {
+      if (interval == null) return "-";
+      else return `${interval}`;
+    },
   },
   {
     field: "actions",
@@ -116,15 +98,38 @@ const aggregationColumns = [
   },
 ];
 
+const sampleDimenionItems: DimensionItem[] = [
+  {
+    sequence: 1,
+    fieldName: "Dest",
+    fieldType: "keyword",
+    aggregationMethod: "terms",
+  },
+  {
+    sequence: 2,
+    fieldName: "FlightDelayMin",
+    fieldType: "integer",
+    aggregationMethod: "histogram",
+    interval: 10,
+  },
+  {
+    sequence: 3,
+    fieldName: "FlightNum",
+    fieldType: "keyword",
+    aggregationMethod: "terms",
+  },
+];
+
 const addFieldsColumns = [
   {
-    field: "fieldname",
+    field: "label",
     name: "Field name",
     sortable: true,
   },
   {
-    field: "fieldType",
+    field: "value.type",
     name: "Field type",
+    sortable: true,
   },
 ];
 
@@ -136,6 +141,10 @@ export default class AdvancedAggregation extends Component<AdvancedAggregationPr
       isModalVisible: false,
       searchText: "",
       selectedFieldType: [],
+      page: 1,
+      size: 10,
+      sortField: "label",
+      sortDirection: "desc",
       selectedFields: [],
     };
   }
@@ -146,33 +155,46 @@ export default class AdvancedAggregation extends Component<AdvancedAggregationPr
 
   onChangeSearch = (e: ChangeEvent<HTMLInputElement>): void => {
     this.setState({ searchText: e.target.value });
+    console.log(this.state);
   };
 
   onChangeFieldType = (options: EuiComboBoxOptionOption<String>[]): void => {
     this.setState({ selectedFieldType: options });
   };
 
-  onSelectionChange = (selectedFields: ManagedCatIndex[]): void => {
+  onSelectionChange = (selectedFields: { label: string; value?: FieldItem }[]): void => {
+    console.log("We are inside onSelectionChange");
     this.setState({ selectedFields });
   };
 
-  render() {
-    const { isModalVisible, searchText, selectedFieldType } = this.state;
-    // const pagination: Pagination = {
-    //   pageIndex: page,
-    //   pageSize: size,
-    //   pageSizeOptions: DEFAULT_PAGE_SIZE_OPTIONS,
-    //   totalItemCount: totalIndices,
-    // };
-    //
-    // const sorting: EuiTableSortingType<ManagedCatIndex> = {
-    //   sort: {
-    //     direction: sortDirection,
-    //     field: sortField,
-    //   },
-    // };
+  //TODO: Save the fields to selectedDimensionsField as DimensionItem
+  onClickSave() {}
 
-    const selection: EuiTableSelectionType<ManagedCatIndex> = {
+  // onTableChange = ({ page: tablePage , sort)}: Criteria<{ label: string; value?: FieldItem }>) => {
+  //   const { index: page, size} = tablePage;
+  //
+  //   const { field: sortField, direction: sortDirection } = sort;
+  //   this.setState({page, size:pageSize , sortField,sortDirection})
+  // };
+
+  render() {
+    const { fieldsOption, selectedDimensionField, onDimensionSelectionChange } = this.props;
+    const { isModalVisible, searchText, selectedFieldType, page, size, sortDirection, sortField } = this.state;
+    const pagination: Pagination = {
+      pageIndex: page,
+      pageSize: size,
+      pageSizeOptions: DEFAULT_PAGE_SIZE_OPTIONS,
+      totalItemCount: fieldsOption.length,
+    };
+
+    const sorting: EuiTableSortingType<{ label: string; value?: FieldItem }> = {
+      sort: {
+        direction: sortDirection,
+        field: sortField,
+      },
+    };
+
+    const selection: EuiTableSelectionType<{ label: string; value?: FieldItem }> = {
       onSelectionChange: this.onSelectionChange,
     };
 
@@ -180,7 +202,7 @@ export default class AdvancedAggregation extends Component<AdvancedAggregationPr
       <ContentPanel
         actions={
           <ModalConsumer>
-            {({ onShow }) => (
+            {() => (
               <ContentPanelActions
                 actions={[
                   {
@@ -199,8 +221,9 @@ export default class AdvancedAggregation extends Component<AdvancedAggregationPr
         titleSize="m"
       >
         <div style={{ paddingLeft: "10px" }}>
+          {/*Need to create array of dimension items after selection*/}
           <EuiBasicTable
-            items={[]}
+            items={sampleDimenionItems}
             rowHeader="fieldName"
             columns={aggregationColumns}
             noItemsMessage="No field added for aggregation"
@@ -215,7 +238,39 @@ export default class AdvancedAggregation extends Component<AdvancedAggregationPr
                 </EuiModalHeader>
 
                 <EuiModalBody>
-                  {addFields(searchText, this.onChangeSearch, selectedFieldType, this.onChangeFieldType, selection)}
+                  <EuiForm title={"Add fields"}>
+                    <EuiFlexGroup>
+                      <EuiFlexItem grow={2}>
+                        <EuiFieldSearch
+                          placeholder="Search field name"
+                          value={searchText}
+                          onChange={this.onChangeSearch}
+                          isClearable={true}
+                        />
+                      </EuiFlexItem>
+                      <EuiFlexItem grow={1}>
+                        <EuiComboBox
+                          placeholder="Field type"
+                          options={fieldTypeOption}
+                          selectedOptions={selectedFieldType}
+                          onChange={this.onChangeFieldType}
+                          isClearable={true}
+                          singleSelection={true}
+                        />
+                      </EuiFlexItem>
+                    </EuiFlexGroup>
+                    <EuiBasicTable
+                      columns={addFieldsColumns}
+                      items={fieldsOption}
+                      rowHeader="fieldName"
+                      noItemsMessage="No fields available"
+                      isSelectable={true}
+                      selection={selection}
+                      // onChange={this.onTableChange}
+                      // pagination={pagination}
+                      // sorting={sorting}
+                    />
+                  </EuiForm>
                 </EuiModalBody>
 
                 <EuiModalFooter>

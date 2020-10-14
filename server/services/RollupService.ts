@@ -17,10 +17,9 @@ import _ from "lodash";
 import { Legacy } from "kibana";
 import { CLUSTER, INDEX } from "../utils/constants";
 import {
-  CatIndex,
   DeleteRollupParams,
   DeleteRollupResponse,
-  GetIndicesResponse,
+  GetFieldsResponse,
   GetRollupsResponse,
   PutRollupParams,
   PutRollupResponse,
@@ -40,50 +39,6 @@ export default class RollupService {
   constructor(esDriver: ElasticsearchPlugin) {
     this.esDriver = esDriver;
   }
-
-  getIndices = async (req: Request, h: ResponseToolkit): Promise<ServerResponse<GetIndicesResponse>> => {
-    try {
-      // @ts-ignore
-      const { from, size, search, sortField, sortDirection } = req.query as {
-        from: string;
-        size: string;
-        search: string;
-        sortField: string;
-        sortDirection: string;
-      };
-      const str = search.trim();
-      const params = {
-        index: str ? `*${str.split(" ").join("* *")}*` : "*",
-        format: "json",
-        s: `${sortField}:${sortDirection}`,
-      };
-      const { callWithRequest } = this.esDriver.getCluster(CLUSTER.DATA);
-      const indicesResponse: CatIndex[] = await callWithRequest(req, "cat.indices", params);
-
-      // _cat doesn't support pagination, do our own in server pagination to at least reduce network bandwidth
-      const fromNumber = parseInt(from, 10);
-      const sizeNumber = parseInt(size, 10);
-      const paginatedIndices = indicesResponse.slice(fromNumber, fromNumber + sizeNumber);
-      const indexUuids = paginatedIndices.map((value: CatIndex) => value.uuid);
-
-      const managedStatus = await this._getManagedStatus(req, indexUuids);
-
-      return {
-        ok: true,
-        response: {
-          indices: paginatedIndices.map((catIndex: CatIndex) => ({ ...catIndex, managed: managedStatus[catIndex.uuid] || "N/A" })),
-          totalIndices: indicesResponse.length,
-        },
-      };
-    } catch (err) {
-      // Throws an error if there is no index matching pattern
-      if (err.statusCode === 404 && err.body.error.type === "index_not_found_exception") {
-        return { ok: true, response: { indices: [], totalIndices: 0 } };
-      }
-      console.error("Index Management - IndexService - getIndices:", err);
-      return { ok: false, error: err.message };
-    }
-  };
 
   /**
    * Calls backend Put Rollup API
@@ -116,7 +71,7 @@ export default class RollupService {
       const params: DeleteRollupParams = { rollupId: id };
       const { callWithRequest } = await this.esDriver.getCluster(CLUSTER.ISM);
       const response: DeleteRollupResponse = await callWithRequest(req, "ism.deleteRollup", params);
-      if (response.result !== "deleted") {
+      if (response.result != "deleted") {
         return { ok: false, error: response.result };
       }
       return { ok: true, response: true };
@@ -126,10 +81,46 @@ export default class RollupService {
     }
   };
 
+  startRollup = async (req: Request, h: ResponseToolkit): Promise<ServerResponse<boolean>> => {
+    try {
+      const { id } = req.params;
+      const params = { rollupId: id };
+      const { callWithRequest } = await this.esDriver.getCluster(CLUSTER.ISM);
+      const getResponse = await callWithRequest(req, "ism.startRollup", params);
+      const acknowledged = _.get(getResponse, "acknowledged");
+      console.log(getResponse);
+      if (acknowledged) {
+        return { ok: true, response: true };
+      } else {
+        return { ok: false, error: "Failed to start rollup" };
+      }
+    } catch (err) {
+      console.error("Index Management - RollupService - startRollup:", err);
+      return { ok: false, error: err.message };
+    }
+  };
+
+  stopRollup = async (req: Request, h: ResponseToolkit): Promise<ServerResponse<boolean>> => {
+    try {
+      const { id } = req.params;
+      const params = { rollupId: id };
+      const { callWithRequest } = await this.esDriver.getCluster(CLUSTER.ISM);
+      const getResponse = await callWithRequest(req, "ism.stopRollup", params);
+      const acknowledged = _.get(getResponse, "acknowledged");
+      if (acknowledged) {
+        return { ok: true, response: true };
+      } else {
+        return { ok: false, error: "Failed to stop rollup" };
+      }
+    } catch (err) {
+      console.error("Index Management - RollupService - stopRollup:", err);
+      return { ok: false, error: err.message };
+    }
+  };
+
   /**
    * Calls backend Get Rollup API
    */
-  //TODO: Figure out the part for DocumentPolicy
   getRollup = async (req: Request, h: ResponseToolkit): Promise<ServerResponse<DocumentRollup>> => {
     try {
       const { id } = req.params;
@@ -146,6 +137,18 @@ export default class RollupService {
       }
     } catch (err) {
       console.error("Index Management - RollupService - getRollup:", err);
+      return { ok: false, error: err.message };
+    }
+  };
+
+  getMappings = async (req: Request, h: ResponseToolkit): Promise<ServerResponse<GetFieldsResponse>> => {
+    try {
+      const { index } = req.params;
+      const { callWithRequest } = this.esDriver.getCluster(CLUSTER.DATA);
+      const mappings = await callWithRequest(req, "indices.getMapping", { index });
+      return { ok: true, response: mappings };
+    } catch (err) {
+      console.error("Index Management - RollupService - getFields:", err);
       return { ok: false, error: err.message };
     }
   };

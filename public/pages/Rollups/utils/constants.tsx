@@ -15,8 +15,7 @@
 
 import React from "react";
 import { EuiLink, EuiTableFieldDataColumnType } from "@elastic/eui";
-import { ROUTES, SortDirection } from "../../../utils/constants";
-import { renderTime } from "../../Policies/utils/helpers";
+import { SortDirection } from "../../../utils/constants";
 import { RollupItem } from "../models/interfaces";
 import { renderContinuous, renderEnabled } from "./helpers";
 

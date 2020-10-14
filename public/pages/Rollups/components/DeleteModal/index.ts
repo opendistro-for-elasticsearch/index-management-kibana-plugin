@@ -13,6 +13,6 @@
  * permissions and limitations under the License.
  */
 
-import TimeAggregation from "./TimeAggregation";
+import DeleteModal from "./DeleteModal";
 
-export default TimeAggregation;
+export default DeleteModal;

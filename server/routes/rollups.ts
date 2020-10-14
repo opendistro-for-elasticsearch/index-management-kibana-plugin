@@ -45,4 +45,22 @@ export default function (server: Server, services: NodeServices) {
     method: REQUEST.DELETE,
     handler: rollupService.deleteRollup,
   });
+
+  server.route({
+    path: `${NODE_API.ROLLUPS}/{id}/_start`,
+    method: REQUEST.POST,
+    handler: rollupService.startRollup,
+  });
+
+  server.route({
+    path: `${NODE_API.ROLLUPS}/{id}/_stop`,
+    method: REQUEST.POST,
+    handler: rollupService.stopRollup,
+  });
+
+  server.route({
+    path: NODE_API._MAPPINGS,
+    method: REQUEST.POST,
+    handler: rollupService.getMappings,
+  });
 }

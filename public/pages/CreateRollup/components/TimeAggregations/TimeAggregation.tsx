@@ -26,20 +26,27 @@ import {
   EuiComboBoxOptionOption,
 } from "@elastic/eui";
 import { ContentPanel } from "../../../../components/ContentPanel";
-import { CalenderTimeunitOptions, FixedTimeunitOptions, TimezoneOptions } from "../../utils/constants";
+import { CalendarTimeunitOptions, FixedTimeunitOptions, TimezoneOptionsByRegion } from "../../utils/constants";
+import { RollupService } from "../../../../services";
+import { FieldItem, IndexItem } from "../../../../../models/interfaces";
 
 interface TimeAggregationProps {
+  rollupService: RollupService;
+  intervalValue: number;
   intervalType: string;
-  onChange: (value: ChangeEvent<HTMLInputElement>) => void;
-  timestampOptions: EuiComboBoxOptionOption<String>[];
   selectedTimestamp: EuiComboBoxOptionOption<String>[];
-  onChangeIntervalType: (optionId: string) => void;
-  onChangeTimestamp: (options: EuiComboBoxOptionOption<String>[]) => void;
-  onChangeTimezone: (e: ChangeEvent<HTMLSelectElement>) => void;
-  onChangeTimeunit: (e: ChangeEvent<HTMLSelectElement>) => void;
-  timezone: string;
   timeunit: string;
+  timezone: string;
+  fieldsOption: { label: string; value?: FieldItem }[];
+
+  onChangeIntervalType: (optionId: string) => void;
+  onChangeIntervalValue: (e: ChangeEvent<HTMLInputElement>) => void;
+  onChangeTimestamp: (options: EuiComboBoxOptionOption<String>[]) => void;
+  onChangeTimeunit: (e: ChangeEvent<HTMLSelectElement>) => void;
+  onChangeTimezone: (e: ChangeEvent<HTMLSelectElement>) => void;
 }
+
+interface TimeAggregationState {}
 
 const radios = [
   {
@@ -47,17 +54,34 @@ const radios = [
     label: "Fixed",
   },
   {
-    id: "calender",
-    label: "Calender",
+    id: "calendar",
+    label: "Calendar",
   },
 ];
-export default class TimeAggregation extends Component<TimeAggregationProps> {
+
+export default class TimeAggregation extends Component<TimeAggregationProps, TimeAggregationState> {
   constructor(props: TimeAggregationProps) {
     super(props);
   }
 
   render() {
-    const { timestampOptions, intervalType, timezone, timeunit, onChangeTimezone, onChangeIntervalType, onChangeTimeunit } = this.props;
+    const {
+      intervalType,
+      intervalValue,
+      selectedTimestamp,
+      timeunit,
+      timezone,
+      onChangeIntervalType,
+      onChangeIntervalValue,
+      onChangeTimestamp,
+      onChangeTimeunit,
+      onChangeTimezone,
+      fieldsOption,
+    } = this.props;
+
+    // Filter options for date histogram
+    const dateFields = fieldsOption.filter((item) => item.value.type == "date");
+
     return (
       <ContentPanel bodyStyles={{ padding: "initial" }} title="Time aggregation" titleSize="m">
         <div style={{ paddingLeft: "10px" }}>
@@ -65,9 +89,9 @@ export default class TimeAggregation extends Component<TimeAggregationProps> {
           <EuiFormRow label="Timestamp field">
             <EuiComboBox
               placeholder="Select timestamp"
-              options={timestampOptions}
-              selectedOptions={this.props.selectedTimestamp}
-              onChange={this.props.onChangeTimestamp}
+              options={dateFields}
+              selectedOptions={selectedTimestamp}
+              onChange={onChangeTimestamp}
               singleSelection={true}
             />
           </EuiFormRow>
@@ -79,14 +103,19 @@ export default class TimeAggregation extends Component<TimeAggregationProps> {
           <EuiFlexGroup style={{ maxWidth: 300 }}>
             <EuiFlexItem grow={false} style={{ width: 100 }}>
               <EuiFormRow label="Interval">
-                <EuiFieldNumber min={1} placeholder="2" />
+                <EuiFieldNumber
+                  min={1}
+                  value={intervalType == "fixed" ? intervalValue : 1}
+                  disabled={intervalType == "calendar"}
+                  onChange={onChangeIntervalValue}
+                />
               </EuiFormRow>
             </EuiFlexItem>
             <EuiFlexItem>
               <EuiFormRow hasEmptyLabelSpace={true}>
                 <EuiSelect
                   id="selectTimeunit"
-                  options={intervalType == "fixed" ? FixedTimeunitOptions : CalenderTimeunitOptions}
+                  options={intervalType == "fixed" ? FixedTimeunitOptions : CalendarTimeunitOptions}
                   value={timeunit}
                   onChange={onChangeTimeunit}
                 />
@@ -95,7 +124,7 @@ export default class TimeAggregation extends Component<TimeAggregationProps> {
           </EuiFlexGroup>
           <EuiSpacer size="m" />
           <EuiFormRow label="Timezone">
-            <EuiSelect id="timezone" options={TimezoneOptions} value={timezone} onChange={onChangeTimezone} />
+            <EuiSelect id="timezone" options={TimezoneOptionsByRegion} value={timezone} onChange={onChangeTimezone} />
           </EuiFormRow>
         </div>
       </ContentPanel>

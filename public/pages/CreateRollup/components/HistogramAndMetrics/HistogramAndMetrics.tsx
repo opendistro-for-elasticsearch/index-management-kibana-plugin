@@ -1,5 +1,5 @@
 /*
- * Copyright 2019 Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ * Copyright 2020 Amazon.com, Inc. or its affiliates. All Rights Reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License").
  * You may not use this file except in compliance with the License.
@@ -14,14 +14,17 @@
  */
 
 import React, { Component } from "react";
-import { EuiFlexGrid, EuiFlexItem, EuiSpacer, EuiText } from "@elastic/eui";
+import { EuiComboBoxOptionOption, EuiFlexGrid, EuiFlexItem, EuiSpacer, EuiText } from "@elastic/eui";
 import { ContentPanel, ContentPanelActions } from "../../../../components/ContentPanel";
 import { ModalConsumer } from "../../../../components/Modal";
 
 interface HistogramAndMetricsProps {
   rollupId: string;
-  rollupIdError: string;
   onChangeStep: (step: number) => void;
+  timestamp: EuiComboBoxOptionOption<String>[];
+  intervalValue: number;
+  timezone: string;
+  timeunit: string;
 }
 
 export default class HistogramAndMetrics extends Component<HistogramAndMetricsProps> {
@@ -30,12 +33,12 @@ export default class HistogramAndMetrics extends Component<HistogramAndMetricsPr
   }
 
   render() {
-    const { onChangeStep } = this.props;
+    const { onChangeStep, intervalValue, timestamp, timezone, timeunit } = this.props;
     return (
       <ContentPanel
         actions={
           <ModalConsumer>
-            {({ onShow }) => (
+            {() => (
               <ContentPanelActions
                 actions={[
                   {
@@ -62,20 +65,20 @@ export default class HistogramAndMetrics extends Component<HistogramAndMetricsPr
           <EuiFlexGrid columns={3}>
             <EuiFlexItem>
               <EuiText size={"xs"}>
-                <dt>Timestamp</dt>
-                <dd>{}</dd>
+                <dt>Timestamp field</dt>
+                <dd>{timestamp[0].label}</dd>
               </EuiText>
             </EuiFlexItem>
             <EuiFlexItem>
               <EuiText size={"xs"}>
                 <dt>Interval</dt>
-                <dd>{}</dd>
+                <dd>{`${intervalValue} ${timeunit}`}</dd>
               </EuiText>
             </EuiFlexItem>
             <EuiFlexItem>
               <EuiText size={"xs"}>
                 <dt>Timezone</dt>
-                <dd>{}</dd>
+                <dd>{timezone}</dd>
               </EuiText>
             </EuiFlexItem>
           </EuiFlexGrid>

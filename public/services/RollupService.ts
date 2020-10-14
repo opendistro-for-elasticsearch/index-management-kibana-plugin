@@ -1,5 +1,5 @@
 /*
- * Copyright 2019 Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ * Copyright 2020 Amazon.com, Inc. or its affiliates. All Rights Reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License").
  * You may not use this file except in compliance with the License.
@@ -16,12 +16,11 @@
 //TODO: Create actual rollup service here when backend is done.
 
 import { IHttpResponse, IHttpService } from "angular";
-import { GetIndicesResponse, PutRollupResponse, GetRollupsResponse, SearchResponse } from "../../server/models/interfaces";
+import { GetIndicesResponse, PutRollupResponse, GetRollupsResponse, GetFieldsResponse } from "../../server/models/interfaces";
 import { ServerResponse } from "../../server/models/types";
 import { NODE_API } from "../../utils/constants";
 import queryString from "query-string";
 import { DocumentRollup, Rollup } from "../../models/interfaces";
-import { INDEX } from "../../server/utils/constants";
 
 export default class RollupService {
   httpClient: IHttpService;
@@ -55,7 +54,6 @@ export default class RollupService {
     const queryParamsString = queryString.stringify({ seqNo, primaryTerm });
     let url = `..${NODE_API.ROLLUPS}/${rollupId}`;
     if (queryParamsString) url += `?${queryParamsString}`;
-    console.log(rollup);
     const response = (await this.httpClient.put(url, rollup)) as IHttpResponse<ServerResponse<PutRollupResponse>>;
     return response.data;
   };
@@ -72,22 +70,24 @@ export default class RollupService {
     return response.data;
   };
 
-  searchIndices = async (searchValue: string, source: boolean = false): Promise<ServerResponse<SearchResponse<any>>> => {
-    const str = searchValue.trim();
-    const mustQuery = {
-      query_string: {
-        default_field: "index.policy_id",
-        default_operator: "AND",
-        query: str ? `*${str.split(" ").join("* *")}*` : "*",
-      },
-    };
-    const body = {
-      index: INDEX.OPENDISTRO_ISM_CONFIG,
-      size: 10,
-      query: { _source: source, query: { bool: { must: [mustQuery, { exists: { field: "policy" } }] } } },
-    };
-    const url = `..${NODE_API._SEARCH}`;
-    const response = (await this.httpClient.post(url, body)) as IHttpResponse<ServerResponse<any>>;
+  startRollup = async (rollupId: string): Promise<ServerResponse<boolean>> => {
+    const url = `..${NODE_API.ROLLUPS}/${rollupId}/_start`;
+    const body = "";
+    const response = (await this.httpClient.post(url, body)) as IHttpResponse<ServerResponse<boolean>>;
+    return response.data;
+  };
+
+  stopRollup = async (rollupId: string): Promise<ServerResponse<boolean>> => {
+    const url = `..${NODE_API.ROLLUPS}/${rollupId}/_stop`;
+    const body = "";
+    const response = (await this.httpClient.post(url, body)) as IHttpResponse<ServerResponse<boolean>>;
+    return response.data;
+  };
+
+  //Function to search for fields from a source index using GET /${source_index}/_mapping
+  getMappings = async (index: string): Promise<ServerResponse<GetFieldsResponse>> => {
+    const url = `..${NODE_API._MAPPINGS}`;
+    const response = (await this.httpClient.post(url, { index })) as IHttpResponse<ServerResponse<GetFieldsResponse>>;
     return response.data;
   };
 }
