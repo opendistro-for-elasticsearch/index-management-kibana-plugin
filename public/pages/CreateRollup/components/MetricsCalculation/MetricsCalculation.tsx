@@ -32,10 +32,12 @@ import {
   EuiOverlayMask,
   EuiSpacer,
   EuiTableSelectionType,
+  EuiCheckbox,
 } from "@elastic/eui";
 import { ContentPanel, ContentPanelActions } from "../../../../components/ContentPanel";
 import { ModalConsumer } from "../../../../components/Modal";
 import { ManagedCatIndex } from "../../../../../server/models/interfaces";
+import { DimensionItem, MetricItem } from "../../../../../models/interfaces";
 
 interface MetricsCalculationProps {}
 
@@ -82,33 +84,69 @@ const addFields = (
     />
   </EuiForm>
 );
+const sampleMetricItems: MetricItem[] = [
+  {
+    fieldname: "On time rate",
+    all: true,
+    min: false,
+    max: true,
+    sum: false,
+    avg: false,
+    value_count: false,
+  },
+  {
+    fieldname: "Return rate",
+    all: true,
+    min: true,
+    max: false,
+    sum: false,
+    avg: false,
+    value_count: false,
+  },
+  {
+    fieldname: "OTIF rate",
+    all: false,
+    min: false,
+    max: true,
+    sum: false,
+    avg: false,
+    value_count: true,
+  },
+];
+const setChecked = (e: ChangeEvent<HTMLInputElement>): void => {};
 
 const metricsColumns = [
-  {
-    field: "sequence",
-    name: "Sequence",
-    sortable: true,
-  },
   {
     field: "fieldname",
     name: "Field Name",
   },
   {
-    field: "fieldType",
-    name: "Field Type",
+    field: "all",
+    name: "All",
     truncateText: true,
+    // render: (all: boolean) => {
+    //   <EuiCheckbox id ={"all"} checked={all} onChange={()=>{all=!all}}/>
+    // },
   },
   {
-    field: "aggregationMethod",
-    name: "Aggregation method",
+    field: "min",
+    name: "Min",
   },
   {
-    field: "interval",
-    name: "Interval",
+    field: "max",
+    name: "Max",
   },
   {
-    field: "actions",
-    name: "Actions",
+    field: "sum",
+    name: "Sum",
+  },
+  {
+    field: "avg",
+    name: "Avg",
+  },
+  {
+    field: "value_count",
+    name: "Value count",
   },
 ];
 
@@ -196,7 +234,7 @@ export default class MetricsCalculation extends Component<MetricsCalculationProp
       >
         <div style={{ paddingLeft: "10px" }}>
           <EuiBasicTable
-            items={[]}
+            items={sampleMetricItems}
             rowHeader="numericField"
             columns={metricsColumns}
             noItemsMessage="No field added for metrics calculation"
