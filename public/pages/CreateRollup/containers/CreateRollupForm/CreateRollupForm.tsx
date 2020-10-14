@@ -24,7 +24,7 @@ import { ManagedCatIndex } from "../../../../../server/models/interfaces";
 import CreateRollup from "../CreateRollup";
 import CreateRollupStep2 from "../CreateRollupStep2";
 import { toastNotifications } from "ui/notify";
-import { IndexItem, Rollup } from "../../../../../models/interfaces";
+import { FieldItem, IndexItem, Rollup } from "../../../../../models/interfaces";
 import { getErrorMessage } from "../../../../utils/helpers";
 import { EMPTY_ROLLUP } from "../../utils/constants";
 import CreateRollupStep3 from "../CreateRollupStep3";
@@ -56,11 +56,13 @@ interface CreateRollupFormState {
 
   mappings: any;
   fields: any;
+  selectedTerms: { label: string; value?: FieldItem }[];
   timestamp: EuiComboBoxOptionOption<String>[];
   intervalType: string;
   intervalValue: number;
   timezone: string;
   timeunit: string;
+  selectedFields: { label: string; value?: FieldItem }[];
 
   jobEnabledByDefault: boolean;
   recurringJob: string;
@@ -106,6 +108,7 @@ export default class CreateRollupForm extends Component<CreateRollupFormProps, C
 
       mappings: "",
       fields: undefined,
+      selectedTerms: [],
       description: "",
       sourceIndex: [],
       sourceIndexError: "",
@@ -206,6 +209,15 @@ export default class CreateRollupForm extends Component<CreateRollupFormProps, C
     newJSON.rollup.description = description;
     this.setState({ description: description, rollupJSON: newJSON });
     console.log(this.state);
+    const { fields } = this.state;
+    var temp: { label: string; value: FieldItem }[] = [];
+    for (var key in fields) {
+      if (fields.hasOwnProperty(key)) {
+        console.log(key + " -> " + fields[key]);
+        temp.push({ label: key, value: fields[key] });
+      }
+    }
+    console.log(temp);
   };
 
   onChangeName = (e: ChangeEvent<HTMLInputElement>): void => {
@@ -297,6 +309,10 @@ export default class CreateRollupForm extends Component<CreateRollupFormProps, C
     this.setState({ timezone: e.target.value, rollupJSON: newJSON });
     //Also update the timezone field in cron expression if needed.
     this.updateSchedule();
+  };
+
+  onSelectionChange = (selectedFields: { label: string; value?: FieldItem }[]): void => {
+    this.setState({ selectedFields });
   };
 
   onChangeJobEnabledByDefault = (): void => {
@@ -420,11 +436,15 @@ export default class CreateRollupForm extends Component<CreateRollupFormProps, C
       targetIndex,
       roles,
       currentStep,
+
       timestamp,
+      fields,
+      selectedTerms,
       intervalValue,
       intervalType,
       timezone,
       timeunit,
+
       jobEnabledByDefault,
       recurringJob,
       recurringDefinition,
@@ -460,7 +480,8 @@ export default class CreateRollupForm extends Component<CreateRollupFormProps, C
         <CreateRollupStep2
           {...this.props}
           currentStep={this.state.currentStep}
-          sourceIndex={sourceIndex}
+          fields={fields}
+          selectedTerms={selectedTerms}
           intervalType={intervalType}
           intervalValue={intervalValue}
           timestamp={timestamp}

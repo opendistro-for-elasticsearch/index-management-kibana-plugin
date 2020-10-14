@@ -47,6 +47,15 @@ export interface IndexItem {
   index: string;
 }
 
+export interface FieldItem {
+  type?: string;
+}
+
+export interface MetricItem {
+  field: string;
+  metric_aggregations: string[];
+}
+
 /**
  * Interface what the Policy Elasticsearch Document
  */

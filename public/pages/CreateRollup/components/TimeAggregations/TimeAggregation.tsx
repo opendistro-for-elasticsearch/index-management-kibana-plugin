@@ -28,14 +28,18 @@ import {
 import { ContentPanel } from "../../../../components/ContentPanel";
 import { CalendarTimeunitOptions, FixedTimeunitOptions, TimezoneOptionsByRegion } from "../../utils/constants";
 import { RollupService } from "../../../../services";
+import { FieldItem, IndexItem } from "../../../../../models/interfaces";
 
 interface TimeAggregationProps {
   rollupService: RollupService;
   intervalValue: number;
   intervalType: string;
   selectedTimestamp: EuiComboBoxOptionOption<String>[];
+  selectedTerms: { label: string; type: string }[];
   timeunit: string;
   timezone: string;
+  fieldsOption: { label: string; value?: FieldItem }[];
+
   onChangeIntervalType: (optionId: string) => void;
   onChangeIntervalValue: (e: ChangeEvent<HTMLInputElement>) => void;
   onChangeTimestamp: (options: EuiComboBoxOptionOption<String>[]) => void;
@@ -43,9 +47,7 @@ interface TimeAggregationProps {
   onChangeTimezone: (e: ChangeEvent<HTMLSelectElement>) => void;
 }
 
-interface TimeAggregationState {
-  timestampOptions: EuiComboBoxOptionOption<String>[];
-}
+interface TimeAggregationState {}
 
 const radios = [
   {
@@ -59,24 +61,23 @@ const radios = [
 ];
 
 //TODO: Fetch actual timestamp options from backend
-const options: EuiComboBoxOptionOption<String>[] = [
+const options: { label: string; value?: FieldItem }[] = [
   {
     label: "timestamp",
+    value: { type: "date" },
   },
   {
-    label: "timestamp2",
+    label: "field1",
+    value: { type: "number" },
   },
   {
-    label: "timestamp3",
+    label: "fields2",
+    value: { type: "string" },
   },
 ];
 export default class TimeAggregation extends Component<TimeAggregationProps, TimeAggregationState> {
   constructor(props: TimeAggregationProps) {
     super(props);
-
-    this.state = {
-      timestampOptions: options,
-    };
   }
 
   render() {
@@ -91,9 +92,18 @@ export default class TimeAggregation extends Component<TimeAggregationProps, Tim
       onChangeTimestamp,
       onChangeTimeunit,
       onChangeTimezone,
+      fieldsOption,
     } = this.props;
 
-    const { timestampOptions } = this.state;
+    // console.log("Let see the key of first item: "+ fieldsJSON[0].key);
+    // const fieldsJSON  = JSON.parse(fields);
+    // console.log(fieldsJSON);
+    //Process fields to find fields with type of date
+
+    // const timestampOptions = fields.map((field: FieldItem) => ({
+    //   label: field.type,
+    //   value: field,
+    // }));
 
     return (
       <ContentPanel bodyStyles={{ padding: "initial" }} title="Time aggregation" titleSize="m">
@@ -102,7 +112,7 @@ export default class TimeAggregation extends Component<TimeAggregationProps, Tim
           <EuiFormRow label="Timestamp field">
             <EuiComboBox
               placeholder="Select timestamp"
-              options={timestampOptions}
+              options={fieldsOption}
               selectedOptions={selectedTimestamp}
               onChange={onChangeTimestamp}
               singleSelection={true}

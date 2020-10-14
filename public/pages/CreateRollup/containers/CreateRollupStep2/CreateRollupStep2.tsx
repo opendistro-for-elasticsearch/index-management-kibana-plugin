@@ -25,12 +25,13 @@ import AdvancedAggregation from "../../components/AdvancedAggregation";
 import MetricsCalculation from "../../components/MetricsCalculation";
 import { toastNotifications } from "ui/notify";
 import { getErrorMessage } from "../../../../utils/helpers";
-import { IndexItem } from "../../../../../models/interfaces";
+import { FieldItem, IndexItem } from "../../../../../models/interfaces";
 
 interface CreateRollupProps extends RouteComponentProps {
   rollupService: RollupService;
   currentStep: number;
-  sourceIndex: { label: string; value?: IndexItem }[];
+  fields: any;
+  selectedTerms: { label: string; value?: FieldItem }[];
   timestamp: EuiComboBoxOptionOption<String>[];
   intervalValue: number;
   intervalType: string;
@@ -62,22 +63,6 @@ export default class CreateRollupStep2 extends Component<CreateRollupProps, Crea
 
   componentDidMount = async (): Promise<void> => {
     chrome.breadcrumbs.set([BREADCRUMBS.INDEX_MANAGEMENT, BREADCRUMBS.ROLLUPS]);
-    // await this.getMappings();
-  };
-
-  getMappings = async (): Promise<void> => {
-    try {
-      const { rollupService } = this.props;
-      const response = await rollupService.getMappings("kibana_sample_data_flights");
-      console.log(response);
-      if (response.ok) {
-        // this.setState({});
-      } else {
-        toastNotifications.addDanger(`Could not load fields: ${response.error}`);
-      }
-    } catch (err) {
-      toastNotifications.addDanger(getErrorMessage(err, "Could not load fields"));
-    }
   };
 
   onCancel = (): void => {
@@ -97,8 +82,32 @@ export default class CreateRollupStep2 extends Component<CreateRollupProps, Crea
       onChangeIntervalValue,
       onChangeTimestamp,
       onChangeTimezone,
+      fields,
     } = this.props;
     const { submitError } = this.state;
+
+    const options: { label: string; value?: FieldItem }[] = [
+      {
+        label: "timestamp",
+        value: { type: "date" },
+      },
+      {
+        label: "field1",
+        value: { type: "number" },
+      },
+      {
+        label: "fields2",
+        value: { type: "string" },
+      },
+    ];
+
+    //Generate fields options
+    var fieldsOption: { label: string; value: FieldItem }[] = [];
+    for (var key in fields) {
+      if (fields.hasOwnProperty(key)) {
+        fieldsOption.push({ label: key, value: fields[key] });
+      }
+    }
 
     return (
       <div style={{ padding: "5px 50px" }}>
@@ -131,9 +140,10 @@ export default class CreateRollupStep2 extends Component<CreateRollupProps, Crea
               onChangeTimezone={onChangeTimezone}
               onChangeTimeunit={onChangeTimeunit}
               onChangeIntervalValue={onChangeIntervalValue}
+              fieldsOption={fieldsOption}
             />
             <EuiSpacer />
-            <AdvancedAggregation />
+            <AdvancedAggregation fieldsOption={fieldsOption} />
             <EuiSpacer />
             <MetricsCalculation />
             {submitError && (
