@@ -59,9 +59,9 @@ export default class NewPolicy extends React.Component<NewPolicyProps, NewPolicy
     try {
       const searchPoliciesResponse = await indexService.searchPolicies(searchValue, true);
       if (searchPoliciesResponse.ok) {
-        const policies = searchPoliciesResponse.response.hits.hits.map((hit: { _id: string; _source: { policy: Policy } }) => ({
-          label: hit._id,
-          value: hit._source.policy,
+        const policies = searchPoliciesResponse.response.policies.map((hit) => ({
+          label: hit.policy.policy_id,
+          value: hit.policy,
         }));
         this.setState({ policies });
       } else {
@@ -85,7 +85,7 @@ export default class NewPolicy extends React.Component<NewPolicyProps, NewPolicy
     const hasSelectedPolicy = !!selectedPolicies.length;
     const stateOptions = _.flatten(
       selectedPolicies.map((selectedPolicy: PolicyOption) =>
-        selectedPolicy.value.states.map(state => ({ value: state.name, text: state.name }))
+        selectedPolicy.value.states.map((state) => ({ value: state.name, text: state.name }))
       )
     );
 

@@ -93,7 +93,9 @@ export default class ApplyPolicyModal extends Component<ApplyPolicyModalProps, A
         }
         if (failures) {
           toastNotifications.addDanger(
-            `Failed to apply policy to ${failedIndices.map(failedIndex => `[${failedIndex.indexName}, ${failedIndex.reason}]`).join(", ")}`
+            `Failed to apply policy to ${failedIndices
+              .map((failedIndex) => `[${failedIndex.indexName}, ${failedIndex.reason}]`)
+              .join(", ")}`
           );
         }
         onClose();
@@ -133,9 +135,9 @@ export default class ApplyPolicyModal extends Component<ApplyPolicyModalProps, A
     try {
       const searchPoliciesResponse = await indexService.searchPolicies(searchValue, true);
       if (searchPoliciesResponse.ok) {
-        const policies = searchPoliciesResponse.response.hits.hits.map((hit: { _id: string; _source: { policy: Policy } }) => ({
-          label: hit._id,
-          policy: hit._source.policy,
+        const policies = searchPoliciesResponse.response.policies.map((hit) => ({
+          label: hit.policy.policy_id,
+          policy: hit.policy,
         }));
         this.setState({ policyOptions: policies });
       } else {
@@ -195,7 +197,7 @@ export default class ApplyPolicyModal extends Component<ApplyPolicyModalProps, A
   getSelectedPolicyError = (selectedPolicy: PolicyOption | null): string => (selectedPolicy ? "" : "You must select a policy");
 
   hasRolloverAction = (selectedPolicy: PolicyOption | null): boolean =>
-    _.get(selectedPolicy, "policy.states", []).some((state: State) => state.actions.some(action => action.hasOwnProperty("rollover")));
+    _.get(selectedPolicy, "policy.states", []).some((state: State) => state.actions.some((action) => action.hasOwnProperty("rollover")));
 
   renderRollover = (): React.ReactNode | null => {
     const { rolloverAlias, hasRolloverAction, rolloverAliasError, hasSubmitted } = this.state;
@@ -211,8 +213,7 @@ export default class ApplyPolicyModal extends Component<ApplyPolicyModalProps, A
           helpText={
             <EuiText size="xs" grow={false}>
               <p>
-                This policy includes a rollover action.
-                Specify a rollover alias.{" "}
+                This policy includes a rollover action. Specify a rollover alias.{" "}
                 <EuiLink href={DOCUMENTATION_URL} target="_blank">
                   Learn more <EuiIcon type="popout" size="s" />
                 </EuiLink>
@@ -253,7 +254,7 @@ export default class ApplyPolicyModal extends Component<ApplyPolicyModalProps, A
     const { selectedPolicy } = this.state;
     if (!selectedPolicy) return null;
 
-    let policyString = '';
+    let policyString = "";
     try {
       policyString = JSON.stringify({ policy: selectedPolicy.policy }, null, 4);
     } catch (err) {
@@ -267,7 +268,9 @@ export default class ApplyPolicyModal extends Component<ApplyPolicyModalProps, A
     return (
       <Fragment>
         <EuiText size="xs" grow={false}>
-          <p><strong>Preview</strong></p>
+          <p>
+            <strong>Preview</strong>
+          </p>
         </EuiText>
         <EuiSpacer size="s" />
         <EuiCodeBlock language="json" fontSize="m" style={{ height: "200px" }}>
@@ -294,17 +297,11 @@ export default class ApplyPolicyModal extends Component<ApplyPolicyModalProps, A
           <EuiModalBody>
             <EuiText size="xs" grow={false}>
               <p>
-                Choose the policy you want to use for the selected indices.
-                A copy of the policy will be created and applied to the indices.
+                Choose the policy you want to use for the selected indices. A copy of the policy will be created and applied to the indices.
               </p>
             </EuiText>
             <EuiSpacer size="m" />
-            <EuiFormRow
-              label="Policy ID"
-              isInvalid={hasSubmitted && !!selectedPolicyError}
-              error={selectedPolicyError}
-              fullWidth
-            >
+            <EuiFormRow label="Policy ID" isInvalid={hasSubmitted && !!selectedPolicyError} error={selectedPolicyError} fullWidth>
               <EuiComboBox
                 placeholder="Search policies"
                 async

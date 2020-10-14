@@ -121,47 +121,21 @@ export default class PolicyService {
         "policy.policy.description": "policy.description.keyword",
         "policy.policy.last_updated_time": "policy.last_updated_time",
       };
-      // const params = {
-      //   index: INDEX.OPENDISTRO_ISM_CONFIG,
-      //   seq_no_primary_term: true,
-      //   body: {
-      //     size,
-      //     from,
-      //     sort: policySorts[sortField] ? [{ [policySorts[sortField]]: sortDirection }] : [],
-      //     query: {
-      //       bool: {
-      //         filter: [{ exists: { field: "policy" } }],
-      //         must: getMustQuery("policy.policy_id", search),
-      //       },
-      //     },
-      //   },
-      // };
-      // console.log("HELLO!!")
-      // console.log(JSON.stringify(params))
+
       var params = {
+        index: INDEX.OPENDISTRO_ISM_CONFIG,
         size: size,
         startIndex: from,
-        searchString: search,
+        searchString: search.trim() ? `*${search.trim().split(" ").join("* *")}*` : "*",
       };
       if (policySorts[sortField]) {
         params.sortString = policySorts[sortField];
         params.sortOrder = sortDirection;
       }
-      // console.log(JSON.stringify(params2))
+
       const { callWithRequest } = await this.esDriver.getCluster(CLUSTER.ISM);
       const searchResponse: SearchResponse<any> = await callWithRequest(req, "ism.getPolicies", params);
-      // console.log(JSON.stringify(searchResponse))
 
-      // const { callWithRequest } = await this.esDriver.getCluster(CLUSTER.DATA);
-      // const searchResponse: SearchResponse<any> = await callWithRequest(req, "search", params);
-      // console.log(JSON.stringify(searchResponse))
-      // const totalPolicies = searchResponse.hits.total.value;
-      // const policies2 = searchResponse.hits.hits.map(hit => ({
-      //   seqNo: hit._seq_no as number,
-      //   primaryTerm: hit._primary_term as number,
-      //   id: hit._id,
-      //   policy: hit._source,
-      // }));
       const totalPolicies = searchResponse.totalPolicies;
       const policies = searchResponse.policies.map((hit) => ({
         seqNo: hit.policy.seq_no as number,
@@ -169,9 +143,6 @@ export default class PolicyService {
         id: hit.policy.policy_id,
         policy: hit,
       }));
-
-      // console.log(JSON.stringify(policies))
-      // console.log(JSON.stringify(policies2))
 
       return { ok: true, response: { policies: policies, totalPolicies } };
     } catch (err) {

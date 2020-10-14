@@ -34,11 +34,15 @@ export default class IndexService {
   search = async (req: Request, h: ResponseToolkit): Promise<ServerResponse<any>> => {
     try {
       const { query, index, size = 0 } = req.payload as { query: object; index: string; size?: number };
-      const params: RequestParams.Search = { index, size, body: query };
-      console.log("SEARCH POLICIES THING");
-      console.log(JSON.stringify(params));
-      const { callWithRequest } = this.esDriver.getCluster(CLUSTER.DATA);
-      const results: SearchResponse<any> = await callWithRequest(req, "search", params);
+      const params = {
+        size: size,
+        searchString: query,
+        index: index,
+      };
+
+      const { callWithRequest } = this.esDriver.getCluster(CLUSTER.ISM);
+      const results: SearchResponse<any> = await callWithRequest(req, "ism.getPolicies", params);
+
       return { ok: true, response: results };
     } catch (err) {
       console.error("Index Management - IndexService - search", err);
