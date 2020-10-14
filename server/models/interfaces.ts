@@ -49,13 +49,13 @@ export interface DeletePolicyResponse {
   result: string;
 }
 
-export interface PutRollupResponse {
+export interface PutPolicyResponse {
   _id: string;
   // TODO: remove _version from IndexPolicyAPI
   _version: number;
   _primary_term: number;
   _seq_no: number;
-  rollup: { rollup: object };
+  policy: { policy: object };
 }
 
 export interface DeleteRollupResponse {
