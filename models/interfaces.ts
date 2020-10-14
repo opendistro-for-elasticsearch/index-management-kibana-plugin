@@ -60,8 +60,13 @@ export interface DimensionItem {
 }
 
 export interface MetricItem {
-  field: string;
-  metric_aggregations: string[];
+  fieldName: string;
+  all: boolean;
+  min: boolean;
+  max: boolean;
+  sum: boolean;
+  avg: boolean;
+  value_count: boolean;
 }
 
 /**
