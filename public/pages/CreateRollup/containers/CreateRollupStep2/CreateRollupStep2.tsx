@@ -108,6 +108,8 @@ export default class CreateRollupStep2 extends Component<CreateRollupProps, Crea
         fieldsOption.push({ label: key, value: fields[key] });
       }
     }
+    const result = fieldsOption.filter((item) => item.value.type == "date");
+    console.log("Filter result: " + result);
 
     return (
       <div style={{ padding: "5px 50px" }}>

@@ -95,15 +95,8 @@ export default class TimeAggregation extends Component<TimeAggregationProps, Tim
       fieldsOption,
     } = this.props;
 
-    // console.log("Let see the key of first item: "+ fieldsJSON[0].key);
-    // const fieldsJSON  = JSON.parse(fields);
-    // console.log(fieldsJSON);
-    //Process fields to find fields with type of date
-
-    // const timestampOptions = fields.map((field: FieldItem) => ({
-    //   label: field.type,
-    //   value: field,
-    // }));
+    // Filter options for date histogram
+    const dateFields = fieldsOption.filter((item) => item.value.type == "date");
 
     return (
       <ContentPanel bodyStyles={{ padding: "initial" }} title="Time aggregation" titleSize="m">
@@ -112,7 +105,7 @@ export default class TimeAggregation extends Component<TimeAggregationProps, Tim
           <EuiFormRow label="Timestamp field">
             <EuiComboBox
               placeholder="Select timestamp"
-              options={fieldsOption}
+              options={dateFields}
               selectedOptions={selectedTimestamp}
               onChange={onChangeTimestamp}
               singleSelection={true}
