@@ -23,14 +23,14 @@ import CreateRollupSteps from "../../components/CreateRollupSteps";
 import TimeAggregation from "../../components/TimeAggregations";
 import AdvancedAggregation from "../../components/AdvancedAggregation";
 import MetricsCalculation from "../../components/MetricsCalculation";
-import { FieldItem } from "../../../../../models/interfaces";
+import { DimensionItem, FieldItem } from "../../../../../models/interfaces";
 
 interface CreateRollupProps extends RouteComponentProps {
   rollupService: RollupService;
   currentStep: number;
   fields: any;
   selectedTerms: { label: string; value?: FieldItem }[];
-  selectedDimensionField: { label: string; value?: FieldItem }[];
+  selectedDimensionField: DimensionItem[];
   timestamp: EuiComboBoxOptionOption<String>[];
   intervalValue: number;
   intervalType: string;
@@ -41,7 +41,7 @@ interface CreateRollupProps extends RouteComponentProps {
   onChangeIntervalValue: (e: ChangeEvent<HTMLInputElement>) => void;
   onChangeTimeunit: (e: ChangeEvent<HTMLSelectElement>) => void;
   onChangeTimezone: (e: ChangeEvent<HTMLSelectElement>) => void;
-  onDimensionSelectionChange: (selectedFields: { label: string; value?: FieldItem }[]) => void;
+  onDimensionSelectionChange: (selectedFields: DimensionItem[]) => void;
 }
 
 interface CreateRollupState {
@@ -95,8 +95,6 @@ export default class CreateRollupStep2 extends Component<CreateRollupProps, Crea
         fieldsOption.push({ label: key, value: fields[key] });
       }
     }
-    const result = fieldsOption.filter((item) => item.value.type == "date");
-    console.log("Filter result: " + result);
 
     return (
       <div style={{ padding: "5px 50px" }}>

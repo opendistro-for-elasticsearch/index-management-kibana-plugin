@@ -24,7 +24,7 @@ import { ManagedCatIndex } from "../../../../../server/models/interfaces";
 import CreateRollup from "../CreateRollup";
 import CreateRollupStep2 from "../CreateRollupStep2";
 import { toastNotifications } from "ui/notify";
-import { FieldItem, IndexItem, Rollup } from "../../../../../models/interfaces";
+import { DimensionItem, FieldItem, IndexItem, Rollup } from "../../../../../models/interfaces";
 import { getErrorMessage } from "../../../../utils/helpers";
 import { EMPTY_ROLLUP } from "../../utils/constants";
 import CreateRollupStep3 from "../CreateRollupStep3";
@@ -57,7 +57,7 @@ interface CreateRollupFormState {
   mappings: any;
   fields: any;
   selectedTerms: { label: string; value?: FieldItem }[];
-  selectedDimensionField: { label: string; value?: FieldItem }[];
+  selectedDimensionField: DimensionItem[];
   timestamp: EuiComboBoxOptionOption<String>[];
   intervalType: string;
   intervalValue: number;
@@ -151,7 +151,6 @@ export default class CreateRollupForm extends Component<CreateRollupFormProps, C
       const { rollupService } = this.props;
       const { sourceIndex } = this.state;
       const response = await rollupService.getMappings("kibana_sample_data_flights");
-      console.log(response);
       if (response.ok) {
         //Set mapping when there is source index selected.
         this.setState({
@@ -314,8 +313,8 @@ export default class CreateRollupForm extends Component<CreateRollupFormProps, C
     this.updateSchedule();
   };
 
-  onDimensionSelectionChange = (selectedFields: { label: string; value?: FieldItem }[]): void => {
-    this.setState({ selectedFields });
+  onDimensionSelectionChange = (selectedFields: DimensionItem[]): void => {
+    this.setState({ selectedDimensionField: selectedFields });
   };
 
   onChangeJobEnabledByDefault = (): void => {

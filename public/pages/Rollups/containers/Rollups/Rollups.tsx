@@ -210,6 +210,7 @@ export default class Rollups extends Component<RollupsProps, RollupsState> {
     this.getRollups = _.debounce(this.getRollups, 500, { leading: true });
   }
 
+  //TODO: Get rollup jobs when backend is done.
   async componentDidMount() {
     chrome.breadcrumbs.set([BREADCRUMBS.INDEX_MANAGEMENT, BREADCRUMBS.ROLLUPS]);
     // await this.getRollups();
@@ -332,7 +333,6 @@ export default class Rollups extends Component<RollupsProps, RollupsState> {
 
   onSelectionChange = (selectedItems: RollupItem[]): void => {
     this.setState({ selectedItems });
-    console.log(this.state);
   };
 
   onSearchChange = (e: React.ChangeEvent<HTMLInputElement>): void => {
