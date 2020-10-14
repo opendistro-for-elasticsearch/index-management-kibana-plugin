@@ -94,7 +94,7 @@ const selectInterval = (
 
 const isRecurring = (recurringJob: string, onChangeRecurringJob: (optionId: string) => void) => (
   <React.Fragment>
-    <EuiFormRow label="Recurring job">
+    <EuiFormRow label="Continuous">
       <EuiRadioGroup options={radios} idSelected={recurringJob} onChange={(id) => onChangeRecurringJob(id)} name="recurringJob" />
     </EuiFormRow>
     <EuiSpacer size="m" />

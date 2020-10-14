@@ -160,7 +160,7 @@ export default class CreateRollupStep3 extends Component<CreateRollupProps, Crea
             </EuiTitle>
             <EuiSpacer />
             <Schedule
-              isEdit={true}
+              isEdit={false}
               rollupId={rollupId}
               rollupIdError={rollupIdError}
               jobEnabledByDefault={jobEnabledByDefault}
