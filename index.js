@@ -31,6 +31,8 @@ export default function (kibana) {
         description: "Kibana plugin for Index Management",
         main: "plugins/opendistro_index_management_kibana/app",
         category: DEFAULT_APP_CATEGORIES.management,
+
+        //To insert the title - "Index Management" in between "Dev Tools" and "Stack management" in Kibana Side Menu.
         order: 9010,
       },
       hacks: [],
