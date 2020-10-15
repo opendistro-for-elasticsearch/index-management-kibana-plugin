@@ -31,6 +31,7 @@ export default function (kibana) {
         description: "Kibana plugin for Index Management",
         main: "plugins/opendistro_index_management_kibana/app",
         category: DEFAULT_APP_CATEGORIES.management,
+        order: 9010,
       },
       hacks: [],
       styleSheetPaths: [resolve(__dirname, "public/app.scss"), resolve(__dirname, "public/app.css")].find((p) => existsSync(p)),
