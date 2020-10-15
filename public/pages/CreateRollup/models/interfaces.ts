@@ -13,8 +13,6 @@
  * permissions and limitations under the License.
  */
 
-import { ManagedCatIndex } from "../../../../server/models/interfaces";
-
 export interface FieldItem {
   label: string;
   type?: string;
@@ -28,7 +26,7 @@ export interface DimensionItem {
 }
 
 export interface MetricItem {
-  fieldName: string;
+  source_field: string;
   all: boolean;
   min: boolean;
   max: boolean;

@@ -34,11 +34,12 @@ import {
   EuiTableSelectionType,
   EuiCheckbox,
   EuiText,
+  EuiFormRow,
 } from "@elastic/eui";
 import { ContentPanel, ContentPanelActions } from "../../../../components/ContentPanel";
 import { ModalConsumer } from "../../../../components/Modal";
-import { FieldItem, MetricItem } from "../../../../../models/interfaces";
 import { AddFieldsColumns } from "../../utils/constants";
+import { FieldItem, MetricItem } from "../../models/interfaces";
 
 interface MetricsCalculationProps {
   fieldsOption: FieldItem[];
@@ -49,13 +50,15 @@ interface MetricsCalculationState {
   searchText: string;
   selectedFieldType: EuiComboBoxOptionOption<String>[];
   selectedFields: FieldItem[];
+  //TODO: Add an 2D array to store checked metrics, or list of boolean[]
+  checks: boolean[][];
 }
 
 const tempFieldTypeOptions = [{ label: "string" }, { label: "location" }, { label: "number" }, { label: "timestamp" }];
 
 const sampleMetricItems: MetricItem[] = [
   {
-    fieldName: "On time rate",
+    source_field: "On time rate",
     all: true,
     min: false,
     max: true,
@@ -64,7 +67,7 @@ const sampleMetricItems: MetricItem[] = [
     value_count: false,
   },
   {
-    fieldName: "Return rate",
+    source_field: "Return rate",
     all: true,
     min: true,
     max: false,
@@ -73,7 +76,7 @@ const sampleMetricItems: MetricItem[] = [
     value_count: false,
   },
   {
-    fieldName: "OTIF rate",
+    source_field: "OTIF rate",
     all: false,
     min: false,
     max: true,
@@ -86,36 +89,75 @@ const setChecked = (e: ChangeEvent<HTMLInputElement>): void => {};
 
 const metricsColumns = [
   {
-    field: "fieldName",
+    field: "source_field",
     name: "Field Name",
   },
   {
     field: "all",
     name: "All",
     truncateText: true,
-    // render: (all: boolean) => {
-    //   <EuiCheckbox id ={"all"} checked={all} onChange={()=>{all=!all}}/>
-    // },
+    render: (all: boolean) => (
+      <EuiForm>
+        <EuiFormRow compressed={true}>
+          <EuiCheckbox id={"all"} checked={all} onChange={setChecked} />
+        </EuiFormRow>
+      </EuiForm>
+    ),
   },
   {
     field: "min",
     name: "Min",
+    render: (min: boolean) => (
+      <EuiForm>
+        <EuiFormRow compressed={true}>
+          <EuiCheckbox id={"min"} checked={min} onChange={setChecked} />
+        </EuiFormRow>
+      </EuiForm>
+    ),
   },
   {
     field: "max",
     name: "Max",
+    render: (max: boolean) => (
+      <EuiForm>
+        <EuiFormRow compressed={true}>
+          <EuiCheckbox id={"max"} checked={max} onChange={setChecked} />
+        </EuiFormRow>
+      </EuiForm>
+    ),
   },
   {
     field: "sum",
     name: "Sum",
+    render: (sum: boolean) => (
+      <EuiForm>
+        <EuiFormRow compressed={true}>
+          <EuiCheckbox id={"sum"} checked={sum} onChange={setChecked} />
+        </EuiFormRow>
+      </EuiForm>
+    ),
   },
   {
     field: "avg",
     name: "Avg",
+    render: (avg: boolean) => (
+      <EuiForm>
+        <EuiFormRow compressed={true}>
+          <EuiCheckbox id={"avg"} checked={avg} onChange={setChecked} />
+        </EuiFormRow>
+      </EuiForm>
+    ),
   },
   {
     field: "value_count",
     name: "Value count",
+    render: (value_count: boolean) => (
+      <EuiForm>
+        <EuiFormRow compressed={true}>
+          <EuiCheckbox id={"value_count"} checked={value_count} onChange={setChecked} />
+        </EuiFormRow>
+      </EuiForm>
+    ),
   },
 ];
 
@@ -128,6 +170,7 @@ export default class MetricsCalculation extends Component<MetricsCalculationProp
       searchText: "",
       selectedFieldType: [],
       selectedFields: [],
+      checks: [],
     };
   }
 
@@ -196,9 +239,10 @@ export default class MetricsCalculation extends Component<MetricsCalculationProp
         titleSize="m"
       >
         <div style={{ paddingLeft: "10px" }}>
+          {/*TODO: Figure out row header*/}
           <EuiBasicTable
             items={sampleMetricItems}
-            rowHeader="numericField"
+            rowHeader="source_field"
             columns={metricsColumns}
             noItemsMessage={
               <Fragment>
