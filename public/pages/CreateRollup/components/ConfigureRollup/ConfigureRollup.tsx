@@ -14,7 +14,7 @@
  */
 
 import React, { ChangeEvent } from "react";
-import { EuiSpacer, EuiFormRow, EuiFieldText, EuiTextArea } from "@elastic/eui";
+import { EuiSpacer, EuiFormRow, EuiFieldText, EuiTextArea, EuiText, EuiFlexGroup, EuiFlexItem } from "@elastic/eui";
 import { ContentPanel } from "../../../../components/ContentPanel";
 
 interface ConfigureRollupProps {
@@ -25,16 +25,28 @@ interface ConfigureRollupProps {
   description: string;
 }
 
-//TODO: Define the allowed characters for rollup job name.
 const ConfigureRollup = ({ rollupId, rollupIdError, onChangeName, onChangeDescription, description }: ConfigureRollupProps) => (
   <ContentPanel bodyStyles={{ padding: "initial" }} title="Job name and description" titleSize="m">
     <div style={{ paddingLeft: "10px" }}>
       <EuiSpacer size="s" />
-      <EuiFormRow label="Name" helpText="Specify a unique and descriptive name." isInvalid={!!rollupIdError} error={rollupIdError}>
+      <EuiFormRow label="Name" helpText="Specify a unique, descriptive name." isInvalid={!!rollupIdError} error={rollupIdError}>
         <EuiFieldText isInvalid={!!rollupIdError} placeholder="my-rollupjob1" value={rollupId} onChange={onChangeName} />
       </EuiFormRow>
-
-      <EuiFormRow label="Description - optional" helpText="Describe details about this rollup job.">
+      <EuiSpacer />
+      <EuiFlexGroup gutterSize={"xs"}>
+        <EuiFlexItem grow={false}>
+          <EuiText size={"xs"}>
+            <h4>Description</h4>
+          </EuiText>
+        </EuiFlexItem>
+        <EuiFlexItem>
+          <EuiText size={"xs"} color={"subdued"}>
+            <i> - optional</i>
+          </EuiText>
+        </EuiFlexItem>
+      </EuiFlexGroup>
+      <EuiSpacer size={"xs"} />
+      <EuiFormRow>
         <EuiTextArea compressed={true} value={description} onChange={onChangeDescription} />
       </EuiFormRow>
     </div>

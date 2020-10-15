@@ -35,7 +35,7 @@ export default class Roles extends Component<RolesProps> {
       <ContentPanel bodyStyles={{ padding: "initial" }} title="Roles" titleSize="m">
         <div style={{ paddingLeft: "10px" }}>
           <EuiSpacer size="s" />
-          <EuiFormRow label="Roles" helpText="Security roles have access to this rollup job.">
+          <EuiFormRow label="Roles" helpText="These roles have access to this rollup job.">
             <EuiComboBox
               placeholder="Select for roles"
               options={this.props.roleOptions}

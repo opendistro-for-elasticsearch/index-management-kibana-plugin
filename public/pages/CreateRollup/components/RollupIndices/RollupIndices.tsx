@@ -107,13 +107,13 @@ export default class RollupIndices extends Component<RollupIndicesProps, RollupI
         <div style={{ paddingLeft: "10px" }}>
           <EuiSpacer size="s" />
           <EuiCallOut color="warning">
-            <p>Indices cannot be changed once the job is created. Please ensure that you have correct spellings.</p>
+            <p>You can't change indices after creating a job. Double-check the source and target index names before proceeding.</p>
           </EuiCallOut>
           <EuiSpacer size="m" />
           <EuiFormRow
             label="Source index"
             error={sourceIndexError}
-            helpText="The index where this rollup job is performed on. Type in * as wildcard for index pattern."
+            helpText="The index pattern on which to performed the rollup job. You can use * as a wildcard."
           >
             <EuiComboBox
               placeholder="Select source index"
