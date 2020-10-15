@@ -231,8 +231,8 @@ export default class CreateRollupForm extends Component<CreateRollupFormProps, C
     const srcIndexText = sourceIndex.length ? sourceIndex[0] : "";
     newJSON.rollup.source_index = srcIndexText;
     this.setState({ sourceIndex: options, rollupJSON: newJSON, sourceIndexError: sourceIndexError });
-    //Update fields
-    this.setState({ fields: sourceIndex.length ? mappings[srcIndexText].mappings.properties : undefined });
+    //TODO: Update fields and clear dimensions, metrics (need to add this)
+    this.setState({ fields: sourceIndex.length ? mappings[srcIndexText].mappings.properties : undefined, selectedDimensionField: [] });
   };
 
   onChangeTargetIndex = (options: EuiComboBoxOptionOption<IndexItem>[]): void => {

@@ -137,7 +137,7 @@ export default class CreateRollupStep2 extends Component<CreateRollupProps, Crea
               onDimensionSelectionChange={onDimensionSelectionChange}
             />
             <EuiSpacer />
-            <MetricsCalculation />
+            <MetricsCalculation fieldsOption={fieldsOption} />
             {submitError && (
               <EuiCallOut title="Sorry, there was an error" color="danger" iconType="alert">
                 <p>{submitError}</p>

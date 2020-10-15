@@ -158,3 +158,16 @@ export const TimezoneOptionsByRegion = [
   { text: "UTC -11", value: "UTC -11" },
   { text: "UTC -12", value: "UTC -12" },
 ];
+
+export const AddFieldsColumns = [
+  {
+    field: "label",
+    name: "Field name",
+    sortable: true,
+  },
+  {
+    field: "type",
+    name: "Field type",
+    sortable: true,
+  },
+];

@@ -36,8 +36,7 @@ interface RollupIndicesState {
   targetIndexOptions: { label: string; value?: IndexItem }[];
 }
 
-//TODO: Add error message
-//TODO: Implement onChangeIndex
+//TODO: Add error message by row instead of showing up at bottom
 export default class RollupIndices extends Component<RollupIndicesProps, RollupIndicesState> {
   constructor(props: RollupIndicesProps) {
     super(props);
@@ -52,6 +51,7 @@ export default class RollupIndices extends Component<RollupIndicesProps, RollupI
     await this.onIndexSearchChange("");
   }
 
+  //TODO: Rename the managed indices
   onIndexSearchChange = async (searchValue: string): Promise<void> => {
     const { indexService } = this.props;
     this.setState({ isLoading: true, indexOptions: [] });

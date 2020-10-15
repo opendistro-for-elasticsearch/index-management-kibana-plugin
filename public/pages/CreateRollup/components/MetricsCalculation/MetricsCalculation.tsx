@@ -13,7 +13,7 @@
  * permissions and limitations under the License.
  */
 
-import React, { ChangeEvent, Component } from "react";
+import React, { ChangeEvent, Component, Fragment } from "react";
 import {
   EuiBasicTable,
   EuiButton,
@@ -33,60 +33,29 @@ import {
   EuiSpacer,
   EuiTableSelectionType,
   EuiCheckbox,
+  EuiText,
 } from "@elastic/eui";
 import { ContentPanel, ContentPanelActions } from "../../../../components/ContentPanel";
 import { ModalConsumer } from "../../../../components/Modal";
-import { ManagedCatIndex } from "../../../../../server/models/interfaces";
-import { DimensionItem, MetricItem } from "../../../../../models/interfaces";
+import { FieldItem, MetricItem } from "../../../../../models/interfaces";
+import { AddFieldsColumns } from "../../utils/constants";
 
-interface MetricsCalculationProps {}
+interface MetricsCalculationProps {
+  fieldsOption: FieldItem[];
+}
 
 interface MetricsCalculationState {
   isModalVisible: boolean;
   searchText: string;
   selectedFieldType: EuiComboBoxOptionOption<String>[];
-  selectedFields: ManagedCatIndex[];
+  selectedFields: FieldItem[];
 }
 
 const tempFieldTypeOptions = [{ label: "string" }, { label: "location" }, { label: "number" }, { label: "timestamp" }];
 
-const addFields = (
-  searchText: string,
-  onChangeSearch: (value: ChangeEvent<HTMLInputElement>) => void,
-  selectedFieldType: EuiComboBoxOptionOption<String>[],
-  onChangeFieldType: (options: EuiComboBoxOptionOption<String>[]) => void,
-  selection: EuiTableSelectionType<ManagedCatIndex>
-) => (
-  <EuiForm title={"Add fields"}>
-    <EuiFlexGroup>
-      <EuiFlexItem grow={2}>
-        <EuiFieldSearch placeholder="Search field name" value={searchText} onChange={onChangeSearch} isClearable={true} />
-      </EuiFlexItem>
-      <EuiFlexItem grow={1}>
-        <EuiComboBox
-          placeholder="Field type"
-          options={tempFieldTypeOptions}
-          selectedOptions={selectedFieldType}
-          onChange={onChangeFieldType}
-          isClearable={true}
-          singleSelection={true}
-        />
-      </EuiFlexItem>
-    </EuiFlexGroup>
-    {/*TODO: create fake list of items, and figure out how to retrieve the selections for table*/}
-    <EuiBasicTable
-      items={[]}
-      rowHeader="fieldName"
-      columns={addFieldsColumns}
-      noItemsMessage="No field added for aggregation"
-      isSelectable={true}
-      selection={selection}
-    />
-  </EuiForm>
-);
 const sampleMetricItems: MetricItem[] = [
   {
-    fieldname: "On time rate",
+    fieldName: "On time rate",
     all: true,
     min: false,
     max: true,
@@ -95,7 +64,7 @@ const sampleMetricItems: MetricItem[] = [
     value_count: false,
   },
   {
-    fieldname: "Return rate",
+    fieldName: "Return rate",
     all: true,
     min: true,
     max: false,
@@ -104,7 +73,7 @@ const sampleMetricItems: MetricItem[] = [
     value_count: false,
   },
   {
-    fieldname: "OTIF rate",
+    fieldName: "OTIF rate",
     all: false,
     min: false,
     max: true,
@@ -117,7 +86,7 @@ const setChecked = (e: ChangeEvent<HTMLInputElement>): void => {};
 
 const metricsColumns = [
   {
-    field: "fieldname",
+    field: "fieldName",
     name: "Field Name",
   },
   {
@@ -150,17 +119,6 @@ const metricsColumns = [
   },
 ];
 
-const addFieldsColumns = [
-  {
-    field: "fieldname",
-    name: "Field name",
-    sortable: true,
-  },
-  {
-    field: "fieldType",
-    name: "Field type",
-  },
-];
 export default class MetricsCalculation extends Component<MetricsCalculationProps, MetricsCalculationState> {
   constructor(props: MetricsCalculationProps) {
     super(props);
@@ -185,15 +143,20 @@ export default class MetricsCalculation extends Component<MetricsCalculationProp
     this.setState({ selectedFieldType: options });
   };
 
-  onSelectionChange = (selectedFields: ManagedCatIndex[]): void => {
+  onSelectionChange = (selectedFields: FieldItem[]): void => {
     this.setState({ selectedFields });
   };
 
   render() {
+    const { fieldsOption } = this.props;
     const { isModalVisible, searchText, selectedFieldType } = this.state;
-    const selection: EuiTableSelectionType<ManagedCatIndex> = {
+
+    //TODO: check if need to filter type of fields to numbers
+    const selection: EuiTableSelectionType<FieldItem> = {
+      // selectable: (field) => (field.type == 'integer'||'float'||'long'),
       onSelectionChange: this.onSelectionChange,
     };
+
     return (
       <ContentPanel
         bodyStyles={{ padding: "initial" }}
@@ -237,7 +200,24 @@ export default class MetricsCalculation extends Component<MetricsCalculationProp
             items={sampleMetricItems}
             rowHeader="numericField"
             columns={metricsColumns}
-            noItemsMessage="No field added for metrics calculation"
+            noItemsMessage={
+              <Fragment>
+                <EuiSpacer />
+                <EuiText>No field added for metrics</EuiText>
+                <EuiSpacer />
+                <EuiFlexGroup alignItems="center">
+                  <EuiFlexItem>
+                    <EuiSpacer />
+                  </EuiFlexItem>
+                  <EuiFlexItem grow={false}>
+                    <EuiButton onClick={this.showModal}>Add fields</EuiButton>
+                  </EuiFlexItem>
+                  <EuiFlexItem>
+                    <EuiSpacer />
+                  </EuiFlexItem>
+                </EuiFlexGroup>
+              </Fragment>
+            }
             tableLayout={"auto"}
           />
           <EuiSpacer size="s" />
@@ -272,9 +252,10 @@ export default class MetricsCalculation extends Component<MetricsCalculationProp
                     </EuiFlexGroup>
                     {/*TODO: create fake list of items, and figure out how to retrieve the selections for table*/}
                     <EuiBasicTable
-                      items={[]}
+                      items={fieldsOption}
+                      itemId={"label"}
                       rowHeader="fieldName"
-                      columns={addFieldsColumns}
+                      columns={AddFieldsColumns}
                       noItemsMessage="No field added for aggregation"
                       isSelectable={true}
                       selection={selection}

@@ -47,29 +47,6 @@ export interface IndexItem {
   index: string;
 }
 
-export interface FieldItem {
-  label: string;
-  type?: string;
-}
-
-export interface DimensionItem {
-  sequence: number;
-  fieldName: string;
-  fieldType?: string;
-  aggregationMethod: string;
-  interval?: number;
-}
-
-export interface MetricItem {
-  fieldName: string;
-  all: boolean;
-  min: boolean;
-  max: boolean;
-  sum: boolean;
-  avg: boolean;
-  value_count: boolean;
-}
-
 /**
  * Interface what the Policy Elasticsearch Document
  */

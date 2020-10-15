@@ -15,7 +15,24 @@
 
 import { ManagedCatIndex } from "../../../../server/models/interfaces";
 
-export interface IndexOption {
+export interface FieldItem {
   label: string;
-  index?: ManagedCatIndex;
+  type?: string;
+}
+
+export interface DimensionItem {
+  sequence: number;
+  field: FieldItem;
+  aggregationMethod: string;
+  interval?: number;
+}
+
+export interface MetricItem {
+  fieldName: string;
+  all: boolean;
+  min: boolean;
+  max: boolean;
+  sum: boolean;
+  avg: boolean;
+  value_count: boolean;
 }
