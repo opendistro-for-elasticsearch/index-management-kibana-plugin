@@ -308,7 +308,7 @@ export default class AdvancedAggregation extends Component<AdvancedAggregationPr
                     <EuiButton onClick={this.showModal}>Add fields</EuiButton>
                   </EuiFlexItem>
                   <EuiFlexItem>
-                    <EuiSpacer />
+                    <EuiSpacer size={"m"} />
                   </EuiFlexItem>
                 </EuiFlexGroup>
               </Fragment>

@@ -522,6 +522,7 @@ export default class CreateRollupForm extends Component<CreateRollupFormProps, C
           timestamp={timestamp}
           timeunit={timeunit}
           timezone={timezone}
+          selectedDimensionField={selectedDimensionField}
           jobEnabledByDefault={jobEnabledByDefault}
           recurringJob={recurringJob}
           recurringDefinition={recurringDefinition}
@@ -552,7 +553,7 @@ export default class CreateRollupForm extends Component<CreateRollupFormProps, C
           {currentStep == 4 ? (
             <EuiFlexItem grow={false}>
               <EuiButton fill onClick={this.onSubmit} isLoading={isSubmitting} data-test-subj="createRollupSubmitButton">
-                {"Submit"}
+                {"Create"}
               </EuiButton>
             </EuiFlexItem>
           ) : (

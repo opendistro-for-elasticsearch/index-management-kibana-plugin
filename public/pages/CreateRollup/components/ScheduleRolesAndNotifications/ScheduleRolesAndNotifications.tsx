@@ -80,7 +80,7 @@ export default class ScheduleRolesAndNotifications extends Component<ScheduleRol
         title="Schedule"
         titleSize="m"
       >
-        <div style={{ paddingLeft: "10px" }}>
+        <div style={{ padding: "15px" }}>
           <EuiSpacer size={"s"} />
           <EuiFlexGrid columns={4}>
             <EuiFlexItem>

@@ -63,7 +63,7 @@ export default class JobNameAndIndices extends Component<JobNameAndIndicesProps>
         title="Job name and indices"
         titleSize="m"
       >
-        <div style={{ paddingLeft: "10px" }}>
+        <div style={{ padding: "15px" }}>
           <EuiSpacer size={"s"} />
           <EuiFlexGrid columns={3}>
             <EuiFlexItem>
