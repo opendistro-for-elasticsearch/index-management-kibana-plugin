@@ -37,9 +37,11 @@ export default class JobNameAndIndices extends Component<JobNameAndIndicesProps>
     const { rollupId, description, onChangeStep, sourceIndex, targetIndex, roles } = this.props;
 
     //Process roles to a string here.
-    const rolesText = roles.map(function (option) {
-      return option.label;
-    });
+    const rolesText = roles.length
+      ? roles.map(function (option) {
+          return option.label;
+        })
+      : "-";
 
     return (
       <ContentPanel
@@ -87,7 +89,7 @@ export default class JobNameAndIndices extends Component<JobNameAndIndicesProps>
             <EuiFlexItem>
               <EuiText size={"xs"}>
                 <dt>Description</dt>
-                <dd>{description}</dd>
+                <dd>{description == "" ? "-" : description}</dd>
               </EuiText>
             </EuiFlexItem>
             <EuiFlexItem>
