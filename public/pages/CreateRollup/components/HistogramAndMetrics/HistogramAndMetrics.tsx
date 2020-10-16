@@ -245,18 +245,27 @@ export default class HistogramAndMetrics extends Component<HistogramAndMetricsPr
             </EuiFlexItem>
           </EuiFlexGroup>
 
-          <EuiPanel>
-            <EuiBasicTable
-              items={selectedDimensionField}
-              rowHeader={"sequence"}
-              columns={aggregationColumns}
-              tableLayout={"auto"}
-              noItemsMessage={"No field added for aggregation"}
-              pagination={pagination}
-              onChange={this.onTableChange}
-            />
-            <EuiSpacer size={"m"} />
-          </EuiPanel>
+          {selectedDimensionField.length ? (
+            <Fragment>
+              <EuiPanel>
+                <EuiBasicTable
+                  items={selectedDimensionField}
+                  rowHeader={"sequence"}
+                  columns={aggregationColumns}
+                  tableLayout={"auto"}
+                  noItemsMessage={"No field added for aggregation"}
+                  pagination={pagination}
+                  onChange={this.onTableChange}
+                />
+              </EuiPanel>
+            </Fragment>
+          ) : (
+            <EuiText>
+              <dd>No field added for aggregation</dd>
+            </EuiText>
+          )}
+          <EuiSpacer size={"m"} />
+
           <EuiSpacer />
           <EuiFlexGroup gutterSize={"xs"}>
             <EuiFlexItem grow={false}>
@@ -270,18 +279,24 @@ export default class HistogramAndMetrics extends Component<HistogramAndMetricsPr
               </EuiText>
             </EuiFlexItem>
           </EuiFlexGroup>
-
-          <EuiPanel>
-            <EuiBasicTable
-              items={sampleMetricItems}
-              rowHeader="source_field"
-              columns={metricsColumns}
-              noItemsMessage={"No field added for metrics calculation"}
-              tableLayout={"auto"}
-              pagination={pagination}
-              onChange={this.onTableChange}
-            />
-          </EuiPanel>
+          {sampleMetricItems.length ? (
+            <Fragment>
+              <EuiPanel>
+                <EuiBasicTable
+                  items={sampleMetricItems}
+                  rowHeader="source_field"
+                  columns={metricsColumns}
+                  tableLayout={"auto"}
+                  pagination={pagination}
+                  onChange={this.onTableChange}
+                />
+              </EuiPanel>
+            </Fragment>
+          ) : (
+            <EuiText>
+              <dd>No field added for metrics calculation</dd>
+            </EuiText>
+          )}
 
           <EuiSpacer size={"s"} />
         </div>
