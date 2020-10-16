@@ -45,6 +45,7 @@ import {
   EuiTitle,
   EuiFormHelpText,
   EuiHorizontalRule,
+  EuiCallOut,
 } from "@elastic/eui";
 import { DEFAULT_PAGE_SIZE_OPTIONS } from "../../../Rollups/utils/constants";
 import { DimensionItem, FieldItem } from "../../models/interfaces";
@@ -268,41 +269,55 @@ export default class AdvancedAggregation extends Component<AdvancedAggregationPr
 
     return (
       <EuiPanel>
-        <EuiFlexGroup style={{ padding: "0px 10px" }} justifyContent="spaceBetween" alignItems="center">
-          <EuiFlexItem>
-            <EuiFlexGroup gutterSize={"xs"}>
-              <EuiFlexItem grow={false}>
-                <EuiTitle size={"m"}>
-                  <h3>Additional aggregation </h3>
-                </EuiTitle>
-              </EuiFlexItem>
-              <EuiFlexItem grow={false}>
-                <EuiTitle size={"m"}>
-                  <i>{" - optional "}</i>
-                </EuiTitle>
-              </EuiFlexItem>
-              <EuiFlexItem>
-                <EuiText size={"m"} color={"subdued"}>
-                  <h2>{` (${selectedDimensionField.length})`}</h2>
-                </EuiText>
-              </EuiFlexItem>
-            </EuiFlexGroup>
-          </EuiFlexItem>
+        <EuiFlexGroup style={{ padding: "5px 10px" }} justifyContent="spaceBetween" alignItems="center">
+          <EuiFlexGroup gutterSize={"xs"} direction={"column"} justifyContent="spaceAround" style={{ padding: "0px 10px" }}>
+            <EuiFlexItem>
+              <EuiFlexGroup gutterSize={"xs"}>
+                <EuiFlexItem grow={false}>
+                  <EuiTitle size={"m"}>
+                    <h3>Additional aggregation </h3>
+                  </EuiTitle>
+                </EuiFlexItem>
+                <EuiFlexItem grow={false}>
+                  <EuiTitle size={"m"}>
+                    <i>{" - optional "}</i>
+                  </EuiTitle>
+                </EuiFlexItem>
+                <EuiFlexItem>
+                  <EuiText size={"m"} color={"subdued"}>
+                    <h2>{` (${selectedDimensionField.length})`}</h2>
+                  </EuiText>
+                </EuiFlexItem>
+              </EuiFlexGroup>
+            </EuiFlexItem>
+            <EuiFlexItem>
+              <EuiFormHelpText>
+                You can aggregate additional fields from the source index into the target index. Rollup supports the terms aggregation (for
+                all field types) and histogram aggregation (for numeric fields).
+              </EuiFormHelpText>
+            </EuiFlexItem>
+            {selectedDimensionField.length != 0 && (
+              <Fragment>
+                <EuiFlexItem>
+                  <EuiCallOut>
+                    <p>
+                      The order of fields impacts rollup performance. Aggregating by smaller buckets and then by larger buckets is faster
+                      than the opposite. For example, if you are rolling up flight data for five airlines with 100 destinations, aggregating
+                      by airline and then by destination is faster than aggregating by destination first.
+                    </p>
+                  </EuiCallOut>
+                  <EuiSpacer size={"s"} />
+                </EuiFlexItem>
+              </Fragment>
+            )}
+          </EuiFlexGroup>
 
           <EuiFlexItem grow={false}>
             <EuiButton onClick={this.showModal}>Add fields</EuiButton>
           </EuiFlexItem>
         </EuiFlexGroup>
 
-        <EuiFlexGroup style={{ padding: "0px 10px" }}>
-          <EuiFlexItem grow={3}>
-            <EuiFormHelpText>
-              You can aggregate additional fields from the source index into the target index. Rollup supports the terms aggregation (for
-              all field types) and histogram aggregation (for numeric fields).
-            </EuiFormHelpText>
-          </EuiFlexItem>
-          <EuiFlexItem grow={2} />
-        </EuiFlexGroup>
+        <EuiSpacer size={"s"} />
         <EuiHorizontalRule margin="xs" />
         <div style={{ paddingLeft: "10px" }}>
           {/*Need to create array of dimension items after selection*/}
