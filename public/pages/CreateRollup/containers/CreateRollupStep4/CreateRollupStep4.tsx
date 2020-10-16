@@ -137,11 +137,6 @@ export default class CreateRollupStep4 extends Component<CreateRollupProps> {
               delayTimeunit={delayTimeunit}
               onChangeStep={onChangeStep}
             />
-            {submitError && (
-              <EuiCallOut title="Sorry, there was an error" color="danger" iconType="alert">
-                <p>{submitError}</p>
-              </EuiCallOut>
-            )}
           </EuiFlexItem>
         </EuiFlexGroup>
         <EuiSpacer />
