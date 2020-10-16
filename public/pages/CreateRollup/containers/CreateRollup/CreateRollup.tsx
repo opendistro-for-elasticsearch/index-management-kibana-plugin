@@ -36,6 +36,7 @@ interface CreateRollupProps extends RouteComponentProps {
   sourceIndex: { label: string; value?: IndexItem }[];
   sourceIndexError: string;
   targetIndex: { label: string; value?: IndexItem }[];
+  targetIndexError: string;
   roles: EuiComboBoxOptionOption<String>[];
   onChangeName: (e: ChangeEvent<HTMLInputElement>) => void;
   onChangeDescription: (value: ChangeEvent<HTMLTextAreaElement>) => void;
@@ -105,21 +106,9 @@ export default class CreateRollup extends Component<CreateRollupProps> {
             />
             <EuiSpacer />
             {/*TODO: Add props to RollupIndices component and fetch indices inside*/}
-            <RollupIndices
-              indexService={indexService}
-              sourceIndex={sourceIndex}
-              sourceIndexError={sourceIndexError}
-              targetIndex={targetIndex}
-              onChangeSourceIndex={onChangeSourceIndex}
-              onChangeTargetIndex={onChangeTargetIndex}
-            />
+            <RollupIndices {...this.props} />
             <EuiSpacer />
             <Roles rollupId={rollupId} rollupIdError={rollupIdError} onChange={onChangeRoles} roles={roles} roleOptions={options} />
-            {submitError && (
-              <EuiCallOut title="Sorry, there was an error" color="danger" iconType="alert">
-                <p>{submitError}</p>
-              </EuiCallOut>
-            )}
           </EuiFlexItem>
         </EuiFlexGroup>
         <EuiSpacer />

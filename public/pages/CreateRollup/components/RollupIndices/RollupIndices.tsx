@@ -26,6 +26,7 @@ interface RollupIndicesProps {
   sourceIndex: { label: string; value?: IndexItem }[];
   sourceIndexError: string;
   targetIndex: { label: string; value?: IndexItem }[];
+  targetIndexError: string;
   onChangeSourceIndex: (options: EuiComboBoxOptionOption<IndexItem>[]) => void;
   onChangeTargetIndex: (options: EuiComboBoxOptionOption<IndexItem>[]) => void;
 }
@@ -100,7 +101,7 @@ export default class RollupIndices extends Component<RollupIndicesProps, RollupI
   };
 
   render() {
-    const { sourceIndex, sourceIndexError, targetIndex, onChangeSourceIndex, onChangeTargetIndex } = this.props;
+    const { sourceIndex, sourceIndexError, targetIndex, targetIndexError, onChangeSourceIndex, onChangeTargetIndex } = this.props;
     const { isLoading, indexOptions, targetIndexOptions } = this.state;
     return (
       <ContentPanel bodyStyles={{ padding: "initial" }} title="Indices" titleSize="m">
@@ -113,6 +114,7 @@ export default class RollupIndices extends Component<RollupIndicesProps, RollupI
           <EuiFormRow
             label="Source index"
             error={sourceIndexError}
+            isInvalid={sourceIndexError != ""}
             helpText="The index pattern on which to performed the rollup job. You can use * as a wildcard."
           >
             <EuiComboBox
@@ -123,11 +125,14 @@ export default class RollupIndices extends Component<RollupIndicesProps, RollupI
               singleSelection={true}
               onSearchChange={this.onIndexSearchChange}
               isLoading={isLoading}
+              isInvalid={sourceIndexError != ""}
             />
           </EuiFormRow>
 
           <EuiFormRow
             label="Target index"
+            error={targetIndexError}
+            isInvalid={targetIndexError != ""}
             helpText="The index stores rollup results. You can look up or an existing index to reuse or type to create a new index."
           >
             <EuiComboBox
@@ -139,6 +144,7 @@ export default class RollupIndices extends Component<RollupIndicesProps, RollupI
               singleSelection={true}
               onSearchChange={this.onIndexSearchChange}
               isLoading={isLoading}
+              isInvalid={targetIndexError != ""}
             />
           </EuiFormRow>
         </div>

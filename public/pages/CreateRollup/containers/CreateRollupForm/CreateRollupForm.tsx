@@ -52,6 +52,7 @@ interface CreateRollupFormState {
   sourceIndex: { label: string; value?: IndexItem }[];
   sourceIndexError: string;
   targetIndex: { label: string; value?: IndexItem }[];
+  targetIndexError: string;
   roles: EuiComboBoxOptionOption<String>[];
 
   mappings: any;
@@ -116,6 +117,7 @@ export default class CreateRollupForm extends Component<CreateRollupFormProps, C
       sourceIndex: [],
       sourceIndexError: "",
       targetIndex: [],
+      targetIndexError: "",
       roles: [],
 
       timestamp: [],
@@ -214,10 +216,8 @@ export default class CreateRollupForm extends Component<CreateRollupFormProps, C
   };
 
   onChangeName = (e: ChangeEvent<HTMLInputElement>): void => {
-    const { hasSubmitted } = this.state;
     const rollupId = e.target.value;
-    if (hasSubmitted) this.setState({ rollupId, rollupIdError: rollupId ? "" : "Required" });
-    else this.setState({ rollupId });
+    this.setState({ rollupId, rollupIdError: rollupId ? "" : "Name is required" });
   };
 
   onChangeSourceIndex = (options: EuiComboBoxOptionOption<IndexItem>[]): void => {
@@ -241,10 +241,10 @@ export default class CreateRollupForm extends Component<CreateRollupFormProps, C
     let targetIndex = options.map(function (option) {
       return option.label;
     });
-    const rollupError = targetIndex.length ? "" : "Target index is required";
+    const targetIndexError = targetIndex.length ? "" : "Target index is required";
 
     newJSON.rollup.target_index = targetIndex[0];
-    this.setState({ targetIndex: options, rollupJSON: newJSON, rollupIdError: rollupError });
+    this.setState({ targetIndex: options, rollupJSON: newJSON, targetIndexError: targetIndexError });
   };
 
   onChangeRoles = (selectedOptions: EuiComboBoxOptionOption<String>[]): void => {
@@ -427,6 +427,7 @@ export default class CreateRollupForm extends Component<CreateRollupFormProps, C
       sourceIndex,
       sourceIndexError,
       targetIndex,
+      targetIndexError,
       roles,
       currentStep,
 
@@ -462,6 +463,7 @@ export default class CreateRollupForm extends Component<CreateRollupFormProps, C
           sourceIndex={sourceIndex}
           sourceIndexError={sourceIndexError}
           targetIndex={targetIndex}
+          targetIndexError={targetIndexError}
           roles={roles}
           onChangeRoles={this.onChangeRoles}
           roleOptions={options}
