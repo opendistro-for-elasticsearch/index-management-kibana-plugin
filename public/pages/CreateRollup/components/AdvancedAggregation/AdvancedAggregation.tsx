@@ -46,8 +46,6 @@ import {
   EuiFormHelpText,
   EuiHorizontalRule,
 } from "@elastic/eui";
-import { ContentPanel, ContentPanelActions } from "../../../../components/ContentPanel";
-import { ModalConsumer } from "../../../../components/Modal";
 import { DEFAULT_PAGE_SIZE_OPTIONS } from "../../../Rollups/utils/constants";
 import { DimensionItem, FieldItem } from "../../models/interfaces";
 import { AddFieldsColumns } from "../../utils/constants";
@@ -290,6 +288,7 @@ export default class AdvancedAggregation extends Component<AdvancedAggregationPr
               </EuiFlexItem>
             </EuiFlexGroup>
           </EuiFlexItem>
+
           <EuiFlexItem grow={false}>
             <EuiButton onClick={this.showModal}>Add fields</EuiButton>
           </EuiFlexItem>
@@ -371,7 +370,7 @@ export default class AdvancedAggregation extends Component<AdvancedAggregationPr
                       noItemsMessage={"No fields available"}
                       isSelectable={true}
                       selection={selection}
-                      tableLayout={"auto"}
+                      tableLayout={"fixed"}
                       // onChange={this.onTableChange}
                       // pagination={pagination}
                       // sorting={sorting}

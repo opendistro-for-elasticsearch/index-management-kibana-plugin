@@ -109,10 +109,7 @@ export default class CreateRollupStep2 extends Component<CreateRollupProps, Crea
             </EuiTitle>
             <EuiSpacer />
             <EuiCallOut color="warning">
-              <p>
-                Aggregations and metrics cannot be changed once the job is created. Please ensure that you select correct fields and
-                metrics.
-              </p>
+              <p>You can't change aggregations or metrics after creating a job. Double-check your choices before proceeding.</p>
             </EuiCallOut>
             <EuiSpacer />
             <TimeAggregation

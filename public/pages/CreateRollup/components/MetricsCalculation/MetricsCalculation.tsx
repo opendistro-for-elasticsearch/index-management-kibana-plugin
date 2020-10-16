@@ -206,7 +206,7 @@ export default class MetricsCalculation extends Component<MetricsCalculationProp
 
     return (
       <EuiPanel>
-        <EuiFlexGroup style={{ padding: "0px 10px" }} justifyContent="spaceBetween">
+        <EuiFlexGroup style={{ padding: "0px 10px" }} justifyContent="spaceBetween" alignItems="center">
           <EuiFlexItem>
             <EuiFlexGroup gutterSize={"xs"}>
               <EuiFlexItem grow={false}>
@@ -228,7 +228,7 @@ export default class MetricsCalculation extends Component<MetricsCalculationProp
           </EuiFlexItem>
 
           <EuiFlexItem grow={false}>
-            <EuiFlexGroup>
+            <EuiFlexGroup gutterSize={"xs"}>
               <EuiFlexItem grow={false}>
                 <EuiButton iconType={"arrowDown"} iconSide={"right"} onClick={this.showModal}>
                   Disable all
@@ -320,7 +320,7 @@ export default class MetricsCalculation extends Component<MetricsCalculationProp
                       columns={AddFieldsColumns}
                       isSelectable={true}
                       selection={selection}
-                      tableLayout={"auto"}
+                      tableLayout={"fixed"}
                     />
                   </EuiForm>
                 </EuiModalBody>

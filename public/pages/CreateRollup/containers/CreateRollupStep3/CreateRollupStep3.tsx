@@ -185,6 +185,7 @@ export default class CreateRollupStep3 extends Component<CreateRollupProps, Crea
             />
           </EuiFlexItem>
         </EuiFlexGroup>
+        <EuiSpacer />
       </div>
     );
   }
