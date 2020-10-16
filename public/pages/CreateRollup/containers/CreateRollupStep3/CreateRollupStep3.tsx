@@ -160,6 +160,7 @@ export default class CreateRollupStep3 extends Component<CreateRollupProps, Crea
             </EuiTitle>
             <EuiSpacer />
             <Schedule
+              {...this.props}
               isEdit={false}
               rollupId={rollupId}
               rollupIdError={rollupIdError}
@@ -182,7 +183,6 @@ export default class CreateRollupStep3 extends Component<CreateRollupProps, Crea
               onChangeDelayTimeunit={onChangeDelayTimeunit}
               onChangeIntervalTimeunit={onChangeIntervalTimeunit}
             />
-            <EuiSpacer />
           </EuiFlexItem>
         </EuiFlexGroup>
         <EuiSpacer />

@@ -216,7 +216,7 @@ export default class RollupDetails extends Component<RollupDetailsProps, RollupD
                 <EuiButton color={"danger"}>Delete</EuiButton>
               </EuiFlexItem>
               <EuiFlexItem grow={false}>
-                <EuiButton fill={true}>Export target index</EuiButton>
+                <EuiButton fill={true}>Explore target index</EuiButton>
               </EuiFlexItem>
             </EuiFlexGroup>
           </EuiFlexItem>

@@ -24,6 +24,7 @@ import CreateRollupSteps from "../../components/CreateRollupSteps";
 import HistogramAndMetrics from "../../components/HistogramAndMetrics";
 import JobNameAndIndices from "../../components/JobNameAndIndices";
 import ScheduleRolesAndNotifications from "../../components/ScheduleRolesAndNotifications";
+import { DimensionItem } from "../../models/interfaces";
 
 interface CreateRollupProps extends RouteComponentProps {
   rollupService: RollupService;
@@ -40,6 +41,7 @@ interface CreateRollupProps extends RouteComponentProps {
   intervalValue: number;
   timezone: string;
   timeunit: string;
+  selectedDimensionField: DimensionItem[];
 
   jobEnabledByDefault: boolean;
   recurringJob: string;
@@ -120,14 +122,7 @@ export default class CreateRollupStep4 extends Component<CreateRollupProps> {
               onChangeStep={onChangeStep}
             />
             <EuiSpacer />
-            <HistogramAndMetrics
-              rollupId={rollupId}
-              intervalValue={intervalValue}
-              timestamp={timestamp}
-              timeunit={timeunit}
-              timezone={timezone}
-              onChangeStep={onChangeStep}
-            />
+            <HistogramAndMetrics {...this.props} />
             <EuiSpacer />
             <ScheduleRolesAndNotifications
               rollupId={rollupId}

@@ -23,13 +23,13 @@ import CreateRollupSteps from "../../components/CreateRollupSteps";
 import TimeAggregation from "../../components/TimeAggregations";
 import AdvancedAggregation from "../../components/AdvancedAggregation";
 import MetricsCalculation from "../../components/MetricsCalculation";
-import { DimensionItem, FieldItem } from "../../../../../models/interfaces";
+import { DimensionItem, FieldItem } from "../../models/interfaces";
 
 interface CreateRollupProps extends RouteComponentProps {
   rollupService: RollupService;
   currentStep: number;
   fields: any;
-  selectedTerms: { label: string; value?: FieldItem }[];
+  selectedTerms: FieldItem[];
   selectedDimensionField: DimensionItem[];
   timestamp: EuiComboBoxOptionOption<String>[];
   intervalValue: number;
@@ -76,7 +76,6 @@ export default class CreateRollupStep2 extends Component<CreateRollupProps, Crea
       intervalType,
       intervalValue,
       timestamp,
-      timezone,
       timeunit,
       selectedDimensionField,
       onChangeTimeunit,
@@ -89,10 +88,10 @@ export default class CreateRollupStep2 extends Component<CreateRollupProps, Crea
     const { submitError } = this.state;
 
     //Generate fields options
-    var fieldsOption: { label: string; value: FieldItem }[] = [];
+    var fieldsOption: FieldItem[] = [];
     for (var key in fields) {
       if (fields.hasOwnProperty(key)) {
-        fieldsOption.push({ label: key, value: fields[key] });
+        fieldsOption.push({ label: key, type: fields[key].type ? fields[key].type : null });
       }
     }
 
@@ -109,10 +108,7 @@ export default class CreateRollupStep2 extends Component<CreateRollupProps, Crea
             </EuiTitle>
             <EuiSpacer />
             <EuiCallOut color="warning">
-              <p>
-                Aggregations and metrics cannot be changed once the job is created. Please ensure that you select correct fields and
-                metrics.
-              </p>
+              <p>You can't change aggregations or metrics after creating a job. Double-check your choices before proceeding.</p>
             </EuiCallOut>
             <EuiSpacer />
             <TimeAggregation
@@ -122,7 +118,6 @@ export default class CreateRollupStep2 extends Component<CreateRollupProps, Crea
               intervalType={intervalType}
               intervalValue={intervalValue}
               selectedTimestamp={timestamp}
-              timezone={timezone}
               timeunit={timeunit}
               onChangeTimezone={onChangeTimezone}
               onChangeTimeunit={onChangeTimeunit}
@@ -137,7 +132,7 @@ export default class CreateRollupStep2 extends Component<CreateRollupProps, Crea
               onDimensionSelectionChange={onDimensionSelectionChange}
             />
             <EuiSpacer />
-            <MetricsCalculation />
+            <MetricsCalculation fieldsOption={fieldsOption} />
             {submitError && (
               <EuiCallOut title="Sorry, there was an error" color="danger" iconType="alert">
                 <p>{submitError}</p>

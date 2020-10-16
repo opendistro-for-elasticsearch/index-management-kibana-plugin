@@ -24,11 +24,16 @@ import {
   EuiFieldNumber,
   EuiRadioGroup,
   EuiComboBoxOptionOption,
+  EuiPanel,
+  EuiTitle,
+  EuiText,
+  EuiFormHelpText,
+  EuiHorizontalRule,
 } from "@elastic/eui";
 import { ContentPanel } from "../../../../components/ContentPanel";
 import { CalendarTimeunitOptions, FixedTimeunitOptions, TimezoneOptionsByRegion } from "../../utils/constants";
 import { RollupService } from "../../../../services";
-import { FieldItem, IndexItem } from "../../../../../models/interfaces";
+import { FieldItem } from "../../../../../models/interfaces";
 
 interface TimeAggregationProps {
   rollupService: RollupService;
@@ -37,7 +42,7 @@ interface TimeAggregationProps {
   selectedTimestamp: EuiComboBoxOptionOption<String>[];
   timeunit: string;
   timezone: string;
-  fieldsOption: { label: string; value?: FieldItem }[];
+  fieldsOption: FieldItem[];
 
   onChangeIntervalType: (optionId: string) => void;
   onChangeIntervalValue: (e: ChangeEvent<HTMLInputElement>) => void;
@@ -80,10 +85,17 @@ export default class TimeAggregation extends Component<TimeAggregationProps, Tim
     } = this.props;
 
     // Filter options for date histogram
-    const dateFields = fieldsOption.filter((item) => item.value.type == "date");
+    const dateFields = fieldsOption.filter((item) => item.type == "date");
 
     return (
-      <ContentPanel bodyStyles={{ padding: "initial" }} title="Time aggregation" titleSize="m">
+      <EuiPanel>
+        <EuiTitle size={"m"}>
+          <h3>Time aggregation </h3>
+        </EuiTitle>
+        <EuiFormHelpText>
+          Your source indices must include a timestamp field. The rollup job creates a date histogram for the field you specify.{" "}
+        </EuiFormHelpText>
+        <EuiHorizontalRule margin="xs" />
         <div style={{ paddingLeft: "10px" }}>
           <EuiSpacer size="s" />
           <EuiFormRow label="Timestamp field">
@@ -123,11 +135,11 @@ export default class TimeAggregation extends Component<TimeAggregationProps, Tim
             </EuiFlexItem>
           </EuiFlexGroup>
           <EuiSpacer size="m" />
-          <EuiFormRow label="Timezone" helpText={"A day/week/month starts from 00:00:00 on the specified timezone."}>
+          <EuiFormRow label="Timezone" helpText={"A day starts from 00:00:00 in the specified timezone."}>
             <EuiSelect id="timezone" options={TimezoneOptionsByRegion} value={timezone} onChange={onChangeTimezone} />
           </EuiFormRow>
         </div>
-      </ContentPanel>
+      </EuiPanel>
     );
   }
 }

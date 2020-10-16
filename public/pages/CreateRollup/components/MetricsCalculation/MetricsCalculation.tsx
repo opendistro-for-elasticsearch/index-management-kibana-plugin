@@ -13,7 +13,7 @@
  * permissions and limitations under the License.
  */
 
-import React, { ChangeEvent, Component } from "react";
+import React, { ChangeEvent, Component, Fragment } from "react";
 import {
   EuiBasicTable,
   EuiButton,
@@ -33,60 +33,35 @@ import {
   EuiSpacer,
   EuiTableSelectionType,
   EuiCheckbox,
+  EuiText,
+  EuiFormRow,
+  EuiPanel,
+  EuiTitle,
+  EuiFormHelpText,
+  EuiHorizontalRule,
+  EuiIcon,
 } from "@elastic/eui";
-import { ContentPanel, ContentPanelActions } from "../../../../components/ContentPanel";
-import { ModalConsumer } from "../../../../components/Modal";
-import { ManagedCatIndex } from "../../../../../server/models/interfaces";
-import { DimensionItem, MetricItem } from "../../../../../models/interfaces";
+import { AddFieldsColumns } from "../../utils/constants";
+import { FieldItem, MetricItem } from "../../models/interfaces";
 
-interface MetricsCalculationProps {}
+interface MetricsCalculationProps {
+  fieldsOption: FieldItem[];
+}
 
 interface MetricsCalculationState {
   isModalVisible: boolean;
   searchText: string;
   selectedFieldType: EuiComboBoxOptionOption<String>[];
-  selectedFields: ManagedCatIndex[];
+  selectedFields: FieldItem[];
+  //TODO: Add an 2D array to store checked metrics, or list of boolean[]
+  checks: boolean[][];
 }
 
 const tempFieldTypeOptions = [{ label: "string" }, { label: "location" }, { label: "number" }, { label: "timestamp" }];
 
-const addFields = (
-  searchText: string,
-  onChangeSearch: (value: ChangeEvent<HTMLInputElement>) => void,
-  selectedFieldType: EuiComboBoxOptionOption<String>[],
-  onChangeFieldType: (options: EuiComboBoxOptionOption<String>[]) => void,
-  selection: EuiTableSelectionType<ManagedCatIndex>
-) => (
-  <EuiForm title={"Add fields"}>
-    <EuiFlexGroup>
-      <EuiFlexItem grow={2}>
-        <EuiFieldSearch placeholder="Search field name" value={searchText} onChange={onChangeSearch} isClearable={true} />
-      </EuiFlexItem>
-      <EuiFlexItem grow={1}>
-        <EuiComboBox
-          placeholder="Field type"
-          options={tempFieldTypeOptions}
-          selectedOptions={selectedFieldType}
-          onChange={onChangeFieldType}
-          isClearable={true}
-          singleSelection={true}
-        />
-      </EuiFlexItem>
-    </EuiFlexGroup>
-    {/*TODO: create fake list of items, and figure out how to retrieve the selections for table*/}
-    <EuiBasicTable
-      items={[]}
-      rowHeader="fieldName"
-      columns={addFieldsColumns}
-      noItemsMessage="No field added for aggregation"
-      isSelectable={true}
-      selection={selection}
-    />
-  </EuiForm>
-);
 const sampleMetricItems: MetricItem[] = [
   {
-    fieldname: "On time rate",
+    source_field: "On time rate",
     all: true,
     min: false,
     max: true,
@@ -95,7 +70,7 @@ const sampleMetricItems: MetricItem[] = [
     value_count: false,
   },
   {
-    fieldname: "Return rate",
+    source_field: "Return rate",
     all: true,
     min: true,
     max: false,
@@ -104,7 +79,7 @@ const sampleMetricItems: MetricItem[] = [
     value_count: false,
   },
   {
-    fieldname: "OTIF rate",
+    source_field: "OTIF rate",
     all: false,
     min: false,
     max: true,
@@ -115,52 +90,6 @@ const sampleMetricItems: MetricItem[] = [
 ];
 const setChecked = (e: ChangeEvent<HTMLInputElement>): void => {};
 
-const metricsColumns = [
-  {
-    field: "fieldname",
-    name: "Field Name",
-  },
-  {
-    field: "all",
-    name: "All",
-    truncateText: true,
-    // render: (all: boolean) => {
-    //   <EuiCheckbox id ={"all"} checked={all} onChange={()=>{all=!all}}/>
-    // },
-  },
-  {
-    field: "min",
-    name: "Min",
-  },
-  {
-    field: "max",
-    name: "Max",
-  },
-  {
-    field: "sum",
-    name: "Sum",
-  },
-  {
-    field: "avg",
-    name: "Avg",
-  },
-  {
-    field: "value_count",
-    name: "Value count",
-  },
-];
-
-const addFieldsColumns = [
-  {
-    field: "fieldname",
-    name: "Field name",
-    sortable: true,
-  },
-  {
-    field: "fieldType",
-    name: "Field type",
-  },
-];
 export default class MetricsCalculation extends Component<MetricsCalculationProps, MetricsCalculationState> {
   constructor(props: MetricsCalculationProps) {
     super(props);
@@ -170,6 +99,7 @@ export default class MetricsCalculation extends Component<MetricsCalculationProp
       searchText: "",
       selectedFieldType: [],
       selectedFields: [],
+      checks: [],
     };
   }
 
@@ -185,65 +115,184 @@ export default class MetricsCalculation extends Component<MetricsCalculationProp
     this.setState({ selectedFieldType: options });
   };
 
-  onSelectionChange = (selectedFields: ManagedCatIndex[]): void => {
+  onSelectionChange = (selectedFields: FieldItem[]): void => {
     this.setState({ selectedFields });
   };
 
+  deleteField() {}
+
   render() {
+    const { fieldsOption } = this.props;
     const { isModalVisible, searchText, selectedFieldType } = this.state;
-    const selection: EuiTableSelectionType<ManagedCatIndex> = {
+
+    //TODO: check if need to filter type of fields to numbers
+    const selection: EuiTableSelectionType<FieldItem> = {
+      // selectable: (field) => (field.type == 'integer'||'float'||'long'),
       onSelectionChange: this.onSelectionChange,
     };
+
+    const metricsColumns = [
+      {
+        field: "source_field",
+        name: "Field Name",
+      },
+      {
+        field: "all",
+        name: "All",
+        truncateText: true,
+        render: (all: boolean) => (
+          <EuiForm>
+            <EuiFormRow compressed={true}>
+              <EuiCheckbox id={"all"} checked={all} onChange={setChecked} />
+            </EuiFormRow>
+          </EuiForm>
+        ),
+      },
+      {
+        field: "min",
+        name: "Min",
+        render: (min: boolean) => (
+          <EuiForm>
+            <EuiFormRow compressed={true}>
+              <EuiCheckbox id={"min"} checked={min} onChange={setChecked} />
+            </EuiFormRow>
+          </EuiForm>
+        ),
+      },
+      {
+        field: "max",
+        name: "Max",
+        render: (max: boolean) => (
+          <EuiForm>
+            <EuiFormRow compressed={true}>
+              <EuiCheckbox id={"max"} checked={max} onChange={setChecked} />
+            </EuiFormRow>
+          </EuiForm>
+        ),
+      },
+      {
+        field: "sum",
+        name: "Sum",
+        render: (sum: boolean) => (
+          <EuiForm>
+            <EuiFormRow compressed={true}>
+              <EuiCheckbox id={"sum"} checked={sum} onChange={setChecked} />
+            </EuiFormRow>
+          </EuiForm>
+        ),
+      },
+      {
+        field: "avg",
+        name: "Avg",
+        render: (avg: boolean) => (
+          <EuiForm>
+            <EuiFormRow compressed={true}>
+              <EuiCheckbox id={"avg"} checked={avg} onChange={setChecked} />
+            </EuiFormRow>
+          </EuiForm>
+        ),
+      },
+      {
+        field: "value_count",
+        name: "Value count",
+        render: (value_count: boolean) => (
+          <EuiForm>
+            <EuiFormRow compressed={true}>
+              <EuiCheckbox id={"value_count"} checked={value_count} onChange={setChecked} />
+            </EuiFormRow>
+          </EuiForm>
+        ),
+      },
+      {
+        field: "action",
+        name: "Actions",
+        render: () => <EuiIcon type={"crossInACircleFilled"} onClick={this.deleteField}></EuiIcon>,
+      },
+    ];
+
     return (
-      <ContentPanel
-        bodyStyles={{ padding: "initial" }}
-        actions={
-          <ModalConsumer>
-            {() => (
-              <ContentPanelActions
-                actions={[
-                  {
-                    text: "Disable all",
-                    buttonProps: {
-                      iconType: "arrowDown",
-                      iconSide: "right",
-                      onClick: () => this.showModal(),
-                    },
-                  },
-                  {
-                    text: "Enable all",
-                    buttonProps: {
-                      iconType: "arrowDown",
-                      iconSide: "right",
-                      onClick: () => this.showModal(),
-                    },
-                  },
-                  {
-                    text: "Add fields",
-                    buttonProps: {
-                      onClick: () => this.showModal(),
-                    },
-                  },
-                ]}
-              />
-            )}
-          </ModalConsumer>
-        }
-        title={`Additional metrics - optional (0)`}
-        titleSize="m"
-      >
+      <EuiPanel>
+        <EuiFlexGroup style={{ padding: "0px 10px" }} justifyContent="spaceBetween" alignItems="center">
+          <EuiFlexItem>
+            <EuiFlexGroup gutterSize={"xs"}>
+              <EuiFlexItem grow={false}>
+                <EuiTitle size={"m"}>
+                  <h3>Additional metrics </h3>
+                </EuiTitle>
+              </EuiFlexItem>
+              <EuiFlexItem grow={false}>
+                <EuiTitle size={"m"}>
+                  <i>{" - optional "}</i>
+                </EuiTitle>
+              </EuiFlexItem>
+              <EuiFlexItem>
+                <EuiText size={"m"} color={"subdued"}>
+                  <h2>{` (${sampleMetricItems.length})`}</h2>
+                </EuiText>
+              </EuiFlexItem>
+            </EuiFlexGroup>
+          </EuiFlexItem>
+
+          <EuiFlexItem grow={false}>
+            <EuiFlexGroup gutterSize={"xs"}>
+              <EuiFlexItem grow={false}>
+                <EuiButton iconType={"arrowDown"} iconSide={"right"} onClick={this.showModal}>
+                  Disable all
+                </EuiButton>
+              </EuiFlexItem>
+              <EuiFlexItem grow={false}>
+                <EuiButton iconType={"arrowDown"} iconSide={"right"} onClick={this.showModal}>
+                  Enable all
+                </EuiButton>
+              </EuiFlexItem>
+              <EuiFlexItem grow={false}>
+                <EuiButton onClick={this.showModal}>Add fields</EuiButton>
+              </EuiFlexItem>
+            </EuiFlexGroup>
+          </EuiFlexItem>
+        </EuiFlexGroup>
+
+        <EuiFlexGroup style={{ padding: "0px 10px" }}>
+          <EuiFlexItem grow={3}>
+            <EuiFormHelpText>
+              You can aggregate additional fields from the source index into the target index. Rollup supports the terms aggregation (for
+              all field types) and histogram aggregation (for numeric fields).
+            </EuiFormHelpText>
+          </EuiFlexItem>
+          <EuiFlexItem grow={2} />
+        </EuiFlexGroup>
+        <EuiHorizontalRule margin="xs" />
         <div style={{ paddingLeft: "10px" }}>
+          {/*TODO: Figure out row header*/}
           <EuiBasicTable
             items={sampleMetricItems}
-            rowHeader="numericField"
+            rowHeader="source_field"
             columns={metricsColumns}
-            noItemsMessage="No field added for metrics calculation"
+            hasActions={true}
+            noItemsMessage={
+              <Fragment>
+                <EuiSpacer />
+                <EuiText>No fields added for metrics</EuiText>
+                <EuiSpacer />
+                <EuiFlexGroup alignItems="center">
+                  <EuiFlexItem>
+                    <EuiSpacer />
+                  </EuiFlexItem>
+                  <EuiFlexItem grow={false}>
+                    <EuiButton onClick={this.showModal}>Add fields</EuiButton>
+                  </EuiFlexItem>
+                  <EuiFlexItem>
+                    <EuiSpacer />
+                  </EuiFlexItem>
+                </EuiFlexGroup>
+              </Fragment>
+            }
             tableLayout={"auto"}
           />
           <EuiSpacer size="s" />
           {isModalVisible && (
             <EuiOverlayMask>
-              <EuiModal onClose={this.closeModal} maxWidth={700}>
+              <EuiModal onClose={this.closeModal} style={{ padding: "5px 30px" }}>
                 <EuiModalHeader>
                   <EuiModalHeaderTitle>Add fields</EuiModalHeaderTitle>
                 </EuiModalHeader>
@@ -272,38 +321,28 @@ export default class MetricsCalculation extends Component<MetricsCalculationProp
                     </EuiFlexGroup>
                     {/*TODO: create fake list of items, and figure out how to retrieve the selections for table*/}
                     <EuiBasicTable
-                      items={[]}
+                      items={fieldsOption}
+                      itemId={"label"}
                       rowHeader="fieldName"
-                      columns={addFieldsColumns}
-                      noItemsMessage="No field added for aggregation"
+                      columns={AddFieldsColumns}
                       isSelectable={true}
                       selection={selection}
-                      tableLayout={"auto"}
+                      tableLayout={"fixed"}
                     />
                   </EuiForm>
                 </EuiModalBody>
 
                 <EuiModalFooter>
                   <EuiButtonEmpty onClick={this.closeModal}>Cancel</EuiButtonEmpty>
-
-                  <EuiButton onClick={this.closeModal}>Save</EuiButton>
+                  <EuiButton fill onClick={this.closeModal}>
+                    Add
+                  </EuiButton>
                 </EuiModalFooter>
               </EuiModal>
             </EuiOverlayMask>
           )}
-          <EuiFlexGroup alignItems="center">
-            <EuiFlexItem>
-              <EuiSpacer />
-            </EuiFlexItem>
-            <EuiFlexItem grow={false}>
-              <EuiButton onClick={this.showModal}>Add fields</EuiButton>
-            </EuiFlexItem>
-            <EuiFlexItem>
-              <EuiSpacer />
-            </EuiFlexItem>
-          </EuiFlexGroup>
         </div>
-      </ContentPanel>
+      </EuiPanel>
     );
   }
 }

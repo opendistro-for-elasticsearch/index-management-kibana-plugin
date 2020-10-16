@@ -24,11 +24,12 @@ import { ManagedCatIndex } from "../../../../../server/models/interfaces";
 import CreateRollup from "../CreateRollup";
 import CreateRollupStep2 from "../CreateRollupStep2";
 import { toastNotifications } from "ui/notify";
-import { DimensionItem, FieldItem, IndexItem, Rollup } from "../../../../../models/interfaces";
+import { IndexItem, Rollup } from "../../../../../models/interfaces";
 import { getErrorMessage } from "../../../../utils/helpers";
 import { EMPTY_ROLLUP } from "../../utils/constants";
 import CreateRollupStep3 from "../CreateRollupStep3";
 import CreateRollupStep4 from "../CreateRollupStep4";
+import { DimensionItem, FieldItem } from "../../models/interfaces";
 
 interface CreateRollupFormProps extends RouteComponentProps {
   rollupService: RollupService;
@@ -52,18 +53,19 @@ interface CreateRollupFormState {
   sourceIndex: { label: string; value?: IndexItem }[];
   sourceIndexError: string;
   targetIndex: { label: string; value?: IndexItem }[];
+  targetIndexError: string;
   roles: EuiComboBoxOptionOption<String>[];
 
   mappings: any;
   fields: any;
-  selectedTerms: { label: string; value?: FieldItem }[];
+  selectedTerms: FieldItem[];
   selectedDimensionField: DimensionItem[];
   timestamp: EuiComboBoxOptionOption<String>[];
   intervalType: string;
   intervalValue: number;
   timezone: string;
   timeunit: string;
-  selectedFields: { label: string; value?: FieldItem }[];
+  selectedFields: FieldItem[];
 
   jobEnabledByDefault: boolean;
   recurringJob: string;
@@ -116,12 +118,13 @@ export default class CreateRollupForm extends Component<CreateRollupFormProps, C
       sourceIndex: [],
       sourceIndexError: "",
       targetIndex: [],
+      targetIndexError: "",
       roles: [],
 
       timestamp: [],
       intervalType: "fixed",
       intervalValue: 1,
-      timezone: "America/Los_Angeles",
+      timezone: "UTC +0",
       timeunit: "ms",
 
       jobEnabledByDefault: false,
@@ -211,22 +214,11 @@ export default class CreateRollupForm extends Component<CreateRollupFormProps, C
     newJSON.rollup.description = description;
     this.setState({ description: description, rollupJSON: newJSON });
     console.log(this.state);
-    const { fields } = this.state;
-    var temp: { label: string; value: FieldItem }[] = [];
-    for (var key in fields) {
-      if (fields.hasOwnProperty(key)) {
-        console.log(key + " -> " + fields[key]);
-        temp.push({ label: key, value: fields[key] });
-      }
-    }
-    console.log(temp);
   };
 
   onChangeName = (e: ChangeEvent<HTMLInputElement>): void => {
-    const { hasSubmitted } = this.state;
     const rollupId = e.target.value;
-    if (hasSubmitted) this.setState({ rollupId, rollupIdError: rollupId ? "" : "Required" });
-    else this.setState({ rollupId });
+    this.setState({ rollupId, rollupIdError: rollupId ? "" : "Name is required" });
   };
 
   onChangeSourceIndex = (options: EuiComboBoxOptionOption<IndexItem>[]): void => {
@@ -240,8 +232,8 @@ export default class CreateRollupForm extends Component<CreateRollupFormProps, C
     const srcIndexText = sourceIndex.length ? sourceIndex[0] : "";
     newJSON.rollup.source_index = srcIndexText;
     this.setState({ sourceIndex: options, rollupJSON: newJSON, sourceIndexError: sourceIndexError });
-    //Update fields
-    this.setState({ fields: sourceIndex.length ? mappings[srcIndexText].mappings.properties : undefined });
+    //TODO: Update fields and clear dimensions, metrics (need to add this)
+    this.setState({ fields: sourceIndex.length ? mappings[srcIndexText].mappings.properties : undefined, selectedDimensionField: [] });
   };
 
   onChangeTargetIndex = (options: EuiComboBoxOptionOption<IndexItem>[]): void => {
@@ -250,10 +242,10 @@ export default class CreateRollupForm extends Component<CreateRollupFormProps, C
     let targetIndex = options.map(function (option) {
       return option.label;
     });
-    const rollupError = targetIndex.length ? "" : "Target index is required";
+    const targetIndexError = targetIndex.length ? "" : "Target index is required";
 
     newJSON.rollup.target_index = targetIndex[0];
-    this.setState({ targetIndex: options, rollupJSON: newJSON, rollupIdError: rollupError });
+    this.setState({ targetIndex: options, rollupJSON: newJSON, targetIndexError: targetIndexError });
   };
 
   onChangeRoles = (selectedOptions: EuiComboBoxOptionOption<String>[]): void => {
@@ -305,6 +297,7 @@ export default class CreateRollupForm extends Component<CreateRollupFormProps, C
     this.setState({ timestamp: selectedOptions, rollupJSON: newJSON, rollupIdError: rollupError });
   };
 
+  //TODO: Modify timezone to include both text and value
   onChangeTimezone = (e: ChangeEvent<HTMLSelectElement>): void => {
     let newJSON = this.state.rollupJSON;
     newJSON.rollup.dimensions[0].date_histogram.timezone = e.target.value;
@@ -436,6 +429,7 @@ export default class CreateRollupForm extends Component<CreateRollupFormProps, C
       sourceIndex,
       sourceIndexError,
       targetIndex,
+      targetIndexError,
       roles,
       currentStep,
 
@@ -471,6 +465,7 @@ export default class CreateRollupForm extends Component<CreateRollupFormProps, C
           sourceIndex={sourceIndex}
           sourceIndexError={sourceIndexError}
           targetIndex={targetIndex}
+          targetIndexError={targetIndexError}
           roles={roles}
           onChangeRoles={this.onChangeRoles}
           roleOptions={options}
@@ -531,6 +526,7 @@ export default class CreateRollupForm extends Component<CreateRollupFormProps, C
           timestamp={timestamp}
           timeunit={timeunit}
           timezone={timezone}
+          selectedDimensionField={selectedDimensionField}
           jobEnabledByDefault={jobEnabledByDefault}
           recurringJob={recurringJob}
           recurringDefinition={recurringDefinition}
@@ -561,7 +557,7 @@ export default class CreateRollupForm extends Component<CreateRollupFormProps, C
           {currentStep == 4 ? (
             <EuiFlexItem grow={false}>
               <EuiButton fill onClick={this.onSubmit} isLoading={isSubmitting} data-test-subj="createRollupSubmitButton">
-                {"Submit"}
+                {"Create"}
               </EuiButton>
             </EuiFlexItem>
           ) : (

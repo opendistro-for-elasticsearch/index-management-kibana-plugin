@@ -141,7 +141,7 @@ export default class Schedule extends Component<ScheduleProps> {
         <div style={{ paddingLeft: "10px" }}>
           <EuiCheckbox
             id="jobEnabledByDefault"
-            label="Job enabled by default"
+            label="Enable job by default"
             checked={jobEnabledByDefault}
             onChange={onChangeJobEnabledByDefault}
           />

@@ -19,7 +19,8 @@ import { PLUGIN_NAME, ROUTES } from "../../../../utils/constants";
 
 export const TEXT = {
   RESET_FILTERS: "There are no rollup jobs matching your applied filters. Reset your filters to view your rollup jobs.",
-  NO_ROLLUPS: "There are no existing rollup jobs. Create a rollup job.",
+  NO_ROLLUPS:
+    "Rollup jobs help you conserve storage space for historical time series data while preserving the specific information you need.",
   LOADING: "Loading rollup jobs...",
 };
 

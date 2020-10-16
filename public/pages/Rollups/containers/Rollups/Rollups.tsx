@@ -489,7 +489,7 @@ export default class Rollups extends Component<RollupsProps, RollupsState> {
       },
       {
         field: "status",
-        name: "Job status",
+        name: "Rollup job status",
         sortable: true,
         textOnly: true,
       },
