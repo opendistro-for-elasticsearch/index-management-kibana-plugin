@@ -46,6 +46,7 @@ import {
   EuiFormHelpText,
   EuiHorizontalRule,
   EuiCallOut,
+  EuiFieldNumber,
 } from "@elastic/eui";
 import { DEFAULT_PAGE_SIZE_OPTIONS } from "../../../Rollups/utils/constants";
 import { DimensionItem, FieldItem } from "../../models/interfaces";
@@ -137,11 +138,18 @@ export default class AdvancedAggregation extends Component<AdvancedAggregationPr
     let i: number = updatedDimensions.length + 1;
     const toAdd: DimensionItem[] = toAddFields.map((field) => {
       console.log("Add: " + field.label);
-      return {
-        sequence: i++,
-        field: field,
-        aggregationMethod: "Terms",
-      };
+      return field.type == "long" || field.type == "double"
+        ? {
+            sequence: i++,
+            field: field,
+            aggregationMethod: "histogram",
+            interval: 5,
+          }
+        : {
+            sequence: i++,
+            field: field,
+            aggregationMethod: "term",
+          };
     });
     onDimensionSelectionChange(updatedDimensions.concat(toAdd));
     console.log(this.props.selectedDimensionField);
@@ -154,6 +162,9 @@ export default class AdvancedAggregation extends Component<AdvancedAggregationPr
   deleteField() {}
 
   swap() {}
+  onChangeInterval = (e: ChangeEvent<HTMLInputElement>): void => {
+    this.setState({});
+  };
 
   //Check the dimension num
   updateSequence(items: DimensionItem[]) {
@@ -236,15 +247,20 @@ export default class AdvancedAggregation extends Component<AdvancedAggregationPr
         name: "Interval",
         dataType: "number",
         truncateText: true,
-        render: (interval: null | number) => {
-          if (interval == null) return "-";
-          else return `${interval}`;
-        },
+        render: (interval: null | number) =>
+          interval == null ? (
+            "-"
+          ) : (
+            <EuiForm>
+              <EuiFormRow>
+                <EuiFieldNumber min={1} value={interval} onChange={this.onChangeInterval} />
+              </EuiFormRow>
+            </EuiForm>
+          ),
       },
       {
         field: "actions",
         name: "Actions",
-        truncateText: true,
         //TODO: Disable button for first and last row
         render: (sequence) => (
           <EuiFlexGroup>
