@@ -39,6 +39,7 @@ import {
   EuiTitle,
   EuiFormHelpText,
   EuiHorizontalRule,
+  EuiIcon,
 } from "@elastic/eui";
 import { ContentPanel, ContentPanelActions } from "../../../../components/ContentPanel";
 import { ModalConsumer } from "../../../../components/Modal";
@@ -91,80 +92,6 @@ const sampleMetricItems: MetricItem[] = [
 ];
 const setChecked = (e: ChangeEvent<HTMLInputElement>): void => {};
 
-const metricsColumns = [
-  {
-    field: "source_field",
-    name: "Field Name",
-  },
-  {
-    field: "all",
-    name: "All",
-    truncateText: true,
-    render: (all: boolean) => (
-      <EuiForm>
-        <EuiFormRow compressed={true}>
-          <EuiCheckbox id={"all"} checked={all} onChange={setChecked} />
-        </EuiFormRow>
-      </EuiForm>
-    ),
-  },
-  {
-    field: "min",
-    name: "Min",
-    render: (min: boolean) => (
-      <EuiForm>
-        <EuiFormRow compressed={true}>
-          <EuiCheckbox id={"min"} checked={min} onChange={setChecked} />
-        </EuiFormRow>
-      </EuiForm>
-    ),
-  },
-  {
-    field: "max",
-    name: "Max",
-    render: (max: boolean) => (
-      <EuiForm>
-        <EuiFormRow compressed={true}>
-          <EuiCheckbox id={"max"} checked={max} onChange={setChecked} />
-        </EuiFormRow>
-      </EuiForm>
-    ),
-  },
-  {
-    field: "sum",
-    name: "Sum",
-    render: (sum: boolean) => (
-      <EuiForm>
-        <EuiFormRow compressed={true}>
-          <EuiCheckbox id={"sum"} checked={sum} onChange={setChecked} />
-        </EuiFormRow>
-      </EuiForm>
-    ),
-  },
-  {
-    field: "avg",
-    name: "Avg",
-    render: (avg: boolean) => (
-      <EuiForm>
-        <EuiFormRow compressed={true}>
-          <EuiCheckbox id={"avg"} checked={avg} onChange={setChecked} />
-        </EuiFormRow>
-      </EuiForm>
-    ),
-  },
-  {
-    field: "value_count",
-    name: "Value count",
-    render: (value_count: boolean) => (
-      <EuiForm>
-        <EuiFormRow compressed={true}>
-          <EuiCheckbox id={"value_count"} checked={value_count} onChange={setChecked} />
-        </EuiFormRow>
-      </EuiForm>
-    ),
-  },
-];
-
 export default class MetricsCalculation extends Component<MetricsCalculationProps, MetricsCalculationState> {
   constructor(props: MetricsCalculationProps) {
     super(props);
@@ -194,6 +121,8 @@ export default class MetricsCalculation extends Component<MetricsCalculationProp
     this.setState({ selectedFields });
   };
 
+  deleteField() {}
+
   render() {
     const { fieldsOption } = this.props;
     const { isModalVisible, searchText, selectedFieldType } = this.state;
@@ -203,6 +132,85 @@ export default class MetricsCalculation extends Component<MetricsCalculationProp
       // selectable: (field) => (field.type == 'integer'||'float'||'long'),
       onSelectionChange: this.onSelectionChange,
     };
+
+    const metricsColumns = [
+      {
+        field: "source_field",
+        name: "Field Name",
+      },
+      {
+        field: "all",
+        name: "All",
+        truncateText: true,
+        render: (all: boolean) => (
+          <EuiForm>
+            <EuiFormRow compressed={true}>
+              <EuiCheckbox id={"all"} checked={all} onChange={setChecked} />
+            </EuiFormRow>
+          </EuiForm>
+        ),
+      },
+      {
+        field: "min",
+        name: "Min",
+        render: (min: boolean) => (
+          <EuiForm>
+            <EuiFormRow compressed={true}>
+              <EuiCheckbox id={"min"} checked={min} onChange={setChecked} />
+            </EuiFormRow>
+          </EuiForm>
+        ),
+      },
+      {
+        field: "max",
+        name: "Max",
+        render: (max: boolean) => (
+          <EuiForm>
+            <EuiFormRow compressed={true}>
+              <EuiCheckbox id={"max"} checked={max} onChange={setChecked} />
+            </EuiFormRow>
+          </EuiForm>
+        ),
+      },
+      {
+        field: "sum",
+        name: "Sum",
+        render: (sum: boolean) => (
+          <EuiForm>
+            <EuiFormRow compressed={true}>
+              <EuiCheckbox id={"sum"} checked={sum} onChange={setChecked} />
+            </EuiFormRow>
+          </EuiForm>
+        ),
+      },
+      {
+        field: "avg",
+        name: "Avg",
+        render: (avg: boolean) => (
+          <EuiForm>
+            <EuiFormRow compressed={true}>
+              <EuiCheckbox id={"avg"} checked={avg} onChange={setChecked} />
+            </EuiFormRow>
+          </EuiForm>
+        ),
+      },
+      {
+        field: "value_count",
+        name: "Value count",
+        render: (value_count: boolean) => (
+          <EuiForm>
+            <EuiFormRow compressed={true}>
+              <EuiCheckbox id={"value_count"} checked={value_count} onChange={setChecked} />
+            </EuiFormRow>
+          </EuiForm>
+        ),
+      },
+      {
+        field: "action",
+        name: "Actions",
+        render: () => <EuiIcon type={"crossInACircleFilled"} onClick={this.deleteField}></EuiIcon>,
+      },
+    ];
 
     return (
       <EuiPanel>
@@ -262,6 +270,7 @@ export default class MetricsCalculation extends Component<MetricsCalculationProp
             items={sampleMetricItems}
             rowHeader="source_field"
             columns={metricsColumns}
+            hasActions={true}
             noItemsMessage={
               <Fragment>
                 <EuiSpacer />
