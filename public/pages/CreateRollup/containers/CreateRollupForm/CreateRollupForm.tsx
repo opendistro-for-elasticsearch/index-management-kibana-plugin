@@ -24,11 +24,12 @@ import { ManagedCatIndex } from "../../../../../server/models/interfaces";
 import CreateRollup from "../CreateRollup";
 import CreateRollupStep2 from "../CreateRollupStep2";
 import { toastNotifications } from "ui/notify";
-import { DimensionItem, FieldItem, IndexItem, Rollup } from "../../../../../models/interfaces";
+import { IndexItem, Rollup } from "../../../../../models/interfaces";
 import { getErrorMessage } from "../../../../utils/helpers";
 import { EMPTY_ROLLUP } from "../../utils/constants";
 import CreateRollupStep3 from "../CreateRollupStep3";
 import CreateRollupStep4 from "../CreateRollupStep4";
+import { DimensionItem, FieldItem } from "../../models/interfaces";
 
 interface CreateRollupFormProps extends RouteComponentProps {
   rollupService: RollupService;
@@ -123,7 +124,7 @@ export default class CreateRollupForm extends Component<CreateRollupFormProps, C
       timestamp: [],
       intervalType: "fixed",
       intervalValue: 1,
-      timezone: "America/Los_Angeles",
+      timezone: "UTC +0",
       timeunit: "ms",
 
       jobEnabledByDefault: false,
@@ -296,6 +297,7 @@ export default class CreateRollupForm extends Component<CreateRollupFormProps, C
     this.setState({ timestamp: selectedOptions, rollupJSON: newJSON, rollupIdError: rollupError });
   };
 
+  //TODO: Modify timezone to include both text and value
   onChangeTimezone = (e: ChangeEvent<HTMLSelectElement>): void => {
     let newJSON = this.state.rollupJSON;
     newJSON.rollup.dimensions[0].date_histogram.timezone = e.target.value;

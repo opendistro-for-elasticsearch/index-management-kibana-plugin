@@ -331,7 +331,7 @@ export default class AdvancedAggregation extends Component<AdvancedAggregationPr
             noItemsMessage={
               <Fragment>
                 <EuiSpacer />
-                <EuiText>No field added for aggregation</EuiText>
+                <EuiText>No fields added for aggregations</EuiText>
                 <EuiSpacer />
                 <EuiFlexGroup style={{ padding: "5px 10px" }} alignItems="center">
                   <EuiFlexItem>

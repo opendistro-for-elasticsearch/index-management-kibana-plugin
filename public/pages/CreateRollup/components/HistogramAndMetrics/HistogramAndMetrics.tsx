@@ -38,6 +38,7 @@ import { ContentPanel, ContentPanelActions } from "../../../../components/Conten
 import { ModalConsumer } from "../../../../components/Modal";
 import { DimensionItem, MetricItem } from "../../models/interfaces";
 import { DEFAULT_PAGE_SIZE_OPTIONS } from "../../../Rollups/utils/constants";
+import { TimezoneOptionsByRegion } from "../../utils/constants";
 
 interface HistogramAndMetricsProps {
   rollupId: string;
@@ -227,7 +228,7 @@ export default class HistogramAndMetrics extends Component<HistogramAndMetricsPr
             <EuiFlexItem>
               <EuiText size={"xs"}>
                 <dt>Timezone</dt>
-                <dd>{timezone}</dd>
+                <dd>{Object.keys(TimezoneOptionsByRegion).find((key) => TimezoneOptionsByRegion[key] === timezone)}</dd>
               </EuiText>
             </EuiFlexItem>
           </EuiFlexGrid>
@@ -253,7 +254,7 @@ export default class HistogramAndMetrics extends Component<HistogramAndMetricsPr
                   rowHeader={"sequence"}
                   columns={aggregationColumns}
                   tableLayout={"auto"}
-                  noItemsMessage={"No field added for aggregation"}
+                  noItemsMessage={"No fields added for aggregations"}
                   pagination={pagination}
                   onChange={this.onTableChange}
                 />
@@ -294,7 +295,7 @@ export default class HistogramAndMetrics extends Component<HistogramAndMetricsPr
             </Fragment>
           ) : (
             <EuiText>
-              <dd>No field added for metrics calculation</dd>
+              <dd>No fields added for metrics</dd>
             </EuiText>
           )}
 

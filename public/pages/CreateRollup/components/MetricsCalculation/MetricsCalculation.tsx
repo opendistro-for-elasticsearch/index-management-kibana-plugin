@@ -272,7 +272,7 @@ export default class MetricsCalculation extends Component<MetricsCalculationProp
             noItemsMessage={
               <Fragment>
                 <EuiSpacer />
-                <EuiText>No field added for metrics calculation</EuiText>
+                <EuiText>No fields added for metrics</EuiText>
                 <EuiSpacer />
                 <EuiFlexGroup alignItems="center">
                   <EuiFlexItem>

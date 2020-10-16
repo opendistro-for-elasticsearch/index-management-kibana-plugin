@@ -23,7 +23,7 @@ import CreateRollupSteps from "../../components/CreateRollupSteps";
 import TimeAggregation from "../../components/TimeAggregations";
 import AdvancedAggregation from "../../components/AdvancedAggregation";
 import MetricsCalculation from "../../components/MetricsCalculation";
-import { DimensionItem, FieldItem } from "../../../../../models/interfaces";
+import { DimensionItem, FieldItem } from "../../models/interfaces";
 
 interface CreateRollupProps extends RouteComponentProps {
   rollupService: RollupService;
@@ -76,7 +76,6 @@ export default class CreateRollupStep2 extends Component<CreateRollupProps, Crea
       intervalType,
       intervalValue,
       timestamp,
-      timezone,
       timeunit,
       selectedDimensionField,
       onChangeTimeunit,
@@ -119,7 +118,6 @@ export default class CreateRollupStep2 extends Component<CreateRollupProps, Crea
               intervalType={intervalType}
               intervalValue={intervalValue}
               selectedTimestamp={timestamp}
-              timezone={timezone}
               timeunit={timeunit}
               onChangeTimezone={onChangeTimezone}
               onChangeTimeunit={onChangeTimeunit}
