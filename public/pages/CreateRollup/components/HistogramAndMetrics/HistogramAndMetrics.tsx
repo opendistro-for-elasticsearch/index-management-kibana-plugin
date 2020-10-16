@@ -13,7 +13,7 @@
  * permissions and limitations under the License.
  */
 
-import React, { Component } from "react";
+import React, { Component, Fragment } from "react";
 
 import {
   EuiComboBoxOptionOption,
@@ -29,10 +29,14 @@ import {
   Criteria,
   // @ts-ignore
   Pagination,
+  EuiForm,
+  EuiFormRow,
+  EuiCheckbox,
+  EuiIcon,
 } from "@elastic/eui";
 import { ContentPanel, ContentPanelActions } from "../../../../components/ContentPanel";
 import { ModalConsumer } from "../../../../components/Modal";
-import { DimensionItem } from "../../models/interfaces";
+import { DimensionItem, MetricItem } from "../../models/interfaces";
 import { DEFAULT_PAGE_SIZE_OPTIONS } from "../../../Rollups/utils/constants";
 
 interface HistogramAndMetricsProps {
@@ -62,28 +66,92 @@ const aggregationColumns: EuiTableFieldDataColumnType<DimensionItem>[] = [
   {
     field: "field.label",
     name: "Field name",
-    truncateText: true,
   },
   {
     field: "field.type",
     name: "Field type",
-    truncateText: true,
     render: (type) => (type == null ? "-" : type),
   },
   {
     field: "aggregationMethod",
     name: "Aggregation method",
-    truncateText: true,
   },
   {
     field: "interval",
     name: "Interval",
     dataType: "number",
-    truncateText: true,
     render: (interval: null | number) => {
       if (interval == null) return "-";
       else return `${interval}`;
     },
+  },
+];
+
+const metricsColumns = [
+  {
+    field: "source_field",
+    name: "Field Name",
+  },
+  {
+    field: "all",
+    name: "All",
+    truncateText: true,
+    render: (all: boolean) => all && <EuiIcon type={"check"} />,
+  },
+  {
+    field: "min",
+    name: "Min",
+    render: (min: boolean) => min && <EuiIcon type={"check"} />,
+  },
+  {
+    field: "max",
+    name: "Max",
+    render: (max: boolean) => max && <EuiIcon type={"check"} />,
+  },
+  {
+    field: "sum",
+    name: "Sum",
+    render: (sum: boolean) => sum && <EuiIcon type={"check"} />,
+  },
+  {
+    field: "avg",
+    name: "Avg",
+    render: (avg: boolean) => avg && <EuiIcon type={"check"} />,
+  },
+  {
+    field: "value_count",
+    name: "Value count",
+    render: (value_count: boolean) => value_count && <EuiIcon type={"check"} />,
+  },
+];
+
+const sampleMetricItems: MetricItem[] = [
+  {
+    source_field: "On time rate",
+    all: true,
+    min: false,
+    max: true,
+    sum: false,
+    avg: false,
+    value_count: false,
+  },
+  {
+    source_field: "Return rate",
+    all: true,
+    min: true,
+    max: false,
+    sum: false,
+    avg: false,
+    value_count: false,
+  },
+  {
+    source_field: "OTIF rate",
+    all: false,
+    min: false,
+    max: true,
+    sum: false,
+    avg: false,
+    value_count: true,
   },
 ];
 
@@ -164,7 +232,7 @@ export default class HistogramAndMetrics extends Component<HistogramAndMetricsPr
             </EuiFlexItem>
           </EuiFlexGrid>
           <EuiSpacer size={"m"} />
-          <EuiFlexGroup>
+          <EuiFlexGroup gutterSize={"xs"}>
             <EuiFlexItem grow={false}>
               <EuiText>
                 <h3>Additional aggregations</h3>
@@ -177,11 +245,10 @@ export default class HistogramAndMetrics extends Component<HistogramAndMetricsPr
             </EuiFlexItem>
           </EuiFlexGroup>
 
-          <EuiSpacer />
           <EuiPanel>
             <EuiBasicTable
               items={selectedDimensionField}
-              rowHeader={"fieldName"}
+              rowHeader={"sequence"}
               columns={aggregationColumns}
               tableLayout={"auto"}
               noItemsMessage={"No field added for aggregation"}
@@ -191,9 +258,30 @@ export default class HistogramAndMetrics extends Component<HistogramAndMetricsPr
             <EuiSpacer size={"m"} />
           </EuiPanel>
           <EuiSpacer />
-          <EuiText>
-            <h3>Additional metrics</h3>
-          </EuiText>
+          <EuiFlexGroup gutterSize={"xs"}>
+            <EuiFlexItem grow={false}>
+              <EuiText>
+                <h3>Additional metrics</h3>
+              </EuiText>
+            </EuiFlexItem>
+            <EuiFlexItem grow={false}>
+              <EuiText color={"subdued"} textAlign={"left"}>
+                <h3>{`(${sampleMetricItems.length})`}</h3>
+              </EuiText>
+            </EuiFlexItem>
+          </EuiFlexGroup>
+
+          <EuiPanel>
+            <EuiBasicTable
+              items={sampleMetricItems}
+              rowHeader="source_field"
+              columns={metricsColumns}
+              noItemsMessage={"No field added for metrics calculation"}
+              tableLayout={"auto"}
+              pagination={pagination}
+              onChange={this.onTableChange}
+            />
+          </EuiPanel>
 
           <EuiSpacer size={"s"} />
         </div>

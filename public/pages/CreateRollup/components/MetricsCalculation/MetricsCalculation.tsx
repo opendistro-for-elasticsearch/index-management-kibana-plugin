@@ -41,8 +41,6 @@ import {
   EuiHorizontalRule,
   EuiIcon,
 } from "@elastic/eui";
-import { ContentPanel, ContentPanelActions } from "../../../../components/ContentPanel";
-import { ModalConsumer } from "../../../../components/Modal";
 import { AddFieldsColumns } from "../../utils/constants";
 import { FieldItem, MetricItem } from "../../models/interfaces";
 
