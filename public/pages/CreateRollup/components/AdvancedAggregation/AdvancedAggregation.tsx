@@ -41,6 +41,9 @@ import {
   EuiText,
   EuiLink,
   EuiIcon,
+  EuiPanel,
+  EuiTitle,
+  EuiFormHelpText,
 } from "@elastic/eui";
 import { ContentPanel, ContentPanelActions } from "../../../../components/ContentPanel";
 import { ModalConsumer } from "../../../../components/Modal";
@@ -265,27 +268,41 @@ export default class AdvancedAggregation extends Component<AdvancedAggregationPr
     ];
 
     return (
-      <ContentPanel
-        actions={
-          <ModalConsumer>
-            {() => (
-              <ContentPanelActions
-                actions={[
-                  {
-                    text: "Add fields",
-                    buttonProps: {
-                      onClick: () => this.showModal(),
-                    },
-                  },
-                ]}
-              />
-            )}
-          </ModalConsumer>
-        }
-        bodyStyles={{ padding: "initial" }}
-        title={`Additional aggregation - optional (${selectedDimensionField.length})`}
-        titleSize="m"
-      >
+      <EuiPanel>
+        <EuiFlexGroup style={{ padding: "0px 10px" }} justifyContent="spaceBetween" alignItems="center">
+          <EuiFlexItem>
+            <EuiFlexGroup gutterSize={"xs"}>
+              <EuiFlexItem grow={false}>
+                <EuiTitle size={"m"}>
+                  <h3>Additional aggregation </h3>
+                </EuiTitle>
+              </EuiFlexItem>
+              <EuiFlexItem grow={false}>
+                <EuiTitle size={"m"}>
+                  <i>{" - optional "}</i>
+                </EuiTitle>
+              </EuiFlexItem>
+              <EuiFlexItem>
+                <EuiText size={"m"} color={"subdued"}>
+                  <h2>{` (${selectedDimensionField.length})`}</h2>
+                </EuiText>
+              </EuiFlexItem>
+            </EuiFlexGroup>
+          </EuiFlexItem>
+          <EuiFlexItem grow={false}>
+            <EuiButton onClick={this.showModal}>Add fields</EuiButton>
+          </EuiFlexItem>
+        </EuiFlexGroup>
+        {/*<EuiFormHelpText>Your source indices must include a timestamp field. The rollup job creates a date histogram for the field you specify. </EuiFormHelpText>*/}
+        <EuiFlexGroup style={{ padding: "0px 10px" }}>
+          <EuiFlexItem grow={3}>
+            <EuiFormHelpText>
+              You can aggregate additional fields from the source index into the target index. Rollup supports the terms aggregation (for
+              all field types) and histogram aggregation (for numeric fields).
+            </EuiFormHelpText>
+          </EuiFlexItem>
+          <EuiFlexItem grow={2} />
+        </EuiFlexGroup>
         <div style={{ paddingLeft: "10px" }}>
           {/*Need to create array of dimension items after selection*/}
           <EuiBasicTable
@@ -300,7 +317,7 @@ export default class AdvancedAggregation extends Component<AdvancedAggregationPr
                 <EuiSpacer />
                 <EuiText>No field added for aggregation</EuiText>
                 <EuiSpacer />
-                <EuiFlexGroup alignItems="center">
+                <EuiFlexGroup style={{ padding: "0px 10px" }} alignItems="center">
                   <EuiFlexItem>
                     <EuiSpacer />
                   </EuiFlexItem>
@@ -376,7 +393,7 @@ export default class AdvancedAggregation extends Component<AdvancedAggregationPr
             </EuiOverlayMask>
           )}
         </div>
-      </ContentPanel>
+      </EuiPanel>
     );
   }
 }
