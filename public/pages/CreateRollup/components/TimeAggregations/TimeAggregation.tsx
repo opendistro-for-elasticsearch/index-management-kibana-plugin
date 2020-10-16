@@ -26,20 +26,19 @@ import {
   EuiComboBoxOptionOption,
   EuiPanel,
   EuiTitle,
-  EuiText,
   EuiFormHelpText,
   EuiHorizontalRule,
 } from "@elastic/eui";
-import { ContentPanel } from "../../../../components/ContentPanel";
 import { CalendarTimeunitOptions, FixedTimeunitOptions, TimezoneOptionsByRegion } from "../../utils/constants";
 import { RollupService } from "../../../../services";
-import { FieldItem } from "../../../../../models/interfaces";
+import { FieldItem } from "../../models/interfaces";
 
 interface TimeAggregationProps {
   rollupService: RollupService;
   intervalValue: number;
   intervalType: string;
   selectedTimestamp: EuiComboBoxOptionOption<String>[];
+  timestampError: string;
   timeunit: string;
   timezone: string;
   fieldsOption: FieldItem[];
@@ -74,6 +73,7 @@ export default class TimeAggregation extends Component<TimeAggregationProps, Tim
       intervalType,
       intervalValue,
       selectedTimestamp,
+      timestampError,
       timeunit,
       timezone,
       onChangeIntervalType,
@@ -98,13 +98,14 @@ export default class TimeAggregation extends Component<TimeAggregationProps, Tim
         <EuiHorizontalRule margin="xs" />
         <div style={{ paddingLeft: "10px" }}>
           <EuiSpacer size="s" />
-          <EuiFormRow label="Timestamp field">
+          <EuiFormRow label="Timestamp field" error={timestampError} isInvalid={!!timestampError}>
             <EuiComboBox
               placeholder="Select timestamp"
               options={dateFields}
               selectedOptions={selectedTimestamp}
               onChange={onChangeTimestamp}
               singleSelection={true}
+              isInvalid={!!timestampError}
             />
           </EuiFormRow>
           <EuiSpacer size="m" />

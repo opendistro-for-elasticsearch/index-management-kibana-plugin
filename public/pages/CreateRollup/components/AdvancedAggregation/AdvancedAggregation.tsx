@@ -211,28 +211,30 @@ export default class AdvancedAggregation extends Component<AdvancedAggregationPr
         name: "Sequence",
         sortable: true,
         dataType: "number",
+        align: "left",
       },
       {
         field: "field.label",
         name: "Field name",
-        truncateText: true,
+        align: "left",
       },
       {
         field: "field.type",
         name: "Field type",
-        truncateText: true,
+        align: "left",
         render: (type) => (type == null ? "-" : type),
       },
       {
         field: "aggregationMethod",
         name: "Aggregation method",
-        truncateText: true,
+        align: "left",
         render: (aggregationMethod) => (
           <EuiForm>
             <EuiFormRow compressed={true}>
               <EuiSelect
                 compressed={true}
                 value={aggregationMethod}
+                disabled={aggregationMethod == "term"}
                 options={[
                   { value: "term", text: "Term" },
                   { value: "histogram", text: "Histogram" },
@@ -246,7 +248,7 @@ export default class AdvancedAggregation extends Component<AdvancedAggregationPr
         field: "interval",
         name: "Interval",
         dataType: "number",
-        truncateText: true,
+        align: "left",
         render: (interval: null | number) =>
           interval == null ? (
             "-"

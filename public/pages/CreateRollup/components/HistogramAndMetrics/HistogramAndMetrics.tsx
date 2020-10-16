@@ -29,16 +29,12 @@ import {
   Criteria,
   // @ts-ignore
   Pagination,
-  EuiForm,
-  EuiFormRow,
-  EuiCheckbox,
   EuiIcon,
 } from "@elastic/eui";
 import { ContentPanel, ContentPanelActions } from "../../../../components/ContentPanel";
 import { ModalConsumer } from "../../../../components/Modal";
 import { DimensionItem, MetricItem } from "../../models/interfaces";
 import { DEFAULT_PAGE_SIZE_OPTIONS } from "../../../Rollups/utils/constants";
-import { TimezoneOptionsByRegion } from "../../utils/constants";
 
 interface HistogramAndMetricsProps {
   rollupId: string;
@@ -62,25 +58,30 @@ const aggregationColumns: EuiTableFieldDataColumnType<DimensionItem>[] = [
     field: "sequence",
     name: "Sequence",
     sortable: true,
+    align: "left",
     dataType: "number",
   },
   {
     field: "field.label",
     name: "Field name",
+    align: "left",
   },
   {
     field: "field.type",
     name: "Field type",
+    align: "left",
     render: (type) => (type == null ? "-" : type),
   },
   {
     field: "aggregationMethod",
     name: "Aggregation method",
+    align: "left",
   },
   {
     field: "interval",
     name: "Interval",
     dataType: "number",
+    align: "left",
     render: (interval: null | number) => {
       if (interval == null) return "-";
       else return `${interval}`;
@@ -96,7 +97,7 @@ const metricsColumns = [
   {
     field: "all",
     name: "All",
-    truncateText: true,
+    align: "left",
     render: (all: boolean) => all && <EuiIcon type={"check"} />,
   },
   {
@@ -175,7 +176,7 @@ export default class HistogramAndMetrics extends Component<HistogramAndMetricsPr
 
   render() {
     const { onChangeStep, intervalValue, timestamp, timezone, timeunit, selectedDimensionField } = this.props;
-    const { from, size, sortDirection, sortField } = this.state;
+    const { from, size } = this.state;
     const page = Math.floor(from / size);
     const pagination: Pagination = {
       pageIndex: page,

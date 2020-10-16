@@ -61,6 +61,7 @@ interface CreateRollupFormState {
   selectedTerms: FieldItem[];
   selectedDimensionField: DimensionItem[];
   timestamp: EuiComboBoxOptionOption<String>[];
+  timestampError: string;
   intervalType: string;
   intervalValue: number;
   timezone: string;
@@ -122,6 +123,7 @@ export default class CreateRollupForm extends Component<CreateRollupFormProps, C
       roles: [],
 
       timestamp: [],
+      timestampError: "",
       intervalType: "fixed",
       intervalValue: 1,
       timezone: "UTC +0",
@@ -131,7 +133,7 @@ export default class CreateRollupForm extends Component<CreateRollupFormProps, C
       recurringJob: "no",
       recurringDefinition: "fixed",
       interval: 2,
-      intervalTimeunit: "M",
+      intervalTimeunit: "MINUTES",
       cronExpression: "",
       pageSize: 1000,
       delayTime: undefined,
@@ -170,20 +172,32 @@ export default class CreateRollupForm extends Component<CreateRollupFormProps, C
 
   _next() {
     let currentStep = this.state.currentStep;
+    let error = false;
     //Verification here
     if (currentStep == 1) {
       const { rollupId, sourceIndex, targetIndex } = this.state;
+
       if (!rollupId) {
-        this.setState({ submitError: "Job name is required." });
-        return;
-      } else if (sourceIndex.length == 0) {
-        this.setState({ submitError: "Source index is required." });
-        return;
-      } else if (targetIndex.length == 0) {
-        this.setState({ submitError: "Target index is required." });
-        return;
+        this.setState({ submitError: "Job name is required.", rollupIdError: "Job name is required." });
+        error = true;
+      }
+      if (sourceIndex.length == 0) {
+        this.setState({ submitError: "Source index is required.", sourceIndexError: "Source index is required." });
+        error = true;
+      }
+      if (targetIndex.length == 0) {
+        this.setState({ submitError: "Target index is required.", targetIndexError: "Target index is required." });
+        error = true;
+      }
+    } else if (currentStep == 2) {
+      const { timestamp } = this.state;
+      if (timestamp.length == 0) {
+        this.setState({ submitError: "Timestamp is required.", timestampError: "Timestamp is required." });
+        error = true;
       }
     }
+    if (error) return;
+
     currentStep = currentStep >= 3 ? 4 : currentStep + 1;
 
     this.setState({
@@ -233,7 +247,10 @@ export default class CreateRollupForm extends Component<CreateRollupFormProps, C
     newJSON.rollup.source_index = srcIndexText;
     this.setState({ sourceIndex: options, rollupJSON: newJSON, sourceIndexError: sourceIndexError });
     //TODO: Update fields and clear dimensions, metrics (need to add this)
-    this.setState({ fields: sourceIndex.length ? mappings[srcIndexText].mappings.properties : undefined, selectedDimensionField: [] });
+    this.setState({
+      fields: sourceIndex.length ? mappings[srcIndexText].mappings.properties : undefined,
+      selectedDimensionField: [],
+    });
   };
 
   onChangeTargetIndex = (options: EuiComboBoxOptionOption<IndexItem>[]): void => {
@@ -291,10 +308,10 @@ export default class CreateRollupForm extends Component<CreateRollupFormProps, C
       return option.label;
     });
 
-    const rollupError = timestamp.length ? "" : "Source field (date) is required.";
+    const timestampError = timestamp.length ? "" : "Timestamp is required.";
 
-    newJSON.rollup.dimensions[0].date_histogram.source_field = timestamp[0];
-    this.setState({ timestamp: selectedOptions, rollupJSON: newJSON, rollupIdError: rollupError });
+    newJSON.rollup.dimensions[0].date_histogram.source_field = timestamp.length ? timestamp[0] : "";
+    this.setState({ timestamp: selectedOptions, rollupJSON: newJSON, timestampError: timestampError });
   };
 
   //TODO: Modify timezone to include both text and value
@@ -434,6 +451,7 @@ export default class CreateRollupForm extends Component<CreateRollupFormProps, C
       currentStep,
 
       timestamp,
+      timestampError,
       fields,
       selectedTerms,
       selectedDimensionField,
@@ -484,6 +502,7 @@ export default class CreateRollupForm extends Component<CreateRollupFormProps, C
           intervalType={intervalType}
           intervalValue={intervalValue}
           timestamp={timestamp}
+          timestampError={timestampError}
           timeunit={timeunit}
           timezone={timezone}
           onChangeIntervalType={this.onChangeIntervalType}

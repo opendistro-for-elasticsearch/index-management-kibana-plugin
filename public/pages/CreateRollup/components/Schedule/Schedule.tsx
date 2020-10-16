@@ -25,6 +25,7 @@ import {
   EuiFlexItem,
   EuiTextArea,
   EuiFormHelpText,
+  EuiText,
 } from "@elastic/eui";
 import { CalendarTimeunitOptions, DelayTimeunitOptions } from "../../utils/constants";
 import { ContentPanel } from "../../../../components/ContentPanel";
@@ -176,7 +177,19 @@ export default class Schedule extends Component<ScheduleProps> {
           <EuiSpacer size="m" />
           <EuiFlexGroup style={{ maxWidth: 400 }}>
             <EuiFlexItem grow={false} style={{ width: 200 }}>
-              <EuiFormRow label="Execution delay - optional">
+              <EuiFlexGroup gutterSize={"xs"}>
+                <EuiFlexItem grow={false}>
+                  <EuiText size={"xs"}>
+                    <h4>Execution delay</h4>
+                  </EuiText>
+                </EuiFlexItem>
+                <EuiFlexItem>
+                  <EuiText size={"xs"} color={"subdued"}>
+                    <i> - optional</i>
+                  </EuiText>
+                </EuiFlexItem>
+              </EuiFlexGroup>
+              <EuiFormRow>
                 <EuiFieldNumber value={delayTime} onChange={onChangeDelayTime} />
               </EuiFormRow>
             </EuiFlexItem>

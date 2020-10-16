@@ -37,6 +37,16 @@ export default class ScheduleRolesAndNotifications extends Component<ScheduleRol
     super(props);
   }
 
+  parseTimeunit = (timeunit: string): string => {
+    if (timeunit == "MINUTES" || timeunit == "m") return "minute(s)";
+    else if (timeunit == "HOURS" || timeunit == "h") return "hour(s)";
+    else if (timeunit == "SECONDS" || timeunit == "s") return "second(s)";
+    else if (timeunit == "DAYS" || timeunit == "d") return "day(s)";
+    else if (timeunit == "ms") return "millisecond(s)";
+
+    return "";
+  };
+
   render() {
     const {
       onChangeStep,
@@ -53,7 +63,7 @@ export default class ScheduleRolesAndNotifications extends Component<ScheduleRol
 
     let scheduleText = recurringJob ? "Continuous, " : "Not continuous, ";
     if (recurringDefinition == "fixed") {
-      scheduleText += "every " + interval + " " + intervalTimeunit;
+      scheduleText += "every " + interval + " " + this.parseTimeunit(intervalTimeunit);
     } else {
       scheduleText += "defined by cron expression: " + cronExpression;
     }
@@ -104,7 +114,7 @@ export default class ScheduleRolesAndNotifications extends Component<ScheduleRol
             <EuiFlexItem>
               <EuiText size={"xs"}>
                 <dt>Execution delay</dt>
-                <dd>{delayTime == 0 || delayTime == undefined ? "-" : delayTime + " " + delayTimeunit}</dd>
+                <dd>{delayTime == 0 || delayTime == undefined ? "-" : delayTime + " " + this.parseTimeunit(delayTimeunit)}</dd>
               </EuiText>
             </EuiFlexItem>
           </EuiFlexGrid>

@@ -236,12 +236,12 @@ export default class MetricsCalculation extends Component<MetricsCalculationProp
           <EuiFlexItem grow={false}>
             <EuiFlexGroup gutterSize={"xs"}>
               <EuiFlexItem grow={false}>
-                <EuiButton iconType={"arrowDown"} iconSide={"right"} onClick={this.showModal}>
+                <EuiButton iconType={"arrowDown"} iconSide={"right"}>
                   Disable all
                 </EuiButton>
               </EuiFlexItem>
               <EuiFlexItem grow={false}>
-                <EuiButton iconType={"arrowDown"} iconSide={"right"} onClick={this.showModal}>
+                <EuiButton iconType={"arrowDown"} iconSide={"right"}>
                   Enable all
                 </EuiButton>
               </EuiFlexItem>

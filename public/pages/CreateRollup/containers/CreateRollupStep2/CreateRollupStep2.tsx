@@ -32,6 +32,7 @@ interface CreateRollupProps extends RouteComponentProps {
   selectedTerms: FieldItem[];
   selectedDimensionField: DimensionItem[];
   timestamp: EuiComboBoxOptionOption<String>[];
+  timestampError: string;
   intervalValue: number;
   intervalType: string;
   timezone: string;
@@ -133,11 +134,6 @@ export default class CreateRollupStep2 extends Component<CreateRollupProps, Crea
             />
             <EuiSpacer />
             <MetricsCalculation fieldsOption={fieldsOption} />
-            {submitError && (
-              <EuiCallOut title="Sorry, there was an error" color="danger" iconType="alert">
-                <p>{submitError}</p>
-              </EuiCallOut>
-            )}
           </EuiFlexItem>
         </EuiFlexGroup>
         <EuiSpacer />
