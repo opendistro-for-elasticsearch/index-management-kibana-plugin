@@ -228,7 +228,7 @@ export default class HistogramAndMetrics extends Component<HistogramAndMetricsPr
             <EuiFlexItem>
               <EuiText size={"xs"}>
                 <dt>Timezone</dt>
-                <dd>{Object.keys(TimezoneOptionsByRegion).find((key) => TimezoneOptionsByRegion[key] === timezone)}</dd>
+                <dd>{timezone}</dd>
               </EuiText>
             </EuiFlexItem>
           </EuiFlexGrid>
