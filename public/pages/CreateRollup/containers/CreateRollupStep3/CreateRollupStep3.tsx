@@ -183,10 +183,8 @@ export default class CreateRollupStep3 extends Component<CreateRollupProps, Crea
               onChangeDelayTimeunit={onChangeDelayTimeunit}
               onChangeIntervalTimeunit={onChangeIntervalTimeunit}
             />
-            <EuiSpacer />
           </EuiFlexItem>
         </EuiFlexGroup>
-        <EuiSpacer />
       </div>
     );
   }

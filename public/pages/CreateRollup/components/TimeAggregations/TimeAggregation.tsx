@@ -24,6 +24,11 @@ import {
   EuiFieldNumber,
   EuiRadioGroup,
   EuiComboBoxOptionOption,
+  EuiPanel,
+  EuiTitle,
+  EuiText,
+  EuiFormHelpText,
+  EuiHorizontalRule,
 } from "@elastic/eui";
 import { ContentPanel } from "../../../../components/ContentPanel";
 import { CalendarTimeunitOptions, FixedTimeunitOptions, TimezoneOptionsByRegion } from "../../utils/constants";
@@ -83,7 +88,14 @@ export default class TimeAggregation extends Component<TimeAggregationProps, Tim
     const dateFields = fieldsOption.filter((item) => item.type == "date");
 
     return (
-      <ContentPanel bodyStyles={{ padding: "initial" }} title="Time aggregation" titleSize="m">
+      <EuiPanel>
+        <EuiTitle size={"m"}>
+          <h3>Additional aggregation </h3>
+        </EuiTitle>
+        <EuiFormHelpText>
+          Your source indices must include a timestamp field. The rollup job creates a date histogram for the field you specify.{" "}
+        </EuiFormHelpText>
+        <EuiHorizontalRule margin="xs" />
         <div style={{ paddingLeft: "10px" }}>
           <EuiSpacer size="s" />
           <EuiFormRow label="Timestamp field">
@@ -127,7 +139,7 @@ export default class TimeAggregation extends Component<TimeAggregationProps, Tim
             <EuiSelect id="timezone" options={TimezoneOptionsByRegion} value={timezone} onChange={onChangeTimezone} />
           </EuiFormRow>
         </div>
-      </ContentPanel>
+      </EuiPanel>
     );
   }
 }

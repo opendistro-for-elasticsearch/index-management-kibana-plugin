@@ -35,6 +35,10 @@ import {
   EuiCheckbox,
   EuiText,
   EuiFormRow,
+  EuiPanel,
+  EuiTitle,
+  EuiFormHelpText,
+  EuiHorizontalRule,
 } from "@elastic/eui";
 import { ContentPanel, ContentPanelActions } from "../../../../components/ContentPanel";
 import { ModalConsumer } from "../../../../components/Modal";
@@ -201,43 +205,57 @@ export default class MetricsCalculation extends Component<MetricsCalculationProp
     };
 
     return (
-      <ContentPanel
-        bodyStyles={{ padding: "initial" }}
-        actions={
-          <ModalConsumer>
-            {() => (
-              <ContentPanelActions
-                actions={[
-                  {
-                    text: "Disable all",
-                    buttonProps: {
-                      iconType: "arrowDown",
-                      iconSide: "right",
-                      onClick: () => this.showModal(),
-                    },
-                  },
-                  {
-                    text: "Enable all",
-                    buttonProps: {
-                      iconType: "arrowDown",
-                      iconSide: "right",
-                      onClick: () => this.showModal(),
-                    },
-                  },
-                  {
-                    text: "Add fields",
-                    buttonProps: {
-                      onClick: () => this.showModal(),
-                    },
-                  },
-                ]}
-              />
-            )}
-          </ModalConsumer>
-        }
-        title={`Additional metrics - optional (0)`}
-        titleSize="m"
-      >
+      <EuiPanel>
+        <EuiFlexGroup style={{ padding: "0px 10px" }} justifyContent="spaceBetween">
+          <EuiFlexItem>
+            <EuiFlexGroup gutterSize={"xs"}>
+              <EuiFlexItem grow={false}>
+                <EuiTitle size={"m"}>
+                  <h3>Additional metrics </h3>
+                </EuiTitle>
+              </EuiFlexItem>
+              <EuiFlexItem grow={false}>
+                <EuiTitle size={"m"}>
+                  <i>{" - optional "}</i>
+                </EuiTitle>
+              </EuiFlexItem>
+              <EuiFlexItem>
+                <EuiText size={"m"} color={"subdued"}>
+                  <h2>{` (${sampleMetricItems.length})`}</h2>
+                </EuiText>
+              </EuiFlexItem>
+            </EuiFlexGroup>
+          </EuiFlexItem>
+
+          <EuiFlexItem grow={false}>
+            <EuiFlexGroup>
+              <EuiFlexItem grow={false}>
+                <EuiButton iconType={"arrowDown"} iconSide={"right"} onClick={this.showModal}>
+                  Disable all
+                </EuiButton>
+              </EuiFlexItem>
+              <EuiFlexItem grow={false}>
+                <EuiButton iconType={"arrowDown"} iconSide={"right"} onClick={this.showModal}>
+                  Enable all
+                </EuiButton>
+              </EuiFlexItem>
+              <EuiFlexItem grow={false}>
+                <EuiButton onClick={this.showModal}>Add fields</EuiButton>
+              </EuiFlexItem>
+            </EuiFlexGroup>
+          </EuiFlexItem>
+        </EuiFlexGroup>
+
+        <EuiFlexGroup style={{ padding: "0px 10px" }}>
+          <EuiFlexItem grow={3}>
+            <EuiFormHelpText>
+              You can aggregate additional fields from the source index into the target index. Rollup supports the terms aggregation (for
+              all field types) and histogram aggregation (for numeric fields).
+            </EuiFormHelpText>
+          </EuiFlexItem>
+          <EuiFlexItem grow={2} />
+        </EuiFlexGroup>
+        <EuiHorizontalRule margin="xs" />
         <div style={{ paddingLeft: "10px" }}>
           {/*TODO: Figure out row header*/}
           <EuiBasicTable
@@ -247,7 +265,7 @@ export default class MetricsCalculation extends Component<MetricsCalculationProp
             noItemsMessage={
               <Fragment>
                 <EuiSpacer />
-                <EuiText>No field added for metrics</EuiText>
+                <EuiText>No field added for metrics calculation</EuiText>
                 <EuiSpacer />
                 <EuiFlexGroup alignItems="center">
                   <EuiFlexItem>
@@ -300,7 +318,6 @@ export default class MetricsCalculation extends Component<MetricsCalculationProp
                       itemId={"label"}
                       rowHeader="fieldName"
                       columns={AddFieldsColumns}
-                      noItemsMessage="No field added for aggregation"
                       isSelectable={true}
                       selection={selection}
                       tableLayout={"auto"}
@@ -317,22 +334,8 @@ export default class MetricsCalculation extends Component<MetricsCalculationProp
               </EuiModal>
             </EuiOverlayMask>
           )}
-          {/*TODO: Hide the empty option message when selectedMetric.length!=0*/}
-          {
-            <EuiFlexGroup alignItems="center">
-              <EuiFlexItem>
-                <EuiSpacer />
-              </EuiFlexItem>
-              <EuiFlexItem grow={false}>
-                <EuiButton onClick={this.showModal}>Add fields</EuiButton>
-              </EuiFlexItem>
-              <EuiFlexItem>
-                <EuiSpacer />
-              </EuiFlexItem>
-            </EuiFlexGroup>
-          }
         </div>
-      </ContentPanel>
+      </EuiPanel>
     );
   }
 }

@@ -44,6 +44,7 @@ import {
   EuiPanel,
   EuiTitle,
   EuiFormHelpText,
+  EuiHorizontalRule,
 } from "@elastic/eui";
 import { ContentPanel, ContentPanelActions } from "../../../../components/ContentPanel";
 import { ModalConsumer } from "../../../../components/Modal";
@@ -293,7 +294,7 @@ export default class AdvancedAggregation extends Component<AdvancedAggregationPr
             <EuiButton onClick={this.showModal}>Add fields</EuiButton>
           </EuiFlexItem>
         </EuiFlexGroup>
-        {/*<EuiFormHelpText>Your source indices must include a timestamp field. The rollup job creates a date histogram for the field you specify. </EuiFormHelpText>*/}
+
         <EuiFlexGroup style={{ padding: "0px 10px" }}>
           <EuiFlexItem grow={3}>
             <EuiFormHelpText>
@@ -303,6 +304,7 @@ export default class AdvancedAggregation extends Component<AdvancedAggregationPr
           </EuiFlexItem>
           <EuiFlexItem grow={2} />
         </EuiFlexGroup>
+        <EuiHorizontalRule margin="xs" />
         <div style={{ paddingLeft: "10px" }}>
           {/*Need to create array of dimension items after selection*/}
           <EuiBasicTable
@@ -317,7 +319,7 @@ export default class AdvancedAggregation extends Component<AdvancedAggregationPr
                 <EuiSpacer />
                 <EuiText>No field added for aggregation</EuiText>
                 <EuiSpacer />
-                <EuiFlexGroup style={{ padding: "0px 10px" }} alignItems="center">
+                <EuiFlexGroup style={{ padding: "5px 10px" }} alignItems="center">
                   <EuiFlexItem>
                     <EuiSpacer />
                   </EuiFlexItem>
