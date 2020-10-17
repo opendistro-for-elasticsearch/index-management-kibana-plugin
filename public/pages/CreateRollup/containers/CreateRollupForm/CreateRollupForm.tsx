@@ -429,9 +429,11 @@ export default class CreateRollupForm extends Component<CreateRollupFormProps, C
         this.props.history.push(ROUTES.ROLLUPS);
       } else {
         this.setState({ submitError: response.error });
+        toastNotifications.addDanger(`Failed to create rollup: ${response.error}`);
       }
     } catch (err) {
       this.setState({ submitError: getErrorMessage(err, "There was a problem creating the rollup job") });
+      toastNotifications.addDanger(`Failed to create rollup: ${getErrorMessage(err, "There was a problem creating the rollup job")}`);
     }
   };
 
