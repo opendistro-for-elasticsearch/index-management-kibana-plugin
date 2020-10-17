@@ -237,5 +237,18 @@ export default function ismPlugin(Client: any, config: any, components: any) {
     method: "POST",
   });
 
+  ism.explainRollup = ca({
+    url: {
+      fmt: `${API.ROLLUP_JOBS_BASE}/<%=rollupId%>/_explain`,
+      req: {
+        rollupId: {
+          type: "string",
+          required: true,
+        },
+      },
+    },
+    method: "GET",
+  });
+
   // TODO add new APIs as they are being implemented: status, stop, start
 }

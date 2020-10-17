@@ -18,7 +18,6 @@ import _ from "lodash";
 import chrome from "ui/chrome";
 import { RouteComponentProps } from "react-router-dom";
 import { EuiFlexItem, EuiFlexGroup, EuiButton, EuiTitle, EuiSpacer, EuiButtonEmpty, EuiComboBoxOptionOption } from "@elastic/eui";
-import { RollupService } from "../../../../services";
 import ConfigureRollup from "../../CreateRollup/components/ConfigureRollup";
 import Roles from "../../CreateRollup/components/Roles";
 import Schedule from "../../CreateRollup/components/Schedule";
@@ -27,6 +26,7 @@ import queryString from "query-string";
 import { getErrorMessage } from "../../../utils/helpers";
 import { BREADCRUMBS, ROUTES } from "../../../utils/constants";
 import { Rollup } from "../../../../models/interfaces";
+import { RollupService } from "../../../services";
 
 interface EditRollupProps extends RouteComponentProps {
   rollupService: RollupService;

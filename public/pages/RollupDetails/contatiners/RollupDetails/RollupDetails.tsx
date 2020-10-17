@@ -14,7 +14,7 @@
  */
 
 import React, { Component } from "react";
-import { EuiSpacer, EuiTitle, EuiComboBoxOptionOption, EuiPanel, EuiFlexGroup, EuiFlexItem, EuiButton } from "@elastic/eui";
+import { EuiSpacer, EuiTitle, EuiComboBoxOptionOption, EuiFlexGroup, EuiFlexItem, EuiButton } from "@elastic/eui";
 import chrome from "ui/chrome";
 import { RouteComponentProps } from "react-router-dom";
 import { RollupService } from "../../../../services";
@@ -24,21 +24,22 @@ import queryString from "query-string";
 import { getErrorMessage } from "../../../../utils/helpers";
 import { EMPTY_ROLLUP } from "../../../CreateRollup/utils/constants";
 import GeneralInformation from "../../Components/GeneralInformation/GeneralInformation";
-import { ModalConsumer } from "../../../../components/Modal";
-import { ContentPanel, ContentPanelActions } from "../../../../components/ContentPanel";
 import RollupStatus from "../../Components/RollupStatus/RollupStatus";
 import AggregationAndMetricsSettings from "../../Components/AggregationAndMetricsSettings/AggregationAndMetricsSettings";
+import { parseTimeunit } from "../../../CreateRollup/utils/helpers";
+import moment from "moment";
 
 interface RollupDetailsProps extends RouteComponentProps {
   rollupService: RollupService;
-  submitError: string;
+}
 
-  timestamp: EuiComboBoxOptionOption<String>[];
-  intervalValue: number;
-  timezone: string;
-  timeunit: string;
-
-  jobEnabledByDefault: boolean;
+interface RollupDetailsState {
+  rollupId: string;
+  description: string;
+  sourceIndex: string;
+  targetIndex: string;
+  roles: EuiComboBoxOptionOption<String>[];
+  rollupJSON: string;
   recurringJob: string;
   recurringDefinition: string;
   interval: number;
@@ -47,15 +48,7 @@ interface RollupDetailsProps extends RouteComponentProps {
   pageSize: number;
   delayTime: number | undefined;
   delayTimeunit: string;
-}
-
-interface RollupDetailsState {
-  rollupId: string;
-  description: string;
-  sourceIndex: string;
-  targetIndex: string;
-  roles: string[];
-  rollupJSON: string;
+  lastUpdated: string;
 }
 
 export default class RollupDetails extends Component<RollupDetailsProps, RollupDetailsState> {
@@ -68,7 +61,17 @@ export default class RollupDetails extends Component<RollupDetailsProps, RollupD
       sourceIndex: "",
       targetIndex: "",
       roles: [],
+
+      recurringJob: "no",
+      recurringDefinition: "fixed",
+      interval: 2,
+      intervalTimeunit: "MINUTES",
+      cronExpression: "",
+      pageSize: 1000,
+      delayTime: undefined,
+      delayTimeunit: "MINUTES",
       rollupJSON: EMPTY_ROLLUP,
+      lastUpdated: "-",
     };
   }
 
@@ -90,33 +93,37 @@ export default class RollupDetails extends Component<RollupDetailsProps, RollupD
     try {
       const { rollupService } = this.props;
       const response = await rollupService.getRollup(rollupId);
+      const explainResponse = await rollupService.explainRollup(rollupId);
 
       if (response.ok) {
         let newJSON = JSON.parse(this.state.rollupJSON);
         newJSON.rollup = response.response.rollup;
-        // let roles: EuiComboBoxOptionOption<String>[] = [];
-        // var i;
-        // for (i = 0; i < response.response.rollup.roles.length; i++) {
-        //   roles.push({ label: response.response.rollup.roles[i] });
-        // }
+        let roles: EuiComboBoxOptionOption<String>[] = [];
+        var i;
+        for (i = 0; i < response.response.rollup.roles.length; i++) {
+          roles.push({ label: response.response.rollup.roles[i] });
+        }
 
         this.setState({
           rollupId: response.response.id,
           description: response.response.rollup.description,
-          // roles: roles,
+          sourceIndex: response.response.rollup.source_index,
+          targetIndex: response.response.rollup.target_index,
+          roles: roles,
+          delayTime: response.response.rollup.delay,
+          pageSize: response.response.rollup.page_size,
           rollupJSON: newJSON,
+          lastUpdated: moment(response.response.rollup.last_updated_time).format("MM/DD/YYYY hh:mm a"),
         });
-        // jobEnabledByDefault: response.response.rollup.enabled,
-        // pageSize: response.response.rollup.page_size,
-        // delayTime: response.response.rollup.delay,
-        // if (response.response.rollup.schedule.cron == undefined) {
-        //   this.setState({
-        //     interval: response.response.rollup.schedule.interval.period,
-        //     intervalTimeunit: response.response.rollup.schedule.interval.unit,
-        //   });
-        // } else {
-        //   this.setState({ cronExpression: response.response.rollup.schedule.cron.expression });
-        // }
+
+        if (response.response.rollup.schedule.cron == undefined) {
+          this.setState({
+            interval: response.response.rollup.schedule.interval.period,
+            intervalTimeunit: response.response.rollup.schedule.interval.unit,
+          });
+        } else {
+          this.setState({ cronExpression: response.response.rollup.schedule.cron.expression });
+        }
       } else {
         toastNotifications.addDanger(`Could not load the rollup job: ${response.error}`);
         this.props.history.push(ROUTES.ROLLUPS);
@@ -173,23 +180,35 @@ export default class RollupDetails extends Component<RollupDetailsProps, RollupD
   };
 
   render() {
-    // const {
-    //   intervalValue,
-    //   timestamp,
-    //   timezone,
-    //   timeunit,
-    //   jobEnabledByDefault,
-    //   recurringJob,
-    //   recurringDefinition,
-    //   interval,
-    //   intervalTimeunit,
-    //   cronExpression,
-    //   pageSize,
-    //   delayTime,
-    //   delayTimeunit,
-    // } = this.props;
+    const {
+      rollupId,
+      description,
+      sourceIndex,
+      targetIndex,
+      roles,
+      recurringJob,
+      recurringDefinition,
+      interval,
+      intervalTimeunit,
+      cronExpression,
+      pageSize,
+      delayTime,
+      delayTimeunit,
+      lastUpdated,
+    } = this.state;
 
-    const { rollupId, description, sourceIndex, targetIndex, roles } = this.state;
+    const rolesText = roles.length
+      ? roles.map(function (option) {
+          return option.label;
+        })
+      : "-";
+
+    let scheduleText = recurringJob ? "Continuous, " : "Not continuous, ";
+    if (recurringDefinition == "fixed") {
+      scheduleText += "every " + interval + " " + parseTimeunit(intervalTimeunit);
+    } else {
+      scheduleText += "defined by cron expression: " + cronExpression;
+    }
 
     return (
       <div style={{ padding: "5px 50px" }}>
@@ -229,6 +248,9 @@ export default class RollupDetails extends Component<RollupDetailsProps, RollupD
           sourceIndex={sourceIndex}
           targetIndex={targetIndex}
           roles={roles}
+          scheduleText={scheduleText}
+          pageSize={pageSize}
+          lastUpdated={lastUpdated}
           onEdit={this.onEdit}
         />
         <EuiSpacer />

@@ -187,6 +187,45 @@ let SampleGetRollupJobs: RollupItem[] = [
       metrics: [],
     },
   },
+  {
+    _id: "startnow",
+    _version: 3,
+    _seq_no: 13,
+    _primary_term: 1,
+    rollup: {
+      rollup_id: "startnow",
+      enabled: true,
+      schedule: {
+        interval: {
+          start_time: 1553112384,
+          period: 1,
+          unit: "Minutes",
+        },
+      },
+      last_updated_time: 1602972619850,
+      enabled_time: 1602972619850,
+      description: "",
+      schema_version: 5,
+      source_index: "kibana_sample_data_logs",
+      target_index: "ex-index",
+      metadata_id: "lu6dOHUB4nl21WFi4uzb",
+      roles: [],
+      page_size: 1000,
+      delay: 0,
+      continuous: true,
+      dimensions: [
+        {
+          date_histogram: {
+            fixed_interval: "1ms",
+            source_field: "timestamp",
+            target_field: "timestamp",
+            timezone: "America/Los_Angeles",
+          },
+        },
+      ],
+      metrics: [],
+    },
+  },
 ];
 
 export default class Rollups extends Component<RollupsProps, RollupsState> {

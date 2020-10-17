@@ -63,4 +63,10 @@ export default function (server: Server, services: NodeServices) {
     method: REQUEST.POST,
     handler: rollupService.getMappings,
   });
+
+  server.route({
+    path: `${NODE_API.ROLLUPS}/{id}/_explain`,
+    method: REQUEST.GET,
+    handler: rollupService.explainRollup,
+  });
 }

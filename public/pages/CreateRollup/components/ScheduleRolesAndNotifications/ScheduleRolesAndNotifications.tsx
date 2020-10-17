@@ -17,6 +17,7 @@ import React, { Component } from "react";
 import { EuiFlexGrid, EuiFlexItem, EuiSpacer, EuiText } from "@elastic/eui";
 import { ContentPanel, ContentPanelActions } from "../../../../components/ContentPanel";
 import { ModalConsumer } from "../../../../components/Modal";
+import { parseTimeunit } from "../../utils/helpers";
 
 interface ScheduleRolesAndNotificationsProps {
   rollupId: string;
@@ -37,16 +38,6 @@ export default class ScheduleRolesAndNotifications extends Component<ScheduleRol
     super(props);
   }
 
-  parseTimeunit = (timeunit: string): string => {
-    if (timeunit == "MINUTES" || timeunit == "m") return "minute(s)";
-    else if (timeunit == "HOURS" || timeunit == "h") return "hour(s)";
-    else if (timeunit == "SECONDS" || timeunit == "s") return "second(s)";
-    else if (timeunit == "DAYS" || timeunit == "d") return "day(s)";
-    else if (timeunit == "ms") return "millisecond(s)";
-
-    return "";
-  };
-
   render() {
     const {
       onChangeStep,
@@ -63,7 +54,7 @@ export default class ScheduleRolesAndNotifications extends Component<ScheduleRol
 
     let scheduleText = recurringJob ? "Continuous, " : "Not continuous, ";
     if (recurringDefinition == "fixed") {
-      scheduleText += "every " + interval + " " + this.parseTimeunit(intervalTimeunit);
+      scheduleText += "every " + interval + " " + parseTimeunit(intervalTimeunit);
     } else {
       scheduleText += "defined by cron expression: " + cronExpression;
     }
@@ -115,7 +106,7 @@ export default class ScheduleRolesAndNotifications extends Component<ScheduleRol
               <EuiText size={"xs"}>
                 <dt>Execution delay</dt>
                 <dd>
-                  {delayTime == NaN || delayTime == undefined || delayTime == 0 ? "-" : delayTime + " " + this.parseTimeunit(delayTimeunit)}
+                  {delayTime == NaN || delayTime == undefined || delayTime == 0 ? "-" : delayTime + " " + parseTimeunit(delayTimeunit)}
                 </dd>
               </EuiText>
             </EuiFlexItem>

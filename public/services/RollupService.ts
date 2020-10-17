@@ -90,4 +90,10 @@ export default class RollupService {
     const response = (await this.httpClient.post(url, { index })) as IHttpResponse<ServerResponse<GetFieldsResponse>>;
     return response.data;
   };
+
+  explainRollup = async (rollupId: string): Promise<ServerResponse<any>> => {
+    const url = `..${NODE_API.ROLLUPS}/${rollupId}/_explain`;
+    const response = (await this.httpClient.get(url)) as IHttpResponse<ServerResponse<DocumentRollup>>;
+    return response.data;
+  };
 }
