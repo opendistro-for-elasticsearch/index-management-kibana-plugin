@@ -121,6 +121,7 @@ export interface RollupMetadata {
   metadata_id: string;
   rollup_metadata: {
     rollup_id: string;
+    failure_reason?: string;
     last_updated_time: number;
     continuous: {
       next_window_start_time: number;

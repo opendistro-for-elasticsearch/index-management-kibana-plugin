@@ -28,6 +28,8 @@ import RollupStatus from "../../Components/RollupStatus/RollupStatus";
 import AggregationAndMetricsSettings from "../../Components/AggregationAndMetricsSettings/AggregationAndMetricsSettings";
 import { parseTimeunit } from "../../../CreateRollup/utils/helpers";
 import moment from "moment";
+import { RollupMetadata } from "../../../../../models/interfaces";
+import { renderTime } from "../../../Rollups/utils/helpers";
 
 interface RollupDetailsProps extends RouteComponentProps {
   rollupService: RollupService;
@@ -49,6 +51,7 @@ interface RollupDetailsState {
   delayTime: number | undefined;
   delayTimeunit: string;
   lastUpdated: string;
+  metadata: RollupMetadata | null;
 }
 
 export default class RollupDetails extends Component<RollupDetailsProps, RollupDetailsState> {
@@ -72,6 +75,7 @@ export default class RollupDetails extends Component<RollupDetailsProps, RollupD
       delayTimeunit: "MINUTES",
       rollupJSON: EMPTY_ROLLUP,
       lastUpdated: "-",
+      metadata: null,
     };
   }
 
@@ -113,7 +117,7 @@ export default class RollupDetails extends Component<RollupDetailsProps, RollupD
           delayTime: response.response.rollup.delay,
           pageSize: response.response.rollup.page_size,
           rollupJSON: newJSON,
-          lastUpdated: moment(response.response.rollup.last_updated_time).format("MM/DD/YYYY hh:mm a"),
+          lastUpdated: renderTime(response.response.rollup.last_updated_time),
         });
 
         if (response.response.rollup.schedule.cron == undefined) {
@@ -128,6 +132,14 @@ export default class RollupDetails extends Component<RollupDetailsProps, RollupD
         toastNotifications.addDanger(`Could not load the rollup job: ${response.error}`);
         this.props.history.push(ROUTES.ROLLUPS);
       }
+      if (explainResponse.ok) {
+        let metadata = explainResponse.response[rollupId];
+        console.log(metadata);
+        this.setState({ metadata: metadata });
+      } else {
+        toastNotifications.addDanger(`Could not load the explain API of rollup job: ${explainResponse.error}`);
+      }
+      console.log(explainResponse);
     } catch (err) {
       toastNotifications.addDanger(getErrorMessage(err, "Could not load the rollup job"));
       this.props.history.push(ROUTES.ROLLUPS);
@@ -192,9 +204,8 @@ export default class RollupDetails extends Component<RollupDetailsProps, RollupD
       intervalTimeunit,
       cronExpression,
       pageSize,
-      delayTime,
-      delayTimeunit,
       lastUpdated,
+      metadata,
     } = this.state;
 
     let scheduleText = recurringJob ? "Continuous, " : "Not continuous, ";
@@ -248,7 +259,7 @@ export default class RollupDetails extends Component<RollupDetailsProps, RollupD
           onEdit={this.onEdit}
         />
         <EuiSpacer />
-        <RollupStatus />
+        <RollupStatus metadata={metadata} />
         {/*<HistogramAndMetrics*/}
         {/*  rollupId={rollupId}*/}
         {/*  intervalValue={intervalValue}*/}

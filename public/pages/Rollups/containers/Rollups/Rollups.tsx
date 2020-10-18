@@ -187,12 +187,12 @@ let SampleGetRollupJobs: RollupItem[] = [
     },
   },
   {
-    _id: "startnow",
+    _id: "another-job",
     _version: 3,
     _seq_no: 13,
     _primary_term: 1,
     rollup: {
-      rollup_id: "startnow",
+      rollup_id: "another-job",
       enabled: true,
       schedule: {
         interval: {

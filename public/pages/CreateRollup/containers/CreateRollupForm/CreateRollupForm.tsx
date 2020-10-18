@@ -151,6 +151,7 @@ export default class CreateRollupForm extends Component<CreateRollupFormProps, C
     await this.getMappings();
   };
 
+  //TODO: Check the field `` part to see if it is actually parsing data.
   getMappings = async (): Promise<void> => {
     try {
       const { rollupService } = this.props;
@@ -160,7 +161,7 @@ export default class CreateRollupForm extends Component<CreateRollupFormProps, C
         //Set mapping when there is source index selected.
         this.setState({
           mappings: response.response,
-          fields: sourceIndex.length ? `response.response.${sourceIndex[0].label}.mappings.properties` : undefined,
+          fields: sourceIndex.length ? response.response[sourceIndex[0].label].mappings.properties : undefined,
         });
       } else {
         toastNotifications.addDanger(`Could not load fields: ${response.error}`);
