@@ -26,7 +26,7 @@ export interface DimensionItem {
 }
 
 export interface MetricItem {
-  source_field: string;
+  source_field: FieldItem;
   all: boolean;
   min: boolean;
   max: boolean;

@@ -92,7 +92,7 @@ const aggregationColumns: EuiTableFieldDataColumnType<DimensionItem>[] = [
 
 const metricsColumns = [
   {
-    field: "source_field",
+    field: "source_field.label",
     name: "Field Name",
   },
   {
@@ -130,7 +130,9 @@ const metricsColumns = [
 
 const sampleMetricItems: MetricItem[] = [
   {
-    source_field: "On time rate",
+    source_field: {
+      label: "On time rate",
+    },
     all: true,
     min: false,
     max: true,
@@ -139,7 +141,9 @@ const sampleMetricItems: MetricItem[] = [
     value_count: false,
   },
   {
-    source_field: "Return rate",
+    source_field: {
+      label: "Return rate",
+    },
     all: true,
     min: true,
     max: false,
@@ -148,7 +152,9 @@ const sampleMetricItems: MetricItem[] = [
     value_count: false,
   },
   {
-    source_field: "OTIF rate",
+    source_field: {
+      label: "OTIF rate",
+    },
     all: false,
     min: false,
     max: true,

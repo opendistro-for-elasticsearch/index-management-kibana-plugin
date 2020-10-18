@@ -43,7 +43,7 @@ import {
   CustomItemAction,
 } from "@elastic/eui";
 import { AddFieldsColumns } from "../../utils/constants";
-import { FieldItem, MetricItem } from "../../models/interfaces";
+import { DimensionItem, FieldItem, MetricItem } from "../../models/interfaces";
 
 interface MetricsCalculationProps {
   fieldsOption: FieldItem[];
@@ -64,7 +64,7 @@ const tempFieldTypeOptions = [{ label: "string" }, { label: "location" }, { labe
 
 const sampleMetricItems: MetricItem[] = [
   {
-    source_field: "On time rate",
+    source_field: { label: "On time rate" },
     all: true,
     min: false,
     max: true,
@@ -73,7 +73,7 @@ const sampleMetricItems: MetricItem[] = [
     value_count: false,
   },
   {
-    source_field: "Return rate",
+    source_field: { label: "Return rate" },
     all: true,
     min: true,
     max: false,
@@ -82,7 +82,7 @@ const sampleMetricItems: MetricItem[] = [
     value_count: false,
   },
   {
-    source_field: "OTIF rate",
+    source_field: { label: "OTIF rate" },
     all: false,
     min: false,
     max: true,
@@ -122,22 +122,59 @@ export default class MetricsCalculation extends Component<MetricsCalculationProp
     this.setState({ selectedFields });
   };
 
-  deleteField(item: MetricItem) {}
+  onClickAdd() {
+    const { onMetricSelectionChange, selectedMetrics } = this.props;
+    const { selectedFields } = this.state;
+    //Clone selectedMetrics
+    let updatedMetrics = Array.from(selectedMetrics);
+    const toAddFields = Array.from(selectedFields);
+    // Loop through selectedFields to see if existing Metrics are removed
+
+    selectedMetrics.map((metric) => {
+      //If does not exist in new selection, don't add this metric.
+      if (!selectedFields.includes(metric.source_field)) {
+        updatedMetrics.splice(updatedMetrics.indexOf(metric), 1);
+      }
+      //If exists, delete it from toAddFields so that it doesn't get added again.
+      else {
+        const index = toAddFields.indexOf(metric.source_field);
+        toAddFields.splice(index, 1);
+      }
+    });
+    const toAdd: MetricItem[] = toAddFields.map((field) => {
+      return {
+        source_field: field,
+        all: false,
+        min: false,
+        max: false,
+        sum: false,
+        avg: false,
+        value_count: false,
+      };
+    });
+    onMetricSelectionChange(updatedMetrics.length ? updatedMetrics.concat(toAdd) : toAdd);
+  }
+
+  deleteField(item: MetricItem) {
+    const { selectedMetrics, onMetricSelectionChange } = this.props;
+    selectedMetrics.splice(selectedMetrics.indexOf(item), 1);
+    onMetricSelectionChange(selectedMetrics);
+  }
 
   render() {
-    const { fieldsOption } = this.props;
-    const { isModalVisible, searchText, selectedFieldType } = this.state;
+    const { fieldsOption, selectedMetrics } = this.props;
+    const { isModalVisible, searchText, selectedFieldType, selectedFields } = this.state;
 
-    //TODO: check if need to filter type of fields to numbers
     const selection: EuiTableSelectionType<FieldItem> = {
       selectable: (field) =>
         field.type == "integer" || field.type == "float" || field.type == "long" || field.type == "double" || field.type == "double",
       onSelectionChange: this.onSelectionChange,
+      initialSelected: selectedFields,
     };
 
     const metricsColumns = [
       {
-        field: "source_field",
+        field: "source_field.label",
         name: "Field Name",
       },
       {
@@ -236,7 +273,7 @@ export default class MetricsCalculation extends Component<MetricsCalculationProp
               </EuiFlexItem>
               <EuiFlexItem>
                 <EuiText size={"m"} color={"subdued"}>
-                  <h2>{` (${sampleMetricItems.length})`}</h2>
+                  <h2>{` (${selectedMetrics.length})`}</h2>
                 </EuiText>
               </EuiFlexItem>
             </EuiFlexGroup>
@@ -274,7 +311,8 @@ export default class MetricsCalculation extends Component<MetricsCalculationProp
         <div style={{ paddingLeft: "10px" }}>
           {/*TODO: Figure out row header*/}
           <EuiBasicTable
-            items={sampleMetricItems}
+            items={selectedMetrics}
+            itemId={"source_field"}
             rowHeader="source_field"
             columns={metricsColumns}
             hasActions={true}
@@ -343,7 +381,13 @@ export default class MetricsCalculation extends Component<MetricsCalculationProp
 
                 <EuiModalFooter>
                   <EuiButtonEmpty onClick={this.closeModal}>Cancel</EuiButtonEmpty>
-                  <EuiButton fill onClick={this.closeModal}>
+                  <EuiButton
+                    fill
+                    onClick={() => {
+                      this.closeModal();
+                      this.onClickAdd();
+                    }}
+                  >
                     Add
                   </EuiButton>
                 </EuiModalFooter>
