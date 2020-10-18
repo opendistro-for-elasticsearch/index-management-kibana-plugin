@@ -34,6 +34,7 @@ import {
   // @ts-ignore
   Pagination,
   EuiTableSortingType,
+  CustomItemAction,
   EuiTableSelectionType,
   EuiTableFieldDataColumnType,
   EuiFormRow,
@@ -151,20 +152,9 @@ export default class AdvancedAggregation extends Component<AdvancedAggregationPr
             aggregationMethod: "term",
           };
     });
-    onDimensionSelectionChange(updatedDimensions.concat(toAdd));
+    onDimensionSelectionChange(updatedDimensions.length ? updatedDimensions.concat(toAdd) : toAdd);
     console.log(this.props.selectedDimensionField);
   }
-
-  moveUp() {}
-
-  moveDown() {}
-
-  deleteField() {}
-
-  swap() {}
-  onChangeInterval = (e: ChangeEvent<HTMLInputElement>): void => {
-    this.setState({});
-  };
 
   //Check the dimension num
   updateSequence(items: DimensionItem[]) {
@@ -177,9 +167,32 @@ export default class AdvancedAggregation extends Component<AdvancedAggregationPr
     onDimensionSelectionChange(items);
   }
 
+  moveUp() {}
+
+  moveDown() {}
+
+  deleteField = (item: DimensionItem) => {
+    const { onDimensionSelectionChange, selectedDimensionField } = this.props;
+    const { selectedFields } = this.state;
+    console.log("ITEM: " + item + " index: " + selectedDimensionField.indexOf(item));
+
+    //Remove the dimension item and then update sequence.
+    selectedDimensionField.splice(selectedDimensionField.indexOf(item), 1);
+    selectedFields.splice(selectedFields.indexOf(item.field), 1);
+    this.setState({ selectedFields });
+    this.updateSequence(selectedDimensionField);
+    onDimensionSelectionChange(selectedDimensionField);
+  };
+
+  swap() {}
+
+  onChangeInterval = (e: ChangeEvent<HTMLInputElement>): void => {
+    this.setState({});
+  };
+
   // onTableChange = ({ page: tablePage, sort }: Criteria<DimensionItem>): void => {
   //   const { index: page, size } = tablePage;
-  //   const { field: sortField, direction: sortDirection } = sort;
+  //   const { field: sortField, direction: sosrtDirection } = sort;
   //   this.setState({ from: page * size, size, sortField, sortDirection });
   // };
   render() {
@@ -204,6 +217,40 @@ export default class AdvancedAggregation extends Component<AdvancedAggregationPr
       onSelectionChange: this.onSelectionChange,
       initialSelected: selectedFields,
     };
+
+    const actions: CustomItemAction[] = [
+      {
+        render: (item: DimensionItem) => {
+          return (
+            <EuiLink
+              onClick={this.moveDown}
+              // disabled={item.sequence == 1}
+            >
+              Move down
+            </EuiLink>
+          );
+        },
+        available: (item: DimensionItem) => item.sequence != selectedDimensionField.length,
+      },
+      {
+        render: (item: DimensionItem) => {
+          return (
+            <EuiLink
+              onClick={this.moveUp}
+              // disabled={item.sequence == 1}
+            >
+              Move up
+            </EuiLink>
+          );
+        },
+        available: (item: DimensionItem) => item.sequence != 1,
+      },
+      {
+        render: (item: DimensionItem) => {
+          return <EuiIcon type={"crossInACircleFilled"} onClick={() => this.deleteField(item)} />;
+        },
+      },
+    ];
 
     const aggregationColumns: EuiTableFieldDataColumnType<DimensionItem>[] = [
       {
@@ -261,27 +308,32 @@ export default class AdvancedAggregation extends Component<AdvancedAggregationPr
           ),
       },
       {
-        field: "actions",
         name: "Actions",
         //TODO: Disable button for first and last row
-        render: (sequence) => (
-          <EuiFlexGroup>
-            <EuiFlexItem grow={false}>
-              <EuiLink onClick={this.moveDown} disabled={sequence == 1}>
-                Move down
-              </EuiLink>
-            </EuiFlexItem>
-            <EuiFlexItem grow={false}>
-              <EuiLink onClick={this.moveUp} disabled={sequence == selectedDimensionField.length}>
-                Move up
-              </EuiLink>
-            </EuiFlexItem>
-
-            <EuiFlexItem grow={false}>
-              <EuiIcon type={"crossInACircleFilled"} onClick={this.deleteField}></EuiIcon>
-            </EuiFlexItem>
-          </EuiFlexGroup>
-        ),
+        actions: actions,
+        // render: (sequence) => (
+        //   <EuiFlexGroup>
+        //     <EuiFlexItem grow={false}>
+        //       <EuiLink onClick={this.moveDown}
+        //                // disabled={item.sequence == 1}
+        //       >
+        //         Move down
+        //       </EuiLink>
+        //     </EuiFlexItem>
+        //     <EuiFlexItem grow={false}>
+        //       <EuiLink onClick={this.moveUp}
+        //                // disabled={item.sequence== selectedDimensionField.length}
+        //       >
+        //         Move up
+        //       </EuiLink>
+        //     </EuiFlexItem>
+        //     <EuiFlexItem grow={false}>
+        //       <EuiIcon type={"crossInACircleFilled"}
+        //                // onClick={this.deleteField}
+        //       />
+        //     </EuiFlexItem>
+        //   </EuiFlexGroup>
+        // ),
       },
     ];
 
@@ -341,7 +393,7 @@ export default class AdvancedAggregation extends Component<AdvancedAggregationPr
           {/*Need to create array of dimension items after selection*/}
           <EuiBasicTable
             items={selectedDimensionField}
-            rowHeader={"fieldName"}
+            itemId={"sequence"}
             columns={aggregationColumns}
             tableLayout={"auto"}
             hasActions={true}
