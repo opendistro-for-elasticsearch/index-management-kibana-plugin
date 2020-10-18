@@ -197,12 +197,6 @@ export default class RollupDetails extends Component<RollupDetailsProps, RollupD
       lastUpdated,
     } = this.state;
 
-    const rolesText = roles.length
-      ? roles.map(function (option) {
-          return option.label;
-        })
-      : "-";
-
     let scheduleText = recurringJob ? "Continuous, " : "Not continuous, ";
     if (recurringDefinition == "fixed") {
       scheduleText += "every " + interval + " " + parseTimeunit(intervalTimeunit);

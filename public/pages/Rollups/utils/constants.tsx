@@ -14,10 +14,7 @@
  */
 
 import React from "react";
-import { EuiLink, EuiTableFieldDataColumnType } from "@elastic/eui";
-import { ROUTES, SortDirection } from "../../../utils/constants";
-import { RollupItem } from "../models/interfaces";
-import { renderContinuous, renderEnabled } from "./helpers";
+import { SortDirection } from "../../../utils/constants";
 
 export const DEFAULT_PAGE_SIZE_OPTIONS = [5, 10, 20, 50];
 

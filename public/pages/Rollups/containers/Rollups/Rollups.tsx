@@ -52,7 +52,6 @@ import RollupEmptyPrompt from "../../components/RollupEmptyPrompt";
 import { RollupItem, RollupsQueryParams } from "../../models/interfaces";
 import { getURLQueryParams, renderContinuous, renderEnabled } from "../../utils/helpers";
 import DeleteModal from "../../components/DeleteModal";
-import { rollupsColumns } from "../../utils/constants";
 
 interface RollupsProps extends RouteComponentProps {
   rollupService: RollupService;
