@@ -13,18 +13,131 @@
  * permissions and limitations under the License.
  */
 
-import React, { Component } from "react";
-import { EuiFlexGrid, EuiSpacer, EuiFlexItem, EuiText } from "@elastic/eui";
+import React, { Component, Fragment } from "react";
+import {
+  EuiFlexGrid,
+  EuiSpacer,
+  EuiFlexItem,
+  EuiText,
+  EuiFlexGroup,
+  EuiPanel,
+  EuiBasicTable,
+  EuiIcon,
+  EuiTableFieldDataColumnType,
+} from "@elastic/eui";
 import { ContentPanel } from "../../../../components/ContentPanel";
-import { DimensionItem } from "../../../CreateRollup/models/interfaces";
-import { parseTimeunit, parseTimezone } from "../../../CreateRollup/utils/helpers";
+import { MetricItem, RollupDimensionItem } from "../../../CreateRollup/models/interfaces";
+import { parseTimezone } from "../../../CreateRollup/utils/helpers";
 
 interface AggregationAndMetricsSettingsProps {
   timestamp: string;
   histogramInterval: string;
   timezone: string;
-  // selectedDimensionField: DimensionItem[];
+  selectedDimensionField: RollupDimensionItem[];
 }
+const aggregationColumns: EuiTableFieldDataColumnType<RollupDimensionItem>[] = [
+  {
+    field: "sequence",
+    name: "Sequence",
+    sortable: true,
+    align: "left",
+    dataType: "number",
+  },
+  {
+    field: "field.label",
+    name: "Field name",
+    align: "left",
+  },
+  {
+    field: "field.type",
+    name: "Field type",
+    align: "left",
+    render: (type: string) => (type == null ? "-" : type),
+  },
+  {
+    field: "aggregationMethod",
+    name: "Aggregation method",
+    align: "left",
+  },
+  {
+    field: "interval",
+    name: "Interval",
+    dataType: "number",
+    align: "left",
+    render: (interval: null | number) => {
+      if (interval == null) return "-";
+      else return `${interval}`;
+    },
+  },
+];
+
+const metricsColumns = [
+  {
+    field: "source_field",
+    name: "Field Name",
+  },
+  {
+    field: "all",
+    name: "All",
+    align: "left",
+    render: (all: boolean) => all && <EuiIcon type={"check"} />,
+  },
+  {
+    field: "min",
+    name: "Min",
+    render: (min: boolean) => min && <EuiIcon type={"check"} />,
+  },
+  {
+    field: "max",
+    name: "Max",
+    render: (max: boolean) => max && <EuiIcon type={"check"} />,
+  },
+  {
+    field: "sum",
+    name: "Sum",
+    render: (sum: boolean) => sum && <EuiIcon type={"check"} />,
+  },
+  {
+    field: "avg",
+    name: "Avg",
+    render: (avg: boolean) => avg && <EuiIcon type={"check"} />,
+  },
+  {
+    field: "value_count",
+    name: "Value count",
+    render: (value_count: boolean) => value_count && <EuiIcon type={"check"} />,
+  },
+];
+
+const sampleMetricItems: MetricItem[] = [
+  {
+    source_field: "On time rate",
+    all: true,
+    min: false,
+    max: true,
+    sum: false,
+    avg: false,
+    value_count: false,
+  },
+  {
+    source_field: "Return rate",
+    all: true,
+    min: true,
+    max: false,
+    sum: false,
+    avg: false,
+    value_count: false,
+  },
+  {
+    source_field: "OTIF rate",
+    all: false,
+    min: false,
+    max: true,
+    sum: false,
+    avg: false,
+    value_count: true,
+  },
+];
 
 export default class AggregationAndMetricsSettings extends Component<AggregationAndMetricsSettingsProps> {
   constructor(props: AggregationAndMetricsSettingsProps) {
@@ -32,12 +145,15 @@ export default class AggregationAndMetricsSettings extends Component<Aggregation
   }
 
   render() {
-    const { timestamp, histogramInterval, timezone } = this.props;
+    const { timestamp, histogramInterval, timezone, selectedDimensionField } = this.props;
 
     return (
       <ContentPanel bodyStyles={{ padding: "initial" }} title="Aggregation and metrics settings" titleSize="m">
         <div style={{ paddingLeft: "10px" }}>
           <EuiSpacer size={"s"} />
+          <EuiText>
+            <h3>Additional metrics</h3>
+          </EuiText>
           <EuiFlexGrid columns={3}>
             <EuiFlexItem>
               <EuiText size={"xs"}>
@@ -59,6 +175,62 @@ export default class AggregationAndMetricsSettings extends Component<Aggregation
             </EuiFlexItem>
           </EuiFlexGrid>
           <EuiSpacer size={"s"} />
+          <EuiFlexGroup gutterSize={"xs"}>
+            <EuiFlexItem grow={false}>
+              <EuiText>
+                <h3>Additional aggregations</h3>
+              </EuiText>
+            </EuiFlexItem>
+            <EuiFlexItem grow={false}>
+              <EuiText color={"subdued"} textAlign={"left"}>
+                <h3>{`(${selectedDimensionField.length})`}</h3>
+              </EuiText>
+            </EuiFlexItem>
+          </EuiFlexGroup>
+
+          {selectedDimensionField.length ? (
+            <Fragment>
+              <EuiPanel>
+                <EuiBasicTable
+                  items={selectedDimensionField}
+                  rowHeader={"sequence"}
+                  columns={aggregationColumns}
+                  tableLayout={"auto"}
+                  noItemsMessage={"No fields added for aggregations"}
+                />
+              </EuiPanel>
+            </Fragment>
+          ) : (
+            <EuiText>
+              <dd>No field added for aggregation</dd>
+            </EuiText>
+          )}
+          <EuiSpacer size={"m"} />
+
+          <EuiSpacer />
+          <EuiFlexGroup gutterSize={"xs"}>
+            <EuiFlexItem grow={false}>
+              <EuiText>
+                <h3>Additional metrics</h3>
+              </EuiText>
+            </EuiFlexItem>
+            <EuiFlexItem grow={false}>
+              <EuiText color={"subdued"} textAlign={"left"}>
+                <h3>{`(${sampleMetricItems.length})`}</h3>
+              </EuiText>
+            </EuiFlexItem>
+          </EuiFlexGroup>
+          {sampleMetricItems.length ? (
+            <Fragment>
+              <EuiPanel>
+                <EuiBasicTable items={sampleMetricItems} rowHeader="source_field" columns={metricsColumns} tableLayout={"auto"} />
+              </EuiPanel>
+            </Fragment>
+          ) : (
+            <EuiText>
+              <dd>No fields added for metrics</dd>
+            </EuiText>
+          )}
         </div>
       </ContentPanel>
     );

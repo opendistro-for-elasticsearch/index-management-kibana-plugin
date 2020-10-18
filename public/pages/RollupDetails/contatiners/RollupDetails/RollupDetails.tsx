@@ -27,9 +27,9 @@ import GeneralInformation from "../../Components/GeneralInformation/GeneralInfor
 import RollupStatus from "../../Components/RollupStatus/RollupStatus";
 import AggregationAndMetricsSettings from "../../Components/AggregationAndMetricsSettings/AggregationAndMetricsSettings";
 import { parseTimeunit } from "../../../CreateRollup/utils/helpers";
-import { RollupMetadata } from "../../../../../models/interfaces";
+import { IndexItem, RollupMetadata } from "../../../../../models/interfaces";
 import { renderTime } from "../../../Rollups/utils/helpers";
-import { DimensionItem } from "../../../CreateRollup/models/interfaces";
+import { DimensionItem, RollupDimensionItem } from "../../../CreateRollup/models/interfaces";
 
 interface RollupDetailsProps extends RouteComponentProps {
   rollupService: RollupService;
@@ -85,7 +85,6 @@ export default class RollupDetails extends Component<RollupDetailsProps, RollupD
       timestamp: "",
       histogramInterval: "",
       timezone: "UTC +0",
-      timeunit: "ms",
       selectedDimensionField: [],
     };
   }
@@ -134,8 +133,9 @@ export default class RollupDetails extends Component<RollupDetailsProps, RollupD
             ? response.response.rollup.dimensions[0].date_histogram.fixed_interval
             : response.response.rollup.dimensions[0].date_histogram.calendar_interval,
           timezone: response.response.rollup.dimensions[0].date_histogram.timezone,
+          selectedDimensionField: this.parseDimension(response.response.rollup.dimensions),
         });
-
+        console.log(response.response.rollup.dimensions);
         if (response.response.rollup.schedule.cron == undefined) {
           this.setState({
             interval: response.response.rollup.schedule.interval.period,
@@ -161,6 +161,20 @@ export default class RollupDetails extends Component<RollupDetailsProps, RollupD
       this.props.history.push(ROUTES.ROLLUPS);
     }
   };
+
+  parseDimension = (dimensions: RollupDimensionItem[]): DimensionItem[] => {
+    const sourceArray = dimensions.slice(1, dimensions.length);
+    const result = sourceArray.map((dimension: RollupDimensionItem) => ({
+      sequence: dimensions.indexOf(dimension),
+      aggregationMethod: !!dimension.histogram ? "terms" : "histogram",
+      field: dimension.histogram == null ? { label: dimension.terms?.source_field } : { label: dimension.histogram?.source_field },
+      interval: dimension.histogram == null ? null : dimension.histogram?.interval,
+    }));
+
+    // console.log(result);
+    return result;
+  };
+
   onDisable = async (): Promise<void> => {
     const { rollupService } = this.props;
     const { rollupId } = this.state;
@@ -226,6 +240,7 @@ export default class RollupDetails extends Component<RollupDetailsProps, RollupD
       timestamp,
       histogramInterval,
       timezone,
+      selectedDimensionField,
     } = this.state;
 
     let scheduleText = recurringJob ? "Continuous, " : "Not continuous, ";
@@ -288,7 +303,12 @@ export default class RollupDetails extends Component<RollupDetailsProps, RollupD
         {/*  timezone={timezone}*/}
         {/*/>*/}
         <EuiSpacer />
-        <AggregationAndMetricsSettings timestamp={timestamp} histogramInterval={histogramInterval} timezone={timezone} />
+        <AggregationAndMetricsSettings
+          timestamp={timestamp}
+          histogramInterval={histogramInterval}
+          timezone={timezone}
+          selectedDimensionField={selectedDimensionField}
+        />
         {/*<ScheduleRolesAndNotifications*/}
         {/*  rollupId={rollupId}*/}
         {/*  jobEnabledByDefault={jobEnabledByDefault}*/}

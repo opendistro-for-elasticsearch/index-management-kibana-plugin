@@ -34,3 +34,24 @@ export interface MetricItem {
   avg: boolean;
   value_count: boolean;
 }
+
+//From backend
+export interface RollupDimensionItem {
+  date_histogram?: {
+    fixed_interval?: string;
+    calendar_interval?: string;
+    source_field: string;
+    target_field: string;
+    timezone: string;
+  };
+  terms?: {
+    source_field: string;
+    target_field: string;
+  };
+  histogram?: {
+    source_field: string;
+    target_field: string;
+    interval: number;
+  };
+}
+s;
