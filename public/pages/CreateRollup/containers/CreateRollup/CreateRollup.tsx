@@ -105,7 +105,6 @@ export default class CreateRollup extends Component<CreateRollupProps> {
               onChangeDescription={onChangeDescription}
             />
             <EuiSpacer />
-            {/*TODO: Add props to RollupIndices component and fetch indices inside*/}
             <RollupIndices {...this.props} />
             <EuiSpacer />
             <Roles rollupId={rollupId} rollupIdError={rollupIdError} onChange={onChangeRoles} roles={roles} roleOptions={options} />
