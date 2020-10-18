@@ -27,9 +27,9 @@ import GeneralInformation from "../../Components/GeneralInformation/GeneralInfor
 import RollupStatus from "../../Components/RollupStatus/RollupStatus";
 import AggregationAndMetricsSettings from "../../Components/AggregationAndMetricsSettings/AggregationAndMetricsSettings";
 import { parseTimeunit } from "../../../CreateRollup/utils/helpers";
-import moment from "moment";
 import { RollupMetadata } from "../../../../../models/interfaces";
 import { renderTime } from "../../../Rollups/utils/helpers";
+import { DimensionItem } from "../../../CreateRollup/models/interfaces";
 
 interface RollupDetailsProps extends RouteComponentProps {
   rollupService: RollupService;
@@ -52,6 +52,11 @@ interface RollupDetailsState {
   delayTimeunit: string;
   lastUpdated: string;
   metadata: RollupMetadata | null;
+
+  timestamp: string;
+  histogramInterval: string;
+  timezone: string;
+  selectedDimensionField: DimensionItem[];
 }
 
 export default class RollupDetails extends Component<RollupDetailsProps, RollupDetailsState> {
@@ -76,6 +81,12 @@ export default class RollupDetails extends Component<RollupDetailsProps, RollupD
       rollupJSON: EMPTY_ROLLUP,
       lastUpdated: "-",
       metadata: null,
+
+      timestamp: "",
+      histogramInterval: "",
+      timezone: "UTC +0",
+      timeunit: "ms",
+      selectedDimensionField: [],
     };
   }
 
@@ -118,6 +129,11 @@ export default class RollupDetails extends Component<RollupDetailsProps, RollupD
           pageSize: response.response.rollup.page_size,
           rollupJSON: newJSON,
           lastUpdated: renderTime(response.response.rollup.last_updated_time),
+          timestamp: response.response.rollup.dimensions[0].date_histogram.source_field,
+          histogramInterval: response.response.rollup.dimensions[0].date_histogram.fixed_interval
+            ? response.response.rollup.dimensions[0].date_histogram.fixed_interval
+            : response.response.rollup.dimensions[0].date_histogram.calendar_interval,
+          timezone: response.response.rollup.dimensions[0].date_histogram.timezone,
         });
 
         if (response.response.rollup.schedule.cron == undefined) {
@@ -206,6 +222,10 @@ export default class RollupDetails extends Component<RollupDetailsProps, RollupD
       pageSize,
       lastUpdated,
       metadata,
+
+      timestamp,
+      histogramInterval,
+      timezone,
     } = this.state;
 
     let scheduleText = recurringJob ? "Continuous, " : "Not continuous, ";
@@ -268,7 +288,7 @@ export default class RollupDetails extends Component<RollupDetailsProps, RollupD
         {/*  timezone={timezone}*/}
         {/*/>*/}
         <EuiSpacer />
-        <AggregationAndMetricsSettings />
+        <AggregationAndMetricsSettings timestamp={timestamp} histogramInterval={histogramInterval} timezone={timezone} />
         {/*<ScheduleRolesAndNotifications*/}
         {/*  rollupId={rollupId}*/}
         {/*  jobEnabledByDefault={jobEnabledByDefault}*/}

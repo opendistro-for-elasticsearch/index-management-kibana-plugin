@@ -15,16 +15,15 @@
 
 import React, { Component } from "react";
 import { EuiFlexGrid, EuiSpacer, EuiFlexItem, EuiText } from "@elastic/eui";
-import { ContentPanel, ContentPanelActions } from "../../../../components/ContentPanel";
-import { ModalConsumer } from "../../../../components/Modal";
+import { ContentPanel } from "../../../../components/ContentPanel";
+import { DimensionItem } from "../../../CreateRollup/models/interfaces";
+import { parseTimeunit, parseTimezone } from "../../../CreateRollup/utils/helpers";
 
 interface AggregationAndMetricsSettingsProps {
-  // rollupId: string;
-  // description: string;
-  // sourceIndex: string;
-  // targetIndex: string;
-  // roles: string[];
-  // onEdit: () => void;
+  timestamp: string;
+  histogramInterval: string;
+  timezone: string;
+  // selectedDimensionField: DimensionItem[];
 }
 
 export default class AggregationAndMetricsSettings extends Component<AggregationAndMetricsSettingsProps> {
@@ -33,13 +32,32 @@ export default class AggregationAndMetricsSettings extends Component<Aggregation
   }
 
   render() {
-    // const { rollupId, description, onEdit, sourceIndex, targetIndex, roles } = this.props;
+    const { timestamp, histogramInterval, timezone } = this.props;
 
     return (
       <ContentPanel bodyStyles={{ padding: "initial" }} title="Aggregation and metrics settings" titleSize="m">
         <div style={{ paddingLeft: "10px" }}>
           <EuiSpacer size={"s"} />
-
+          <EuiFlexGrid columns={3}>
+            <EuiFlexItem>
+              <EuiText size={"xs"}>
+                <dt>Timestamp field</dt>
+                <dd>{timestamp}</dd>
+              </EuiText>
+            </EuiFlexItem>
+            <EuiFlexItem>
+              <EuiText size={"xs"}>
+                <dt>Interval</dt>
+                <dd>{histogramInterval}</dd>
+              </EuiText>
+            </EuiFlexItem>
+            <EuiFlexItem>
+              <EuiText size={"xs"}>
+                <dt>Timezone</dt>
+                <dd>{parseTimezone(timezone)}</dd>
+              </EuiText>
+            </EuiFlexItem>
+          </EuiFlexGrid>
           <EuiSpacer size={"s"} />
         </div>
       </ContentPanel>
