@@ -23,7 +23,7 @@ import CreateRollupSteps from "../../components/CreateRollupSteps";
 import TimeAggregation from "../../components/TimeAggregations";
 import AdvancedAggregation from "../../components/AdvancedAggregation";
 import MetricsCalculation from "../../components/MetricsCalculation";
-import { DimensionItem, FieldItem } from "../../models/interfaces";
+import { DimensionItem, FieldItem, MetricItem } from "../../models/interfaces";
 
 interface CreateRollupProps extends RouteComponentProps {
   rollupService: RollupService;
@@ -31,6 +31,7 @@ interface CreateRollupProps extends RouteComponentProps {
   fields: any;
   selectedTerms: FieldItem[];
   selectedDimensionField: DimensionItem[];
+  selectedMetrics: MetricItem[];
   timestamp: EuiComboBoxOptionOption<String>[];
   timestampError: string;
   intervalValue: number;
@@ -43,6 +44,7 @@ interface CreateRollupProps extends RouteComponentProps {
   onChangeTimeunit: (e: ChangeEvent<HTMLSelectElement>) => void;
   onChangeTimezone: (e: ChangeEvent<HTMLSelectElement>) => void;
   onDimensionSelectionChange: (selectedFields: DimensionItem[]) => void;
+  onMetricSelectionChange: (selectedFields: MetricItem[]) => void;
 }
 
 interface CreateRollupState {
@@ -133,7 +135,7 @@ export default class CreateRollupStep2 extends Component<CreateRollupProps, Crea
               onDimensionSelectionChange={onDimensionSelectionChange}
             />
             <EuiSpacer />
-            <MetricsCalculation fieldsOption={fieldsOption} />
+            <MetricsCalculation {...this.props} fieldsOption={fieldsOption} />
           </EuiFlexItem>
         </EuiFlexGroup>
         <EuiSpacer />

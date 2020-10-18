@@ -40,12 +40,15 @@ import {
   EuiFormHelpText,
   EuiHorizontalRule,
   EuiIcon,
+  CustomItemAction,
 } from "@elastic/eui";
 import { AddFieldsColumns } from "../../utils/constants";
 import { FieldItem, MetricItem } from "../../models/interfaces";
 
 interface MetricsCalculationProps {
   fieldsOption: FieldItem[];
+  selectedMetrics: MetricItem[];
+  onMetricSelectionChange: (selectedFields: MetricItem[]) => void;
 }
 
 interface MetricsCalculationState {
@@ -119,7 +122,7 @@ export default class MetricsCalculation extends Component<MetricsCalculationProp
     this.setState({ selectedFields });
   };
 
-  deleteField() {}
+  deleteField(item: MetricItem) {}
 
   render() {
     const { fieldsOption } = this.props;
@@ -127,7 +130,8 @@ export default class MetricsCalculation extends Component<MetricsCalculationProp
 
     //TODO: check if need to filter type of fields to numbers
     const selection: EuiTableSelectionType<FieldItem> = {
-      // selectable: (field) => (field.type == 'integer'||'float'||'long'),
+      selectable: (field) =>
+        field.type == "integer" || field.type == "float" || field.type == "long" || field.type == "double" || field.type == "double",
       onSelectionChange: this.onSelectionChange,
     };
 
@@ -204,9 +208,14 @@ export default class MetricsCalculation extends Component<MetricsCalculationProp
         ),
       },
       {
-        field: "action",
         name: "Actions",
-        render: () => <EuiIcon type={"crossInACircleFilled"} onClick={this.deleteField}></EuiIcon>,
+        actions: [
+          {
+            render: (item: MetricItem) => {
+              return <EuiIcon type={"crossInACircleFilled"} onClick={() => this.deleteField(item)} />;
+            },
+          },
+        ],
       },
     ];
 

@@ -29,7 +29,7 @@ import { getErrorMessage } from "../../../../utils/helpers";
 import { EMPTY_ROLLUP } from "../../utils/constants";
 import CreateRollupStep3 from "../CreateRollupStep3";
 import CreateRollupStep4 from "../CreateRollupStep4";
-import { DimensionItem, FieldItem } from "../../models/interfaces";
+import { DimensionItem, FieldItem, MetricItem } from "../../models/interfaces";
 
 interface CreateRollupFormProps extends RouteComponentProps {
   rollupService: RollupService;
@@ -60,6 +60,7 @@ interface CreateRollupFormState {
   fields: any;
   selectedTerms: FieldItem[];
   selectedDimensionField: DimensionItem[];
+  selectedMetrics: MetricItem[];
   timestamp: EuiComboBoxOptionOption<String>[];
   timestampError: string;
   intervalType: string;
@@ -115,6 +116,7 @@ export default class CreateRollupForm extends Component<CreateRollupFormProps, C
       selectedFields: [],
       selectedTerms: [],
       selectedDimensionField: [],
+      selectedMetrics: [],
       description: "",
       sourceIndex: [],
       sourceIndexError: "",
@@ -326,12 +328,10 @@ export default class CreateRollupForm extends Component<CreateRollupFormProps, C
 
   onDimensionSelectionChange = (selectedFields: DimensionItem[]): void => {
     this.setState({ selectedDimensionField: selectedFields });
-    //Update JSON
-    // let newJSON = this.state.rollupJSON;
-    // newJSON.dimensions = selectedFields.map((dimension) => {
-    //
-    //   }
-    // );
+  };
+
+  onMetricSelectionChange = (selectedFields: MetricItem[]): void => {
+    this.setState({ selectedMetrics: selectedFields });
   };
 
   onChangeJobEnabledByDefault = (): void => {
@@ -485,6 +485,7 @@ export default class CreateRollupForm extends Component<CreateRollupFormProps, C
       fields,
       selectedTerms,
       selectedDimensionField,
+      selectedMetrics,
       intervalValue,
       intervalType,
       timezone,
@@ -529,6 +530,7 @@ export default class CreateRollupForm extends Component<CreateRollupFormProps, C
           fields={fields}
           selectedTerms={selectedTerms}
           selectedDimensionField={selectedDimensionField}
+          selectedMetrics={selectedMetrics}
           intervalType={intervalType}
           intervalValue={intervalValue}
           timestamp={timestamp}
@@ -541,6 +543,7 @@ export default class CreateRollupForm extends Component<CreateRollupFormProps, C
           onChangeTimeunit={this.onChangeTimeunit}
           onChangeTimezone={this.onChangeTimezone}
           onDimensionSelectionChange={this.onDimensionSelectionChange}
+          onMetricSelectionChange={this.onMetricSelectionChange}
         />
         <CreateRollupStep3
           {...this.props}
@@ -576,6 +579,7 @@ export default class CreateRollupForm extends Component<CreateRollupFormProps, C
           timeunit={timeunit}
           timezone={timezone}
           selectedDimensionField={selectedDimensionField}
+          selectedMetrics={selectedMetrics}
           jobEnabledByDefault={jobEnabledByDefault}
           recurringJob={recurringJob}
           recurringDefinition={recurringDefinition}
