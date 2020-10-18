@@ -406,30 +406,6 @@ export default class CreateRollupForm extends Component<CreateRollupFormProps, C
   updateDimension = (): void => {
     const { rollupJSON, selectedDimensionField } = this.state;
     let newJSON = rollupJSON;
-
-    //Add date_histogram first
-
-    // let timestampString = timestamp.map(function(option) {
-    //   return option.label;
-    // });
-    //
-    // if (intervalType == 'fixed') {
-    //   newJSON.dimensions.push({
-    //     date_histogram: {
-    //       fixed_interval: intervalValue + intervalTimeunit,
-    //       source_field: timestampString[0],
-    //       timezone: timezone,
-    //     },
-    //   });
-    // } else {
-    //   newJSON.dimensions.push({
-    //     date_histogram: {
-    //       calendar_interval: intervalValue + intervalTimeunit,
-    //       source_field: timestamp,
-    //       timezone: timezone,
-    //     },
-    //   });
-    // }
     //Push rest of dimensions
     selectedDimensionField.map((dimension) => {
       if (dimension.aggregationMethod == "terms") {
@@ -470,7 +446,6 @@ export default class CreateRollupForm extends Component<CreateRollupFormProps, C
     this.setState({ isSubmitting: false });
   };
 
-  //TODO: Go back to rollup jobs page when cancelled
   onCancel = (): void => {
     this.props.history.push(ROUTES.ROLLUPS);
   };
