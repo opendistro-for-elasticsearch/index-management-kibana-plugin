@@ -191,8 +191,17 @@ export default class AdvancedAggregation extends Component<AdvancedAggregationPr
     this.updateSequence(selectedDimensionField);
   };
 
-  onChangeInterval = (e: ChangeEvent<HTMLInputElement>): void => {
-    this.setState({});
+  onChangeInterval = (e: ChangeEvent<HTMLInputElement>, item: DimensionItem): void => {
+    const { selectedDimensionField, onDimensionSelectionChange } = this.props;
+    const index = selectedDimensionField.indexOf(item);
+    const newItem: DimensionItem = {
+      sequence: item.sequence,
+      field: item.field,
+      aggregationMethod: e.target.value,
+      interval: e.target.valueAsNumber,
+    };
+    selectedDimensionField[index] = newItem;
+    onDimensionSelectionChange(selectedDimensionField);
   };
 
   onChangeAggregationMethod = (e: ChangeEvent<HTMLSelectElement>, item: DimensionItem): void => {
@@ -317,13 +326,13 @@ export default class AdvancedAggregation extends Component<AdvancedAggregationPr
         name: "Interval",
         dataType: "number",
         align: "left",
-        render: (interval: null | number) =>
+        render: (interval: number, item) =>
           interval == null ? (
             "-"
           ) : (
             <EuiForm>
               <EuiFormRow>
-                <EuiFieldNumber min={1} value={interval} onChange={this.onChangeInterval} />
+                <EuiFieldNumber min={1} value={interval} onChange={(e) => this.onChangeInterval(e, item)} />
               </EuiFormRow>
             </EuiForm>
           ),
