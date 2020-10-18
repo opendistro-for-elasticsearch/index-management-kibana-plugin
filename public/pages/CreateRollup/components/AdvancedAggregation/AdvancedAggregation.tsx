@@ -222,28 +222,20 @@ export default class AdvancedAggregation extends Component<AdvancedAggregationPr
       {
         render: (item: DimensionItem) => {
           return (
-            <EuiLink
-              onClick={this.moveDown}
-              // disabled={item.sequence == 1}
-            >
-              Move down
-            </EuiLink>
+            <EuiFlexGroup>
+              <EuiFlexItem grow={false}>
+                <EuiLink onClick={this.moveUp} disabled={item.sequence == 1}>
+                  Move up
+                </EuiLink>
+              </EuiFlexItem>
+              <EuiFlexItem grow={false}>
+                <EuiLink onClick={this.moveDown} disabled={item.sequence == selectedDimensionField.length}>
+                  Move down
+                </EuiLink>
+              </EuiFlexItem>
+            </EuiFlexGroup>
           );
         },
-        available: (item: DimensionItem) => item.sequence != selectedDimensionField.length,
-      },
-      {
-        render: (item: DimensionItem) => {
-          return (
-            <EuiLink
-              onClick={this.moveUp}
-              // disabled={item.sequence == 1}
-            >
-              Move up
-            </EuiLink>
-          );
-        },
-        available: (item: DimensionItem) => item.sequence != 1,
       },
       {
         render: (item: DimensionItem) => {
