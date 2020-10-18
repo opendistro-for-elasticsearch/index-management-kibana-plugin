@@ -27,7 +27,7 @@ import {
 } from "../models/interfaces";
 import { getMustQuery } from "../utils/helpers";
 import { RollupsSort, ServerResponse } from "../models/types";
-import { DocumentRollup, Rollup } from "../../models/interfaces";
+import { DocumentRollup, Rollup, RollupMetadata } from "../../models/interfaces";
 
 type Request = Legacy.Request;
 type ElasticsearchPlugin = Legacy.Plugins.elasticsearch.Plugin;
@@ -149,6 +149,24 @@ export default class RollupService {
       return { ok: true, response: mappings };
     } catch (err) {
       console.error("Index Management - RollupService - getFields:", err);
+      return { ok: false, error: err.message };
+    }
+  };
+
+  explainRollup = async (req: Request, h: ResponseToolkit): Promise<ServerResponse<RollupMetadata>> => {
+    try {
+      const { id } = req.params;
+      const params = { rollupId: id };
+      const { callWithRequest } = await this.esDriver.getCluster(CLUSTER.ISM);
+      const rollupMetadata = await callWithRequest(req, "ism.explainRollup", params);
+      console.log(rollupMetadata);
+      if (rollupMetadata[id] != null) {
+        return { ok: true, response: rollupMetadata };
+      } else {
+        return { ok: false, error: "Failed to load rollup" };
+      }
+    } catch (err) {
+      console.error("Index Management - RollupService - explainRollup:", err);
       return { ok: false, error: err.message };
     }
   };

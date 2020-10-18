@@ -52,7 +52,6 @@ import RollupEmptyPrompt from "../../components/RollupEmptyPrompt";
 import { RollupItem, RollupsQueryParams } from "../../models/interfaces";
 import { getURLQueryParams, renderContinuous, renderEnabled } from "../../utils/helpers";
 import DeleteModal from "../../components/DeleteModal";
-import { rollupsColumns } from "../../utils/constants";
 
 interface RollupsProps extends RouteComponentProps {
   rollupService: RollupService;
@@ -178,6 +177,45 @@ let SampleGetRollupJobs: RollupItem[] = [
         {
           date_histogram: {
             fixed_interval: "30d",
+            source_field: "timestamp",
+            target_field: "timestamp",
+            timezone: "America/Los_Angeles",
+          },
+        },
+      ],
+      metrics: [],
+    },
+  },
+  {
+    _id: "another-job",
+    _version: 3,
+    _seq_no: 13,
+    _primary_term: 1,
+    rollup: {
+      rollup_id: "another-job",
+      enabled: true,
+      schedule: {
+        interval: {
+          start_time: 1553112384,
+          period: 1,
+          unit: "Minutes",
+        },
+      },
+      last_updated_time: 1602972619850,
+      enabled_time: 1602972619850,
+      description: "",
+      schema_version: 5,
+      source_index: "kibana_sample_data_logs",
+      target_index: "ex-index",
+      metadata_id: "lu6dOHUB4nl21WFi4uzb",
+      roles: [],
+      page_size: 1000,
+      delay: 0,
+      continuous: true,
+      dimensions: [
+        {
+          date_histogram: {
+            fixed_interval: "1ms",
             source_field: "timestamp",
             target_field: "timestamp",
             timezone: "America/Los_Angeles",

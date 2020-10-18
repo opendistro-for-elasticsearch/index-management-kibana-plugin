@@ -151,6 +151,7 @@ export default class CreateRollupForm extends Component<CreateRollupFormProps, C
     await this.getMappings();
   };
 
+  //TODO: Check the field `` part to see if it is actually parsing data.
   getMappings = async (): Promise<void> => {
     try {
       const { rollupService } = this.props;
@@ -160,7 +161,7 @@ export default class CreateRollupForm extends Component<CreateRollupFormProps, C
         //Set mapping when there is source index selected.
         this.setState({
           mappings: response.response,
-          fields: sourceIndex.length ? `response.response.${sourceIndex[0].label}.mappings.properties` : undefined,
+          fields: sourceIndex.length ? response.response[sourceIndex[0].label].mappings.properties : undefined,
         });
       } else {
         toastNotifications.addDanger(`Could not load fields: ${response.error}`);
@@ -325,6 +326,12 @@ export default class CreateRollupForm extends Component<CreateRollupFormProps, C
 
   onDimensionSelectionChange = (selectedFields: DimensionItem[]): void => {
     this.setState({ selectedDimensionField: selectedFields });
+    //Update JSON
+    // let newJSON = this.state.rollupJSON;
+    // newJSON.dimensions = selectedFields.map((dimension) => {
+    //
+    //   }
+    // );
   };
 
   onChangeJobEnabledByDefault = (): void => {
@@ -396,6 +403,53 @@ export default class CreateRollupForm extends Component<CreateRollupFormProps, C
     this.setState({ intervalTimeunit: e.target.value, rollupJSON: newJSON });
   };
 
+  updateDimension = (): void => {
+    const { rollupJSON, selectedDimensionField } = this.state;
+    let newJSON = rollupJSON;
+
+    //Add date_histogram first
+
+    // let timestampString = timestamp.map(function(option) {
+    //   return option.label;
+    // });
+    //
+    // if (intervalType == 'fixed') {
+    //   newJSON.dimensions.push({
+    //     date_histogram: {
+    //       fixed_interval: intervalValue + intervalTimeunit,
+    //       source_field: timestampString[0],
+    //       timezone: timezone,
+    //     },
+    //   });
+    // } else {
+    //   newJSON.dimensions.push({
+    //     date_histogram: {
+    //       calendar_interval: intervalValue + intervalTimeunit,
+    //       source_field: timestamp,
+    //       timezone: timezone,
+    //     },
+    //   });
+    // }
+    //Push rest of dimensions
+    selectedDimensionField.map((dimension) => {
+      if (dimension.aggregationMethod == "terms") {
+        newJSON.rollup.dimensions.push({
+          terms: {
+            source_field: dimension.field.label,
+          },
+        });
+      } else {
+        newJSON.rollup.dimensions.push({
+          histogram: {
+            source_field: dimension.field.label,
+            interval: dimension.interval,
+          },
+        });
+      }
+    });
+    this.setState({ rollupJSON: newJSON });
+  };
+
   //TODO: Complete submit logistic
   onSubmit = async (): Promise<void> => {
     const { rollupId, rollupJSON } = this.state;
@@ -405,6 +459,7 @@ export default class CreateRollupForm extends Component<CreateRollupFormProps, C
         this.setState({ rollupIdError: "Required" });
       } else {
         //TODO: Build JSON string here
+        this.updateDimension();
         await this.onCreate(rollupId, rollupJSON);
       }
     } catch (err) {

@@ -14,7 +14,7 @@
  */
 
 import React, { Component } from "react";
-import { EuiFlexGrid, EuiSpacer, EuiFlexItem, EuiText } from "@elastic/eui";
+import { EuiFlexGrid, EuiSpacer, EuiFlexItem, EuiText, EuiComboBoxOptionOption } from "@elastic/eui";
 import { ContentPanel, ContentPanelActions } from "../../../../components/ContentPanel";
 import { ModalConsumer } from "../../../../components/Modal";
 
@@ -23,7 +23,10 @@ interface GeneralInformationProps {
   description: string;
   sourceIndex: string;
   targetIndex: string;
-  roles: string[];
+  roles: EuiComboBoxOptionOption<String>[];
+  scheduleText: string;
+  pageSize: number;
+  lastUpdated: string;
   onEdit: () => void;
 }
 
@@ -33,8 +36,12 @@ export default class GeneralInformation extends Component<GeneralInformationProp
   }
 
   render() {
-    const { rollupId, description, onEdit, sourceIndex, targetIndex, roles } = this.props;
-
+    const { rollupId, description, onEdit, sourceIndex, targetIndex, roles, scheduleText, pageSize, lastUpdated } = this.props;
+    const rolesText = roles.length
+      ? roles.map(function (option) {
+          return option.label;
+        })
+      : "-";
     return (
       <ContentPanel
         actions={
@@ -81,31 +88,31 @@ export default class GeneralInformation extends Component<GeneralInformationProp
             <EuiFlexItem>
               <EuiText size={"xs"}>
                 <dt>Schedule</dt>
-                <dd></dd>
+                <dd>{scheduleText}</dd>
               </EuiText>
             </EuiFlexItem>
             <EuiFlexItem>
               <EuiText size={"xs"}>
                 <dt>Description</dt>
-                <dd>{description}</dd>
+                <dd>{description == "" ? "-" : description}</dd>
               </EuiText>
             </EuiFlexItem>
             <EuiFlexItem>
               <EuiText size={"xs"}>
                 <dt>Roles</dt>
-                <dd>{roles}</dd>
+                <dd>{rolesText}</dd>
               </EuiText>
             </EuiFlexItem>
             <EuiFlexItem>
               <EuiText size={"xs"}>
                 <dt>Last updated</dt>
-                <dd></dd>
+                <dd>{lastUpdated}</dd>
               </EuiText>
             </EuiFlexItem>
             <EuiFlexItem>
               <EuiText size={"xs"}>
                 <dt>Pages per execution</dt>
-                <dd></dd>
+                <dd>{pageSize}</dd>
               </EuiText>
             </EuiFlexItem>
           </EuiFlexGrid>

@@ -14,6 +14,8 @@
  */
 
 // TODO: Backend has PR out to change this model, this needs to be updated once that goes through
+import { MetricItem } from "../public/pages/CreateRollup/models/interfaces";
+
 export interface ManagedIndexMetaData {
   index: string;
   indexUuid: string;
@@ -79,43 +81,59 @@ export interface State {
 }
 
 export interface Rollup {
-  id: string;
-  seq_no: number;
-  primary_Term: number;
-  rollup: {
-    continuous: boolean;
-    delay?: number;
-    description?: string;
-    dimensions: [
-      {
-        date_histogram: {
-          source_field: string;
-          fixed_interval?: string;
-          calendar_interval?: string;
-          timezone: string;
-        };
-      }
-    ];
-    enabled: boolean;
-    enabled_time?: number;
-    last_updated_time: number;
-    metadata_id?: number;
-    metrics: [];
-    page_size: number;
-    roles: [];
-    schedule: {
-      interval?: {
-        start_time: number;
-        period: number;
-        unit: string;
+  continuous: boolean;
+  delay?: number;
+  description?: string;
+  dimensions: [
+    {
+      date_histogram: {
+        source_field: string;
+        fixed_interval?: string;
+        calendar_interval?: string;
+        timezone: string;
       };
-      cron?: {
-        expression: string;
-        timezone?: string;
-      };
+    }
+  ];
+  enabled: boolean;
+  enabled_time?: number;
+  last_updated_time: number;
+  metadata_id?: number;
+  metrics: MetricItem[];
+  page_size: number;
+  roles: object[];
+  schedule: {
+    interval?: {
+      start_time: number;
+      period: number;
+      unit: string;
     };
-    schema_version: number;
-    source_index: string;
-    target_index: string;
+    cron?: {
+      expression: string;
+      timezone?: string;
+    };
+  };
+  schema_version: number;
+  source_index: string;
+  target_index: string;
+}
+
+export interface RollupMetadata {
+  metadata_id: string;
+  rollup_metadata: {
+    rollup_id: string;
+    failure_reason?: string;
+    last_updated_time: number;
+    continuous: {
+      next_window_start_time: number;
+      next_window_end_time: number;
+    };
+    status: string;
+    stats: {
+      pages_processed: number;
+      documents_processed: number;
+      rollups_indexed: number;
+      index_time_in_millis: number;
+      search_time_in_millis: number;
+    };
   };
 }
