@@ -112,28 +112,26 @@ export default class AdvancedAggregation extends Component<AdvancedAggregationPr
     const { onDimensionSelectionChange, selectedDimensionField } = this.props;
     const { selectedFields } = this.state;
     //Clone selectedDimensionField
+    let updatedDimensions = Array.from(selectedDimensionField);
     const toAddFields = Array.from(selectedFields);
     // Loop through selectedFields to see if existing Dimensions are removed
 
-    let updatedDimensions = selectedDimensionField.map((dimension) => {
-      //If does not exist in new selection, remove this dimension.
+    selectedDimensionField.map((dimension) => {
+      //If does not exist in new selection, don't add this dimension.
       if (!selectedFields.includes(dimension.field)) {
-        console.log("Delete: " + dimension.field.label);
+        updatedDimensions.splice(updatedDimensions.indexOf(dimension), 1);
       }
       //If exists, delete it from toAddFields so that it doesn't get added again.
       else {
         const index = toAddFields.indexOf(dimension.field);
         toAddFields.splice(index, 1);
-        console.log(dimension.field.label + " exists.");
-        return dimension;
       }
     });
     //Update sequence number
     this.updateSequence(updatedDimensions);
     //Parse selectedFields to an array of DimensionItem if it does not exist
-    let i: number = updatedDimensions.length + 1;
+    let i = updatedDimensions.length + 1;
     const toAdd: DimensionItem[] = toAddFields.map((field) => {
-      console.log("Add: " + field.label);
       return field.type == "long" || field.type == "double"
         ? {
             sequence: i++,
@@ -148,17 +146,16 @@ export default class AdvancedAggregation extends Component<AdvancedAggregationPr
           };
     });
     onDimensionSelectionChange(updatedDimensions.length ? updatedDimensions.concat(toAdd) : toAdd);
-    console.log(this.props.selectedDimensionField);
   }
 
   //Check the dimension num
   updateSequence(items: DimensionItem[]) {
+    if (items.length == 0) return;
     const { onDimensionSelectionChange } = this.props;
     let dimensionNum;
     for (dimensionNum = 0; dimensionNum < items.length; dimensionNum++) {
       items[dimensionNum].sequence = dimensionNum + 1;
     }
-    console.log(items);
     onDimensionSelectionChange(items);
   }
 
@@ -311,31 +308,7 @@ export default class AdvancedAggregation extends Component<AdvancedAggregationPr
       },
       {
         name: "Actions",
-        //TODO: Disable button for first and last row
         actions: actions,
-        // render: (sequence) => (
-        //   <EuiFlexGroup>
-        //     <EuiFlexItem grow={false}>
-        //       <EuiLink onClick={this.moveDown}
-        //                // disabled={item.sequence == 1}
-        //       >
-        //         Move down
-        //       </EuiLink>
-        //     </EuiFlexItem>
-        //     <EuiFlexItem grow={false}>
-        //       <EuiLink onClick={this.moveUp}
-        //                // disabled={item.sequence== selectedDimensionField.length}
-        //       >
-        //         Move up
-        //       </EuiLink>
-        //     </EuiFlexItem>
-        //     <EuiFlexItem grow={false}>
-        //       <EuiIcon type={"crossInACircleFilled"}
-        //                // onClick={this.deleteField}
-        //       />
-        //     </EuiFlexItem>
-        //   </EuiFlexGroup>
-        // ),
       },
     ];
 
