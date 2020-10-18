@@ -33,7 +33,6 @@ import {
   EuiComboBoxOptionOption,
   // @ts-ignore
   Pagination,
-  EuiTableSortingType,
   CustomItemAction,
   EuiTableSelectionType,
   EuiTableFieldDataColumnType,
@@ -49,12 +48,8 @@ import {
   EuiCallOut,
   EuiFieldNumber,
 } from "@elastic/eui";
-import { DEFAULT_PAGE_SIZE_OPTIONS } from "../../../Rollups/utils/constants";
 import { DimensionItem, FieldItem } from "../../models/interfaces";
 import { AddFieldsColumns } from "../../utils/constants";
-import { RollupItem } from "../../../Rollups/models/interfaces";
-import { ManagedCatIndex } from "../../../../../server/models/interfaces";
-import { Criteria } from "@elastic/eui/src/components/basic_table/basic_table";
 
 interface AdvancedAggregationProps {
   fieldsOption: FieldItem[];
@@ -167,12 +162,28 @@ export default class AdvancedAggregation extends Component<AdvancedAggregationPr
     onDimensionSelectionChange(items);
   }
 
-  moveUp() {}
+  moveUp(item: DimensionItem) {
+    const { selectedDimensionField } = this.props;
+    const toMoveindex = selectedDimensionField.indexOf(item);
+    if (toMoveindex == 0) return;
+    let toSwap = selectedDimensionField[toMoveindex - 1];
+    selectedDimensionField[toMoveindex] = toSwap;
+    selectedDimensionField[toMoveindex - 1] = item;
+    this.updateSequence(selectedDimensionField);
+  }
 
-  moveDown() {}
+  moveDown(item: DimensionItem) {
+    const { selectedDimensionField } = this.props;
+    const toMoveindex = selectedDimensionField.indexOf(item);
+    if (toMoveindex == selectedDimensionField.length - 1) return;
+    let toSwap = selectedDimensionField[toMoveindex + 1];
+    selectedDimensionField[toMoveindex] = toSwap;
+    selectedDimensionField[toMoveindex + 1] = item;
+    this.updateSequence(selectedDimensionField);
+  }
 
   deleteField = (item: DimensionItem) => {
-    const { onDimensionSelectionChange, selectedDimensionField } = this.props;
+    const { selectedDimensionField } = this.props;
     const { selectedFields } = this.state;
     console.log("ITEM: " + item + " index: " + selectedDimensionField.indexOf(item));
 
@@ -181,7 +192,6 @@ export default class AdvancedAggregation extends Component<AdvancedAggregationPr
     selectedFields.splice(selectedFields.indexOf(item.field), 1);
     this.setState({ selectedFields });
     this.updateSequence(selectedDimensionField);
-    onDimensionSelectionChange(selectedDimensionField);
   };
 
   swap() {}
@@ -224,12 +234,12 @@ export default class AdvancedAggregation extends Component<AdvancedAggregationPr
           return (
             <EuiFlexGroup>
               <EuiFlexItem grow={false}>
-                <EuiLink onClick={this.moveUp} disabled={item.sequence == 1}>
+                <EuiLink onClick={() => this.moveUp(item)} disabled={item.sequence == 1}>
                   Move up
                 </EuiLink>
               </EuiFlexItem>
               <EuiFlexItem grow={false}>
-                <EuiLink onClick={this.moveDown} disabled={item.sequence == selectedDimensionField.length}>
+                <EuiLink onClick={() => this.moveDown(item)} disabled={item.sequence == selectedDimensionField.length}>
                   Move down
                 </EuiLink>
               </EuiFlexItem>
