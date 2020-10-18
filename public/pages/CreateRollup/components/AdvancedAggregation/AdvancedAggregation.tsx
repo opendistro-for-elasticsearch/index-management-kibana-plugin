@@ -142,7 +142,7 @@ export default class AdvancedAggregation extends Component<AdvancedAggregationPr
         : {
             sequence: i++,
             field: field,
-            aggregationMethod: "term",
+            aggregationMethod: "terms",
           };
     });
     onDimensionSelectionChange(updatedDimensions.length ? updatedDimensions.concat(toAdd) : toAdd);
@@ -191,8 +191,6 @@ export default class AdvancedAggregation extends Component<AdvancedAggregationPr
     this.updateSequence(selectedDimensionField);
   };
 
-  swap() {}
-
   onChangeInterval = (e: ChangeEvent<HTMLInputElement>): void => {
     this.setState({});
   };
@@ -203,7 +201,7 @@ export default class AdvancedAggregation extends Component<AdvancedAggregationPr
   //   this.setState({ from: page * size, size, sortField, sortDirection });
   // };
   render() {
-    const { fieldsOption, selectedDimensionField, onDimensionSelectionChange } = this.props;
+    const { fieldsOption, selectedDimensionField } = this.props;
     const { selectedFields, isModalVisible, searchText, selectedFieldType, page, size, sortDirection, sortField } = this.state;
     // const pagination: Pagination = {
     //   pageIndex: page,
@@ -280,9 +278,9 @@ export default class AdvancedAggregation extends Component<AdvancedAggregationPr
               <EuiSelect
                 compressed={true}
                 value={aggregationMethod}
-                disabled={aggregationMethod == "term"}
+                disabled={aggregationMethod == "terms"}
                 options={[
-                  { value: "term", text: "Term" },
+                  { value: "terms", text: "Terms" },
                   { value: "histogram", text: "Histogram" },
                 ]}
               />
