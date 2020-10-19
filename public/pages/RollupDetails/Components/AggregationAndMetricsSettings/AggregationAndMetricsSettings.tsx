@@ -34,6 +34,7 @@ interface AggregationAndMetricsSettingsProps {
   histogramInterval: string;
   timezone: string;
   selectedDimensionField: RollupDimensionItem[];
+  selectedMetrics: MetricItem[];
 }
 const aggregationColumns: EuiTableFieldDataColumnType<RollupDimensionItem>[] = [
   {
@@ -77,12 +78,6 @@ const metricsColumns = [
     name: "Field Name",
   },
   {
-    field: "all",
-    name: "All",
-    align: "left",
-    render: (all: boolean) => all && <EuiIcon type={"check"} />,
-  },
-  {
     field: "min",
     name: "Min",
     render: (min: boolean) => min && <EuiIcon type={"check"} />,
@@ -109,43 +104,13 @@ const metricsColumns = [
   },
 ];
 
-const sampleMetricItems: MetricItem[] = [
-  {
-    source_field: "On time rate",
-    all: true,
-    min: false,
-    max: true,
-    sum: false,
-    avg: false,
-    value_count: false,
-  },
-  {
-    source_field: "Return rate",
-    all: true,
-    min: true,
-    max: false,
-    sum: false,
-    avg: false,
-    value_count: false,
-  },
-  {
-    source_field: "OTIF rate",
-    all: false,
-    min: false,
-    max: true,
-    sum: false,
-    avg: false,
-    value_count: true,
-  },
-];
-
 export default class AggregationAndMetricsSettings extends Component<AggregationAndMetricsSettingsProps> {
   constructor(props: AggregationAndMetricsSettingsProps) {
     super(props);
   }
 
   render() {
-    const { timestamp, histogramInterval, timezone, selectedDimensionField } = this.props;
+    const { timestamp, histogramInterval, timezone, selectedDimensionField, selectedMetrics } = this.props;
 
     return (
       <ContentPanel bodyStyles={{ padding: "initial" }} title="Aggregation and metrics settings" titleSize="m">
@@ -216,14 +181,14 @@ export default class AggregationAndMetricsSettings extends Component<Aggregation
             </EuiFlexItem>
             <EuiFlexItem grow={false}>
               <EuiText color={"subdued"} textAlign={"left"}>
-                <h3>{`(${sampleMetricItems.length})`}</h3>
+                <h3>{`(${selectedMetrics.length})`}</h3>
               </EuiText>
             </EuiFlexItem>
           </EuiFlexGroup>
-          {sampleMetricItems.length ? (
+          {selectedMetrics.length ? (
             <Fragment>
               <EuiPanel>
-                <EuiBasicTable items={sampleMetricItems} rowHeader="source_field" columns={metricsColumns} tableLayout={"auto"} />
+                <EuiBasicTable items={selectedMetrics} rowHeader="source_field" columns={metricsColumns} tableLayout={"auto"} />
               </EuiPanel>
             </Fragment>
           ) : (

@@ -54,4 +54,16 @@ export interface RollupDimensionItem {
     interval: number;
   };
 }
-s;
+
+export interface RollupMetricItem {
+  source_field: string;
+  metrics: [
+    {
+      min?: Object;
+      max?: Object;
+      sum?: Object;
+      avg?: Object;
+      value_count?: Object;
+    }
+  ];
+}

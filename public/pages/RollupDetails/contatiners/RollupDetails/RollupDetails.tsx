@@ -27,9 +27,9 @@ import GeneralInformation from "../../Components/GeneralInformation/GeneralInfor
 import RollupStatus from "../../Components/RollupStatus/RollupStatus";
 import AggregationAndMetricsSettings from "../../Components/AggregationAndMetricsSettings/AggregationAndMetricsSettings";
 import { parseTimeunit } from "../../../CreateRollup/utils/helpers";
-import { IndexItem, RollupMetadata } from "../../../../../models/interfaces";
+import { RollupMetadata } from "../../../../../models/interfaces";
 import { renderTime } from "../../../Rollups/utils/helpers";
-import { DimensionItem, RollupDimensionItem } from "../../../CreateRollup/models/interfaces";
+import { DimensionItem, MetricItem, RollupDimensionItem, RollupMetricItem } from "../../../CreateRollup/models/interfaces";
 
 interface RollupDetailsProps extends RouteComponentProps {
   rollupService: RollupService;
@@ -56,7 +56,8 @@ interface RollupDetailsState {
   timestamp: string;
   histogramInterval: string;
   timezone: string;
-  selectedDimensionField: DimensionItem[];
+  selectedDimensionField: RollupDimensionItem[];
+  selectedMetrics: MetricItem[];
 }
 
 export default class RollupDetails extends Component<RollupDetailsProps, RollupDetailsState> {
@@ -86,6 +87,7 @@ export default class RollupDetails extends Component<RollupDetailsProps, RollupD
       histogramInterval: "",
       timezone: "UTC +0",
       selectedDimensionField: [],
+      selectedMetrics: [],
     };
   }
 
@@ -134,8 +136,8 @@ export default class RollupDetails extends Component<RollupDetailsProps, RollupD
             : response.response.rollup.dimensions[0].date_histogram.calendar_interval,
           timezone: response.response.rollup.dimensions[0].date_histogram.timezone,
           selectedDimensionField: this.parseDimension(response.response.rollup.dimensions),
+          selectedMetrics: this.parseMetric(response.response.rollup.metrics),
         });
-        console.log(response.response.rollup.dimensions);
         if (response.response.rollup.schedule.cron == undefined) {
           this.setState({
             interval: response.response.rollup.schedule.interval.period,
@@ -158,12 +160,13 @@ export default class RollupDetails extends Component<RollupDetailsProps, RollupD
       console.log(explainResponse);
     } catch (err) {
       toastNotifications.addDanger(getErrorMessage(err, "Could not load the rollup job"));
-      this.props.history.push(ROUTES.ROLLUPS);
+      // this.props.history.push(ROUTES.ROLLUPS);
     }
   };
 
   parseDimension = (dimensions: RollupDimensionItem[]): DimensionItem[] => {
     const sourceArray = dimensions.slice(1, dimensions.length);
+    if (sourceArray.length == 0) return [];
     const result = sourceArray.map((dimension: RollupDimensionItem) => ({
       sequence: dimensions.indexOf(dimension),
       aggregationMethod: !!dimension.histogram ? "terms" : "histogram",
@@ -172,6 +175,22 @@ export default class RollupDetails extends Component<RollupDetailsProps, RollupD
     }));
 
     // console.log(result);
+    return result;
+  };
+
+  parseMetric = (metrics: RollupMetricItem[]): MetricItem[] => {
+    if (metrics.length == 0) return [];
+    console.log(metrics);
+    const result = metrics.map((metric) => ({
+      source_field: metric.source_field,
+      all: null,
+      min: metric.metrics.filter((item) => item.min != null).length > 0,
+      max: metric.metrics.filter((item) => item.max != null).length > 0,
+      sum: metric.metrics.filter((item) => item.sum != null).length > 0,
+      avg: metric.metrics.filter((item) => item.avg != null).length > 0,
+      value_count: metric.metrics.filter((item) => item.value_count != null).length > 0,
+    }));
+    console.log("Result: " + result);
     return result;
   };
 
@@ -241,6 +260,7 @@ export default class RollupDetails extends Component<RollupDetailsProps, RollupD
       histogramInterval,
       timezone,
       selectedDimensionField,
+      selectedMetrics,
     } = this.state;
 
     let scheduleText = recurringJob ? "Continuous, " : "Not continuous, ";
@@ -295,32 +315,14 @@ export default class RollupDetails extends Component<RollupDetailsProps, RollupD
         />
         <EuiSpacer />
         <RollupStatus metadata={metadata} />
-        {/*<HistogramAndMetrics*/}
-        {/*  rollupId={rollupId}*/}
-        {/*  intervalValue={intervalValue}*/}
-        {/*  timestamp={timestamp}*/}
-        {/*  timeunit={timeunit}*/}
-        {/*  timezone={timezone}*/}
-        {/*/>*/}
         <EuiSpacer />
         <AggregationAndMetricsSettings
           timestamp={timestamp}
           histogramInterval={histogramInterval}
           timezone={timezone}
           selectedDimensionField={selectedDimensionField}
+          selectedMetrics={selectedMetrics}
         />
-        {/*<ScheduleRolesAndNotifications*/}
-        {/*  rollupId={rollupId}*/}
-        {/*  jobEnabledByDefault={jobEnabledByDefault}*/}
-        {/*  recurringJob={recurringJob}*/}
-        {/*  recurringDefinition={recurringDefinition}*/}
-        {/*  interval={interval}*/}
-        {/*  intervalTimeunit={intervalTimeunit}*/}
-        {/*  cronExpression={cronExpression}*/}
-        {/*  pageSize={pageSize}*/}
-        {/*  delayTime={delayTime}*/}
-        {/*  delayTimeunit={delayTimeunit}*/}
-        {/*/>*/}
         <EuiSpacer />
       </div>
     );

@@ -39,7 +39,7 @@ export default class RollupStatus extends Component<RollupStatusProps> {
               <EuiText size={"xs"}>
                 <dt>Current rollup window</dt>
                 <dd>
-                  {metadata == null
+                  {metadata == null || metadata.rollup_metadata.continuous == null
                     ? "-"
                     : renderTime(metadata.rollup_metadata.continuous.next_window_start_time) +
                       " - " +
