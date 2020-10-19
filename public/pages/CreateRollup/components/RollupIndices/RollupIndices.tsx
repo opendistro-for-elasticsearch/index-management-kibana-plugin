@@ -20,6 +20,7 @@ import { EuiComboBoxOptionOption } from "@elastic/eui/src/components/combo_box/t
 import { IndexItem } from "../../../../../models/interfaces";
 import { toastNotifications } from "ui/notify";
 import IndexService from "../../../../services/IndexService";
+import _ from "lodash";
 
 interface RollupIndicesProps {
   indexService: IndexService;
@@ -46,6 +47,8 @@ export default class RollupIndices extends Component<RollupIndicesProps, RollupI
       indexOptions: [],
       targetIndexOptions: [],
     };
+
+    this.onIndexSearchChange = _.debounce(this.onIndexSearchChange, 500, { leading: true });
   }
 
   async componentDidMount(): Promise<void> {

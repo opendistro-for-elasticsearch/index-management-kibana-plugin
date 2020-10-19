@@ -216,6 +216,27 @@ export default class RollupService {
         rollup: hit._source,
       }));
 
+      let ids = "";
+      rollups.map((rollup) => {
+        if (rollups.indexOf(rollup) == 0) {
+          ids = ids + rollup._id;
+        } else {
+          ids = ids + "," + rollup._id;
+        }
+      });
+      const explainParams = { rollupId: ids };
+      //TODO: find away to call explain api here, the callWithRequest is from different cluster so it is currently not working.
+
+      // const rollupMetadata = await callWithRequest(req, "ism.explainRollup", explainParams);
+      // // Add metadata item to corresponding rollup
+      // if (rollupMetadata) {
+      //   rollups.map((rollup)=> {
+      //     rollup.rollup.metadata = rollupMetadata[rollup._id];
+      //   });
+      // } else {
+      //   // Show error here
+      // }
+      // console.log(rollups);
       return { ok: true, response: { rollups: rollups, totalRollups: totalRollups } };
     } catch (err) {
       if (err.statusCode === 404 && err.body.error.type === "index_not_found_exception") {
