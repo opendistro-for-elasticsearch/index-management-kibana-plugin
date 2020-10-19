@@ -291,7 +291,6 @@ export default class CreateRollupForm extends Component<CreateRollupFormProps, C
     this.setDateHistogram();
   };
 
-  //TODO: Clear the other field?
   setDateHistogram = (): void => {
     const { intervalType, intervalValue, timeunit } = this.state;
     let newJSON = this.state.rollupJSON;
@@ -426,6 +425,25 @@ export default class CreateRollupForm extends Component<CreateRollupFormProps, C
     this.setState({ rollupJSON: newJSON });
   };
 
+  updateMetric = (): void => {
+    const { rollupJSON, selectedMetrics } = this.state;
+    let newJSON = rollupJSON;
+    //Push all metrics
+    selectedMetrics.map((metric) => {
+      const metrics = [];
+      if (metric.min) metrics.push({ min: {} });
+      if (metric.max) metrics.push({ max: {} });
+      if (metric.sum) metrics.push({ sum: {} });
+      if (metric.avg) metrics.push({ avg: {} });
+      if (metric.value_count) metrics.push({ value_count: {} });
+      newJSON.rollup.metrics.push({
+        source_field: metric.source_field.label,
+        metrics: metrics,
+      });
+    });
+    this.setState({ rollupJSON: newJSON });
+  };
+
   //TODO: Complete submit logistic
   onSubmit = async (): Promise<void> => {
     const { rollupId, rollupJSON } = this.state;
@@ -436,6 +454,7 @@ export default class CreateRollupForm extends Component<CreateRollupFormProps, C
       } else {
         //TODO: Build JSON string here
         this.updateDimension();
+        this.updateMetric();
         await this.onCreate(rollupId, rollupJSON);
       }
     } catch (err) {
