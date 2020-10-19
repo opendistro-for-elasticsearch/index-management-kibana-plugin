@@ -14,7 +14,6 @@
  */
 
 import React, { ChangeEvent, Component } from "react";
-import _ from "lodash";
 import chrome from "ui/chrome";
 import { RouteComponentProps } from "react-router-dom";
 import { EuiFlexItem, EuiFlexGroup, EuiButton, EuiTitle, EuiSpacer, EuiButtonEmpty, EuiComboBoxOptionOption } from "@elastic/eui";
@@ -68,7 +67,6 @@ const options: EuiComboBoxOptionOption<String>[] = [
 ];
 
 export default class EditRollup extends Component<EditRollupProps, EditRollupState> {
-  //TODO: Get actual rollupId etc. here
   constructor(props: EditRollupProps) {
     super(props);
     this.state = {
@@ -192,7 +190,6 @@ export default class EditRollup extends Component<EditRollupProps, EditRollupSta
     this.setState({ cronExpression: e.target.value, rollupJSON: newJSON });
   };
 
-  //TODO: Figure out the correct format of delay time, do we need to convert the value along with timeunit?
   onChangeDelayTime = (e: ChangeEvent<HTMLInputElement>): void => {
     let newJSON = this.state.rollupJSON;
     newJSON.rollup.delay = e.target.value;
@@ -211,7 +208,7 @@ export default class EditRollup extends Component<EditRollupProps, EditRollupSta
     this.setState({ pageSize: e.target.valueAsNumber, rollupJSON: newJSON });
   };
 
-  //Trying to clear interval field when cron expression is defined
+  //Try to clear interval field when cron expression is defined
   onChangeRecurringDefinition = (e: ChangeEvent<HTMLSelectElement>): void => {
     let newJSON = this.state.rollupJSON;
     this.setState({ recurringDefinition: e.target.value, rollupJSON: newJSON });
@@ -297,6 +294,7 @@ export default class EditRollup extends Component<EditRollupProps, EditRollupSta
         <EuiSpacer />
         {/*TODO: Disable change name function*/}
         <ConfigureRollup
+          isEdit={true}
           rollupId={rollupId}
           rollupIdError={rollupIdError}
           onChangeDescription={this.onChangeDescription}

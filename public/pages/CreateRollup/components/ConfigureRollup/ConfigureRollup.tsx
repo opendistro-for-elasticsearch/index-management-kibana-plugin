@@ -18,6 +18,7 @@ import { EuiSpacer, EuiFormRow, EuiFieldText, EuiTextArea, EuiText, EuiFlexGroup
 import { ContentPanel } from "../../../../components/ContentPanel";
 
 interface ConfigureRollupProps {
+  isEdit: boolean;
   rollupId: string;
   rollupIdError: string;
   onChangeName: (value: ChangeEvent<HTMLInputElement>) => void;
@@ -25,12 +26,12 @@ interface ConfigureRollupProps {
   description: string;
 }
 
-const ConfigureRollup = ({ rollupId, rollupIdError, onChangeName, onChangeDescription, description }: ConfigureRollupProps) => (
+const ConfigureRollup = ({ isEdit, rollupId, rollupIdError, onChangeName, onChangeDescription, description }: ConfigureRollupProps) => (
   <ContentPanel bodyStyles={{ padding: "initial" }} title="Job name and description" titleSize="m">
     <div style={{ paddingLeft: "10px" }}>
       <EuiSpacer size="s" />
       <EuiFormRow label="Name" helpText="Specify a unique, descriptive name." isInvalid={!!rollupIdError} error={rollupIdError}>
-        <EuiFieldText isInvalid={!!rollupIdError} placeholder="my-rollupjob1" value={rollupId} onChange={onChangeName} />
+        <EuiFieldText isInvalid={!!rollupIdError} placeholder="my-rollupjob1" value={rollupId} onChange={onChangeName} disabled={isEdit} />
       </EuiFormRow>
       <EuiSpacer />
       <EuiFlexGroup gutterSize={"xs"}>

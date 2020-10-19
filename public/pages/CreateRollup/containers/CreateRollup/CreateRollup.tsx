@@ -98,6 +98,7 @@ export default class CreateRollup extends Component<CreateRollupProps> {
             </EuiTitle>
             <EuiSpacer />
             <ConfigureRollup
+              isEdit={false}
               rollupId={rollupId}
               rollupIdError={rollupIdError}
               description={description}
