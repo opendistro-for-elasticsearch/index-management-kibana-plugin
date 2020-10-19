@@ -25,7 +25,7 @@ import AdvancedAggregation from "../../components/AdvancedAggregation";
 import MetricsCalculation from "../../components/MetricsCalculation";
 import { DimensionItem, FieldItem, MetricItem } from "../../models/interfaces";
 
-interface CreateRollupProps extends RouteComponentProps {
+interface CreateRollupStep2Props extends RouteComponentProps {
   rollupService: RollupService;
   currentStep: number;
   fields: any;
@@ -47,21 +47,9 @@ interface CreateRollupProps extends RouteComponentProps {
   onMetricSelectionChange: (selectedFields: MetricItem[]) => void;
 }
 
-interface CreateRollupState {
-  submitError: string;
-  isSubmitting: boolean;
-  hasSubmitted: boolean;
-}
-
-export default class CreateRollupStep2 extends Component<CreateRollupProps, CreateRollupState> {
-  constructor(props: CreateRollupProps) {
+export default class CreateRollupStep2 extends Component<CreateRollupStep2Props> {
+  constructor(props: CreateRollupStep2Props) {
     super(props);
-
-    this.state = {
-      submitError: "",
-      isSubmitting: false,
-      hasSubmitted: false,
-    };
   }
 
   componentDidMount = async (): Promise<void> => {
@@ -74,21 +62,7 @@ export default class CreateRollupStep2 extends Component<CreateRollupProps, Crea
 
   render() {
     if (this.props.currentStep !== 2) return null;
-    const {
-      fields,
-      intervalType,
-      intervalValue,
-      timestamp,
-      timeunit,
-      selectedDimensionField,
-      onChangeTimeunit,
-      onChangeIntervalType,
-      onChangeIntervalValue,
-      onChangeTimestamp,
-      onChangeTimezone,
-      onDimensionSelectionChange,
-    } = this.props;
-    const { submitError } = this.state;
+    const { fields, timestamp } = this.props;
 
     //Generate fields options
     var fieldsOption: FieldItem[] = [];
@@ -114,26 +88,9 @@ export default class CreateRollupStep2 extends Component<CreateRollupProps, Crea
               <p>You can't change aggregations or metrics after creating a job. Double-check your choices before proceeding.</p>
             </EuiCallOut>
             <EuiSpacer />
-            <TimeAggregation
-              {...this.props}
-              onChangeTimestamp={onChangeTimestamp}
-              onChangeIntervalType={onChangeIntervalType}
-              intervalType={intervalType}
-              intervalValue={intervalValue}
-              selectedTimestamp={timestamp}
-              timeunit={timeunit}
-              onChangeTimezone={onChangeTimezone}
-              onChangeTimeunit={onChangeTimeunit}
-              onChangeIntervalValue={onChangeIntervalValue}
-              fieldsOption={fieldsOption}
-            />
+            <TimeAggregation {...this.props} selectedTimestamp={timestamp} fieldsOption={fieldsOption} />
             <EuiSpacer />
-            <AdvancedAggregation
-              {...this.props}
-              fieldsOption={fieldsOption}
-              selectedDimensionField={selectedDimensionField}
-              onDimensionSelectionChange={onDimensionSelectionChange}
-            />
+            <AdvancedAggregation {...this.props} fieldsOption={fieldsOption} />
             <EuiSpacer />
             <MetricsCalculation {...this.props} fieldsOption={fieldsOption} />
           </EuiFlexItem>

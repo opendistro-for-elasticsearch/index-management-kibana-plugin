@@ -424,14 +424,14 @@ export default class MetricsCalculation extends Component<MetricsCalculationProp
                 </EuiTitle>
               </EuiFlexItem>
               <EuiFlexItem grow={false}>
-                <EuiTitle size={"m"}>
-                  <i>{" - optional "}</i>
-                </EuiTitle>
-              </EuiFlexItem>
-              <EuiFlexItem>
                 <EuiText size={"m"} color={"subdued"}>
                   <h2>{` (${selectedMetrics.length})`}</h2>
                 </EuiText>
+              </EuiFlexItem>
+              <EuiFlexItem grow={false}>
+                <EuiTitle size={"m"}>
+                  <i>{" - optional "}</i>
+                </EuiTitle>
               </EuiFlexItem>
             </EuiFlexGroup>
           </EuiFlexItem>
