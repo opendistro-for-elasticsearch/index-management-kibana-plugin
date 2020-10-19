@@ -153,14 +153,14 @@ export default class RollupService {
     }
   };
 
-  explainRollup = async (req: Request, h: ResponseToolkit): Promise<ServerResponse<RollupMetadata>> => {
+  explainRollup = async (req: Request, h: ResponseToolkit): Promise<ServerResponse<RollupMetadata[]>> => {
     try {
       const { id } = req.params;
       const params = { rollupId: id };
       const { callWithRequest } = await this.esDriver.getCluster(CLUSTER.ISM);
       const rollupMetadata = await callWithRequest(req, "ism.explainRollup", params);
       console.log(rollupMetadata);
-      if (rollupMetadata[id] != null) {
+      if (rollupMetadata) {
         return { ok: true, response: rollupMetadata };
       } else {
         return { ok: false, error: "Failed to load rollup" };

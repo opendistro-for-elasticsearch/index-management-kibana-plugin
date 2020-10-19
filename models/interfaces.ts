@@ -115,6 +115,7 @@ export interface Rollup {
   schema_version: number;
   source_index: string;
   target_index: string;
+  metadata?: RollupMetadata;
 }
 
 export interface RollupMetadata {
