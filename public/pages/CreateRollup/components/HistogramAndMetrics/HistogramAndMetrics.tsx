@@ -45,6 +45,7 @@ interface HistogramAndMetricsProps {
   timezone: string;
   timeunit: string;
   selectedDimensionField: DimensionItem[];
+  selectedMetrics: MetricItem[];
 }
 
 interface HistogramAndMetricsState {
@@ -128,42 +129,6 @@ const metricsColumns = [
   },
 ];
 
-const sampleMetricItems: MetricItem[] = [
-  {
-    source_field: {
-      label: "On time rate",
-    },
-    all: true,
-    min: false,
-    max: true,
-    sum: false,
-    avg: false,
-    value_count: false,
-  },
-  {
-    source_field: {
-      label: "Return rate",
-    },
-    all: true,
-    min: true,
-    max: false,
-    sum: false,
-    avg: false,
-    value_count: false,
-  },
-  {
-    source_field: {
-      label: "OTIF rate",
-    },
-    all: false,
-    min: false,
-    max: true,
-    sum: false,
-    avg: false,
-    value_count: true,
-  },
-];
-
 export default class HistogramAndMetrics extends Component<HistogramAndMetricsProps, HistogramAndMetricsState> {
   constructor(props: HistogramAndMetricsProps) {
     super(props);
@@ -182,7 +147,7 @@ export default class HistogramAndMetrics extends Component<HistogramAndMetricsPr
   };
 
   render() {
-    const { onChangeStep, intervalValue, timestamp, timezone, timeunit, selectedDimensionField } = this.props;
+    const { onChangeStep, intervalValue, timestamp, timezone, timeunit, selectedDimensionField, selectedMetrics } = this.props;
     const { from, size } = this.state;
     const page = Math.floor(from / size);
     const pagination: Pagination = {
@@ -284,15 +249,15 @@ export default class HistogramAndMetrics extends Component<HistogramAndMetricsPr
             </EuiFlexItem>
             <EuiFlexItem grow={false}>
               <EuiText color={"subdued"} textAlign={"left"}>
-                <h3>{`(${sampleMetricItems.length})`}</h3>
+                <h3>{`(${selectedMetrics.length})`}</h3>
               </EuiText>
             </EuiFlexItem>
           </EuiFlexGroup>
-          {sampleMetricItems.length ? (
+          {selectedMetrics.length ? (
             <Fragment>
               <EuiPanel>
                 <EuiBasicTable
-                  items={sampleMetricItems}
+                  items={selectedMetrics}
                   rowHeader="source_field"
                   columns={metricsColumns}
                   tableLayout={"auto"}
