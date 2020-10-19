@@ -14,7 +14,22 @@
  */
 
 import React, { Component } from "react";
-import { EuiSpacer, EuiTitle, EuiComboBoxOptionOption, EuiFlexGroup, EuiFlexItem, EuiButton } from "@elastic/eui";
+import {
+  EuiSpacer,
+  EuiTitle,
+  EuiComboBoxOptionOption,
+  EuiFlexGroup,
+  EuiFlexItem,
+  EuiButton,
+  EuiOverlayMask,
+  EuiButtonEmpty,
+  EuiModalFooter,
+  EuiModal,
+  EuiModalHeader,
+  EuiModalHeaderTitle,
+  EuiModalBody,
+  EuiCodeBlock,
+} from "@elastic/eui";
 import chrome from "ui/chrome";
 import { RouteComponentProps } from "react-router-dom";
 import { RollupService } from "../../../../services";
@@ -58,6 +73,8 @@ interface RollupDetailsState {
   timezone: string;
   selectedDimensionField: RollupDimensionItem[];
   selectedMetrics: MetricItem[];
+
+  isModalOpen: boolean;
 }
 
 export default class RollupDetails extends Component<RollupDetailsProps, RollupDetailsState> {
@@ -88,6 +105,7 @@ export default class RollupDetails extends Component<RollupDetailsProps, RollupD
       timezone: "UTC +0",
       selectedDimensionField: [],
       selectedMetrics: [],
+      isModalOpen: false,
     };
   }
 
@@ -240,6 +258,10 @@ export default class RollupDetails extends Component<RollupDetailsProps, RollupD
     this.props.history.push(ROUTES.ROLLUPS);
   };
 
+  showModal = () => this.setState({ isModalOpen: true });
+
+  closeModal = () => this.setState({ isModalOpen: false });
+
   render() {
     const {
       rollupId,
@@ -261,6 +283,8 @@ export default class RollupDetails extends Component<RollupDetailsProps, RollupD
       timezone,
       selectedDimensionField,
       selectedMetrics,
+      isModalOpen,
+      rollupJSON,
     } = this.state;
 
     let scheduleText = recurringJob ? "Continuous, " : "Not continuous, ";
@@ -289,7 +313,7 @@ export default class RollupDetails extends Component<RollupDetailsProps, RollupD
                 </EuiButton>
               </EuiFlexItem>
               <EuiFlexItem grow={false}>
-                <EuiButton>View JSON</EuiButton>
+                <EuiButton onClick={this.showModal}>View JSON</EuiButton>
               </EuiFlexItem>
               <EuiFlexItem grow={false}>
                 <EuiButton color={"danger"}>Delete</EuiButton>
@@ -324,6 +348,26 @@ export default class RollupDetails extends Component<RollupDetailsProps, RollupD
           selectedMetrics={selectedMetrics}
         />
         <EuiSpacer />
+
+        {isModalOpen && (
+          <EuiOverlayMask>
+            <EuiModal onClose={this.closeModal} style={{ padding: "5px 30px" }}>
+              <EuiModalHeader>
+                <EuiModalHeaderTitle>{"View JSON of " + rollupId} </EuiModalHeaderTitle>
+              </EuiModalHeader>
+
+              <EuiModalBody>
+                <EuiCodeBlock language="json" fontSize="m" paddingSize="m" overflowHeight={600} inline={false} isCopyable>
+                  {JSON.stringify(rollupJSON)}
+                </EuiCodeBlock>
+              </EuiModalBody>
+
+              <EuiModalFooter>
+                <EuiButtonEmpty onClick={this.closeModal}>Close</EuiButtonEmpty>
+              </EuiModalFooter>
+            </EuiModal>
+          </EuiOverlayMask>
+        )}
       </div>
     );
   }

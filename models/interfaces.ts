@@ -123,7 +123,7 @@ export interface RollupMetadata {
     rollup_id: string;
     failure_reason?: string;
     last_updated_time: number;
-    continuous: {
+    continuous?: {
       next_window_start_time: number;
       next_window_end_time: number;
     };
