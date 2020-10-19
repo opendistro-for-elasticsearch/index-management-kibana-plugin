@@ -40,6 +40,9 @@ import {
   EuiFormHelpText,
   EuiHorizontalRule,
   EuiIcon,
+  EuiPopover,
+  EuiContextMenuPanel,
+  EuiContextMenuItem,
 } from "@elastic/eui";
 import { AddFieldsColumns } from "../../utils/constants";
 import { FieldItem, MetricItem } from "../../models/interfaces";
@@ -55,6 +58,8 @@ interface MetricsCalculationState {
   searchText: string;
   selectedFieldType: EuiComboBoxOptionOption<String>[];
   selectedFields: FieldItem[];
+  isDisableOpen: boolean;
+  isEnableOpen: boolean;
 }
 
 const tempFieldTypeOptions = [{ label: "string" }, { label: "location" }, { label: "number" }, { label: "timestamp" }];
@@ -68,12 +73,22 @@ export default class MetricsCalculation extends Component<MetricsCalculationProp
       searchText: "",
       selectedFieldType: [],
       selectedFields: [],
+      isDisableOpen: false,
+      isEnableOpen: false,
     };
   }
 
   closeModal = () => this.setState({ isModalVisible: false });
 
   showModal = () => this.setState({ isModalVisible: true });
+
+  closeDisable = () => this.setState({ isDisableOpen: false });
+
+  showDisable = () => this.setState({ isDisableOpen: true });
+
+  closeEnable = () => this.setState({ isEnableOpen: false });
+
+  showEnable = () => this.setState({ isEnableOpen: true });
 
   onChangeSearch = (e: ChangeEvent<HTMLInputElement>): void => {
     this.setState({ searchText: e.target.value });
@@ -170,9 +185,25 @@ export default class MetricsCalculation extends Component<MetricsCalculationProp
     onMetricSelectionChange(selectedMetrics);
   };
 
+  onClickDisable(method: string) {
+    const { selectedMetrics, onMetricSelectionChange } = this.props;
+    selectedMetrics.map((metric) => {
+      metric[method] = false;
+    });
+    onMetricSelectionChange(selectedMetrics);
+  }
+
+  onClickEnable(method: string) {
+    const { selectedMetrics, onMetricSelectionChange } = this.props;
+    selectedMetrics.map((metric) => {
+      metric[method] = true;
+    });
+    onMetricSelectionChange(selectedMetrics);
+  }
+
   render() {
     const { fieldsOption, selectedMetrics } = this.props;
-    const { isModalVisible, searchText, selectedFieldType, selectedFields } = this.state;
+    const { isModalVisible, searchText, selectedFieldType, selectedFields, isDisableOpen, isEnableOpen } = this.state;
 
     const selection: EuiTableSelectionType<FieldItem> = {
       selectable: (field) =>
@@ -265,6 +296,123 @@ export default class MetricsCalculation extends Component<MetricsCalculationProp
       },
     ];
 
+    const disableActions = [
+      <EuiContextMenuItem
+        key="disable_min"
+        icon="empty"
+        disabled={selectedMetrics.length == 0}
+        onClick={() => {
+          this.closeDisable();
+          this.onClickDisable("min");
+        }}
+      >
+        Min
+      </EuiContextMenuItem>,
+      <EuiContextMenuItem
+        key="disable_max"
+        icon="empty"
+        disabled={selectedMetrics.length == 0}
+        onClick={() => {
+          this.closeDisable();
+          this.onClickDisable("max");
+        }}
+      >
+        Max
+      </EuiContextMenuItem>,
+      <EuiContextMenuItem
+        key="disable_sum"
+        icon="empty"
+        disabled={selectedMetrics.length == 0}
+        onClick={() => {
+          this.closeDisable();
+          this.onClickDisable("sum");
+        }}
+      >
+        Sum
+      </EuiContextMenuItem>,
+      <EuiContextMenuItem
+        key="disable_avg"
+        icon="empty"
+        disabled={selectedMetrics.length == 0}
+        onClick={() => {
+          this.closeDisable();
+          this.onClickDisable("avg");
+        }}
+      >
+        Avg
+      </EuiContextMenuItem>,
+      <EuiContextMenuItem
+        key="disable_value_count"
+        icon="empty"
+        disabled={selectedMetrics.length == 0}
+        onClick={() => {
+          this.closeDisable();
+          this.onClickDisable("value_count");
+        }}
+      >
+        Value count
+      </EuiContextMenuItem>,
+    ];
+
+    const enableActions = [
+      <EuiContextMenuItem
+        key="Min"
+        icon="empty"
+        disabled={selectedMetrics.length == 0}
+        onClick={() => {
+          this.closeEnable();
+          this.onClickEnable("min");
+        }}
+      >
+        Min
+      </EuiContextMenuItem>,
+      <EuiContextMenuItem
+        key="enable_max"
+        icon="empty"
+        disabled={selectedMetrics.length == 0}
+        onClick={() => {
+          this.closeEnable();
+          this.onClickEnable("max");
+        }}
+      >
+        Max
+      </EuiContextMenuItem>,
+      <EuiContextMenuItem
+        key="enable_sum"
+        icon="empty"
+        disabled={selectedMetrics.length == 0}
+        onClick={() => {
+          this.closeEnable();
+          this.onClickEnable("sum");
+        }}
+      >
+        Sum
+      </EuiContextMenuItem>,
+      <EuiContextMenuItem
+        key="enable_avg"
+        icon="empty"
+        disabled={selectedMetrics.length == 0}
+        onClick={() => {
+          this.closeEnable();
+          this.onClickEnable("avg");
+        }}
+      >
+        Avg
+      </EuiContextMenuItem>,
+      <EuiContextMenuItem
+        key="enable_value_count"
+        icon="empty"
+        disabled={selectedMetrics.length == 0}
+        onClick={() => {
+          this.closeEnable();
+          this.onClickEnable("value_count");
+        }}
+      >
+        Value count
+      </EuiContextMenuItem>,
+    ];
+
+    // @ts-ignore
     return (
       <EuiPanel>
         <EuiFlexGroup style={{ padding: "0px 10px" }} justifyContent="spaceBetween" alignItems="center">
@@ -291,14 +439,34 @@ export default class MetricsCalculation extends Component<MetricsCalculationProp
           <EuiFlexItem grow={false}>
             <EuiFlexGroup gutterSize={"xs"}>
               <EuiFlexItem grow={false}>
-                <EuiButton iconType={"arrowDown"} iconSide={"right"}>
-                  Disable all
-                </EuiButton>
+                <EuiPopover
+                  button={
+                    <EuiButton iconType={"arrowDown"} iconSide={"right"} onClick={this.showDisable} disabled={selectedMetrics.length == 0}>
+                      Disable all
+                    </EuiButton>
+                  }
+                  isOpen={isDisableOpen}
+                  closePopover={this.closeDisable}
+                  panelPaddingSize="none"
+                  anchorPosition="downLeft"
+                >
+                  <EuiContextMenuPanel items={disableActions} />
+                </EuiPopover>
               </EuiFlexItem>
               <EuiFlexItem grow={false}>
-                <EuiButton iconType={"arrowDown"} iconSide={"right"}>
-                  Enable all
-                </EuiButton>
+                <EuiPopover
+                  button={
+                    <EuiButton iconType={"arrowDown"} iconSide={"right"} onClick={this.showEnable} disabled={selectedMetrics.length == 0}>
+                      Enable all
+                    </EuiButton>
+                  }
+                  isOpen={isEnableOpen}
+                  closePopover={this.closeEnable}
+                  panelPaddingSize="none"
+                  anchorPosition="downLeft"
+                >
+                  <EuiContextMenuPanel items={enableActions} />
+                </EuiPopover>
               </EuiFlexItem>
               <EuiFlexItem grow={false}>
                 <EuiButton onClick={this.showModal}>Add fields</EuiButton>
@@ -318,7 +486,6 @@ export default class MetricsCalculation extends Component<MetricsCalculationProp
         </EuiFlexGroup>
         <EuiHorizontalRule margin="xs" />
         <div style={{ paddingLeft: "10px" }}>
-          {/*TODO: Figure out row header*/}
           <EuiBasicTable
             items={selectedMetrics}
             itemId={"source_field"}
@@ -375,7 +542,6 @@ export default class MetricsCalculation extends Component<MetricsCalculationProp
                         />
                       </EuiFlexItem>
                     </EuiFlexGroup>
-                    {/*TODO: create fake list of items, and figure out how to retrieve the selections for table*/}
                     <EuiBasicTable
                       items={fieldsOption}
                       itemId={"label"}
