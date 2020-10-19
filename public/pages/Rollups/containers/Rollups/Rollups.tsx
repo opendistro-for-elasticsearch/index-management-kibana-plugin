@@ -97,7 +97,6 @@ export default class Rollups extends Component<RollupsProps, RollupsState> {
     this.getRollups = _.debounce(this.getRollups, 500, { leading: true });
   }
 
-  //TODO: Get rollup jobs when backend is done.
   async componentDidMount() {
     chrome.breadcrumbs.set([BREADCRUMBS.INDEX_MANAGEMENT, BREADCRUMBS.ROLLUPS]);
     await this.getRollups();
@@ -128,6 +127,7 @@ export default class Rollups extends Component<RollupsProps, RollupsState> {
       const rollupJobsResponse = await rollupService.getRollups(queryParamsString);
       if (rollupJobsResponse.ok) {
         const { rollups, totalRollups } = rollupJobsResponse.response;
+        console.log(rollups);
         this.setState({ rollups, totalRollups });
       } else {
         toastNotifications.addDanger(rollupJobsResponse.error);
@@ -421,7 +421,6 @@ export default class Rollups extends Component<RollupsProps, RollupsState> {
       },
     ];
 
-    //TODO: Add action buttons here
     return (
       <EuiPanel style={{ paddingLeft: "0px", paddingRight: "0px" }}>
         <EuiFlexGroup style={{ padding: "0px 10px" }} justifyContent="spaceBetween" alignItems="center">
