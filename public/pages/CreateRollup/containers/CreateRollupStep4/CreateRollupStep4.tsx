@@ -58,16 +58,6 @@ interface CreateRollupProps extends RouteComponentProps {
 export default class CreateRollupStep4 extends Component<CreateRollupProps> {
   constructor(props: CreateRollupProps) {
     super(props);
-
-    this.state = {
-      rollupSeqNo: null,
-      rollupPrimaryTerm: null,
-      rollupIdError: "",
-      submitError: "",
-      jsonString: "",
-      isSubmitting: false,
-      hasSubmitted: false,
-    };
   }
 
   componentDidMount = async (): Promise<void> => {
@@ -80,28 +70,6 @@ export default class CreateRollupStep4 extends Component<CreateRollupProps> {
 
   render() {
     if (this.props.currentStep != 4) return null;
-    const {
-      rollupId,
-      description,
-      onChangeStep,
-      submitError,
-      sourceIndex,
-      targetIndex,
-      roles,
-      intervalValue,
-      timestamp,
-      timezone,
-      timeunit,
-      jobEnabledByDefault,
-      recurringJob,
-      recurringDefinition,
-      interval,
-      intervalTimeunit,
-      cronExpression,
-      pageSize,
-      delayTime,
-      delayTimeunit,
-    } = this.props;
 
     return (
       <div style={{ padding: "5px 50px" }}>
@@ -114,32 +82,11 @@ export default class CreateRollupStep4 extends Component<CreateRollupProps> {
               <h1>Review and create</h1>
             </EuiTitle>
             <EuiSpacer />
-            <JobNameAndIndices
-              {...this.props}
-              rollupId={rollupId}
-              description={description}
-              sourceIndex={sourceIndex}
-              targetIndex={targetIndex}
-              roles={roles}
-              onChangeStep={onChangeStep}
-            />
+            <JobNameAndIndices {...this.props} />
             <EuiSpacer />
             <HistogramAndMetrics {...this.props} />
             <EuiSpacer />
-            <ScheduleRolesAndNotifications
-              {...this.props}
-              rollupId={rollupId}
-              jobEnabledByDefault={jobEnabledByDefault}
-              recurringJob={recurringJob}
-              recurringDefinition={recurringDefinition}
-              interval={interval}
-              intervalTimeunit={intervalTimeunit}
-              cronExpression={cronExpression}
-              pageSize={pageSize}
-              delayTime={delayTime}
-              delayTimeunit={delayTimeunit}
-              onChangeStep={onChangeStep}
-            />
+            <ScheduleRolesAndNotifications {...this.props} />
           </EuiFlexItem>
         </EuiFlexGroup>
         <EuiSpacer />
