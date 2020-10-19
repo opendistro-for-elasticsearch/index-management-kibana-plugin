@@ -253,15 +253,15 @@ export default class Rollups extends Component<RollupsProps, RollupsState> {
   //TODO: Get rollup jobs when backend is done.
   async componentDidMount() {
     chrome.breadcrumbs.set([BREADCRUMBS.INDEX_MANAGEMENT, BREADCRUMBS.ROLLUPS]);
-    // await this.getRollups();
+    await this.getRollups();
   }
 
   async componentDidUpdate(prevProps: RollupsProps, prevState: RollupsState) {
-    // const prevQuery = Rollups.getQueryObjectFromState(prevState);
-    // const currQuery = Rollups.getQueryObjectFromState(this.state);
-    // if (!_.isEqual(prevQuery, currQuery)) {
-    //   await this.getRollups();
-    // }
+    const prevQuery = Rollups.getQueryObjectFromState(prevState);
+    const currQuery = Rollups.getQueryObjectFromState(this.state);
+    if (!_.isEqual(prevQuery, currQuery)) {
+      await this.getRollups();
+    }
   }
 
   static getQueryObjectFromState({ from, size, search, sortField, sortDirection }: RollupsState): RollupsQueryParams {
@@ -310,6 +310,7 @@ export default class Rollups extends Component<RollupsProps, RollupsState> {
         if (response.ok) {
           this.closeDeleteModal();
           //TODO: Update status or pull jobs again
+
           //Show success message
           toastNotifications.addSuccess(`"${rollupId}" successfully deleted!`);
         } else {
@@ -489,21 +490,21 @@ export default class Rollups extends Component<RollupsProps, RollupsState> {
         ),
       },
       {
-        field: "rollup.source_index",
+        field: "rollup.rollup.source_index",
         name: "Source index",
         sortable: true,
         textOnly: true,
         truncateText: true,
       },
       {
-        field: "rollup.target_index",
+        field: "rollup.rollup.target_index",
         name: "Target index",
         sortable: true,
         textOnly: true,
         truncateText: true,
       },
       {
-        field: "rollup.enabled",
+        field: "rollup.rollup.enabled",
         name: "Job state",
         sortable: true,
         textOnly: true,
@@ -511,7 +512,7 @@ export default class Rollups extends Component<RollupsProps, RollupsState> {
         render: renderEnabled,
       },
       {
-        field: "rollup.continuous",
+        field: "rollup.rollup.continuous",
         name: "Continuous",
         sortable: true,
         textOnly: true,
@@ -519,14 +520,14 @@ export default class Rollups extends Component<RollupsProps, RollupsState> {
         render: renderContinuous,
       },
       {
-        field: "nextWindow",
+        field: "rollup.nextWindow",
         name: "Next rollup window",
         sortable: true,
         textOnly: true,
         truncateText: true,
       },
       {
-        field: "status",
+        field: "rollup.status",
         name: "Rollup job status",
         sortable: true,
         textOnly: true,

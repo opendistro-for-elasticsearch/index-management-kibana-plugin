@@ -119,21 +119,21 @@ export interface Rollup {
 
 export interface RollupMetadata {
   metadata_id: string;
-  rollup_metadata: {
-    rollup_id: string;
+  rollup_metadata?: {
+    rollup_id?: string;
     failure_reason?: string;
-    last_updated_time: number;
+    last_updated_time?: number;
     continuous?: {
       next_window_start_time: number;
       next_window_end_time: number;
     };
-    status: string;
-    stats: {
-      pages_processed: number;
-      documents_processed: number;
-      rollups_indexed: number;
-      index_time_in_millis: number;
-      search_time_in_millis: number;
+    status?: string;
+    stats?: {
+      pages_processed?: number;
+      documents_processed?: number;
+      rollups_indexed?: number;
+      index_time_in_millis?: number;
+      search_time_in_millis?: number;
     };
   };
 }

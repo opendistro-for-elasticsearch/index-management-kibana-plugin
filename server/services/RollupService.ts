@@ -210,13 +210,13 @@ export default class RollupService {
 
       const totalRollups = searchResponse.hits.total.value;
       const rollups = searchResponse.hits.hits.map((hit) => ({
-        seqNo: hit._seq_no as number,
-        primaryTerm: hit._primary_term as number,
-        id: hit._id,
+        _seqNo: hit._seq_no as number,
+        _primaryTerm: hit._primary_term as number,
+        _id: hit._id,
         rollup: hit._source,
       }));
 
-      return { ok: true, response: { rollups: rollups, totalRollups } };
+      return { ok: true, response: { rollups: rollups, totalRollups: totalRollups } };
     } catch (err) {
       if (err.statusCode === 404 && err.body.error.type === "index_not_found_exception") {
         return { ok: true, response: { rollups: [], totalRollups: 0 } };
