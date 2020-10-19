@@ -51,6 +51,11 @@ export default class RollupStatus extends Component<RollupStatusProps> {
               <EuiText size={"xs"}>
                 <dt>Status</dt>
                 <dd>{metadata == null || metadata.rollup_metadata == null ? "-" : metadata.rollup_metadata.status}</dd>
+                <dd>
+                  {!(metadata == null || metadata.rollup_metadata == null) && metadata.rollup_metadata.status == "failed"
+                    ? "Failure reason: " + metadata.rollup_metadata.failure_reason
+                    : ""}
+                </dd>
               </EuiText>
             </EuiFlexItem>
             <EuiFlexItem>
