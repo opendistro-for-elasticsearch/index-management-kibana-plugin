@@ -14,7 +14,7 @@
  */
 
 import React, { ChangeEvent, Component } from "react";
-import { EuiSpacer, EuiTitle, EuiFlexGroup, EuiFlexItem, EuiCallOut, EuiComboBoxOptionOption } from "@elastic/eui";
+import { EuiSpacer, EuiTitle, EuiFlexGroup, EuiFlexItem, EuiComboBoxOptionOption } from "@elastic/eui";
 import { RouteComponentProps } from "react-router-dom";
 import { RollupService } from "../../../../services";
 import ConfigureRollup from "../../components/ConfigureRollup";
@@ -69,22 +69,7 @@ export default class CreateRollup extends Component<CreateRollupProps> {
       // Prop: The current step
       return null;
     }
-    const {
-      rollupId,
-      rollupIdError,
-      submitError,
-      description,
-      sourceIndex,
-      sourceIndexError,
-      targetIndex,
-      roles,
-      onChangeName,
-      onChangeDescription,
-      onChangeSourceIndex,
-      onChangeTargetIndex,
-      onChangeRoles,
-      indexService,
-    } = this.props;
+    const { rollupId, rollupIdError, description, roles, onChangeName, onChangeDescription, onChangeRoles } = this.props;
 
     return (
       <div style={{ padding: "5px 50px" }}>
