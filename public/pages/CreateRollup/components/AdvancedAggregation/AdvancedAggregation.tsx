@@ -132,7 +132,7 @@ export default class AdvancedAggregation extends Component<AdvancedAggregationPr
     //Parse selectedFields to an array of DimensionItem if it does not exist
     let i = updatedDimensions.length + 1;
     const toAdd: DimensionItem[] = toAddFields.map((field) => {
-      return field.type == "long" || field.type == "double"
+      return field.type == "long" || field.type == "double" || field.type == "float" || field.type == "integer" || field.type == "number"
         ? {
             sequence: i++,
             field: field,
@@ -191,8 +191,32 @@ export default class AdvancedAggregation extends Component<AdvancedAggregationPr
     this.updateSequence(selectedDimensionField);
   };
 
-  onChangeInterval = (e: ChangeEvent<HTMLInputElement>): void => {
-    this.setState({});
+  onChangeInterval = (e: ChangeEvent<HTMLInputElement>, item: DimensionItem): void => {
+    const { selectedDimensionField, onDimensionSelectionChange } = this.props;
+    const index = selectedDimensionField.indexOf(item);
+    const newItem: DimensionItem = {
+      sequence: item.sequence,
+      field: item.field,
+      aggregationMethod: e.target.value,
+      interval: e.target.valueAsNumber,
+    };
+    selectedDimensionField[index] = newItem;
+    onDimensionSelectionChange(selectedDimensionField);
+  };
+
+  onChangeAggregationMethod = (e: ChangeEvent<HTMLSelectElement>, item: DimensionItem): void => {
+    const { selectedDimensionField, onDimensionSelectionChange } = this.props;
+    const index = selectedDimensionField.indexOf(item);
+    const newItem: DimensionItem = {
+      sequence: item.sequence,
+      field: item.field,
+      aggregationMethod: e.target.value,
+    };
+    if (e.target.value == "histogram") {
+      newItem.interval = 5;
+    }
+    selectedDimensionField[index] = newItem;
+    onDimensionSelectionChange(selectedDimensionField);
   };
 
   // onTableChange = ({ page: tablePage, sort }: Criteria<DimensionItem>): void => {
@@ -272,17 +296,26 @@ export default class AdvancedAggregation extends Component<AdvancedAggregationPr
         field: "aggregationMethod",
         name: "Aggregation method",
         align: "left",
-        render: (aggregationMethod) => (
+        render: (aggregationMethod, item) => (
           <EuiForm>
             <EuiFormRow compressed={true}>
               <EuiSelect
                 compressed={true}
                 value={aggregationMethod}
-                disabled={aggregationMethod == "terms"}
+                disabled={
+                  !(
+                    item.field.type == "long" ||
+                    item.field.type == "double" ||
+                    item.field.type == "float" ||
+                    item.field.type == "integer" ||
+                    item.field.type == "number"
+                  )
+                }
                 options={[
                   { value: "terms", text: "Terms" },
                   { value: "histogram", text: "Histogram" },
                 ]}
+                onChange={(e) => this.onChangeAggregationMethod(e, item)}
               />
             </EuiFormRow>
           </EuiForm>
@@ -293,13 +326,13 @@ export default class AdvancedAggregation extends Component<AdvancedAggregationPr
         name: "Interval",
         dataType: "number",
         align: "left",
-        render: (interval: null | number) =>
+        render: (interval: number, item) =>
           interval == null ? (
             "-"
           ) : (
             <EuiForm>
               <EuiFormRow>
-                <EuiFieldNumber min={1} value={interval} onChange={this.onChangeInterval} />
+                <EuiFieldNumber min={1} value={interval} onChange={(e) => this.onChangeInterval(e, item)} />
               </EuiFormRow>
             </EuiForm>
           ),

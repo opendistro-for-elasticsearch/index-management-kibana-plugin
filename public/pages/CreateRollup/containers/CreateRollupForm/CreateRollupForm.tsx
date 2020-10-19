@@ -29,7 +29,7 @@ import { getErrorMessage } from "../../../../utils/helpers";
 import { EMPTY_ROLLUP } from "../../utils/constants";
 import CreateRollupStep3 from "../CreateRollupStep3";
 import CreateRollupStep4 from "../CreateRollupStep4";
-import { DimensionItem, FieldItem } from "../../models/interfaces";
+import { DimensionItem, FieldItem, MetricItem } from "../../models/interfaces";
 
 interface CreateRollupFormProps extends RouteComponentProps {
   rollupService: RollupService;
@@ -60,6 +60,7 @@ interface CreateRollupFormState {
   fields: any;
   selectedTerms: FieldItem[];
   selectedDimensionField: DimensionItem[];
+  selectedMetrics: MetricItem[];
   timestamp: EuiComboBoxOptionOption<String>[];
   timestampError: string;
   intervalType: string;
@@ -115,6 +116,7 @@ export default class CreateRollupForm extends Component<CreateRollupFormProps, C
       selectedFields: [],
       selectedTerms: [],
       selectedDimensionField: [],
+      selectedMetrics: [],
       description: "",
       sourceIndex: [],
       sourceIndexError: "",
@@ -289,7 +291,6 @@ export default class CreateRollupForm extends Component<CreateRollupFormProps, C
     this.setDateHistogram();
   };
 
-  //TODO: Clear the other field?
   setDateHistogram = (): void => {
     const { intervalType, intervalValue, timeunit } = this.state;
     let newJSON = this.state.rollupJSON;
@@ -326,12 +327,10 @@ export default class CreateRollupForm extends Component<CreateRollupFormProps, C
 
   onDimensionSelectionChange = (selectedFields: DimensionItem[]): void => {
     this.setState({ selectedDimensionField: selectedFields });
-    //Update JSON
-    // let newJSON = this.state.rollupJSON;
-    // newJSON.dimensions = selectedFields.map((dimension) => {
-    //
-    //   }
-    // );
+  };
+
+  onMetricSelectionChange = (selectedFields: MetricItem[]): void => {
+    this.setState({ selectedMetrics: selectedFields });
   };
 
   onChangeJobEnabledByDefault = (): void => {
@@ -406,30 +405,6 @@ export default class CreateRollupForm extends Component<CreateRollupFormProps, C
   updateDimension = (): void => {
     const { rollupJSON, selectedDimensionField } = this.state;
     let newJSON = rollupJSON;
-
-    //Add date_histogram first
-
-    // let timestampString = timestamp.map(function(option) {
-    //   return option.label;
-    // });
-    //
-    // if (intervalType == 'fixed') {
-    //   newJSON.dimensions.push({
-    //     date_histogram: {
-    //       fixed_interval: intervalValue + intervalTimeunit,
-    //       source_field: timestampString[0],
-    //       timezone: timezone,
-    //     },
-    //   });
-    // } else {
-    //   newJSON.dimensions.push({
-    //     date_histogram: {
-    //       calendar_interval: intervalValue + intervalTimeunit,
-    //       source_field: timestamp,
-    //       timezone: timezone,
-    //     },
-    //   });
-    // }
     //Push rest of dimensions
     selectedDimensionField.map((dimension) => {
       if (dimension.aggregationMethod == "terms") {
@@ -450,6 +425,25 @@ export default class CreateRollupForm extends Component<CreateRollupFormProps, C
     this.setState({ rollupJSON: newJSON });
   };
 
+  updateMetric = (): void => {
+    const { rollupJSON, selectedMetrics } = this.state;
+    let newJSON = rollupJSON;
+    //Push all metrics
+    selectedMetrics.map((metric) => {
+      const metrics = [];
+      if (metric.min) metrics.push({ min: {} });
+      if (metric.max) metrics.push({ max: {} });
+      if (metric.sum) metrics.push({ sum: {} });
+      if (metric.avg) metrics.push({ avg: {} });
+      if (metric.value_count) metrics.push({ value_count: {} });
+      newJSON.rollup.metrics.push({
+        source_field: metric.source_field.label,
+        metrics: metrics,
+      });
+    });
+    this.setState({ rollupJSON: newJSON });
+  };
+
   //TODO: Complete submit logistic
   onSubmit = async (): Promise<void> => {
     const { rollupId, rollupJSON } = this.state;
@@ -460,6 +454,7 @@ export default class CreateRollupForm extends Component<CreateRollupFormProps, C
       } else {
         //TODO: Build JSON string here
         this.updateDimension();
+        this.updateMetric();
         await this.onCreate(rollupId, rollupJSON);
       }
     } catch (err) {
@@ -470,7 +465,6 @@ export default class CreateRollupForm extends Component<CreateRollupFormProps, C
     this.setState({ isSubmitting: false });
   };
 
-  //TODO: Go back to rollup jobs page when cancelled
   onCancel = (): void => {
     this.props.history.push(ROUTES.ROLLUPS);
   };
@@ -512,6 +506,7 @@ export default class CreateRollupForm extends Component<CreateRollupFormProps, C
       fields,
       selectedTerms,
       selectedDimensionField,
+      selectedMetrics,
       intervalValue,
       intervalType,
       timezone,
@@ -556,6 +551,7 @@ export default class CreateRollupForm extends Component<CreateRollupFormProps, C
           fields={fields}
           selectedTerms={selectedTerms}
           selectedDimensionField={selectedDimensionField}
+          selectedMetrics={selectedMetrics}
           intervalType={intervalType}
           intervalValue={intervalValue}
           timestamp={timestamp}
@@ -568,6 +564,7 @@ export default class CreateRollupForm extends Component<CreateRollupFormProps, C
           onChangeTimeunit={this.onChangeTimeunit}
           onChangeTimezone={this.onChangeTimezone}
           onDimensionSelectionChange={this.onDimensionSelectionChange}
+          onMetricSelectionChange={this.onMetricSelectionChange}
         />
         <CreateRollupStep3
           {...this.props}
@@ -603,6 +600,7 @@ export default class CreateRollupForm extends Component<CreateRollupFormProps, C
           timeunit={timeunit}
           timezone={timezone}
           selectedDimensionField={selectedDimensionField}
+          selectedMetrics={selectedMetrics}
           jobEnabledByDefault={jobEnabledByDefault}
           recurringJob={recurringJob}
           recurringDefinition={recurringDefinition}
