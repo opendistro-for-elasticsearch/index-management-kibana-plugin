@@ -39,7 +39,7 @@ export default class RollupStatus extends Component<RollupStatusProps> {
               <EuiText size={"xs"}>
                 <dt>Current rollup window</dt>
                 <dd>
-                  {metadata == null || metadata.rollup_metadata.continuous == null
+                  {metadata == null || metadata.rollup_metadata == null || metadata.rollup_metadata.continuous == null
                     ? "-"
                     : renderTime(metadata.rollup_metadata.continuous.next_window_start_time) +
                       " - " +
@@ -50,19 +50,19 @@ export default class RollupStatus extends Component<RollupStatusProps> {
             <EuiFlexItem>
               <EuiText size={"xs"}>
                 <dt>Status</dt>
-                <dd>{metadata == null ? "-" : metadata.rollup_metadata.status}</dd>
+                <dd>{metadata == null || metadata.rollup_metadata == null ? "-" : metadata.rollup_metadata.status}</dd>
               </EuiText>
             </EuiFlexItem>
             <EuiFlexItem>
               <EuiText size={"xs"}>
                 <dt>Rollup indexed</dt>
-                <dd>{metadata == null ? "-" : metadata.rollup_metadata.stats.rollups_indexed}</dd>
+                <dd>{metadata == null || metadata.rollup_metadata == null ? "-" : metadata.rollup_metadata.stats.rollups_indexed}</dd>
               </EuiText>
             </EuiFlexItem>
             <EuiFlexItem>
               <EuiText size={"xs"}>
                 <dt>Indexed time (ms)</dt>
-                <dd>{metadata == null ? "-" : metadata.rollup_metadata.stats.index_time_in_millis}</dd>
+                <dd>{metadata == null || metadata.rollup_metadata == null ? "-" : metadata.rollup_metadata.stats.index_time_in_millis}</dd>
               </EuiText>
             </EuiFlexItem>
             <EuiFlexItem></EuiFlexItem>
@@ -70,13 +70,13 @@ export default class RollupStatus extends Component<RollupStatusProps> {
             <EuiFlexItem>
               <EuiText size={"xs"}>
                 <dt>Document processed</dt>
-                <dd>{metadata == null ? "-" : metadata.rollup_metadata.stats.documents_processed}</dd>
+                <dd>{metadata == null || metadata.rollup_metadata == null ? "-" : metadata.rollup_metadata.stats.documents_processed}</dd>
               </EuiText>
             </EuiFlexItem>
             <EuiFlexItem>
               <EuiText size={"xs"}>
                 <dt>Search time (ms)</dt>
-                <dd>{metadata == null ? "-" : metadata.rollup_metadata.stats.search_time_in_millis}</dd>
+                <dd>{metadata == null || metadata.rollup_metadata == null ? "-" : metadata.rollup_metadata.stats.search_time_in_millis}</dd>
               </EuiText>
             </EuiFlexItem>
             <EuiFlexItem></EuiFlexItem>
@@ -84,7 +84,7 @@ export default class RollupStatus extends Component<RollupStatusProps> {
             <EuiFlexItem>
               <EuiText size={"xs"}>
                 <dt>Page processed</dt>
-                <dd>{metadata == null ? "-" : metadata.rollup_metadata.stats.pages_processed}</dd>
+                <dd>{metadata == null || metadata.rollup_metadata == null ? "-" : metadata.rollup_metadata.stats.pages_processed}</dd>
               </EuiText>
             </EuiFlexItem>
           </EuiFlexGrid>

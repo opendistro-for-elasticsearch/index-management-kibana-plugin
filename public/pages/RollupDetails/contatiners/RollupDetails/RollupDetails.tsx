@@ -45,6 +45,7 @@ import { parseTimeunit } from "../../../CreateRollup/utils/helpers";
 import { RollupMetadata } from "../../../../../models/interfaces";
 import { renderTime } from "../../../Rollups/utils/helpers";
 import { DimensionItem, MetricItem, RollupDimensionItem, RollupMetricItem } from "../../../CreateRollup/models/interfaces";
+import DeleteModal from "../../../Rollups/components/DeleteModal";
 
 interface RollupDetailsProps extends RouteComponentProps {
   rollupService: RollupService;
@@ -75,6 +76,8 @@ interface RollupDetailsState {
   selectedMetrics: MetricItem[];
 
   isModalOpen: boolean;
+  enabled: boolean;
+  isDeleteModalVisible: boolean;
 }
 
 export default class RollupDetails extends Component<RollupDetailsProps, RollupDetailsState> {
@@ -106,6 +109,8 @@ export default class RollupDetails extends Component<RollupDetailsProps, RollupD
       selectedDimensionField: [],
       selectedMetrics: [],
       isModalOpen: false,
+      enabled: false,
+      isDeleteModalVisible: false,
     };
   }
 
@@ -155,6 +160,7 @@ export default class RollupDetails extends Component<RollupDetailsProps, RollupD
           timezone: response.response.rollup.dimensions[0].date_histogram.timezone,
           selectedDimensionField: this.parseDimension(response.response.rollup.dimensions),
           selectedMetrics: this.parseMetric(response.response.rollup.metrics),
+          enabled: response.response.rollup.enabled,
         });
         if (response.response.rollup.schedule.cron == undefined) {
           this.setState({
@@ -219,7 +225,7 @@ export default class RollupDetails extends Component<RollupDetailsProps, RollupD
       const response = await rollupService.stopRollup(rollupId);
 
       if (response.ok) {
-        //TODO: Update status or pull jobs again
+        this.setState({ enabled: false });
         //Show success message
         toastNotifications.addSuccess(`${rollupId} is disabled`);
       } else {
@@ -238,7 +244,7 @@ export default class RollupDetails extends Component<RollupDetailsProps, RollupD
       const response = await rollupService.startRollup(rollupId);
 
       if (response.ok) {
-        //TODO: Update status or pull jobs again
+        this.setState({ enabled: true });
         //Show success message
         toastNotifications.addSuccess(`${rollupId} is enabled`);
       } else {
@@ -254,13 +260,38 @@ export default class RollupDetails extends Component<RollupDetailsProps, RollupD
     if (rollupId) this.props.history.push(`${ROUTES.EDIT_ROLLUP}?id=${rollupId}`);
   };
 
-  onCancel = (): void => {
-    this.props.history.push(ROUTES.ROLLUPS);
-  };
-
   showModal = () => this.setState({ isModalOpen: true });
 
   closeModal = () => this.setState({ isModalOpen: false });
+
+  closeDeleteModal = (): void => {
+    this.setState({ isDeleteModalVisible: false });
+  };
+
+  showDeleteModal = (): void => {
+    this.setState({ isDeleteModalVisible: true });
+  };
+
+  onClickDelete = async (): Promise<void> => {
+    const { rollupService } = this.props;
+    const { rollupId } = this.state;
+
+    try {
+      const response = await rollupService.deleteRollup(rollupId);
+
+      if (response.ok) {
+        this.closeDeleteModal();
+        //TODO: Update status or pull jobs again
+        //Show success message
+        toastNotifications.addSuccess(`"${rollupId}" successfully deleted!`);
+        this.props.history.push(ROUTES.ROLLUPS);
+      } else {
+        toastNotifications.addDanger(`Could not delete the rollup job "${rollupId}" : ${response.error}`);
+      }
+    } catch (err) {
+      toastNotifications.addDanger(getErrorMessage(err, "Could not delete the rollup job"));
+    }
+  };
 
   render() {
     const {
@@ -285,6 +316,8 @@ export default class RollupDetails extends Component<RollupDetailsProps, RollupD
       selectedMetrics,
       isModalOpen,
       rollupJSON,
+      enabled,
+      isDeleteModalVisible,
     } = this.state;
 
     let scheduleText = recurringJob ? "Continuous, " : "Not continuous, ";
@@ -305,10 +338,12 @@ export default class RollupDetails extends Component<RollupDetailsProps, RollupD
           <EuiFlexItem grow={false}>
             <EuiFlexGroup alignItems="center" gutterSize="s">
               <EuiFlexItem grow={false}>
-                <EuiButton onClick={this.onDisable}>Disable</EuiButton>
+                <EuiButton disabled={!enabled} onClick={this.onDisable}>
+                  Disable
+                </EuiButton>
               </EuiFlexItem>
               <EuiFlexItem grow={false}>
-                <EuiButton disabled={true} onClick={this.onEnable}>
+                <EuiButton disabled={enabled} onClick={this.onEnable}>
                   Enable
                 </EuiButton>
               </EuiFlexItem>
@@ -316,7 +351,9 @@ export default class RollupDetails extends Component<RollupDetailsProps, RollupD
                 <EuiButton onClick={this.showModal}>View JSON</EuiButton>
               </EuiFlexItem>
               <EuiFlexItem grow={false}>
-                <EuiButton color={"danger"}>Delete</EuiButton>
+                <EuiButton onClick={this.showDeleteModal} color={"danger"}>
+                  Delete
+                </EuiButton>
               </EuiFlexItem>
               <EuiFlexItem grow={false}>
                 <EuiButton fill={true}>Explore target index</EuiButton>
@@ -367,6 +404,10 @@ export default class RollupDetails extends Component<RollupDetailsProps, RollupD
               </EuiModalFooter>
             </EuiModal>
           </EuiOverlayMask>
+        )}
+
+        {isDeleteModalVisible && (
+          <DeleteModal rollupId={rollupId} closeDeleteModal={this.closeDeleteModal} onClickDelete={this.onClickDelete} />
         )}
       </div>
     );
