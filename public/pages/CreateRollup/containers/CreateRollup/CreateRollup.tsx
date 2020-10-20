@@ -51,10 +51,8 @@ export default class CreateRollup extends Component<CreateRollupProps> {
 
   render() {
     if (this.props.currentStep !== 1) {
-      // Prop: The current step
       return null;
     }
-    const { rollupId, rollupIdError, description, onChangeName, onChangeDescription } = this.props;
 
     return (
       <div style={{ padding: "5px 50px" }}>
@@ -67,14 +65,7 @@ export default class CreateRollup extends Component<CreateRollupProps> {
               <h1>Set up Indices</h1>
             </EuiTitle>
             <EuiSpacer />
-            <ConfigureRollup
-              isEdit={false}
-              rollupId={rollupId}
-              rollupIdError={rollupIdError}
-              description={description}
-              onChangeName={onChangeName}
-              onChangeDescription={onChangeDescription}
-            />
+            <ConfigureRollup isEdit={false} {...this.props} />
             <EuiSpacer />
             <RollupIndices {...this.props} />
           </EuiFlexItem>
