@@ -42,6 +42,7 @@ interface CreateRollupProps extends RouteComponentProps {
   onChangeSourceIndex: (options: EuiComboBoxOptionOption<IndexItem>[]) => void;
   onChangeTargetIndex: (options: EuiComboBoxOptionOption<IndexItem>[]) => void;
   currentStep: number;
+  hasAggregation: boolean;
 }
 
 export default class CreateRollup extends Component<CreateRollupProps> {

@@ -142,7 +142,6 @@ export default class CreateRollupForm extends Component<CreateRollupFormProps, C
     };
     this._next = this._next.bind(this);
     this._prev = this._prev.bind(this);
-    // this.onChange = this.onChange.bind(this);
   }
 
   componentDidMount = async (): Promise<void> => {
@@ -151,11 +150,12 @@ export default class CreateRollupForm extends Component<CreateRollupFormProps, C
     await this.getMappings();
   };
 
-  //TODO: Check the field `` part to see if it is actually parsing data.
+  //TODO: Try to get only the mapping of specified source index instead of all indices. And maybe get mappings after selecting src index
   getMappings = async (): Promise<void> => {
     try {
       const { rollupService } = this.props;
       const { sourceIndex } = this.state;
+      //TODO: modify this to actual src index when onChangeSourceIndex is called.
       const response = await rollupService.getMappings("kibana_sample_data_flights");
       if (response.ok) {
         //Set mapping when there is source index selected.
@@ -247,10 +247,10 @@ export default class CreateRollupForm extends Component<CreateRollupFormProps, C
     const srcIndexText = sourceIndex.length ? sourceIndex[0] : "";
     newJSON.rollup.source_index = srcIndexText;
     this.setState({ sourceIndex: options, rollupJSON: newJSON, sourceIndexError: sourceIndexError });
-    //TODO: Update fields and clear dimensions, metrics (need to add this)
     this.setState({
       fields: sourceIndex.length ? mappings[srcIndexText].mappings.properties : undefined,
       selectedDimensionField: [],
+      selectedMetrics: [],
     });
   };
 
@@ -540,6 +540,7 @@ export default class CreateRollupForm extends Component<CreateRollupFormProps, C
           onChangeSourceIndex={this.onChangeSourceIndex}
           onChangeTargetIndex={this.onChangeTargetIndex}
           currentStep={this.state.currentStep}
+          hasAggregation={selectedDimensionField.length != 0 || selectedMetrics.length != 0}
         />
         <CreateRollupStep2
           {...this.props}

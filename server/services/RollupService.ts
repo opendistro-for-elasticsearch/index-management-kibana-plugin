@@ -148,7 +148,7 @@ export default class RollupService {
       const mappings = await callWithRequest(req, "indices.getMapping", { index });
       return { ok: true, response: mappings };
     } catch (err) {
-      console.error("Index Management - RollupService - getFields:", err);
+      console.error("Index Management - RollupService - getMapping:", err);
       return { ok: false, error: err.message };
     }
   };

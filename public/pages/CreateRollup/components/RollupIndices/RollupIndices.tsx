@@ -13,7 +13,7 @@
  * permissions and limitations under the License.
  */
 
-import React, { Component } from "react";
+import React, { Component, Fragment } from "react";
 import { EuiSpacer, EuiFormRow, EuiComboBox, EuiCallOut } from "@elastic/eui";
 import { ContentPanel } from "../../../../components/ContentPanel";
 import { EuiComboBoxOptionOption } from "@elastic/eui/src/components/combo_box/types";
@@ -30,6 +30,7 @@ interface RollupIndicesProps {
   targetIndexError: string;
   onChangeSourceIndex: (options: EuiComboBoxOptionOption<IndexItem>[]) => void;
   onChangeTargetIndex: (options: EuiComboBoxOptionOption<IndexItem>[]) => void;
+  hasAggregation: boolean;
 }
 
 interface RollupIndicesState {
@@ -38,7 +39,6 @@ interface RollupIndicesState {
   targetIndexOptions: { label: string; value?: IndexItem }[];
 }
 
-//TODO: Add error message by row instead of showing up at bottom
 export default class RollupIndices extends Component<RollupIndicesProps, RollupIndicesState> {
   constructor(props: RollupIndicesProps) {
     super(props);
@@ -104,7 +104,15 @@ export default class RollupIndices extends Component<RollupIndicesProps, RollupI
   };
 
   render() {
-    const { sourceIndex, sourceIndexError, targetIndex, targetIndexError, onChangeSourceIndex, onChangeTargetIndex } = this.props;
+    const {
+      sourceIndex,
+      sourceIndexError,
+      targetIndex,
+      targetIndexError,
+      onChangeSourceIndex,
+      onChangeTargetIndex,
+      hasAggregation,
+    } = this.props;
     const { isLoading, indexOptions, targetIndexOptions } = this.state;
     return (
       <ContentPanel bodyStyles={{ padding: "initial" }} title="Indices" titleSize="m">
@@ -113,6 +121,14 @@ export default class RollupIndices extends Component<RollupIndicesProps, RollupI
           <EuiCallOut color="warning">
             <p>You can't change indices after creating a job. Double-check the source and target index names before proceeding.</p>
           </EuiCallOut>
+          {hasAggregation && (
+            <Fragment>
+              <EuiSpacer />
+              <EuiCallOut color="warning">
+                <p>Note: changing source index will erase all existing definitions about aggregations and metrics.</p>
+              </EuiCallOut>
+            </Fragment>
+          )}
           <EuiSpacer size="m" />
           <EuiFormRow
             label="Source index"
