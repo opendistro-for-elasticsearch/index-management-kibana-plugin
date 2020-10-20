@@ -20,7 +20,6 @@ import { RollupService } from "../../../../services";
 import ConfigureRollup from "../../components/ConfigureRollup";
 import RollupIndices from "../../components/RollupIndices";
 import CreateRollupSteps from "../../components/CreateRollupSteps";
-import Roles from "../../components/Roles";
 import IndexService from "../../../../services/IndexService";
 import { IndexItem } from "../../../../../models/interfaces";
 
@@ -42,7 +41,6 @@ interface CreateRollupProps extends RouteComponentProps {
   roleOptions: EuiComboBoxOptionOption<String>[];
   onChangeSourceIndex: (options: EuiComboBoxOptionOption<IndexItem>[]) => void;
   onChangeTargetIndex: (options: EuiComboBoxOptionOption<IndexItem>[]) => void;
-  onChangeRoles: (selectedOptions: EuiComboBoxOptionOption<String>[]) => void;
   currentStep: number;
 }
 

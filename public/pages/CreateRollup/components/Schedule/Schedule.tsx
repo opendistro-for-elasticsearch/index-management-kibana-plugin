@@ -140,12 +140,14 @@ export default class Schedule extends Component<ScheduleProps> {
     return (
       <ContentPanel bodyStyles={{ padding: "initial" }} title="Schedule" titleSize="s">
         <div style={{ paddingLeft: "10px" }}>
-          <EuiCheckbox
-            id="jobEnabledByDefault"
-            label="Enable job by default"
-            checked={jobEnabledByDefault}
-            onChange={onChangeJobEnabledByDefault}
-          />
+          {!isEdit && (
+            <EuiCheckbox
+              id="jobEnabledByDefault"
+              label="Enable job by default"
+              checked={jobEnabledByDefault}
+              onChange={onChangeJobEnabledByDefault}
+            />
+          )}
           <EuiSpacer size="m" />
           {!isEdit && isRecurring(recurringJob, onChangeRecurringJob)}
 

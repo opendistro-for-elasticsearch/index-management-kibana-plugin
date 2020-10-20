@@ -195,7 +195,7 @@ export default class Rollups extends Component<RollupsProps, RollupsState> {
         if (response.ok) {
           this.closeDeleteModal();
           //TODO: Update status or pull jobs again
-
+          this.getRollups();
           //Show success message
           toastNotifications.addSuccess(`"${rollupId}" successfully deleted!`);
         } else {
@@ -218,6 +218,7 @@ export default class Rollups extends Component<RollupsProps, RollupsState> {
 
         if (response.ok) {
           //TODO: Update status or pull jobs again
+          this.getRollups();
           //Show success message
           toastNotifications.addSuccess(`${rollupId} is disabled`);
         } else {
@@ -240,6 +241,7 @@ export default class Rollups extends Component<RollupsProps, RollupsState> {
 
         if (response.ok) {
           //TODO: Update status or pull jobs again
+          this.getRollups();
           //Show success message
           toastNotifications.addSuccess(`${rollupId} is enabled`);
         } else {

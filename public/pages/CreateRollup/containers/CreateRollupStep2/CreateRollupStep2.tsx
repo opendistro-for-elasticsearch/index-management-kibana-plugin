@@ -76,7 +76,6 @@ export default class CreateRollupStep2 extends Component<CreateRollupStep2Props>
         }
       }
     }
-    console.log(fieldsOption);
     return fieldsOption;
   };
 

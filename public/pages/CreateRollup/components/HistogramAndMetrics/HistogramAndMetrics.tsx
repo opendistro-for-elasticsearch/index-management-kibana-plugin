@@ -41,6 +41,7 @@ interface HistogramAndMetricsProps {
   rollupId: string;
   onChangeStep: (step: number) => void;
   timestamp: EuiComboBoxOptionOption<String>[];
+  intervalType: string;
   intervalValue: number;
   timezone: string;
   timeunit: string;
@@ -146,8 +147,22 @@ export default class HistogramAndMetrics extends Component<HistogramAndMetricsPr
     this.setState({ from: page * size, size, sortField, sortDirection });
   };
 
+  parseInterval(intervalType: string, intervalValue: number, timeunit: string): string {
+    if (intervalType == "calendar") return "1 " + parseTimeunit(timeunit);
+    return intervalValue + " " + parseTimeunit(timeunit);
+  }
+
   render() {
-    const { onChangeStep, intervalValue, timestamp, timezone, timeunit, selectedDimensionField, selectedMetrics } = this.props;
+    const {
+      onChangeStep,
+      intervalType,
+      intervalValue,
+      timestamp,
+      timezone,
+      timeunit,
+      selectedDimensionField,
+      selectedMetrics,
+    } = this.props;
     const { from, size } = this.state;
     const page = Math.floor(from / size);
     const pagination: Pagination = {
@@ -195,7 +210,7 @@ export default class HistogramAndMetrics extends Component<HistogramAndMetricsPr
             <EuiFlexItem>
               <EuiText size={"xs"}>
                 <dt>Interval</dt>
-                <dd>{intervalValue + " " + parseTimeunit(timeunit)}</dd>
+                <dd>{this.parseInterval(intervalType, intervalValue, timeunit)}</dd>
               </EuiText>
             </EuiFlexItem>
             <EuiFlexItem>

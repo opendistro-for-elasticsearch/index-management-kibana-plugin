@@ -35,9 +35,9 @@ interface CreateRollupProps extends RouteComponentProps {
   description: string;
   sourceIndex: { label: string; value?: IndexItem }[];
   targetIndex: { label: string; value?: IndexItem }[];
-  roles: EuiComboBoxOptionOption<String>[];
 
   timestamp: EuiComboBoxOptionOption<String>[];
+  intervalType: string;
   intervalValue: number;
   timezone: string;
   timeunit: string;

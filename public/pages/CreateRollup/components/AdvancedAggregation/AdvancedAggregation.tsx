@@ -96,7 +96,6 @@ export default class AdvancedAggregation extends Component<AdvancedAggregationPr
 
   onChangeSearch = (e: ChangeEvent<HTMLInputElement>): void => {
     this.setState({ searchText: e.target.value });
-    console.log(this.state);
   };
 
   onChangeFieldType = (options: EuiComboBoxOptionOption<String>[]): void => {
@@ -182,7 +181,6 @@ export default class AdvancedAggregation extends Component<AdvancedAggregationPr
   deleteField = (item: DimensionItem) => {
     const { selectedDimensionField } = this.props;
     const { selectedFields } = this.state;
-    console.log("ITEM: " + item + " index: " + selectedDimensionField.indexOf(item));
 
     //Remove the dimension item and then update sequence.
     selectedDimensionField.splice(selectedDimensionField.indexOf(item), 1);
