@@ -131,7 +131,12 @@ export default class AdvancedAggregation extends Component<AdvancedAggregationPr
     //Parse selectedFields to an array of DimensionItem if it does not exist
     let i = updatedDimensions.length + 1;
     const toAdd: DimensionItem[] = toAddFields.map((field) => {
-      return field.type == "long" || field.type == "double" || field.type == "float" || field.type == "integer" || field.type == "number"
+      return field.type == "long" ||
+        field.type == "double" ||
+        field.type == "float" ||
+        field.type == "integer" ||
+        field.type == "number" ||
+        field.type == "half_float"
         ? {
             sequence: i++,
             field: field,

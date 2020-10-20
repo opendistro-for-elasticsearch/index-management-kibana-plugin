@@ -591,6 +591,7 @@ export default class CreateRollupForm extends Component<CreateRollupFormProps, C
           intervalTimeunit={intervalTimeunit}
           intervalError={intervalError}
           cronExpression={cronExpression}
+          cronTimezone={cronTimezone}
           pageSize={pageSize}
           delayTime={delayTime}
           delayTimeunit={delayTimeunit}

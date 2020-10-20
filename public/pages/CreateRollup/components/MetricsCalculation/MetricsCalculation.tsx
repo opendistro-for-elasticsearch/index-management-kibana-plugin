@@ -209,7 +209,12 @@ export default class MetricsCalculation extends Component<MetricsCalculationProp
 
     const selection: EuiTableSelectionType<FieldItem> = {
       selectable: (field) =>
-        field.type == "integer" || field.type == "float" || field.type == "long" || field.type == "double" || field.type == "double",
+        field.type == "integer" ||
+        field.type == "float" ||
+        field.type == "long" ||
+        field.type == "double" ||
+        field.type == "double" ||
+        field.type == "half_float",
       onSelectionChange: this.onSelectionChange,
       initialSelected: selectedFields,
     };
