@@ -66,6 +66,7 @@ interface CreateRollupFormState {
   timestampError: string;
   intervalType: string;
   intervalValue: number;
+  intervalError: string;
   timezone: string;
   timeunit: string;
   selectedFields: FieldItem[];
@@ -116,6 +117,7 @@ export default class CreateRollupForm extends Component<CreateRollupFormProps, C
       timestampError: "",
       intervalType: "fixed",
       intervalValue: 1,
+      intervalError: "",
       timezone: "UTC +0",
       timeunit: "ms",
 
@@ -197,8 +199,21 @@ export default class CreateRollupForm extends Component<CreateRollupFormProps, C
             error = true;
           }
         });
+        //If nothing invalid found, clear error.
+        if (!error) this.setState({ metricError: "" });
+      }
+    } else if (currentStep == 3) {
+      //Check if interval is a valid value and is specified.
+      const { intervalError, recurringDefinition } = this.state;
+      if (recurringDefinition == "fixed") {
+        if (intervalError != "") {
+          const intervalErrorMsg = "Interval value is required.";
+          this.setState({ submitError: intervalErrorMsg, intervalError: intervalErrorMsg });
+          error = true;
+        }
       }
     }
+
     if (error) return;
 
     currentStep = currentStep >= 3 ? 4 : currentStep + 1;
@@ -339,9 +354,16 @@ export default class CreateRollupForm extends Component<CreateRollupFormProps, C
   };
 
   onChangeIntervalTime = (e: ChangeEvent<HTMLInputElement>): void => {
+    const interval = e.target.value;
     let newJSON = this.state.rollupJSON;
     newJSON.rollup.schedule.interval.period = e.target.value;
     this.setState({ interval: e.target.valueAsNumber, rollupJSON: newJSON });
+    if (interval == "") {
+      const intervalErrorMsg = "Interval value is required.";
+      this.setState({ submitError: intervalErrorMsg, intervalError: intervalErrorMsg });
+    } else {
+      this.setState({ intervalError: "" });
+    }
   };
 
   onChangePage = (e: ChangeEvent<HTMLInputElement>): void => {
@@ -503,6 +525,7 @@ export default class CreateRollupForm extends Component<CreateRollupFormProps, C
       recurringDefinition,
       interval,
       intervalTimeunit,
+      intervalError,
       cronExpression,
       pageSize,
       delayTime,
@@ -559,6 +582,7 @@ export default class CreateRollupForm extends Component<CreateRollupFormProps, C
           recurringDefinition={recurringDefinition}
           interval={interval}
           intervalTimeunit={intervalTimeunit}
+          intervalError={intervalError}
           cronExpression={cronExpression}
           pageSize={pageSize}
           delayTime={delayTime}

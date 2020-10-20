@@ -33,6 +33,7 @@ interface CreateRollupProps extends RouteComponentProps {
   recurringDefinition: string;
   interval: number;
   intervalTimeunit: string;
+  intervalError: string;
   cronExpression: string;
   pageSize: number;
   delayTime: number | undefined;

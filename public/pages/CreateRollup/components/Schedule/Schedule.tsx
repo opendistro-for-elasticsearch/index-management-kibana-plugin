@@ -39,6 +39,7 @@ interface ScheduleProps {
   recurringDefinition: string;
   interval: number;
   intervalTimeunit: string;
+  intervalError: string;
   cronExpression: string;
   pageSize: number;
   delayTime: number | undefined;
@@ -68,14 +69,15 @@ const radios = [
 const selectInterval = (
   interval: number,
   intervalTimeunit: string,
+  intervalError: string,
   onChangeInterval: (e: ChangeEvent<HTMLInputElement>) => void,
   onChangeTimeunit: (value: ChangeEvent<HTMLSelectElement>) => void
 ) => (
   <React.Fragment>
     <EuiFlexGroup style={{ maxWidth: 400 }}>
       <EuiFlexItem grow={false} style={{ width: 200 }}>
-        <EuiFormRow label="Rollup interval">
-          <EuiFieldNumber value={interval} onChange={onChangeInterval} />
+        <EuiFormRow label="Rollup interval" error={intervalError} isInvalid={intervalError != ""}>
+          <EuiFieldNumber value={interval} onChange={onChangeInterval} isInvalid={intervalError != ""} />
         </EuiFormRow>
       </EuiFlexItem>
       <EuiFlexItem>
@@ -123,6 +125,7 @@ export default class Schedule extends Component<ScheduleProps> {
       recurringDefinition,
       interval,
       intervalTimeunit,
+      intervalError,
       cronExpression,
       pageSize,
       delayTime,
@@ -165,7 +168,7 @@ export default class Schedule extends Component<ScheduleProps> {
           <EuiSpacer size="m" />
 
           {recurringDefinition == "fixed"
-            ? selectInterval(interval, intervalTimeunit, onChangeIntervalTime, onChangeIntervalTimeunit)
+            ? selectInterval(interval, intervalTimeunit, intervalError, onChangeIntervalTime, onChangeIntervalTimeunit)
             : defineCron(cronExpression, onChangeCron)}
 
           <EuiSpacer size="m" />
