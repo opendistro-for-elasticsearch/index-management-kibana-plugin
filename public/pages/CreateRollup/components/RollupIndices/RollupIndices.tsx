@@ -125,7 +125,7 @@ export default class RollupIndices extends Component<RollupIndicesProps, RollupI
               options={indexOptions}
               selectedOptions={sourceIndex}
               onChange={onChangeSourceIndex}
-              singleSelection={true}
+              singleSelection={{ asPlainText: true }}
               onSearchChange={this.onIndexSearchChange}
               isLoading={isLoading}
               isInvalid={sourceIndexError != ""}
@@ -144,7 +144,7 @@ export default class RollupIndices extends Component<RollupIndicesProps, RollupI
               selectedOptions={targetIndex}
               onChange={onChangeTargetIndex}
               onCreateOption={this.onCreateOption}
-              singleSelection={true}
+              singleSelection={{ asPlainText: true }}
               onSearchChange={this.onIndexSearchChange}
               isLoading={isLoading}
               isInvalid={targetIndexError != ""}

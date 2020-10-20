@@ -159,7 +159,6 @@ export default class RollupService {
       const params = { rollupId: id };
       const { callWithRequest } = await this.esDriver.getCluster(CLUSTER.ISM);
       const rollupMetadata = await callWithRequest(req, "ism.explainRollup", params);
-      console.log(rollupMetadata);
       if (rollupMetadata) {
         return { ok: true, response: rollupMetadata };
       } else {

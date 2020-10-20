@@ -1,5 +1,5 @@
 /*
- * Copyright 2019 Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ * Copyright 2020 Amazon.com, Inc. or its affiliates. All Rights Reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License").
  * You may not use this file except in compliance with the License.
@@ -412,7 +412,6 @@ export default class MetricsCalculation extends Component<MetricsCalculationProp
       </EuiContextMenuItem>,
     ];
 
-    // @ts-ignore
     return (
       <EuiPanel>
         <EuiFlexGroup style={{ padding: "0px 10px" }} justifyContent="spaceBetween" alignItems="center">
