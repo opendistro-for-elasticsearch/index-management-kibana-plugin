@@ -29,7 +29,7 @@ import {
   EuiFormHelpText,
   EuiHorizontalRule,
 } from "@elastic/eui";
-import { CalendarTimeunitOptions, FixedTimeunitOptions, TimezoneOptionsByRegion } from "../../utils/constants";
+import { CalendarTimeunitOptions, FixedTimeunitOptions } from "../../utils/constants";
 import { RollupService } from "../../../../services";
 import { FieldItem } from "../../models/interfaces";
 import moment from "moment-timezone";
@@ -89,7 +89,6 @@ export default class TimeAggregation extends Component<TimeAggregationProps, Tim
 
     // Filter options for date histogram
     const dateFields = fieldsOption.filter((item) => item.type == "date");
-    const timezones = moment.tz.names().map((tz) => ({ label: tz, text: tz }));
 
     return (
       <EuiPanel>
