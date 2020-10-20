@@ -64,6 +64,8 @@ const radios = [
   },
 ];
 
+const timezones = moment.tz.names().map((tz) => ({ label: tz, text: tz }));
+
 export default class TimeAggregation extends Component<TimeAggregationProps, TimeAggregationState> {
   constructor(props: TimeAggregationProps) {
     super(props);

@@ -28,6 +28,7 @@ interface ScheduleRolesAndNotificationsProps {
   interval: number;
   intervalTimeunit: string;
   cronExpression: string;
+  cronTimezone: string;
   pageSize: number;
   delayTime: number | undefined;
   delayTimeunit: string;

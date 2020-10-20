@@ -77,6 +77,7 @@ interface CreateRollupFormState {
   interval: number;
   intervalTimeunit: string;
   cronExpression: string;
+  cronTimezone: string;
   pageSize: number;
   delayTime: number | undefined;
   delayTimeunit: string;
@@ -118,7 +119,7 @@ export default class CreateRollupForm extends Component<CreateRollupFormProps, C
       intervalType: "fixed",
       intervalValue: 1,
       intervalError: "",
-      timezone: "UTC +0",
+      timezone: "Africa/Abidjan",
       timeunit: "ms",
 
       jobEnabledByDefault: false,
@@ -127,6 +128,7 @@ export default class CreateRollupForm extends Component<CreateRollupFormProps, C
       interval: 2,
       intervalTimeunit: "MINUTES",
       cronExpression: "",
+      cronTimezone: "Africa/Abidjan",
       pageSize: 1000,
       delayTime: undefined,
       delayTimeunit: "MINUTES",
@@ -346,6 +348,10 @@ export default class CreateRollupForm extends Component<CreateRollupFormProps, C
     this.setState({ cronExpression: e.target.value, rollupJSON: newJSON });
   };
 
+  onChangeCronTimezone = (e: ChangeEvent<HTMLSelectElement>): void => {
+    this.setState({ cronTimezone: e.target.value });
+  };
+
   //TODO: Figure out the correct format of delay time, do we need to convert the value along with timeunit?
   onChangeDelayTime = (e: ChangeEvent<HTMLInputElement>): void => {
     let newJSON = this.state.rollupJSON;
@@ -378,10 +384,10 @@ export default class CreateRollupForm extends Component<CreateRollupFormProps, C
   };
 
   updateSchedule = (): void => {
-    const { recurringDefinition, cronExpression, interval, intervalTimeunit, timezone } = this.state;
+    const { recurringDefinition, cronExpression, interval, intervalTimeunit, cronTimezone } = this.state;
     let newJSON = this.state.rollupJSON;
     if (recurringDefinition == "cron") {
-      newJSON.rollup.schedule.cron = { expression: `${cronExpression}`, timezone: `${timezone}` };
+      newJSON.rollup.schedule.cron = { expression: `${cronExpression}`, timezone: `${cronTimezone}` };
       delete newJSON.rollup.schedule["interval"];
     } else {
       //Using current time as start time.
@@ -527,6 +533,7 @@ export default class CreateRollupForm extends Component<CreateRollupFormProps, C
       intervalTimeunit,
       intervalError,
       cronExpression,
+      cronTimezone,
       pageSize,
       delayTime,
       delayTimeunit,
@@ -589,6 +596,7 @@ export default class CreateRollupForm extends Component<CreateRollupFormProps, C
           delayTimeunit={delayTimeunit}
           onChangeJobEnabledByDefault={this.onChangeJobEnabledByDefault}
           onChangeCron={this.onChangeCron}
+          onChangeCronTimezone={this.onChangeCronTimezone}
           onChangeDelayTime={this.onChangeDelayTime}
           onChangeIntervalTime={this.onChangeIntervalTime}
           onChangePage={this.onChangePage}
@@ -616,6 +624,7 @@ export default class CreateRollupForm extends Component<CreateRollupFormProps, C
           interval={interval}
           intervalTimeunit={intervalTimeunit}
           cronExpression={cronExpression}
+          cronTimezone={cronTimezone}
           pageSize={pageSize}
           delayTime={delayTime}
           delayTimeunit={delayTimeunit}
