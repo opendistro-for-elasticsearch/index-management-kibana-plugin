@@ -32,6 +32,7 @@ import {
 import { CalendarTimeunitOptions, FixedTimeunitOptions, TimezoneOptionsByRegion } from "../../utils/constants";
 import { RollupService } from "../../../../services";
 import { FieldItem } from "../../models/interfaces";
+import moment from "moment-timezone";
 
 interface TimeAggregationProps {
   rollupService: RollupService;
@@ -62,6 +63,8 @@ const radios = [
     label: "Calendar",
   },
 ];
+
+const timezones = moment.tz.names().map((tz) => ({ label: tz, text: tz }));
 
 export default class TimeAggregation extends Component<TimeAggregationProps, TimeAggregationState> {
   constructor(props: TimeAggregationProps) {
@@ -137,7 +140,7 @@ export default class TimeAggregation extends Component<TimeAggregationProps, Tim
           </EuiFlexGroup>
           <EuiSpacer size="m" />
           <EuiFormRow label="Timezone" helpText={"A day starts from 00:00:00 in the specified timezone."}>
-            <EuiSelect id="timezone" options={TimezoneOptionsByRegion} value={timezone} onChange={onChangeTimezone} />
+            <EuiSelect id="timezone" options={timezones} value={timezone} onChange={onChangeTimezone} />
           </EuiFormRow>
         </div>
       </EuiPanel>

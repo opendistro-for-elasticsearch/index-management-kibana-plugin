@@ -35,11 +35,13 @@ interface CreateRollupProps extends RouteComponentProps {
   intervalTimeunit: string;
   intervalError: string;
   cronExpression: string;
+  cronTimezone: string;
   pageSize: number;
   delayTime: number | undefined;
   delayTimeunit: string;
   onChangeJobEnabledByDefault: () => void;
   onChangeCron: (e: ChangeEvent<HTMLTextAreaElement>) => void;
+  onChangeCronTimezone: (e: ChangeEvent<HTMLSelectElement>) => void;
   onChangeDelayTime: (e: ChangeEvent<HTMLInputElement>) => void;
   onChangeIntervalTime: (e: ChangeEvent<HTMLInputElement>) => void;
   onChangePage: (e: ChangeEvent<HTMLInputElement>) => void;

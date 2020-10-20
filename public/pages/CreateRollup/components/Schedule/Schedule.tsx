@@ -29,6 +29,7 @@ import {
 } from "@elastic/eui";
 import { CalendarTimeunitOptions, DelayTimeunitOptions } from "../../utils/constants";
 import { ContentPanel } from "../../../../components/ContentPanel";
+import moment from "moment-timezone";
 
 interface ScheduleProps {
   isEdit: boolean;
@@ -41,11 +42,13 @@ interface ScheduleProps {
   intervalTimeunit: string;
   intervalError: string;
   cronExpression: string;
+  cronTimezone: string;
   pageSize: number;
   delayTime: number | undefined;
   delayTimeunit: string;
   onChangeJobEnabledByDefault: () => void;
   onChangeCron: (e: ChangeEvent<HTMLTextAreaElement>) => void;
+  onChangeCronTimezone: (e: ChangeEvent<HTMLSelectElement>) => void;
   onChangeDelayTime: (e: ChangeEvent<HTMLInputElement>) => void;
   onChangeIntervalTime: (e: ChangeEvent<HTMLInputElement>) => void;
   onChangePage: (e: ChangeEvent<HTMLInputElement>) => void;
@@ -104,13 +107,7 @@ const isRecurring = (recurringJob: string, onChangeRecurringJob: (optionId: stri
   </React.Fragment>
 );
 
-const defineCron = (cronExpression: string, onChangeCron: (value: ChangeEvent<HTMLTextAreaElement>) => void) => (
-  <React.Fragment>
-    <EuiFormRow label="Define by cron expression">
-      <EuiTextArea value={cronExpression} onChange={onChangeCron} compressed={true} />
-    </EuiFormRow>
-  </React.Fragment>
-);
+const timezones = moment.tz.names().map((tz) => ({ label: tz, text: tz }));
 
 export default class Schedule extends Component<ScheduleProps> {
   constructor(props: ScheduleProps) {
@@ -127,11 +124,13 @@ export default class Schedule extends Component<ScheduleProps> {
       intervalTimeunit,
       intervalError,
       cronExpression,
+      cronTimezone,
       pageSize,
       delayTime,
       delayTimeunit,
       onChangeJobEnabledByDefault,
       onChangeCron,
+      onChangeCronTimezone,
       onChangeDelayTime,
       onChangeIntervalTime,
       onChangePage,
@@ -167,9 +166,18 @@ export default class Schedule extends Component<ScheduleProps> {
           </EuiFormRow>
           <EuiSpacer size="m" />
 
-          {recurringDefinition == "fixed"
-            ? selectInterval(interval, intervalTimeunit, intervalError, onChangeIntervalTime, onChangeIntervalTimeunit)
-            : defineCron(cronExpression, onChangeCron)}
+          {recurringDefinition == "fixed" ? (
+            selectInterval(interval, intervalTimeunit, intervalError, onChangeIntervalTime, onChangeIntervalTimeunit)
+          ) : (
+            <React.Fragment>
+              <EuiFormRow label="Define by cron expression">
+                <EuiTextArea value={cronExpression} onChange={onChangeCron} compressed={true} />
+              </EuiFormRow>
+              <EuiFormRow label="Timezone" helpText={"A day starts from 00:00:00 in the specified timezone."}>
+                <EuiSelect id="timezone" options={timezones} value={cronTimezone} onChange={onChangeCronTimezone} />
+              </EuiFormRow>
+            </React.Fragment>
+          )}
 
           <EuiSpacer size="m" />
 
