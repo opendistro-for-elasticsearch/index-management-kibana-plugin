@@ -66,15 +66,15 @@ interface CreateRollupFormState {
   timestampError: string;
   intervalType: string;
   intervalValue: number;
-  intervalError: string;
   timezone: string;
   timeunit: string;
   selectedFields: FieldItem[];
-
   jobEnabledByDefault: boolean;
+
   recurringJob: string;
   recurringDefinition: string;
   interval: number;
+  intervalError: string;
   intervalTimeunit: string;
   cronExpression: string;
   cronTimezone: string;

@@ -43,6 +43,7 @@ interface EditRollupState {
   recurringJob: string;
   recurringDefinition: string;
   interval: number;
+  intervalError: string;
   intervalTimeunit: string;
   cronExpression: string;
   pageSize: number;
@@ -67,6 +68,7 @@ export default class EditRollup extends Component<EditRollupProps, EditRollupSta
       recurringJob: "no",
       recurringDefinition: "fixed",
       interval: 2,
+      intervalError: "",
       intervalTimeunit: "M",
       cronExpression: "",
       pageSize: 1000,
@@ -168,8 +170,15 @@ export default class EditRollup extends Component<EditRollupProps, EditRollupSta
 
   onChangeIntervalTime = (e: ChangeEvent<HTMLInputElement>): void => {
     let newJSON = this.state.rollupJSON;
+    const interval = e.target.value;
     newJSON.rollup.schedule.interval.period = e.target.value;
     this.setState({ interval: e.target.valueAsNumber, rollupJSON: newJSON });
+    if (interval == "") {
+      const intervalErrorMsg = "Interval value is required.";
+      this.setState({ submitError: intervalErrorMsg, intervalError: intervalErrorMsg });
+    } else {
+      this.setState({ intervalError: "" });
+    }
   };
 
   onChangePage = (e: ChangeEvent<HTMLInputElement>): void => {
@@ -249,6 +258,7 @@ export default class EditRollup extends Component<EditRollupProps, EditRollupSta
       recurringJob,
       recurringDefinition,
       interval,
+      intervalError,
       intervalTimeunit,
       cronExpression,
       pageSize,
@@ -282,6 +292,7 @@ export default class EditRollup extends Component<EditRollupProps, EditRollupSta
           intervalTimeunit={intervalTimeunit}
           cronExpression={cronExpression}
           pageSize={pageSize}
+          intervalError={intervalError}
           delayTime={delayTime}
           delayTimeunit={delayTimeunit}
           onChangeJobEnabledByDefault={this.onChangeJobEnabledByDefault}
