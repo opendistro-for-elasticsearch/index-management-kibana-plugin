@@ -16,9 +16,8 @@
 import React, { ChangeEvent, Component } from "react";
 import chrome from "ui/chrome";
 import { RouteComponentProps } from "react-router-dom";
-import { EuiFlexItem, EuiFlexGroup, EuiButton, EuiTitle, EuiSpacer, EuiButtonEmpty, EuiComboBoxOptionOption } from "@elastic/eui";
+import { EuiFlexItem, EuiFlexGroup, EuiButton, EuiTitle, EuiSpacer, EuiButtonEmpty } from "@elastic/eui";
 import ConfigureRollup from "../../CreateRollup/components/ConfigureRollup";
-import Roles from "../../CreateRollup/components/Roles";
 import Schedule from "../../CreateRollup/components/Schedule";
 import { toastNotifications } from "ui/notify";
 import queryString from "query-string";
@@ -40,7 +39,6 @@ interface EditRollupState {
   isSubmitting: boolean;
   hasSubmitted: boolean;
   description: string;
-  roles: EuiComboBoxOptionOption<String>[];
   jobEnabledByDefault: boolean;
   recurringJob: string;
   recurringDefinition: string;
@@ -52,19 +50,6 @@ interface EditRollupState {
   delayTimeunit: string;
   rollupJSON: any;
 }
-
-//TODO: Fetch actual roles from backend
-const options: EuiComboBoxOptionOption<String>[] = [
-  {
-    label: "Role1",
-  },
-  {
-    label: "Role2",
-  },
-  {
-    label: "Role3",
-  },
-];
 
 export default class EditRollup extends Component<EditRollupProps, EditRollupState> {
   constructor(props: EditRollupProps) {
@@ -78,7 +63,6 @@ export default class EditRollup extends Component<EditRollupProps, EditRollupSta
       isSubmitting: false,
       hasSubmitted: false,
       description: "",
-      roles: [],
       jobEnabledByDefault: false,
       recurringJob: "no",
       recurringDefinition: "fixed",
@@ -114,18 +98,12 @@ export default class EditRollup extends Component<EditRollupProps, EditRollupSta
       if (response.ok) {
         let newJSON = JSON.parse(this.state.rollupJSON);
         newJSON.rollup = response.response.rollup;
-        let roles: EuiComboBoxOptionOption<String>[] = [];
-        var i;
-        for (i = 0; i < response.response.rollup.roles.length; i++) {
-          roles.push({ label: response.response.rollup.roles[i] });
-        }
 
         this.setState({
           rollupSeqNo: response.response.seqNo,
           rollupPrimaryTerm: response.response.primaryTerm,
           rollupId: response.response.id,
           description: response.response.rollup.description,
-          roles: roles,
           jobEnabledByDefault: response.response.rollup.enabled,
           pageSize: response.response.rollup.page_size,
           delayTime: response.response.rollup.delay,
@@ -167,14 +145,6 @@ export default class EditRollup extends Component<EditRollupProps, EditRollupSta
     newJSON.rollup.rollupId = rollupId;
     if (hasSubmitted) this.setState({ rollupId, rollupIdError: rollupId ? "" : "Required" });
     else this.setState({ rollupId: rollupId, rollupJSON: newJSON });
-  };
-
-  onChangeRoles = (selectedOptions: EuiComboBoxOptionOption<String>[]): void => {
-    let newJSON = this.state.rollupJSON;
-    newJSON.rollup.roles = selectedOptions.map(function (option) {
-      return option.label;
-    });
-    this.setState({ roles: selectedOptions, rollupJSON: newJSON });
   };
 
   onChangeJobEnabledByDefault = (): void => {
@@ -274,7 +244,6 @@ export default class EditRollup extends Component<EditRollupProps, EditRollupSta
       rollupId,
       rollupIdError,
       isSubmitting,
-      roles,
       description,
       jobEnabledByDefault,
       recurringJob,
@@ -301,9 +270,6 @@ export default class EditRollup extends Component<EditRollupProps, EditRollupSta
           onChangeName={this.onChangeName}
           description={description}
         />
-        <EuiSpacer />
-
-        <Roles rollupId={rollupId} rollupIdError={rollupIdError} onChange={this.onChangeRoles} roleOptions={options} roles={roles} />
         <EuiSpacer />
         <Schedule
           isEdit={true}

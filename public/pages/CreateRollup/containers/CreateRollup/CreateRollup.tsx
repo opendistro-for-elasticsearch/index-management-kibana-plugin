@@ -37,7 +37,6 @@ interface CreateRollupProps extends RouteComponentProps {
   sourceIndexError: string;
   targetIndex: { label: string; value?: IndexItem }[];
   targetIndexError: string;
-  roles: EuiComboBoxOptionOption<String>[];
   onChangeName: (e: ChangeEvent<HTMLInputElement>) => void;
   onChangeDescription: (value: ChangeEvent<HTMLTextAreaElement>) => void;
   roleOptions: EuiComboBoxOptionOption<String>[];
@@ -46,18 +45,6 @@ interface CreateRollupProps extends RouteComponentProps {
   onChangeRoles: (selectedOptions: EuiComboBoxOptionOption<String>[]) => void;
   currentStep: number;
 }
-
-const options: EuiComboBoxOptionOption<String>[] = [
-  {
-    label: "Role1",
-  },
-  {
-    label: "Role2",
-  },
-  {
-    label: "Role3",
-  },
-];
 
 export default class CreateRollup extends Component<CreateRollupProps> {
   constructor(props: CreateRollupProps) {
@@ -69,7 +56,7 @@ export default class CreateRollup extends Component<CreateRollupProps> {
       // Prop: The current step
       return null;
     }
-    const { rollupId, rollupIdError, description, roles, onChangeName, onChangeDescription, onChangeRoles } = this.props;
+    const { rollupId, rollupIdError, description, onChangeName, onChangeDescription } = this.props;
 
     return (
       <div style={{ padding: "5px 50px" }}>
@@ -92,8 +79,6 @@ export default class CreateRollup extends Component<CreateRollupProps> {
             />
             <EuiSpacer />
             <RollupIndices {...this.props} />
-            <EuiSpacer />
-            <Roles rollupId={rollupId} rollupIdError={rollupIdError} onChange={onChangeRoles} roles={roles} roleOptions={options} />
           </EuiFlexItem>
         </EuiFlexGroup>
         <EuiSpacer />

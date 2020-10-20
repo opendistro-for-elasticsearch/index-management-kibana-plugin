@@ -56,7 +56,6 @@ interface RollupDetailsState {
   description: string;
   sourceIndex: string;
   targetIndex: string;
-  roles: EuiComboBoxOptionOption<String>[];
   rollupJSON: string;
   recurringJob: string;
   recurringDefinition: string;
@@ -89,7 +88,6 @@ export default class RollupDetails extends Component<RollupDetailsProps, RollupD
       description: "",
       sourceIndex: "",
       targetIndex: "",
-      roles: [],
 
       recurringJob: "no",
       recurringDefinition: "fixed",
@@ -137,18 +135,11 @@ export default class RollupDetails extends Component<RollupDetailsProps, RollupD
       if (response.ok) {
         let newJSON = JSON.parse(this.state.rollupJSON);
         newJSON.rollup = response.response.rollup;
-        let roles: EuiComboBoxOptionOption<String>[] = [];
-        var i;
-        for (i = 0; i < response.response.rollup.roles.length; i++) {
-          roles.push({ label: response.response.rollup.roles[i] });
-        }
-
         this.setState({
           rollupId: response.response.id,
           description: response.response.rollup.description,
           sourceIndex: response.response.rollup.source_index,
           targetIndex: response.response.rollup.target_index,
-          roles: roles,
           delayTime: response.response.rollup.delay,
           pageSize: response.response.rollup.page_size,
           rollupJSON: newJSON,
@@ -299,7 +290,6 @@ export default class RollupDetails extends Component<RollupDetailsProps, RollupD
       description,
       sourceIndex,
       targetIndex,
-      roles,
       recurringJob,
       recurringDefinition,
       interval,
@@ -368,7 +358,6 @@ export default class RollupDetails extends Component<RollupDetailsProps, RollupD
           description={description}
           sourceIndex={sourceIndex}
           targetIndex={targetIndex}
-          roles={roles}
           scheduleText={scheduleText}
           pageSize={pageSize}
           lastUpdated={lastUpdated}

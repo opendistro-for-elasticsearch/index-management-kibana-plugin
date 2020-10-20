@@ -23,7 +23,6 @@ interface GeneralInformationProps {
   description: string;
   sourceIndex: string;
   targetIndex: string;
-  roles: EuiComboBoxOptionOption<String>[];
   scheduleText: string;
   pageSize: number;
   lastUpdated: string;
@@ -36,12 +35,7 @@ export default class GeneralInformation extends Component<GeneralInformationProp
   }
 
   render() {
-    const { rollupId, description, onEdit, sourceIndex, targetIndex, roles, scheduleText, pageSize, lastUpdated } = this.props;
-    const rolesText = roles.length
-      ? roles.map(function (option) {
-          return option.label;
-        })
-      : "-";
+    const { rollupId, description, onEdit, sourceIndex, targetIndex, scheduleText, pageSize, lastUpdated } = this.props;
     return (
       <ContentPanel
         actions={
@@ -95,12 +89,6 @@ export default class GeneralInformation extends Component<GeneralInformationProp
               <EuiText size={"xs"}>
                 <dt>Description</dt>
                 <dd>{description == "" ? "-" : description}</dd>
-              </EuiText>
-            </EuiFlexItem>
-            <EuiFlexItem>
-              <EuiText size={"xs"}>
-                <dt>Roles</dt>
-                <dd>{rolesText}</dd>
               </EuiText>
             </EuiFlexItem>
             <EuiFlexItem>

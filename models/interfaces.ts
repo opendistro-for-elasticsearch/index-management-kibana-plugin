@@ -96,20 +96,19 @@ export interface Rollup {
   ];
   enabled: boolean;
   enabled_time?: number;
-  last_updated_time: number;
+  last_updated_time?: number;
   metadata_id?: number;
-  metrics: MetricItem[];
+  metrics?: MetricItem[];
   page_size: number;
-  roles: object[];
   schedule: {
     interval?: {
-      start_time: number;
+      start_time?: number;
       period: number;
       unit: string;
     };
     cron?: {
       expression: string;
-      timezone?: string;
+      timezone: string;
     };
   };
   schema_version: number;

@@ -195,7 +195,7 @@ export default class HistogramAndMetrics extends Component<HistogramAndMetricsPr
             <EuiFlexItem>
               <EuiText size={"xs"}>
                 <dt>Interval</dt>
-                <dd>{intervalValue + parseTimeunit(timeunit)}</dd>
+                <dd>{intervalValue + " " + parseTimeunit(timeunit)}</dd>
               </EuiText>
             </EuiFlexItem>
             <EuiFlexItem>

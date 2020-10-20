@@ -34,14 +34,13 @@ export const EMPTY_ROLLUP = JSON.stringify({
     roles: [],
     schedule: {
       interval: {
-        start_time: 1553112384,
+        start_time: 234802,
+        period: 1,
         unit: "MINUTES",
       },
     },
     source_index: "",
     target_index: "",
-    last_updated_time: 1553112384,
-    delay: 0,
   },
 });
 

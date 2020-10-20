@@ -14,7 +14,7 @@
  */
 
 import React, { Component } from "react";
-import { EuiFlexGrid, EuiSpacer, EuiFlexItem, EuiText, EuiComboBoxOptionOption } from "@elastic/eui";
+import { EuiFlexGrid, EuiSpacer, EuiFlexItem, EuiText } from "@elastic/eui";
 import { ContentPanel, ContentPanelActions } from "../../../../components/ContentPanel";
 import { ModalConsumer } from "../../../../components/Modal";
 import { IndexItem } from "../../../../../models/interfaces";
@@ -24,7 +24,6 @@ interface JobNameAndIndicesProps {
   description: string;
   sourceIndex: { label: string; value?: IndexItem }[];
   targetIndex: { label: string; value?: IndexItem }[];
-  roles: EuiComboBoxOptionOption<String>[];
   onChangeStep: (step: number) => void;
 }
 
@@ -34,14 +33,7 @@ export default class JobNameAndIndices extends Component<JobNameAndIndicesProps>
   }
 
   render() {
-    const { rollupId, description, onChangeStep, sourceIndex, targetIndex, roles } = this.props;
-
-    //Process roles to a string here.
-    const rolesText = roles.length
-      ? roles.map(function (option) {
-          return option.label;
-        })
-      : "-";
+    const { rollupId, description, onChangeStep, sourceIndex, targetIndex } = this.props;
 
     return (
       <ContentPanel
@@ -82,20 +74,14 @@ export default class JobNameAndIndices extends Component<JobNameAndIndicesProps>
             </EuiFlexItem>
             <EuiFlexItem>
               <EuiText size={"xs"}>
-                <dt>Roles</dt>
-                <dd>{rolesText.toString()}</dd>
+                <dt>Target index</dt>
+                <dd>{targetIndex[0].label}</dd>
               </EuiText>
             </EuiFlexItem>
             <EuiFlexItem>
               <EuiText size={"xs"}>
                 <dt>Description</dt>
                 <dd>{description == "" ? "-" : description}</dd>
-              </EuiText>
-            </EuiFlexItem>
-            <EuiFlexItem>
-              <EuiText size={"xs"}>
-                <dt>Target index</dt>
-                <dd>{targetIndex[0].label}</dd>
               </EuiText>
             </EuiFlexItem>
           </EuiFlexGrid>
