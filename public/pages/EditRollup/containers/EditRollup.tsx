@@ -25,6 +25,7 @@ import { getErrorMessage } from "../../../utils/helpers";
 import { BREADCRUMBS, ROUTES } from "../../../utils/constants";
 import { Rollup } from "../../../../models/interfaces";
 import { RollupService } from "../../../services";
+import moment from "moment";
 
 interface EditRollupProps extends RouteComponentProps {
   rollupService: RollupService;
@@ -46,6 +47,7 @@ interface EditRollupState {
   intervalError: string;
   intervalTimeunit: string;
   cronExpression: string;
+  cronTimezone: string;
   pageSize: number;
   delayTime: number | undefined;
   delayTimeunit: string;
@@ -71,6 +73,7 @@ export default class EditRollup extends Component<EditRollupProps, EditRollupSta
       intervalError: "",
       intervalTimeunit: "M",
       cronExpression: "",
+      cronTimezone: "Africa/Abidjan",
       pageSize: 1000,
       delayTime: undefined,
       delayTimeunit: "MINUTES",
@@ -162,6 +165,10 @@ export default class EditRollup extends Component<EditRollupProps, EditRollupSta
     this.setState({ cronExpression: e.target.value, rollupJSON: newJSON });
   };
 
+  onChangeCronTimezone = (e: ChangeEvent<HTMLSelectElement>): void => {
+    this.setState({ cronTimezone: e.target.value });
+  };
+
   onChangeDelayTime = (e: ChangeEvent<HTMLInputElement>): void => {
     let newJSON = this.state.rollupJSON;
     newJSON.rollup.delay = e.target.value;
@@ -210,6 +217,21 @@ export default class EditRollup extends Component<EditRollupProps, EditRollupSta
     this.setState({ intervalTimeunit: e.target.value, rollupJSON: newJSON });
   };
 
+  updateSchedule = (): void => {
+    const { recurringDefinition, cronExpression, interval, intervalTimeunit, cronTimezone } = this.state;
+    let newJSON = this.state.rollupJSON;
+    if (recurringDefinition == "cron") {
+      newJSON.rollup.schedule.cron = { expression: `${cronExpression}`, timezone: `${cronTimezone}` };
+      delete newJSON.rollup.schedule["interval"];
+    } else {
+      //Using current time as start time.
+      console.log(`{ unit : ${intervalTimeunit}, period : ${interval}}`);
+      newJSON.rollup.schedule.interval = { start_time: moment().unix(), unit: `${intervalTimeunit}`, period: `${interval}` };
+      // delete newJSON.rollup.schedule["cron"];
+    }
+    this.setState({ rollupJSON: newJSON });
+  };
+
   onSubmit = async (): Promise<void> => {
     const { rollupId, rollupJSON } = this.state;
     this.setState({ submitError: "", isSubmitting: true, hasSubmitted: true });
@@ -218,6 +240,7 @@ export default class EditRollup extends Component<EditRollupProps, EditRollupSta
         this.setState({ rollupIdError: "Required" });
       } else {
         //Build JSON string here
+        this.updateSchedule();
         await this.onUpdate(rollupId, rollupJSON);
       }
     } catch (err) {
@@ -261,6 +284,7 @@ export default class EditRollup extends Component<EditRollupProps, EditRollupSta
       intervalError,
       intervalTimeunit,
       cronExpression,
+      cronTimezone,
       pageSize,
       delayTime,
       delayTimeunit,
@@ -291,12 +315,14 @@ export default class EditRollup extends Component<EditRollupProps, EditRollupSta
           interval={interval}
           intervalTimeunit={intervalTimeunit}
           cronExpression={cronExpression}
+          cronTimezone={cronTimezone}
           pageSize={pageSize}
           intervalError={intervalError}
           delayTime={delayTime}
           delayTimeunit={delayTimeunit}
           onChangeJobEnabledByDefault={this.onChangeJobEnabledByDefault}
           onChangeCron={this.onChangeCron}
+          onChangeCronTimezone={this.onChangeCronTimezone}
           onChangeDelayTime={this.onChangeDelayTime}
           onChangeIntervalTime={this.onChangeIntervalTime}
           onChangePage={this.onChangePage}

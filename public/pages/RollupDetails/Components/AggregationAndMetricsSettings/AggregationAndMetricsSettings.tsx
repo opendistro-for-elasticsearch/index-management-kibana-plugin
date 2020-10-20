@@ -26,17 +26,17 @@ import {
   EuiTableFieldDataColumnType,
 } from "@elastic/eui";
 import { ContentPanel } from "../../../../components/ContentPanel";
-import { MetricItem, RollupDimensionItem } from "../../../CreateRollup/models/interfaces";
+import { DimensionItem, MetricItem } from "../../../CreateRollup/models/interfaces";
 import { parseTimezone } from "../../../CreateRollup/utils/helpers";
 
 interface AggregationAndMetricsSettingsProps {
   timestamp: string;
   histogramInterval: string;
   timezone: string;
-  selectedDimensionField: RollupDimensionItem[];
+  selectedDimensionField: DimensionItem[];
   selectedMetrics: MetricItem[];
 }
-const aggregationColumns: EuiTableFieldDataColumnType<RollupDimensionItem>[] = [
+const aggregationColumns: EuiTableFieldDataColumnType<DimensionItem>[] = [
   {
     field: "sequence",
     name: "Sequence",

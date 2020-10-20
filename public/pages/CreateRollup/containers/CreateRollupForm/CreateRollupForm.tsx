@@ -400,6 +400,7 @@ export default class CreateRollupForm extends Component<CreateRollupFormProps, C
 
   onChangeRecurringJob = (optionId: string): void => {
     let newJSON = this.state.rollupJSON;
+    s;
     newJSON.rollup.continuous = optionId == "yes";
     this.setState({ recurringJob: optionId, rollupJSON: newJSON });
   };

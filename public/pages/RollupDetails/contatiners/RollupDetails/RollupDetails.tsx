@@ -71,7 +71,7 @@ interface RollupDetailsState {
   timestamp: string;
   histogramInterval: string;
   timezone: string;
-  selectedDimensionField: RollupDimensionItem[];
+  selectedDimensionField: DimensionItem[];
   selectedMetrics: MetricItem[];
 
   isModalOpen: boolean;
@@ -184,12 +184,10 @@ export default class RollupDetails extends Component<RollupDetailsProps, RollupD
     if (sourceArray.length == 0) return [];
     const result = sourceArray.map((dimension: RollupDimensionItem) => ({
       sequence: dimensions.indexOf(dimension),
-      aggregationMethod: !!dimension.histogram ? "terms" : "histogram",
+      aggregationMethod: dimension.histogram == null ? "terms" : "histogram",
       field: dimension.histogram == null ? { label: dimension.terms?.source_field } : { label: dimension.histogram?.source_field },
       interval: dimension.histogram == null ? null : dimension.histogram?.interval,
     }));
-
-    // console.log(result);
     return result;
   };
 
