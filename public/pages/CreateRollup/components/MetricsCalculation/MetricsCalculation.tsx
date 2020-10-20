@@ -43,6 +43,7 @@ import {
   EuiPopover,
   EuiContextMenuPanel,
   EuiContextMenuItem,
+  EuiCallOut,
 } from "@elastic/eui";
 import { AddFieldsColumns } from "../../utils/constants";
 import { FieldItem, MetricItem } from "../../models/interfaces";
@@ -50,6 +51,7 @@ import { FieldItem, MetricItem } from "../../models/interfaces";
 interface MetricsCalculationProps {
   fieldsOption: FieldItem[];
   selectedMetrics: MetricItem[];
+  metricError: string;
   onMetricSelectionChange: (selectedFields: MetricItem[]) => void;
 }
 
@@ -202,7 +204,7 @@ export default class MetricsCalculation extends Component<MetricsCalculationProp
   }
 
   render() {
-    const { fieldsOption, selectedMetrics } = this.props;
+    const { fieldsOption, selectedMetrics, metricError } = this.props;
     const { isModalVisible, searchText, selectedFieldType, selectedFields, isDisableOpen, isEnableOpen } = this.state;
 
     const selection: EuiTableSelectionType<FieldItem> = {
@@ -412,6 +414,7 @@ export default class MetricsCalculation extends Component<MetricsCalculationProp
       </EuiContextMenuItem>,
     ];
 
+    // @ts-ignore
     return (
       <EuiPanel>
         <EuiFlexGroup style={{ padding: "0px 10px" }} justifyContent="spaceBetween" alignItems="center">
@@ -485,6 +488,15 @@ export default class MetricsCalculation extends Component<MetricsCalculationProp
         </EuiFlexGroup>
         <EuiHorizontalRule margin="xs" />
         <div style={{ paddingLeft: "10px" }}>
+          {metricError != "" && (
+            <Fragment>
+              <EuiCallOut color={"danger"}>
+                <p>{metricError}</p>
+              </EuiCallOut>
+              <EuiSpacer />
+            </Fragment>
+          )}
+
           <EuiBasicTable
             items={selectedMetrics}
             itemId={"source_field"}

@@ -60,6 +60,7 @@ interface CreateRollupFormState {
   selectedTerms: FieldItem[];
   selectedDimensionField: DimensionItem[];
   selectedMetrics: MetricItem[];
+  metricError: string;
   timestamp: EuiComboBoxOptionOption<String>[];
   timestampError: string;
   intervalType: string;
@@ -79,19 +80,6 @@ interface CreateRollupFormState {
   delayTimeunit: string;
   rollupJSON: any;
 }
-
-//TODO: Fetch actual roles from backend
-const options: EuiComboBoxOptionOption<String>[] = [
-  {
-    label: "Role1",
-  },
-  {
-    label: "Role2",
-  },
-  {
-    label: "Role3",
-  },
-];
 
 export default class CreateRollupForm extends Component<CreateRollupFormProps, CreateRollupFormState> {
   constructor(props: CreateRollupFormProps) {
@@ -116,6 +104,7 @@ export default class CreateRollupForm extends Component<CreateRollupFormProps, C
       selectedTerms: [],
       selectedDimensionField: [],
       selectedMetrics: [],
+      metricError: "",
       description: "",
       sourceIndex: [],
       sourceIndexError: "",
@@ -171,6 +160,7 @@ export default class CreateRollupForm extends Component<CreateRollupFormProps, C
     }
   };
 
+  //TODO: Add error when no method is selected in metrics (step 2)
   _next() {
     let currentStep = this.state.currentStep;
     let error = false;
@@ -191,10 +181,21 @@ export default class CreateRollupForm extends Component<CreateRollupFormProps, C
         error = true;
       }
     } else if (currentStep == 2) {
-      const { timestamp } = this.state;
+      const { timestamp, selectedMetrics } = this.state;
       if (timestamp.length == 0) {
         this.setState({ submitError: "Timestamp is required.", timestampError: "Timestamp is required." });
         error = true;
+      }
+      if (selectedMetrics.length != 0) {
+        //Check if there's any metric item with no method selected.
+        //TODO: Could Probably store all invalid fields in an array and highlight them in table.
+        selectedMetrics.map((metric) => {
+          if (!(metric.min || metric.max || metric.sum || metric.avg || metric.value_count)) {
+            const errorMsg = "Must specify at least one metric to aggregate on for: " + metric.source_field.label;
+            this.setState({ submitError: errorMsg, metricError: errorMsg });
+            error = true;
+          }
+        });
       }
     }
     if (error) return;
@@ -443,16 +444,10 @@ export default class CreateRollupForm extends Component<CreateRollupFormProps, C
       if (!rollupId) {
         this.setState({ rollupIdError: "Required" });
       } else {
-        //TODO: Build JSON string here
-        console.log("set date histogram");
         this.setDateHistogram();
-        console.log("update dimension");
         this.updateDimension();
-        console.log("update metric");
         this.updateMetric();
-        console.log("update schedule");
         this.updateSchedule();
-        console.log("Creating...");
         await this.onCreate(rollupId, rollupJSON);
       }
     } catch (err) {
@@ -470,7 +465,6 @@ export default class CreateRollupForm extends Component<CreateRollupFormProps, C
   onCreate = async (rollupId: string, rollup: Rollup): Promise<void> => {
     const { rollupService } = this.props;
     try {
-      console.log("Putting rollup...");
       const response = await rollupService.putRollup(rollup, rollupId);
       if (response.ok) {
         toastNotifications.addSuccess(`Created rollup: ${response.response._id}`);
@@ -505,6 +499,7 @@ export default class CreateRollupForm extends Component<CreateRollupFormProps, C
       selectedTerms,
       selectedDimensionField,
       selectedMetrics,
+      metricError,
       intervalValue,
       intervalType,
       timezone,
@@ -534,7 +529,6 @@ export default class CreateRollupForm extends Component<CreateRollupFormProps, C
           sourceIndexError={sourceIndexError}
           targetIndex={targetIndex}
           targetIndexError={targetIndexError}
-          roleOptions={options}
           onChangeName={this.onChangeName}
           onChangeDescription={this.onChangeDescription}
           onChangeSourceIndex={this.onChangeSourceIndex}
@@ -549,6 +543,7 @@ export default class CreateRollupForm extends Component<CreateRollupFormProps, C
           selectedTerms={selectedTerms}
           selectedDimensionField={selectedDimensionField}
           selectedMetrics={selectedMetrics}
+          metricError={metricError}
           intervalType={intervalType}
           intervalValue={intervalValue}
           timestamp={timestamp}

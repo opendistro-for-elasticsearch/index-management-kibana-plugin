@@ -38,7 +38,6 @@ interface CreateRollupProps extends RouteComponentProps {
   targetIndexError: string;
   onChangeName: (e: ChangeEvent<HTMLInputElement>) => void;
   onChangeDescription: (value: ChangeEvent<HTMLTextAreaElement>) => void;
-  roleOptions: EuiComboBoxOptionOption<String>[];
   onChangeSourceIndex: (options: EuiComboBoxOptionOption<IndexItem>[]) => void;
   onChangeTargetIndex: (options: EuiComboBoxOptionOption<IndexItem>[]) => void;
   currentStep: number;

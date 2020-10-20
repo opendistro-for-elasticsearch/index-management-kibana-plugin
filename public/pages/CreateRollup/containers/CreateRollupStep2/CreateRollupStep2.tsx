@@ -32,6 +32,7 @@ interface CreateRollupStep2Props extends RouteComponentProps {
   selectedTerms: FieldItem[];
   selectedDimensionField: DimensionItem[];
   selectedMetrics: MetricItem[];
+  metricError: string;
   timestamp: EuiComboBoxOptionOption<String>[];
   timestampError: string;
   intervalValue: number;
