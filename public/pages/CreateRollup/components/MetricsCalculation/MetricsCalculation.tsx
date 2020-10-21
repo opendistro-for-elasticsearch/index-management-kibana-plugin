@@ -47,6 +47,7 @@ import {
 } from "@elastic/eui";
 import { AddFieldsColumns } from "../../utils/constants";
 import { FieldItem, MetricItem } from "../../models/interfaces";
+import { isNumericMapping } from "../../utils/helpers";
 
 interface MetricsCalculationProps {
   fieldsOption: FieldItem[];
@@ -208,13 +209,7 @@ export default class MetricsCalculation extends Component<MetricsCalculationProp
     const { isModalVisible, searchText, selectedFieldType, selectedFields, isDisableOpen, isEnableOpen } = this.state;
 
     const selection: EuiTableSelectionType<FieldItem> = {
-      selectable: (field) =>
-        field.type == "integer" ||
-        field.type == "float" ||
-        field.type == "long" ||
-        field.type == "double" ||
-        field.type == "double" ||
-        field.type == "half_float",
+      selectable: (field) => isNumericMapping(field.type),
       onSelectionChange: this.onSelectionChange,
       initialSelected: selectedFields,
     };
