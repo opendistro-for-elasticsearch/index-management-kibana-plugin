@@ -107,7 +107,7 @@ export default class ScheduleRolesAndNotifications extends Component<ScheduleRol
               <EuiText size={"xs"}>
                 <dt>Execution delay</dt>
                 <dd>
-                  {delayTime == NaN || delayTime == undefined || delayTime == 0 ? "-" : delayTime + " " + parseTimeunit(delayTimeunit)}
+                  {isNaN(delayTime) || delayTime == undefined || delayTime == 0 ? "-" : delayTime + " " + parseTimeunit(delayTimeunit)}
                 </dd>
               </EuiText>
             </EuiFlexItem>

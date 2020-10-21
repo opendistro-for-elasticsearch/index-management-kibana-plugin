@@ -357,8 +357,8 @@ export default class CreateRollupForm extends Component<CreateRollupFormProps, C
   //TODO: Figure out the correct format of delay time, do we need to convert the value along with timeunit?
   onChangeDelayTime = (e: ChangeEvent<HTMLInputElement>): void => {
     let newJSON = this.state.rollupJSON;
-    newJSON.rollup.delay = e.target.valueAsNumber ? e.target.value : 0;
-    this.setState({ delayTime: e.target.valueAsNumber, rollupJSON: newJSON });
+    newJSON.rollup.delay = e.target.value == "" ? 0 : e.target.valueAsNumber;
+    this.setState({ delayTime: e.target.value == "" ? 0 : e.target.valueAsNumber, rollupJSON: newJSON });
   };
 
   onChangeIntervalTime = (e: ChangeEvent<HTMLInputElement>): void => {
@@ -392,7 +392,11 @@ export default class CreateRollupForm extends Component<CreateRollupFormProps, C
       newJSON.rollup.schedule.cron = { expression: `${cronExpression}`, timezone: `${cronTimezone}` };
       delete newJSON.rollup.schedule["interval"];
     } else {
-      newJSON.rollup.schedule.interval = { start_time: moment().unix(), unit: `${intervalTimeunit}`, period: `${interval}` };
+      newJSON.rollup.schedule.interval = {
+        start_time: moment().unix(),
+        unit: `${intervalTimeunit}`,
+        period: `${interval}`,
+      };
       // delete newJSON.rollup.schedule["cron"];
     }
     this.setState({ rollupJSON: newJSON });
