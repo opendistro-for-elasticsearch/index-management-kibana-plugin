@@ -390,8 +390,6 @@ export default class CreateRollupForm extends Component<CreateRollupFormProps, C
       newJSON.rollup.schedule.cron = { expression: `${cronExpression}`, timezone: `${cronTimezone}` };
       delete newJSON.rollup.schedule["interval"];
     } else {
-      //Using current time as start time.
-      console.log(`{ unit : ${intervalTimeunit}, period : ${interval}}`);
       newJSON.rollup.schedule.interval = { start_time: moment().unix(), unit: `${intervalTimeunit}`, period: `${interval}` };
       // delete newJSON.rollup.schedule["cron"];
     }

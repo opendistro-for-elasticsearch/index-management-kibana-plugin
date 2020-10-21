@@ -33,7 +33,6 @@ export default class RollupService {
     let url = `..${NODE_API.ROLLUPS}`;
     if (queryParamsString) url += `?${queryParamsString}`;
     const response = (await this.httpClient.get(url)) as IHttpResponse<ServerResponse<GetRollupsResponse>>;
-    console.log(response);
     return response.data;
   };
 

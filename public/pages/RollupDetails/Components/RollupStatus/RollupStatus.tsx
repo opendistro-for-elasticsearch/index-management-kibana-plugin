@@ -14,7 +14,7 @@
  */
 
 import React, { Component } from "react";
-import { EuiFlexGrid, EuiSpacer, EuiFlexItem, EuiText } from "@elastic/eui";
+import { EuiFlexGrid, EuiSpacer, EuiFlexItem, EuiText, EuiIcon } from "@elastic/eui";
 import { ContentPanel } from "../../../../components/ContentPanel";
 import { RollupMetadata } from "../../../../../models/interfaces";
 import { renderTime } from "../../../Rollups/utils/helpers";
@@ -50,7 +50,14 @@ export default class RollupStatus extends Component<RollupStatusProps> {
             <EuiFlexItem>
               <EuiText size={"xs"}>
                 <dt>Status</dt>
-                <dd>{metadata == null || metadata.rollup_metadata == null ? "-" : metadata.rollup_metadata.status}</dd>
+                <dd>
+                  {!(metadata == null || metadata.rollup_metadata == null) && metadata.rollup_metadata.status == "failed" ? (
+                    <EuiIcon type={"alert"} color={"danger"} />
+                  ) : (
+                    ""
+                  )}
+                  {metadata == null || metadata.rollup_metadata == null ? "-" : metadata.rollup_metadata.status}
+                </dd>
                 <dd>
                   {!(metadata == null || metadata.rollup_metadata == null) && metadata.rollup_metadata.status == "failed"
                     ? "Failure reason: " + metadata.rollup_metadata.failure_reason

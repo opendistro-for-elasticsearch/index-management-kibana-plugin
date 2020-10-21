@@ -46,6 +46,9 @@ import { RollupMetadata } from "../../../../../models/interfaces";
 import { renderTime } from "../../../Rollups/utils/helpers";
 import { DimensionItem, MetricItem, RollupDimensionItem, RollupMetricItem } from "../../../CreateRollup/models/interfaces";
 import DeleteModal from "../../../Rollups/components/DeleteModal";
+import _ from "lodash";
+import Policies from "../../../Policies/containers/Policies";
+import Rollups from "../../../Rollups/containers/Rollups";
 
 interface RollupDetailsProps extends RouteComponentProps {
   rollupService: RollupService;
@@ -115,10 +118,8 @@ export default class RollupDetails extends Component<RollupDetailsProps, RollupD
   componentDidMount = async (): Promise<void> => {
     chrome.breadcrumbs.set([BREADCRUMBS.INDEX_MANAGEMENT, BREADCRUMBS.ROLLUPS]);
     const { id } = queryString.parse(this.props.location.search);
-    console.log(id);
-    if (typeof id === "string" && !!id) {
+    if (typeof id === "string") {
       chrome.breadcrumbs.push({ text: id });
-
       await this.getRollup(id);
     } else {
       toastNotifications.addDanger(`Invalid rollup id: ${id}`);
@@ -133,8 +134,7 @@ export default class RollupDetails extends Component<RollupDetailsProps, RollupD
       const explainResponse = await rollupService.explainRollup(rollupId);
 
       if (response.ok) {
-        let newJSON = JSON.parse(this.state.rollupJSON);
-        newJSON.rollup = response.response.rollup;
+        let newJSON = response.response.rollup;
         this.setState({
           rollupId: response.response.id,
           description: response.response.rollup.description,
@@ -167,12 +167,10 @@ export default class RollupDetails extends Component<RollupDetailsProps, RollupD
       }
       if (explainResponse.ok) {
         let metadata = explainResponse.response[rollupId];
-        console.log(metadata);
         this.setState({ metadata: metadata });
       } else {
         toastNotifications.addDanger(`Could not load the explain API of rollup job: ${explainResponse.error}`);
       }
-      console.log(explainResponse);
     } catch (err) {
       toastNotifications.addDanger(getErrorMessage(err, "Could not load the rollup job"));
       // this.props.history.push(ROUTES.ROLLUPS);
@@ -193,7 +191,6 @@ export default class RollupDetails extends Component<RollupDetailsProps, RollupD
 
   parseMetric = (metrics: RollupMetricItem[]): MetricItem[] => {
     if (metrics.length == 0) return [];
-    console.log(metrics);
     const result = metrics.map((metric) => ({
       source_field: metric.source_field,
       all: null,
@@ -203,7 +200,6 @@ export default class RollupDetails extends Component<RollupDetailsProps, RollupD
       avg: metric.metrics.filter((item) => item.avg != null).length > 0,
       value_count: metric.metrics.filter((item) => item.value_count != null).length > 0,
     }));
-    console.log("Result: " + result);
     return result;
   };
 
@@ -392,7 +388,7 @@ export default class RollupDetails extends Component<RollupDetailsProps, RollupD
 
               <EuiModalBody>
                 <EuiCodeBlock language="json" fontSize="m" paddingSize="m" overflowHeight={600} inline={false} isCopyable>
-                  {JSON.stringify(rollupJSON, null, 2)}
+                  {JSON.stringify(rollupJSON, null, 4)}
                 </EuiCodeBlock>
               </EuiModalBody>
 

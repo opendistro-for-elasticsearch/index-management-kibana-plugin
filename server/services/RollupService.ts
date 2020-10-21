@@ -88,7 +88,6 @@ export default class RollupService {
       const { callWithRequest } = await this.esDriver.getCluster(CLUSTER.ISM);
       const getResponse = await callWithRequest(req, "ism.startRollup", params);
       const acknowledged = _.get(getResponse, "acknowledged");
-      console.log(getResponse);
       if (acknowledged) {
         return { ok: true, response: true };
       } else {

@@ -225,7 +225,6 @@ export default class EditRollup extends Component<EditRollupProps, EditRollupSta
       delete newJSON.rollup.schedule["interval"];
     } else {
       //Using current time as start time.
-      console.log(`{ unit : ${intervalTimeunit}, period : ${interval}}`);
       newJSON.rollup.schedule.interval = { start_time: moment().unix(), unit: `${intervalTimeunit}`, period: `${interval}` };
       // delete newJSON.rollup.schedule["cron"];
     }

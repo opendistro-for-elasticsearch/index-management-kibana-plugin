@@ -52,7 +52,6 @@ import RollupEmptyPrompt from "../../components/RollupEmptyPrompt";
 import { RollupItem, RollupsQueryParams } from "../../models/interfaces";
 import { getURLQueryParams, renderContinuous, renderEnabled, renderTime } from "../../utils/helpers";
 import DeleteModal from "../../components/DeleteModal";
-import { RollupMetadata } from "../../../../../models/interfaces";
 
 interface RollupsProps extends RouteComponentProps {
   rollupService: RollupService;
@@ -127,7 +126,6 @@ export default class Rollups extends Component<RollupsProps, RollupsState> {
       const rollupJobsResponse = await rollupService.getRollups(queryParamsString);
       if (rollupJobsResponse.ok) {
         const { rollups, totalRollups } = rollupJobsResponse.response;
-        console.log(rollups);
         this.setState({ rollups, totalRollups });
       } else {
         toastNotifications.addDanger(rollupJobsResponse.error);
@@ -152,7 +150,6 @@ export default class Rollups extends Component<RollupsProps, RollupsState> {
           paramString = paramString + "," + rollup._id;
         }
       });
-      console.log(paramString);
       const rollupJobsResponse = await rollupService.explainRollup(paramString);
       if (rollupJobsResponse.ok) {
         const rollupExplain = rollupJobsResponse.response;
@@ -165,7 +162,6 @@ export default class Rollups extends Component<RollupsProps, RollupsState> {
       } else {
         toastNotifications.addDanger(rollupJobsResponse.error);
       }
-      console.log(rollupJobsResponse);
     } catch (err) {
       toastNotifications.addDanger(getErrorMessage(err, "There was a problem loading the metadata of rollups"));
     }
@@ -195,7 +191,7 @@ export default class Rollups extends Component<RollupsProps, RollupsState> {
         if (response.ok) {
           this.closeDeleteModal();
           //TODO: Update status or pull jobs again
-          this.getRollups();
+          await this.getRollups();
           //Show success message
           toastNotifications.addSuccess(`"${rollupId}" successfully deleted!`);
         } else {
@@ -218,7 +214,7 @@ export default class Rollups extends Component<RollupsProps, RollupsState> {
 
         if (response.ok) {
           //TODO: Update status or pull jobs again
-          this.getRollups();
+          await this.getRollups();
           //Show success message
           toastNotifications.addSuccess(`${rollupId} is disabled`);
         } else {
@@ -443,7 +439,6 @@ export default class Rollups extends Component<RollupsProps, RollupsState> {
                   disabled={!selectedItems.length}
                   onClick={() => {
                     this.onEnable();
-                    console.log(this.state);
                   }}
                 >
                   Enable
