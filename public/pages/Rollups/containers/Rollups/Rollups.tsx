@@ -190,7 +190,6 @@ export default class Rollups extends Component<RollupsProps, RollupsState> {
 
         if (response.ok) {
           this.closeDeleteModal();
-          //TODO: Update status or pull jobs again
           await this.getRollups();
           //Show success message
           toastNotifications.addSuccess(`"${rollupId}" successfully deleted!`);
