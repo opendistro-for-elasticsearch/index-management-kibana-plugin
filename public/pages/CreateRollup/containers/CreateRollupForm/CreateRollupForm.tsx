@@ -31,6 +31,7 @@ import CreateRollupStep3 from "../CreateRollupStep3";
 import CreateRollupStep4 from "../CreateRollupStep4";
 import { DimensionItem, FieldItem, MetricItem } from "../../models/interfaces";
 import moment from "moment";
+import { compareFieldItem, parseFieldOptions } from "../../utils/helpers";
 
 interface CreateRollupFormProps extends RouteComponentProps {
   rollupService: RollupService;
@@ -57,6 +58,7 @@ interface CreateRollupFormState {
   targetIndexError: string;
 
   mappings: any;
+  allMappings: FieldItem[][];
   fields: FieldItem[];
   selectedTerms: FieldItem[];
   selectedDimensionField: DimensionItem[];
@@ -102,6 +104,7 @@ export default class CreateRollupForm extends Component<CreateRollupFormProps, C
       totalIndices: 0,
 
       mappings: "",
+      allMappings: [],
       fields: [],
       selectedFields: [],
       selectedTerms: [],
@@ -150,13 +153,17 @@ export default class CreateRollupForm extends Component<CreateRollupFormProps, C
       const { rollupService } = this.props;
       const response = await rollupService.getMappings(srcIndex);
       if (response.ok) {
-        //Make mappings array to help parsing fields
-        let fields: FieldItem[] = [];
+        let allMappings: FieldItem[][] = [];
         const mappings = response.response;
+        //Push mappings array to allMappings 2D array first
         for (let index in mappings) {
-          fields = this.parseFieldOptions("", mappings[index].mappings.properties);
+          allMappings.push(parseFieldOptions("", mappings[index].mappings.properties));
         }
-        this.setState({ mappings, fields });
+        //Find intersect from all mappings
+        const fields = allMappings.reduce((mappingA, mappingB) =>
+          mappingA.filter((itemA) => mappingB.some((itemB) => compareFieldItem(itemA, itemB)))
+        );
+        this.setState({ mappings, fields, allMappings });
       } else {
         toastNotifications.addDanger(`Could not load fields: ${response.error}`);
       }
@@ -164,21 +171,7 @@ export default class CreateRollupForm extends Component<CreateRollupFormProps, C
       toastNotifications.addDanger(getErrorMessage(err, "Could not load fields"));
     }
   };
-  parseFieldOptions = (prefix: string, mappings: any): FieldItem[] => {
-    let fieldsOption: FieldItem[] = [];
-    console.log("Entering: " + prefix + mappings);
-    for (let field in mappings) {
-      if (mappings.hasOwnProperty(field)) {
-        if (mappings[field].type != "object" && mappings[field].type != null && mappings[field].type != "nested")
-          fieldsOption.push({ label: prefix + field, type: mappings[field].type });
-        if (mappings[field].fields != null)
-          fieldsOption = fieldsOption.concat(this.parseFieldOptions(prefix + field + ".", mappings[field].fields));
-        if (mappings[field].properties != null)
-          fieldsOption = fieldsOption.concat(this.parseFieldOptions(prefix + field + ".", mappings[field].properties));
-      }
-    }
-    return fieldsOption;
-  };
+
   _next() {
     let currentStep = this.state.currentStep;
     let error = false;
