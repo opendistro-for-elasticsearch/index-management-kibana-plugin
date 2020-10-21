@@ -17,7 +17,6 @@ import React, { Component } from "react";
 import {
   EuiSpacer,
   EuiTitle,
-  EuiComboBoxOptionOption,
   EuiFlexGroup,
   EuiFlexItem,
   EuiButton,
@@ -382,7 +381,7 @@ export default class RollupDetails extends Component<RollupDetailsProps, RollupD
 
               <EuiModalBody>
                 <EuiCodeBlock language="json" fontSize="m" paddingSize="m" overflowHeight={600} inline={false} isCopyable>
-                  {JSON.stringify(rollupJSON)}
+                  {JSON.stringify(rollupJSON, null, 2)}
                 </EuiCodeBlock>
               </EuiModalBody>
 
