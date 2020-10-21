@@ -112,3 +112,17 @@ export const parseTimezone = (timezone: string): string => {
   }
   return text;
 };
+
+//Returns true if field type is numeric
+export const isNumericMapping = (fieldType: string | null): boolean => {
+  return (
+    fieldType == "long" ||
+    fieldType == "integer" ||
+    fieldType == "short" ||
+    fieldType == "byte" ||
+    fieldType == "double" ||
+    fieldType == "float" ||
+    fieldType == "half_float" ||
+    fieldType == "scaled_float"
+  );
+};

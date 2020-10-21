@@ -56,6 +56,7 @@ import { DimensionItem, FieldItem } from "../../models/interfaces";
 import { AddFieldsColumns } from "../../utils/constants";
 import { DEFAULT_PAGE_SIZE_OPTIONS } from "../../../Rollups/utils/constants";
 import _ from "lodash";
+import { isNumericMapping } from "../../utils/helpers";
 
 interface AdvancedAggregationProps {
   fieldsOption: FieldItem[];
@@ -89,14 +90,14 @@ const fieldTypeOption = [
 export default class AdvancedAggregation extends Component<AdvancedAggregationProps, AdvancedAggregationState> {
   constructor(props: AdvancedAggregationProps) {
     super(props);
-    const { fieldsOption } = this.props;
+    const { selectedDimensionField, fieldsOption } = this.props;
     this.state = {
       isModalVisible: false,
       searchText: "",
       selectedFieldType: [],
       allSelectedFields: [],
       fieldsShown: fieldsOption.slice(0, 10),
-      dimensionsShown: [],
+      dimensionsShown: selectedDimensionField.slice(0, 10),
       from: 0,
       size: 10,
       sortField: "label",
@@ -151,12 +152,7 @@ export default class AdvancedAggregation extends Component<AdvancedAggregationPr
     //Parse selectedFields to an array of DimensionItem if any of the field does not exist
     let i = updatedDimensions.length + 1;
     const toAdd: DimensionItem[] = toAddFields.map((field) => {
-      return field.type == "long" ||
-        field.type == "double" ||
-        field.type == "float" ||
-        field.type == "integer" ||
-        field.type == "number" ||
-        field.type == "half_float"
+      return isNumericMapping(field.type)
         ? {
             sequence: i++,
             field: field,

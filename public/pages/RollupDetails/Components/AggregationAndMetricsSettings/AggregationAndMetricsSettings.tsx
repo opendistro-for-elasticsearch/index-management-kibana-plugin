@@ -24,9 +24,15 @@ import {
   EuiBasicTable,
   EuiIcon,
   EuiTableFieldDataColumnType,
+  //@ts-ignore
+  Criteria,
+  //@ts-ignore
+  Pagination,
+  EuiTableSortingType,
 } from "@elastic/eui";
 import { ContentPanel } from "../../../../components/ContentPanel";
-import { DimensionItem, MetricItem } from "../../../CreateRollup/models/interfaces";
+import { DimensionItem, FieldItem, MetricItem } from "../../../CreateRollup/models/interfaces";
+import { DEFAULT_PAGE_SIZE_OPTIONS } from "../../../Rollups/utils/constants";
 
 interface AggregationAndMetricsSettingsProps {
   timestamp: string;
@@ -34,6 +40,18 @@ interface AggregationAndMetricsSettingsProps {
   timezone: string;
   selectedDimensionField: DimensionItem[];
   selectedMetrics: MetricItem[];
+}
+interface AggregationAndMetricsSettingsState {
+  dimensionsShown: DimensionItem[];
+  metricsShown: MetricItem[];
+  from: number;
+  size: number;
+  sortField: string;
+  sortDirection: string;
+  dimension_from: number;
+  dimension_size: number;
+  dimension_sortField: string;
+  dimension_sortDirection: string;
 }
 const aggregationColumns: EuiTableFieldDataColumnType<DimensionItem>[] = [
   {
@@ -108,13 +126,96 @@ const metricsColumns = [
   },
 ];
 
-export default class AggregationAndMetricsSettings extends Component<AggregationAndMetricsSettingsProps> {
+export default class AggregationAndMetricsSettings extends Component<
+  AggregationAndMetricsSettingsProps,
+  AggregationAndMetricsSettingsState
+> {
   constructor(props: AggregationAndMetricsSettingsProps) {
     super(props);
+    const { selectedDimensionField, selectedMetrics } = this.props;
+    this.state = {
+      dimensionsShown: selectedDimensionField.slice(0, 10),
+      metricsShown: selectedMetrics.slice(0, 10),
+      from: 0,
+      size: 10,
+      sortField: "source_field",
+      sortDirection: "desc",
+      dimension_from: 0,
+      dimension_size: 10,
+      dimension_sortField: "sequence",
+      dimension_sortDirection: "desc",
+    };
   }
+  onTableChange = ({ page: tablePage, sort }: Criteria<FieldItem>): void => {
+    const { index: page, size } = tablePage;
+    const { field: sortField, direction: sortDirection } = sort;
+    const { selectedMetrics } = this.props;
+    this.setState({
+      from: page * size,
+      size,
+      sortField,
+      sortDirection,
+      metricsShown: selectedMetrics.slice(page * size, page * size + size),
+    });
+    this.forceUpdate();
+  };
+
+  onDimensionTableChange = ({ page: tablePage, sort }: Criteria<DimensionItem>): void => {
+    const { index: dimension_page, dimension_size } = tablePage;
+    const { field: dimension_sortField, direction: dimension_sortDirection } = sort;
+    const { selectedDimensionField } = this.props;
+    this.setState({
+      dimension_from: dimension_page * dimension_size,
+      dimension_size: dimension_size,
+      dimension_sortField: dimension_sortField,
+      dimension_sortDirection: dimension_sortDirection,
+      dimensionsShown: selectedDimensionField.slice(dimension_page * dimension_size, dimension_page * dimension_size + dimension_size),
+    });
+    this.forceUpdate();
+  };
 
   render() {
     const { timestamp, histogramInterval, timezone, selectedDimensionField, selectedMetrics } = this.props;
+    const {
+      from,
+      size,
+      sortDirection,
+      sortField,
+      metricsShown,
+      dimension_from,
+      dimension_size,
+      dimension_sortDirection,
+      dimension_sortField,
+      dimensionsShown,
+    } = this.state;
+    const page = Math.floor(from / size);
+    const pagination: Pagination = {
+      pageIndex: page,
+      pageSize: size,
+      pageSizeOptions: DEFAULT_PAGE_SIZE_OPTIONS,
+      totalItemCount: selectedMetrics.length,
+    };
+
+    const sorting: EuiTableSortingType<MetricItem> = {
+      sort: {
+        direction: sortDirection,
+        field: sortField,
+      },
+    };
+    const dimension_page = Math.floor(dimension_from / dimension_size);
+    const dimension_pagination: Pagination = {
+      pageIndex: dimension_page,
+      pageSize: dimension_size,
+      pageSizeOptions: DEFAULT_PAGE_SIZE_OPTIONS,
+      totalItemCount: selectedDimensionField.length,
+    };
+
+    const dimension_sorting: EuiTableSortingType<DimensionItem> = {
+      sort: {
+        direction: dimension_sortDirection,
+        field: dimension_sortField,
+      },
+    };
 
     return (
       <ContentPanel bodyStyles={{ padding: "initial" }} title="Aggregation and metrics settings" titleSize="m">
@@ -161,11 +262,14 @@ export default class AggregationAndMetricsSettings extends Component<Aggregation
             <Fragment>
               <EuiPanel>
                 <EuiBasicTable
-                  items={selectedDimensionField}
+                  items={dimensionsShown}
                   rowHeader={"sequence"}
                   columns={aggregationColumns}
                   tableLayout={"auto"}
                   noItemsMessage={"No fields added for aggregations"}
+                  onChange={this.onDimensionTableChange}
+                  pagination={dimension_pagination}
+                  sorting={dimension_sorting}
                 />
               </EuiPanel>
             </Fragment>
@@ -192,7 +296,15 @@ export default class AggregationAndMetricsSettings extends Component<Aggregation
           {selectedMetrics.length ? (
             <Fragment>
               <EuiPanel>
-                <EuiBasicTable items={selectedMetrics} rowHeader="source_field" columns={metricsColumns} tableLayout={"auto"} />
+                <EuiBasicTable
+                  items={metricsShown}
+                  rowHeader="source_field"
+                  columns={metricsColumns}
+                  tableLayout={"auto"}
+                  onChange={this.onTableChange}
+                  pagination={pagination}
+                  sorting={sorting}
+                />
               </EuiPanel>
             </Fragment>
           ) : (

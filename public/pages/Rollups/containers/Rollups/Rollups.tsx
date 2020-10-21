@@ -287,6 +287,16 @@ export default class Rollups extends Component<RollupsProps, RollupsState> {
     this.setState({ isDeleteModalVisible: true });
   };
 
+  concatName = (): string => {
+    const { selectedItems } = this.state;
+    let result = "";
+    var item;
+    for (item of selectedItems) {
+      if (selectedItems.indexOf(item) == 0) result = result + item._id;
+      else result = result + ", " + item._id;
+    }
+    return result;
+  };
   render() {
     const {
       totalRollups,
@@ -345,7 +355,7 @@ export default class Rollups extends Component<RollupsProps, RollupsState> {
       <EuiContextMenuItem
         key="Delete"
         icon="empty"
-        disabled={selectedItems.length != 1}
+        disabled={selectedItems.length == 0}
         onClick={() => {
           this.closePopover();
           this.showDeleteModal();
@@ -499,7 +509,7 @@ export default class Rollups extends Component<RollupsProps, RollupsState> {
           />
           {isDeleteModalVisible && (
             <DeleteModal
-              rollupId={selectedItems.length ? selectedItems[0]._id : ""}
+              rollupId={selectedItems.length ? this.concatName() : ""}
               closeDeleteModal={this.closeDeleteModal}
               onClickDelete={this.onClickDelete}
             />

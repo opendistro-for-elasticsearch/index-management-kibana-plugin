@@ -53,6 +53,7 @@ import {
 import { AddFieldsColumns } from "../../utils/constants";
 import { FieldItem, MetricItem } from "../../models/interfaces";
 import { DEFAULT_PAGE_SIZE_OPTIONS } from "../../../Rollups/utils/constants";
+import { isNumericMapping } from "../../utils/helpers";
 
 interface MetricsCalculationProps {
   fieldsOption: FieldItem[];
@@ -81,13 +82,14 @@ const tempFieldTypeOptions = [{ label: "string" }, { label: "location" }, { labe
 export default class MetricsCalculation extends Component<MetricsCalculationProps, MetricsCalculationState> {
   constructor(props: MetricsCalculationProps) {
     super(props);
+    const { selectedMetrics } = this.props;
     this.state = {
       isModalVisible: false,
       searchText: "",
       selectedFieldType: [],
       selectedFields: [],
       allSelectedFields: [],
-      metricsShown: [],
+      metricsShown: selectedMetrics.slice(0, 10),
       from: 0,
       size: 10,
       sortField: "source_field",
@@ -287,13 +289,7 @@ export default class MetricsCalculation extends Component<MetricsCalculationProp
     // };
 
     const selection: EuiTableSelectionType<FieldItem> = {
-      selectable: (field) =>
-        field.type == "integer" ||
-        field.type == "float" ||
-        field.type == "long" ||
-        field.type == "double" ||
-        field.type == "double" ||
-        field.type == "half_float",
+      selectable: (field) => isNumericMapping(field.type),
       onSelectionChange: this.onSelectionChange,
       initialSelected: selectedFields,
     };

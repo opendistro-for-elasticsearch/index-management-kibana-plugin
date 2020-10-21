@@ -13,7 +13,7 @@
  * permissions and limitations under the License.
  */
 
-import React, { ChangeEvent, Component } from "react";
+import React, { ChangeEvent, Component, Fragment } from "react";
 import {
   EuiSpacer,
   EuiFormRow,
@@ -28,6 +28,7 @@ import {
   EuiTitle,
   EuiFormHelpText,
   EuiHorizontalRule,
+  EuiText,
 } from "@elastic/eui";
 import { CalendarTimeunitOptions, FixedTimeunitOptions } from "../../utils/constants";
 import { RollupService } from "../../../../services";
@@ -117,26 +118,58 @@ export default class TimeAggregation extends Component<TimeAggregationProps, Tim
           </EuiFormRow>
           <EuiSpacer size="m" />
           <EuiFlexGroup style={{ maxWidth: 300 }}>
-            <EuiFlexItem grow={false} style={{ width: 100 }}>
-              <EuiFormRow label="Interval">
-                <EuiFieldNumber
-                  min={1}
-                  value={intervalType == "fixed" ? intervalValue : 1}
-                  disabled={intervalType == "calendar"}
-                  onChange={onChangeIntervalValue}
-                />
-              </EuiFormRow>
-            </EuiFlexItem>
-            <EuiFlexItem>
-              <EuiFormRow hasEmptyLabelSpace={true}>
-                <EuiSelect
-                  id="selectTimeunit"
-                  options={intervalType == "fixed" ? FixedTimeunitOptions : CalendarTimeunitOptions}
-                  value={timeunit}
-                  onChange={onChangeTimeunit}
-                />
-              </EuiFormRow>
-            </EuiFlexItem>
+            {intervalType == "fixed" ? (
+              <Fragment>
+                <EuiFlexItem grow={false} style={{ width: 100 }}>
+                  <EuiFormRow label="Interval">
+                    <EuiFieldNumber
+                      min={1}
+                      value={intervalType == "fixed" ? intervalValue : 1}
+                      // disabled={intervalType == 'calendar'}
+                      onChange={onChangeIntervalValue}
+                    />
+                  </EuiFormRow>
+                </EuiFlexItem>
+                <EuiFlexItem>
+                  <EuiFormRow hasEmptyLabelSpace={true}>
+                    <EuiSelect
+                      id="selectTimeunit"
+                      options={intervalType == "fixed" ? FixedTimeunitOptions : CalendarTimeunitOptions}
+                      value={timeunit}
+                      onChange={onChangeTimeunit}
+                    />
+                  </EuiFormRow>
+                </EuiFlexItem>
+              </Fragment>
+            ) : (
+              <Fragment>
+                <EuiFlexItem grow={false}>
+                  <EuiFormRow hasEmptyLabelSpace={true}>
+                    <EuiText size={"m"}>Every 1 </EuiText>
+                  </EuiFormRow>
+                </EuiFlexItem>
+                <EuiFlexItem>
+                  <EuiFormRow hasEmptyLabelSpace={true}>
+                    <EuiSelect
+                      id="selectTimeunit"
+                      options={intervalType == "fixed" ? FixedTimeunitOptions : CalendarTimeunitOptions}
+                      value={timeunit}
+                      onChange={onChangeTimeunit}
+                    />
+                  </EuiFormRow>
+                </EuiFlexItem>
+              </Fragment>
+            )}
+            {/*<EuiFlexItem>*/}
+            {/*  <EuiFormRow hasEmptyLabelSpace={true}>*/}
+            {/*    <EuiSelect*/}
+            {/*      id="selectTimeunit"*/}
+            {/*      options={intervalType == 'fixed' ? FixedTimeunitOptions : CalendarTimeunitOptions}*/}
+            {/*      value={timeunit}*/}
+            {/*      onChange={onChangeTimeunit}*/}
+            {/*    />*/}
+            {/*  </EuiFormRow>*/}
+            {/*</EuiFlexItem>*/}
           </EuiFlexGroup>
           <EuiSpacer size="m" />
           <EuiFormRow label="Timezone" helpText={"A day starts from 00:00:00 in the specified timezone."}>
