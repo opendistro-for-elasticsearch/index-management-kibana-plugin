@@ -348,8 +348,8 @@ export default class AdvancedAggregation extends Component<AdvancedAggregationPr
 
     return (
       <EuiPanel>
-        <EuiFlexGroup style={{ padding: "5px 10px" }} justifyContent="spaceBetween" alignItems="center">
-          <EuiFlexGroup gutterSize={"xs"} direction={"column"} justifyContent="spaceAround" style={{ padding: "0px 10px" }}>
+        <EuiFlexGroup style={{ padding: "0px 10px" }} justifyContent="spaceBetween" alignItems="center">
+          <EuiFlexGroup gutterSize={"xs"} direction={"column"} justifyContent="spaceAround" style={{ padding: "5px 10px" }}>
             <EuiFlexItem>
               <EuiFlexGroup gutterSize={"xs"}>
                 <EuiFlexItem grow={false}>
@@ -390,9 +390,13 @@ export default class AdvancedAggregation extends Component<AdvancedAggregationPr
               </Fragment>
             )}
           </EuiFlexGroup>
-
           <EuiFlexItem grow={false}>
-            <EuiButton onClick={this.showModal}>Add fields</EuiButton>
+            <EuiFlexGroup direction={"column"} justifyContent="spaceBetween" style={{ padding: "0px 10px" }}>
+              <EuiFlexItem grow={false}>
+                <EuiButton onClick={this.showModal}>Add fields</EuiButton>
+              </EuiFlexItem>
+              <EuiFlexItem />
+            </EuiFlexGroup>
           </EuiFlexItem>
         </EuiFlexGroup>
 

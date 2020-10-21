@@ -62,7 +62,7 @@ export default class CreateRollup extends Component<CreateRollupProps> {
           </EuiFlexItem>
           <EuiFlexItem>
             <EuiTitle size="l">
-              <h1>Set up Indices</h1>
+              <h1>Set up indices</h1>
             </EuiTitle>
             <EuiSpacer />
             <ConfigureRollup isEdit={false} {...this.props} />

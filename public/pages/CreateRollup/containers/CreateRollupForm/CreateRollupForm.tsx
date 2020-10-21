@@ -254,6 +254,7 @@ export default class CreateRollupForm extends Component<CreateRollupFormProps, C
     this.setState({ rollupId, rollupIdError: rollupId ? "" : "Name is required" });
   };
 
+  //TODO: Should do getMapping here and with actual source index name so that wildcard values are also working
   onChangeSourceIndex = (options: EuiComboBoxOptionOption<IndexItem>[]): void => {
     const { mappings } = this.state;
     //Try to get label text from option from the only array element in options, if exists

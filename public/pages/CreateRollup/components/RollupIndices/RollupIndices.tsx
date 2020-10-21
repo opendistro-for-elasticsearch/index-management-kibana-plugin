@@ -55,24 +55,23 @@ export default class RollupIndices extends Component<RollupIndicesProps, RollupI
     await this.onIndexSearchChange("");
   }
 
-  //TODO: Rename the managed indices
   onIndexSearchChange = async (searchValue: string): Promise<void> => {
     const { indexService } = this.props;
     this.setState({ isLoading: true, indexOptions: [] });
     try {
       const queryParamsString = `from=0&size=10&search=${searchValue}&sortDirection=desc&sortField=index`;
-      const managedIndicesResponse = await indexService.getIndices(queryParamsString);
-      if (managedIndicesResponse.ok) {
+      const getIndicesResponse = await indexService.getIndices(queryParamsString);
+      if (getIndicesResponse.ok) {
         const options = searchValue.trim() ? [{ label: `${searchValue}*` }] : [];
-        const managedIndices = managedIndicesResponse.response.indices.map((managedIndex: IndexItem) => ({
-          label: managedIndex.index,
+        const indices = getIndicesResponse.response.indices.map((index: IndexItem) => ({
+          label: index.index,
         }));
-        this.setState({ indexOptions: options.concat(managedIndices), targetIndexOptions: managedIndices });
+        this.setState({ indexOptions: options.concat(indices), targetIndexOptions: indices });
       } else {
-        if (managedIndicesResponse.error.startsWith("[index_not_found_exception]")) {
-          toastNotifications.addDanger("You have not created a managed index yet");
+        if (getIndicesResponse.error.startsWith("[index_not_found_exception]")) {
+          toastNotifications.addDanger("No index available");
         } else {
-          toastNotifications.addDanger(managedIndicesResponse.error);
+          toastNotifications.addDanger(getIndicesResponse.error);
         }
       }
     } catch (err) {
