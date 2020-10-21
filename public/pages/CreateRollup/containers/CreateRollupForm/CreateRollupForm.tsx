@@ -57,7 +57,7 @@ interface CreateRollupFormState {
   targetIndexError: string;
 
   mappings: any;
-  fields: any;
+  fields: FieldItem[];
   selectedTerms: FieldItem[];
   selectedDimensionField: DimensionItem[];
   selectedMetrics: MetricItem[];
@@ -102,13 +102,14 @@ export default class CreateRollupForm extends Component<CreateRollupFormProps, C
       totalIndices: 0,
 
       mappings: "",
-      fields: undefined,
+      fields: [],
       selectedFields: [],
       selectedTerms: [],
       selectedDimensionField: [],
       selectedMetrics: [],
       metricError: "",
       description: "",
+
       sourceIndex: [],
       sourceIndexError: "",
       targetIndex: [],
@@ -141,22 +142,21 @@ export default class CreateRollupForm extends Component<CreateRollupFormProps, C
   componentDidMount = async (): Promise<void> => {
     chrome.breadcrumbs.set([BREADCRUMBS.INDEX_MANAGEMENT, BREADCRUMBS.ROLLUPS]);
     chrome.breadcrumbs.push(BREADCRUMBS.CREATE_ROLLUP);
-    await this.getMappings();
   };
 
-  //TODO: Try to get only the mapping of specified source index instead of all indices. And maybe get mappings after selecting src index
-  getMappings = async (): Promise<void> => {
+  getMappings = async (srcIndex: string): Promise<void> => {
+    if (!srcIndex.length) return;
     try {
       const { rollupService } = this.props;
-      const { sourceIndex } = this.state;
-      //TODO: modify this to actual src index when onChangeSourceIndex is called.
-      const response = await rollupService.getMappings("kibana_sample_data_flights");
+      const response = await rollupService.getMappings(srcIndex);
       if (response.ok) {
-        //Set mapping when there is source index selected.
-        this.setState({
-          mappings: response.response,
-          fields: sourceIndex.length ? response.response[sourceIndex[0].label].mappings.properties : undefined,
-        });
+        //Make mappings array to help parsing fields
+        let fields: FieldItem[] = [];
+        const mappings = response.response;
+        for (let index in mappings) {
+          fields = this.parseFieldOptions("", mappings[index].mappings.properties);
+        }
+        this.setState({ mappings, fields });
       } else {
         toastNotifications.addDanger(`Could not load fields: ${response.error}`);
       }
@@ -164,7 +164,21 @@ export default class CreateRollupForm extends Component<CreateRollupFormProps, C
       toastNotifications.addDanger(getErrorMessage(err, "Could not load fields"));
     }
   };
-
+  parseFieldOptions = (prefix: string, mappings: any): FieldItem[] => {
+    let fieldsOption: FieldItem[] = [];
+    console.log("Entering: " + prefix + mappings);
+    for (let field in mappings) {
+      if (mappings.hasOwnProperty(field)) {
+        if (mappings[field].type != "object" && mappings[field].type != null && mappings[field].type != "nested")
+          fieldsOption.push({ label: prefix + field, type: mappings[field].type });
+        if (mappings[field].fields != null)
+          fieldsOption = fieldsOption.concat(this.parseFieldOptions(prefix + field + ".", mappings[field].fields));
+        if (mappings[field].properties != null)
+          fieldsOption = fieldsOption.concat(this.parseFieldOptions(prefix + field + ".", mappings[field].properties));
+      }
+    }
+    return fieldsOption;
+  };
   _next() {
     let currentStep = this.state.currentStep;
     let error = false;
@@ -256,10 +270,7 @@ export default class CreateRollupForm extends Component<CreateRollupFormProps, C
     this.setState({ rollupId, rollupIdError: rollupId ? "" : "Name is required" });
   };
 
-  //TODO: Should do getMapping here and with actual source index name so that wildcard values are also working
-  onChangeSourceIndex = (options: EuiComboBoxOptionOption<IndexItem>[]): void => {
-    const { mappings } = this.state;
-    //Try to get label text from option from the only array element in options, if exists
+  onChangeSourceIndex = async (options: EuiComboBoxOptionOption<IndexItem>[]): Promise<void> => {
     let newJSON = this.state.rollupJSON;
     let sourceIndex = options.map(function (option) {
       return option.label;
@@ -269,10 +280,10 @@ export default class CreateRollupForm extends Component<CreateRollupFormProps, C
     newJSON.rollup.source_index = srcIndexText;
     this.setState({ sourceIndex: options, rollupJSON: newJSON, sourceIndexError: sourceIndexError });
     this.setState({
-      fields: sourceIndex.length ? mappings[srcIndexText].mappings.properties : undefined,
       selectedDimensionField: [],
       selectedMetrics: [],
     });
+    await this.getMappings(srcIndexText);
   };
 
   onChangeTargetIndex = (options: EuiComboBoxOptionOption<IndexItem>[]): void => {
@@ -281,6 +292,7 @@ export default class CreateRollupForm extends Component<CreateRollupFormProps, C
     let targetIndex = options.map(function (option) {
       return option.label;
     });
+
     const targetIndexError = targetIndex.length ? "" : "Target index is required";
 
     newJSON.rollup.target_index = targetIndex[0];
@@ -388,6 +400,7 @@ export default class CreateRollupForm extends Component<CreateRollupFormProps, C
   updateSchedule = (): void => {
     const { recurringDefinition, cronExpression, interval, intervalTimeunit, cronTimezone } = this.state;
     let newJSON = this.state.rollupJSON;
+
     if (recurringDefinition == "cron") {
       newJSON.rollup.schedule.cron = { expression: `${cronExpression}`, timezone: `${cronTimezone}` };
       delete newJSON.rollup.schedule["interval"];

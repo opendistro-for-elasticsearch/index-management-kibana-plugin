@@ -140,11 +140,12 @@ export default class RollupService {
     }
   };
 
-  getMappings = async (req: Request, h: ResponseToolkit): Promise<ServerResponse<GetFieldsResponse>> => {
+  getMappings = async (req: Request, h: ResponseToolkit): Promise<ServerResponse<any>> => {
     try {
-      const { index } = req.params;
+      const { index } = req.payload as { index: string };
+      const params = { index: index };
       const { callWithRequest } = this.esDriver.getCluster(CLUSTER.DATA);
-      const mappings = await callWithRequest(req, "indices.getMapping", { index });
+      const mappings = await callWithRequest(req, "indices.getMapping", params);
       return { ok: true, response: mappings };
     } catch (err) {
       console.error("Index Management - RollupService - getMapping:", err);
