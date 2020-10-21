@@ -165,7 +165,6 @@ export default class CreateRollupForm extends Component<CreateRollupFormProps, C
     }
   };
 
-  //TODO: Add error when no method is selected in metrics (step 2)
   _next() {
     let currentStep = this.state.currentStep;
     let error = false;
