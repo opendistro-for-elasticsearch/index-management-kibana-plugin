@@ -35,7 +35,7 @@ import { ContentPanel, ContentPanelActions } from "../../../../components/Conten
 import { ModalConsumer } from "../../../../components/Modal";
 import { DimensionItem, MetricItem } from "../../models/interfaces";
 import { DEFAULT_PAGE_SIZE_OPTIONS } from "../../../Rollups/utils/constants";
-import { parseTimeunit, parseTimezone } from "../../utils/helpers";
+import { parseTimeunit } from "../../utils/helpers";
 
 interface HistogramAndMetricsProps {
   rollupId: string;
@@ -221,7 +221,7 @@ export default class HistogramAndMetrics extends Component<HistogramAndMetricsPr
             <EuiFlexItem>
               <EuiText size={"xs"}>
                 <dt>Timezone</dt>
-                <dd>{parseTimezone(timezone)}</dd>
+                <dd>{timezone}</dd>
               </EuiText>
             </EuiFlexItem>
           </EuiFlexGrid>

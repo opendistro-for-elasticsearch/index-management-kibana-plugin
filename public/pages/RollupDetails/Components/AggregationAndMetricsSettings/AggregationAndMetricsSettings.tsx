@@ -27,7 +27,6 @@ import {
 } from "@elastic/eui";
 import { ContentPanel } from "../../../../components/ContentPanel";
 import { DimensionItem, MetricItem } from "../../../CreateRollup/models/interfaces";
-import { parseTimezone } from "../../../CreateRollup/utils/helpers";
 
 interface AggregationAndMetricsSettingsProps {
   timestamp: string;
@@ -140,7 +139,7 @@ export default class AggregationAndMetricsSettings extends Component<Aggregation
             <EuiFlexItem>
               <EuiText size={"xs"}>
                 <dt>Timezone</dt>
-                <dd>{parseTimezone(timezone)}</dd>
+                <dd>{timezone}</dd>
               </EuiText>
             </EuiFlexItem>
           </EuiFlexGrid>
