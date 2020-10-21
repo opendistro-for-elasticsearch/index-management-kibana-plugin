@@ -17,6 +17,7 @@ import React, { Component } from "react";
 import { EuiFlexGrid, EuiFlexItem, EuiSpacer, EuiText } from "@elastic/eui";
 import { ContentPanel, ContentPanelActions } from "../../../../components/ContentPanel";
 import { ModalConsumer } from "../../../../components/Modal";
+import { parseTimeunit } from "../../utils/helpers";
 
 interface ScheduleRolesAndNotificationsProps {
   rollupId: string;
@@ -27,6 +28,7 @@ interface ScheduleRolesAndNotificationsProps {
   interval: number;
   intervalTimeunit: string;
   cronExpression: string;
+  cronTimezone: string;
   pageSize: number;
   delayTime: number | undefined;
   delayTimeunit: string;
@@ -53,7 +55,7 @@ export default class ScheduleRolesAndNotifications extends Component<ScheduleRol
 
     let scheduleText = recurringJob ? "Continuous, " : "Not continuous, ";
     if (recurringDefinition == "fixed") {
-      scheduleText += "every " + interval + " " + intervalTimeunit;
+      scheduleText += "every " + interval + " " + parseTimeunit(intervalTimeunit);
     } else {
       scheduleText += "defined by cron expression: " + cronExpression;
     }
@@ -80,7 +82,7 @@ export default class ScheduleRolesAndNotifications extends Component<ScheduleRol
         title="Schedule"
         titleSize="m"
       >
-        <div style={{ paddingLeft: "10px" }}>
+        <div style={{ padding: "15px" }}>
           <EuiSpacer size={"s"} />
           <EuiFlexGrid columns={4}>
             <EuiFlexItem>
@@ -104,7 +106,9 @@ export default class ScheduleRolesAndNotifications extends Component<ScheduleRol
             <EuiFlexItem>
               <EuiText size={"xs"}>
                 <dt>Execution delay</dt>
-                <dd>{delayTime == 0 || delayTime == undefined ? "-" : delayTime + " " + delayTimeunit}</dd>
+                <dd>
+                  {isNaN(delayTime) || delayTime == undefined || delayTime == 0 ? "-" : delayTime + " " + parseTimeunit(delayTimeunit)}
+                </dd>
               </EuiText>
             </EuiFlexItem>
           </EuiFlexGrid>

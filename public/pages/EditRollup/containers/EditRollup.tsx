@@ -14,19 +14,18 @@
  */
 
 import React, { ChangeEvent, Component } from "react";
-import _ from "lodash";
 import chrome from "ui/chrome";
 import { RouteComponentProps } from "react-router-dom";
-import { EuiFlexItem, EuiFlexGroup, EuiButton, EuiTitle, EuiSpacer, EuiButtonEmpty, EuiComboBoxOptionOption } from "@elastic/eui";
-import { RollupService } from "../../../../services";
+import { EuiFlexItem, EuiFlexGroup, EuiButton, EuiTitle, EuiSpacer, EuiButtonEmpty } from "@elastic/eui";
 import ConfigureRollup from "../../CreateRollup/components/ConfigureRollup";
-import Roles from "../../CreateRollup/components/Roles";
 import Schedule from "../../CreateRollup/components/Schedule";
 import { toastNotifications } from "ui/notify";
 import queryString from "query-string";
 import { getErrorMessage } from "../../../utils/helpers";
 import { BREADCRUMBS, ROUTES } from "../../../utils/constants";
 import { Rollup } from "../../../../models/interfaces";
+import { RollupService } from "../../../services";
+import moment from "moment";
 
 interface EditRollupProps extends RouteComponentProps {
   rollupService: RollupService;
@@ -41,34 +40,21 @@ interface EditRollupState {
   isSubmitting: boolean;
   hasSubmitted: boolean;
   description: string;
-  roles: EuiComboBoxOptionOption<String>[];
   jobEnabledByDefault: boolean;
   recurringJob: string;
   recurringDefinition: string;
   interval: number;
+  intervalError: string;
   intervalTimeunit: string;
   cronExpression: string;
+  cronTimezone: string;
   pageSize: number;
   delayTime: number | undefined;
   delayTimeunit: string;
   rollupJSON: any;
 }
 
-//TODO: Fetch actual roles from backend
-const options: EuiComboBoxOptionOption<String>[] = [
-  {
-    label: "Role1",
-  },
-  {
-    label: "Role2",
-  },
-  {
-    label: "Role3",
-  },
-];
-
 export default class EditRollup extends Component<EditRollupProps, EditRollupState> {
-  //TODO: Get actual rollupId etc. here
   constructor(props: EditRollupProps) {
     super(props);
     this.state = {
@@ -80,13 +66,14 @@ export default class EditRollup extends Component<EditRollupProps, EditRollupSta
       isSubmitting: false,
       hasSubmitted: false,
       description: "",
-      roles: [],
       jobEnabledByDefault: false,
       recurringJob: "no",
       recurringDefinition: "fixed",
       interval: 2,
+      intervalError: "",
       intervalTimeunit: "M",
       cronExpression: "",
+      cronTimezone: "Africa/Abidjan",
       pageSize: 1000,
       delayTime: undefined,
       delayTimeunit: "MINUTES",
@@ -97,7 +84,6 @@ export default class EditRollup extends Component<EditRollupProps, EditRollupSta
   componentDidMount = async (): Promise<void> => {
     chrome.breadcrumbs.set([BREADCRUMBS.INDEX_MANAGEMENT, BREADCRUMBS.ROLLUPS]);
     const { id } = queryString.parse(this.props.location.search);
-    console.log(id);
     if (typeof id === "string" && !!id) {
       chrome.breadcrumbs.push(BREADCRUMBS.EDIT_ROLLUP);
       chrome.breadcrumbs.push({ text: id });
@@ -117,18 +103,12 @@ export default class EditRollup extends Component<EditRollupProps, EditRollupSta
       if (response.ok) {
         let newJSON = JSON.parse(this.state.rollupJSON);
         newJSON.rollup = response.response.rollup;
-        let roles: EuiComboBoxOptionOption<String>[] = [];
-        var i;
-        for (i = 0; i < response.response.rollup.roles.length; i++) {
-          roles.push({ label: response.response.rollup.roles[i] });
-        }
 
         this.setState({
           rollupSeqNo: response.response.seqNo,
           rollupPrimaryTerm: response.response.primaryTerm,
           rollupId: response.response.id,
           description: response.response.rollup.description,
-          roles: roles,
           jobEnabledByDefault: response.response.rollup.enabled,
           pageSize: response.response.rollup.page_size,
           delayTime: response.response.rollup.delay,
@@ -172,14 +152,6 @@ export default class EditRollup extends Component<EditRollupProps, EditRollupSta
     else this.setState({ rollupId: rollupId, rollupJSON: newJSON });
   };
 
-  onChangeRoles = (selectedOptions: EuiComboBoxOptionOption<String>[]): void => {
-    let newJSON = this.state.rollupJSON;
-    newJSON.rollup.roles = selectedOptions.map(function (option) {
-      return option.label;
-    });
-    this.setState({ roles: selectedOptions, rollupJSON: newJSON });
-  };
-
   onChangeJobEnabledByDefault = (): void => {
     const checked = this.state.jobEnabledByDefault;
     let newJSON = this.state.rollupJSON;
@@ -193,7 +165,10 @@ export default class EditRollup extends Component<EditRollupProps, EditRollupSta
     this.setState({ cronExpression: e.target.value, rollupJSON: newJSON });
   };
 
-  //TODO: Figure out the correct format of delay time, do we need to convert the value along with timeunit?
+  onChangeCronTimezone = (e: ChangeEvent<HTMLSelectElement>): void => {
+    this.setState({ cronTimezone: e.target.value });
+  };
+
   onChangeDelayTime = (e: ChangeEvent<HTMLInputElement>): void => {
     let newJSON = this.state.rollupJSON;
     newJSON.rollup.delay = e.target.value;
@@ -202,8 +177,15 @@ export default class EditRollup extends Component<EditRollupProps, EditRollupSta
 
   onChangeIntervalTime = (e: ChangeEvent<HTMLInputElement>): void => {
     let newJSON = this.state.rollupJSON;
+    const interval = e.target.value;
     newJSON.rollup.schedule.interval.period = e.target.value;
     this.setState({ interval: e.target.valueAsNumber, rollupJSON: newJSON });
+    if (interval == "") {
+      const intervalErrorMsg = "Interval value is required.";
+      this.setState({ submitError: intervalErrorMsg, intervalError: intervalErrorMsg });
+    } else {
+      this.setState({ intervalError: "" });
+    }
   };
 
   onChangePage = (e: ChangeEvent<HTMLInputElement>): void => {
@@ -212,7 +194,7 @@ export default class EditRollup extends Component<EditRollupProps, EditRollupSta
     this.setState({ pageSize: e.target.valueAsNumber, rollupJSON: newJSON });
   };
 
-  //Trying to clear interval field when cron expression is defined
+  //Try to clear interval field when cron expression is defined
   onChangeRecurringDefinition = (e: ChangeEvent<HTMLSelectElement>): void => {
     let newJSON = this.state.rollupJSON;
     this.setState({ recurringDefinition: e.target.value, rollupJSON: newJSON });
@@ -235,6 +217,20 @@ export default class EditRollup extends Component<EditRollupProps, EditRollupSta
     this.setState({ intervalTimeunit: e.target.value, rollupJSON: newJSON });
   };
 
+  updateSchedule = (): void => {
+    const { recurringDefinition, cronExpression, interval, intervalTimeunit, cronTimezone } = this.state;
+    let newJSON = this.state.rollupJSON;
+    if (recurringDefinition == "cron") {
+      newJSON.rollup.schedule.cron = { expression: `${cronExpression}`, timezone: `${cronTimezone}` };
+      delete newJSON.rollup.schedule["interval"];
+    } else {
+      //Using current time as start time.
+      newJSON.rollup.schedule.interval = { start_time: moment().unix(), unit: `${intervalTimeunit}`, period: `${interval}` };
+      // delete newJSON.rollup.schedule["cron"];
+    }
+    this.setState({ rollupJSON: newJSON });
+  };
+
   onSubmit = async (): Promise<void> => {
     const { rollupId, rollupJSON } = this.state;
     this.setState({ submitError: "", isSubmitting: true, hasSubmitted: true });
@@ -243,6 +239,7 @@ export default class EditRollup extends Component<EditRollupProps, EditRollupSta
         this.setState({ rollupIdError: "Required" });
       } else {
         //Build JSON string here
+        this.updateSchedule();
         await this.onUpdate(rollupId, rollupJSON);
       }
     } catch (err) {
@@ -278,14 +275,15 @@ export default class EditRollup extends Component<EditRollupProps, EditRollupSta
       rollupId,
       rollupIdError,
       isSubmitting,
-      roles,
       description,
       jobEnabledByDefault,
       recurringJob,
       recurringDefinition,
       interval,
+      intervalError,
       intervalTimeunit,
       cronExpression,
+      cronTimezone,
       pageSize,
       delayTime,
       delayTimeunit,
@@ -298,15 +296,13 @@ export default class EditRollup extends Component<EditRollupProps, EditRollupSta
         <EuiSpacer />
         {/*TODO: Disable change name function*/}
         <ConfigureRollup
+          isEdit={true}
           rollupId={rollupId}
           rollupIdError={rollupIdError}
           onChangeDescription={this.onChangeDescription}
           onChangeName={this.onChangeName}
           description={description}
         />
-        <EuiSpacer />
-
-        <Roles rollupId={rollupId} rollupIdError={rollupIdError} onChange={this.onChangeRoles} roleOptions={options} roles={roles} />
         <EuiSpacer />
         <Schedule
           isEdit={true}
@@ -318,11 +314,14 @@ export default class EditRollup extends Component<EditRollupProps, EditRollupSta
           interval={interval}
           intervalTimeunit={intervalTimeunit}
           cronExpression={cronExpression}
+          cronTimezone={cronTimezone}
           pageSize={pageSize}
+          intervalError={intervalError}
           delayTime={delayTime}
           delayTimeunit={delayTimeunit}
           onChangeJobEnabledByDefault={this.onChangeJobEnabledByDefault}
           onChangeCron={this.onChangeCron}
+          onChangeCronTimezone={this.onChangeCronTimezone}
           onChangeDelayTime={this.onChangeDelayTime}
           onChangeIntervalTime={this.onChangeIntervalTime}
           onChangePage={this.onChangePage}

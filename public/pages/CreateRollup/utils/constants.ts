@@ -34,14 +34,13 @@ export const EMPTY_ROLLUP = JSON.stringify({
     roles: [],
     schedule: {
       interval: {
-        start_time: 1553112384,
+        start_time: 234802,
+        period: 1,
         unit: "MINUTES",
       },
     },
     source_index: "",
     target_index: "",
-    last_updated_time: 1553112384,
-    delay: 0,
   },
 });
 
@@ -157,4 +156,18 @@ export const TimezoneOptionsByRegion = [
   { text: "UTC -10", value: "-10:00" },
   { text: "UTC -11", value: "UTC -11" },
   { text: "UTC -12", value: "UTC -12" },
+];
+
+export const AddFieldsColumns = [
+  {
+    field: "label",
+    name: "Field name",
+    sortable: true,
+  },
+  {
+    field: "type",
+    name: "Field type",
+    sortable: true,
+    render: (type: string | undefined) => (type == null || type == undefined ? "-" : type),
+  },
 ];

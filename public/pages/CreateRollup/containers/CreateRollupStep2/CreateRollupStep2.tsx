@@ -23,15 +23,18 @@ import CreateRollupSteps from "../../components/CreateRollupSteps";
 import TimeAggregation from "../../components/TimeAggregations";
 import AdvancedAggregation from "../../components/AdvancedAggregation";
 import MetricsCalculation from "../../components/MetricsCalculation";
-import { DimensionItem, FieldItem } from "../../../../../models/interfaces";
+import { DimensionItem, FieldItem, MetricItem } from "../../models/interfaces";
 
-interface CreateRollupProps extends RouteComponentProps {
+interface CreateRollupStep2Props extends RouteComponentProps {
   rollupService: RollupService;
   currentStep: number;
   fields: FieldItem[];
   selectedTerms: FieldItem[];
   selectedDimensionField: DimensionItem[];
+  selectedMetrics: MetricItem[];
+  metricError: string;
   timestamp: EuiComboBoxOptionOption<String>[];
+  timestampError: string;
   intervalValue: number;
   intervalType: string;
   timezone: string;
@@ -42,23 +45,12 @@ interface CreateRollupProps extends RouteComponentProps {
   onChangeTimeunit: (e: ChangeEvent<HTMLSelectElement>) => void;
   onChangeTimezone: (e: ChangeEvent<HTMLSelectElement>) => void;
   onDimensionSelectionChange: (selectedFields: DimensionItem[]) => void;
+  onMetricSelectionChange: (selectedFields: MetricItem[]) => void;
 }
 
-interface CreateRollupState {
-  submitError: string;
-  isSubmitting: boolean;
-  hasSubmitted: boolean;
-}
-
-export default class CreateRollupStep2 extends Component<CreateRollupProps, CreateRollupState> {
-  constructor(props: CreateRollupProps) {
+export default class CreateRollupStep2 extends Component<CreateRollupStep2Props> {
+  constructor(props: CreateRollupStep2Props) {
     super(props);
-
-    this.state = {
-      submitError: "",
-      isSubmitting: false,
-      hasSubmitted: false,
-    };
   }
 
   componentDidMount = async (): Promise<void> => {
@@ -92,12 +84,9 @@ export default class CreateRollupStep2 extends Component<CreateRollupProps, Crea
             <EuiSpacer />
             <MetricsCalculation {...this.props} fieldsOption={fields} />
             <EuiSpacer />
-            <MetricsCalculation />
-            {submitError && (
-              <EuiCallOut title="Sorry, there was an error" color="danger" iconType="alert">
-                <p>{submitError}</p>
-              </EuiCallOut>
-            )}
+            <EuiCallOut color="warning">
+              <p>You can't change aggregations or metrics after creating a job. Double-check your choices before proceeding.</p>
+            </EuiCallOut>
           </EuiFlexItem>
         </EuiFlexGroup>
         <EuiSpacer />

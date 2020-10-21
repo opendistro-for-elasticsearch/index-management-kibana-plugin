@@ -14,7 +14,7 @@
  */
 
 import React, { Component } from "react";
-import { EuiSpacer, EuiTitle, EuiFlexGroup, EuiFlexItem, EuiCallOut, EuiComboBoxOptionOption } from "@elastic/eui";
+import { EuiSpacer, EuiTitle, EuiFlexGroup, EuiFlexItem, EuiComboBoxOptionOption, EuiCallOut } from "@elastic/eui";
 import chrome from "ui/chrome";
 import { RouteComponentProps } from "react-router-dom";
 import { RollupService } from "../../../../services";
@@ -24,6 +24,7 @@ import CreateRollupSteps from "../../components/CreateRollupSteps";
 import HistogramAndMetrics from "../../components/HistogramAndMetrics";
 import JobNameAndIndices from "../../components/JobNameAndIndices";
 import ScheduleRolesAndNotifications from "../../components/ScheduleRolesAndNotifications";
+import { DimensionItem, MetricItem } from "../../models/interfaces";
 
 interface CreateRollupProps extends RouteComponentProps {
   rollupService: RollupService;
@@ -34,12 +35,14 @@ interface CreateRollupProps extends RouteComponentProps {
   description: string;
   sourceIndex: { label: string; value?: IndexItem }[];
   targetIndex: { label: string; value?: IndexItem }[];
-  roles: EuiComboBoxOptionOption<String>[];
 
   timestamp: EuiComboBoxOptionOption<String>[];
+  intervalType: string;
   intervalValue: number;
   timezone: string;
   timeunit: string;
+  selectedDimensionField: DimensionItem[];
+  selectedMetrics: MetricItem[];
 
   jobEnabledByDefault: boolean;
   recurringJob: string;
@@ -47,6 +50,7 @@ interface CreateRollupProps extends RouteComponentProps {
   interval: number;
   intervalTimeunit: string;
   cronExpression: string;
+  cronTimezone: string;
   pageSize: number;
   delayTime: number | undefined;
   delayTimeunit: string;
@@ -55,16 +59,6 @@ interface CreateRollupProps extends RouteComponentProps {
 export default class CreateRollupStep4 extends Component<CreateRollupProps> {
   constructor(props: CreateRollupProps) {
     super(props);
-
-    this.state = {
-      rollupSeqNo: null,
-      rollupPrimaryTerm: null,
-      rollupIdError: "",
-      submitError: "",
-      jsonString: "",
-      isSubmitting: false,
-      hasSubmitted: false,
-    };
   }
 
   componentDidMount = async (): Promise<void> => {
@@ -77,28 +71,6 @@ export default class CreateRollupStep4 extends Component<CreateRollupProps> {
 
   render() {
     if (this.props.currentStep != 4) return null;
-    const {
-      rollupId,
-      description,
-      onChangeStep,
-      submitError,
-      sourceIndex,
-      targetIndex,
-      roles,
-      intervalValue,
-      timestamp,
-      timezone,
-      timeunit,
-      jobEnabledByDefault,
-      recurringJob,
-      recurringDefinition,
-      interval,
-      intervalTimeunit,
-      cronExpression,
-      pageSize,
-      delayTime,
-      delayTimeunit,
-    } = this.props;
 
     return (
       <div style={{ padding: "5px 50px" }}>
@@ -111,42 +83,15 @@ export default class CreateRollupStep4 extends Component<CreateRollupProps> {
               <h1>Review and create</h1>
             </EuiTitle>
             <EuiSpacer />
-            <JobNameAndIndices
-              rollupId={rollupId}
-              description={description}
-              sourceIndex={sourceIndex}
-              targetIndex={targetIndex}
-              roles={roles}
-              onChangeStep={onChangeStep}
-            />
+            <JobNameAndIndices {...this.props} />
             <EuiSpacer />
-            <HistogramAndMetrics
-              rollupId={rollupId}
-              intervalValue={intervalValue}
-              timestamp={timestamp}
-              timeunit={timeunit}
-              timezone={timezone}
-              onChangeStep={onChangeStep}
-            />
+            <HistogramAndMetrics {...this.props} />
             <EuiSpacer />
-            <ScheduleRolesAndNotifications
-              rollupId={rollupId}
-              jobEnabledByDefault={jobEnabledByDefault}
-              recurringJob={recurringJob}
-              recurringDefinition={recurringDefinition}
-              interval={interval}
-              intervalTimeunit={intervalTimeunit}
-              cronExpression={cronExpression}
-              pageSize={pageSize}
-              delayTime={delayTime}
-              delayTimeunit={delayTimeunit}
-              onChangeStep={onChangeStep}
-            />
-            {submitError && (
-              <EuiCallOut title="Sorry, there was an error" color="danger" iconType="alert">
-                <p>{submitError}</p>
-              </EuiCallOut>
-            )}
+            <ScheduleRolesAndNotifications {...this.props} />
+            <EuiSpacer />
+            <EuiCallOut color="warning">
+              <p>You can't change aggregations or metrics after creating a job. Double-check your choices before proceeding.</p>
+            </EuiCallOut>
           </EuiFlexItem>
         </EuiFlexGroup>
         <EuiSpacer />

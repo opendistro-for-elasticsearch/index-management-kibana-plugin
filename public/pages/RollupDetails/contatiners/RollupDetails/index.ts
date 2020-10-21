@@ -1,5 +1,5 @@
 /*
- * Copyright 2019 Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ * Copyright 2020 Amazon.com, Inc. or its affiliates. All Rights Reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License").
  * You may not use this file except in compliance with the License.
@@ -13,14 +13,6 @@
  * permissions and limitations under the License.
  */
 
-import { SortDirection } from "../../../utils/constants";
+import RollupDetails from "./RollupDetails";
 
-export const DEFAULT_PAGE_SIZE_OPTIONS = [5, 10, 20, 50];
-
-export const DEFAULT_QUERY_PARAMS = {
-  from: 0,
-  size: 20,
-  search: "",
-  sortField: "name",
-  sortDirection: SortDirection.DESC,
-};
+export default RollupDetails;

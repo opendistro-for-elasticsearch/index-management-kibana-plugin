@@ -14,7 +14,7 @@
  */
 
 import { IndexService, ManagedIndexService, PolicyService, RollupService } from "../services";
-import { DocumentPolicy, ManagedIndexItem } from "../../models/interfaces";
+import { DocumentPolicy, ManagedIndexItem, Rollup } from "../../models/interfaces";
 import { RollupItem } from "../../public/pages/Rollups/models/interfaces";
 
 export interface NodeServices {
@@ -49,13 +49,13 @@ export interface DeletePolicyResponse {
   result: string;
 }
 
-export interface PutRollupResponse {
+export interface PutPolicyResponse {
   _id: string;
   // TODO: remove _version from IndexPolicyAPI
   _version: number;
   _primary_term: number;
   _seq_no: number;
-  rollup: { rollup: object };
+  policy: { policy: object };
 }
 
 export interface DeleteRollupResponse {
@@ -80,7 +80,7 @@ export interface PutRollupResponse {
   _id: string;
   _primary_term: number;
   _seq_no: number;
-  rollup: { rollup: object };
+  rollup: { rollup: Rollup };
 }
 
 export interface IndexUpdateResponse {
@@ -158,6 +158,22 @@ export interface FailedIndex {
 }
 
 export interface ExplainAPIManagedIndexMetaData {
+  "opendistro.index_state_management.policy_id": string | null;
+  index?: string;
+  index_uuid?: string;
+  policy_id?: string;
+  policy_seq_no?: number;
+  policy_primary_term?: number;
+  policy_completed?: boolean;
+  rolled_over?: boolean;
+  transition_to?: string;
+  state?: { name: string; start_time: number };
+  action?: { name: string; start_time: number; index: number; failed: boolean; consumed_retries: number };
+  retry_info?: { failed: boolean; consumed_retries: number };
+  info?: object;
+}
+
+export interface ExplainAPIRollupMetaData {
   "opendistro.index_state_management.policy_id": string | null;
   index?: string;
   index_uuid?: string;

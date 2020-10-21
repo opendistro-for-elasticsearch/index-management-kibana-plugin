@@ -25,9 +25,11 @@ import {
   EuiFlexItem,
   EuiTextArea,
   EuiFormHelpText,
+  EuiText,
 } from "@elastic/eui";
 import { CalendarTimeunitOptions, DelayTimeunitOptions } from "../../utils/constants";
 import { ContentPanel } from "../../../../components/ContentPanel";
+import moment from "moment-timezone";
 
 interface ScheduleProps {
   isEdit: boolean;
@@ -38,12 +40,15 @@ interface ScheduleProps {
   recurringDefinition: string;
   interval: number;
   intervalTimeunit: string;
+  intervalError: string;
   cronExpression: string;
+  cronTimezone: string;
   pageSize: number;
   delayTime: number | undefined;
   delayTimeunit: string;
   onChangeJobEnabledByDefault: () => void;
   onChangeCron: (e: ChangeEvent<HTMLTextAreaElement>) => void;
+  onChangeCronTimezone: (e: ChangeEvent<HTMLSelectElement>) => void;
   onChangeDelayTime: (e: ChangeEvent<HTMLInputElement>) => void;
   onChangeIntervalTime: (e: ChangeEvent<HTMLInputElement>) => void;
   onChangePage: (e: ChangeEvent<HTMLInputElement>) => void;
@@ -67,14 +72,15 @@ const radios = [
 const selectInterval = (
   interval: number,
   intervalTimeunit: string,
+  intervalError: string,
   onChangeInterval: (e: ChangeEvent<HTMLInputElement>) => void,
   onChangeTimeunit: (value: ChangeEvent<HTMLSelectElement>) => void
 ) => (
   <React.Fragment>
     <EuiFlexGroup style={{ maxWidth: 400 }}>
       <EuiFlexItem grow={false} style={{ width: 200 }}>
-        <EuiFormRow label="Rollup interval">
-          <EuiFieldNumber value={interval} onChange={onChangeInterval} />
+        <EuiFormRow label="Rollup interval" error={intervalError} isInvalid={intervalError != ""}>
+          <EuiFieldNumber value={interval} onChange={onChangeInterval} isInvalid={intervalError != ""} />
         </EuiFormRow>
       </EuiFlexItem>
       <EuiFlexItem>
@@ -101,13 +107,7 @@ const isRecurring = (recurringJob: string, onChangeRecurringJob: (optionId: stri
   </React.Fragment>
 );
 
-const defineCron = (cronExpression: string, onChangeCron: (value: ChangeEvent<HTMLTextAreaElement>) => void) => (
-  <React.Fragment>
-    <EuiFormRow label="Define by cron expression">
-      <EuiTextArea value={cronExpression} onChange={onChangeCron} compressed={true} />
-    </EuiFormRow>
-  </React.Fragment>
-);
+const timezones = moment.tz.names().map((tz) => ({ label: tz, text: tz }));
 
 export default class Schedule extends Component<ScheduleProps> {
   constructor(props: ScheduleProps) {
@@ -122,12 +122,15 @@ export default class Schedule extends Component<ScheduleProps> {
       recurringDefinition,
       interval,
       intervalTimeunit,
+      intervalError,
       cronExpression,
+      cronTimezone,
       pageSize,
       delayTime,
       delayTimeunit,
       onChangeJobEnabledByDefault,
       onChangeCron,
+      onChangeCronTimezone,
       onChangeDelayTime,
       onChangeIntervalTime,
       onChangePage,
@@ -139,12 +142,14 @@ export default class Schedule extends Component<ScheduleProps> {
     return (
       <ContentPanel bodyStyles={{ padding: "initial" }} title="Schedule" titleSize="s">
         <div style={{ paddingLeft: "10px" }}>
-          <EuiCheckbox
-            id="jobEnabledByDefault"
-            label="Job enabled by default"
-            checked={jobEnabledByDefault}
-            onChange={onChangeJobEnabledByDefault}
-          />
+          {!isEdit && (
+            <EuiCheckbox
+              id="jobEnabledByDefault"
+              label="Enable job by default"
+              checked={jobEnabledByDefault}
+              onChange={onChangeJobEnabledByDefault}
+            />
+          )}
           <EuiSpacer size="m" />
           {!isEdit && isRecurring(recurringJob, onChangeRecurringJob)}
 
@@ -161,22 +166,43 @@ export default class Schedule extends Component<ScheduleProps> {
           </EuiFormRow>
           <EuiSpacer size="m" />
 
-          {recurringDefinition == "fixed"
-            ? selectInterval(interval, intervalTimeunit, onChangeIntervalTime, onChangeIntervalTimeunit)
-            : defineCron(cronExpression, onChangeCron)}
+          {recurringDefinition == "fixed" ? (
+            selectInterval(interval, intervalTimeunit, intervalError, onChangeIntervalTime, onChangeIntervalTimeunit)
+          ) : (
+            <React.Fragment>
+              <EuiFormRow label="Define by cron expression">
+                <EuiTextArea value={cronExpression} onChange={onChangeCron} compressed={true} />
+              </EuiFormRow>
+              <EuiFormRow label="Timezone" helpText={"A day starts from 00:00:00 in the specified timezone."}>
+                <EuiSelect id="timezone" options={timezones} value={cronTimezone} onChange={onChangeCronTimezone} />
+              </EuiFormRow>
+            </React.Fragment>
+          )}
 
           <EuiSpacer size="m" />
 
           <EuiFormRow
             label="Page per execution"
-            helpText={"The number of pages every execution processes. A larger number means faster execution and more cost on memory."}
+            helpText={"The number of pages every execution processes. A larger number means faster execution and higher costs on memory."}
           >
             <EuiFieldNumber min={1} placeholder={"1000"} value={pageSize} onChange={onChangePage} />
           </EuiFormRow>
           <EuiSpacer size="m" />
           <EuiFlexGroup style={{ maxWidth: 400 }}>
             <EuiFlexItem grow={false} style={{ width: 200 }}>
-              <EuiFormRow label="Execution delay - optional">
+              <EuiFlexGroup gutterSize={"xs"}>
+                <EuiFlexItem grow={false}>
+                  <EuiText size={"xs"}>
+                    <h4>Execution delay</h4>
+                  </EuiText>
+                </EuiFlexItem>
+                <EuiFlexItem>
+                  <EuiText size={"xs"} color={"subdued"}>
+                    <i> - optional</i>
+                  </EuiText>
+                </EuiFlexItem>
+              </EuiFlexGroup>
+              <EuiFormRow>
                 <EuiFieldNumber value={delayTime} onChange={onChangeDelayTime} />
               </EuiFormRow>
             </EuiFlexItem>
@@ -187,7 +213,7 @@ export default class Schedule extends Component<ScheduleProps> {
             </EuiFlexItem>
           </EuiFlexGroup>
           <EuiFormHelpText style={{ maxWidth: 400 }}>
-            The amount of time the job wait for data ingestion to accommodate any necessary processing time.
+            The amount of time the job waits for data ingestion to accommodate any necessary processing time.
           </EuiFormHelpText>
         </div>
       </ContentPanel>

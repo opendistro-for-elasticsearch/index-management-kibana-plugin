@@ -44,12 +44,13 @@ import {
   EuiContextMenuItem,
   EuiContextMenuPanel,
   EuiTextColor,
+  EuiLink,
+  EuiTableFieldDataColumnType,
 } from "@elastic/eui";
-import { rollupsColumns } from "../../utils/constants";
 import { RollupService } from "../../../../services";
 import RollupEmptyPrompt from "../../components/RollupEmptyPrompt";
 import { RollupItem, RollupsQueryParams } from "../../models/interfaces";
-import { getURLQueryParams } from "../../utils/helpers";
+import { getURLQueryParams, renderContinuous, renderEnabled, renderTime } from "../../utils/helpers";
 import DeleteModal from "../../components/DeleteModal";
 
 interface RollupsProps extends RouteComponentProps {
@@ -65,127 +66,11 @@ interface RollupsState {
   sortDirection: Direction;
   selectedItems: RollupItem[];
   rollups: RollupItem[];
+  rollupExplain: any;
   loadingRollups: boolean;
   isPopoverOpen: boolean;
   isDeleteModalVisible: boolean;
 }
-
-let SampleGetRollupJobs: RollupItem[] = [
-  {
-    _id: "sample_job1",
-    _version: 1,
-    _seq_no: 0,
-    _primary_term: 1,
-    rollup: {
-      enabled: false,
-      schedule: {
-        interval: {
-          start_time: 1553112384,
-          period: 1,
-          unit: "Days",
-        },
-      },
-      last_updated_time: 1602191791392,
-      enabled_time: null,
-      description: "Rolls up our daily indices into monthly summarized views",
-      schema_version: 5,
-      source_index: "kibana_sample_data_flights",
-      target_index: "rollup-stats",
-      metadata_id: null,
-      roles: [],
-      page_size: 200,
-      delay: 10,
-      continuous: false,
-      dimensions: [
-        {
-          date_histogram: {
-            fixed_interval: "30d",
-            source_field: "timestamp",
-            target_field: "timestamp",
-            timezone: "America/Los_Angeles",
-          },
-        },
-      ],
-      metrics: [],
-    },
-  },
-  {
-    _id: "sample_job2",
-    _version: 1,
-    _seq_no: 1,
-    _primary_term: 1,
-    rollup: {
-      enabled: false,
-      schedule: {
-        interval: {
-          start_time: 1553112384,
-          period: 1,
-          unit: "Days",
-        },
-      },
-      last_updated_time: 1602191837182,
-      enabled_time: null,
-      description: "Rolls up our daily indices into monthly summarized views",
-      schema_version: 5,
-      source_index: "kibana_sample_data_flights",
-      target_index: "rollup-stats",
-      metadata_id: null,
-      roles: [],
-      page_size: 200,
-      delay: 10,
-      continuous: false,
-      dimensions: [
-        {
-          date_histogram: {
-            fixed_interval: "30d",
-            source_field: "timestamp",
-            target_field: "timestamp",
-            timezone: "America/Los_Angeles",
-          },
-        },
-      ],
-      metrics: [],
-    },
-  },
-  {
-    _id: "sample_job3",
-    _version: 1,
-    _seq_no: 2,
-    _primary_term: 1,
-    rollup: {
-      enabled: false,
-      schedule: {
-        interval: {
-          start_time: 1553112384,
-          period: 1,
-          unit: "Days",
-        },
-      },
-      last_updated_time: 1602191874405,
-      enabled_time: null,
-      description: "Rolls up our daily indices into monthly summarized views",
-      schema_version: 5,
-      source_index: "kibana_sample_data_flights",
-      target_index: "new-index",
-      metadata_id: null,
-      roles: [],
-      page_size: 200,
-      delay: 10,
-      continuous: false,
-      dimensions: [
-        {
-          date_histogram: {
-            fixed_interval: "30d",
-            source_field: "timestamp",
-            target_field: "timestamp",
-            timezone: "America/Los_Angeles",
-          },
-        },
-      ],
-      metrics: [],
-    },
-  },
-];
 
 export default class Rollups extends Component<RollupsProps, RollupsState> {
   constructor(props: RollupsProps) {
@@ -201,27 +86,31 @@ export default class Rollups extends Component<RollupsProps, RollupsState> {
       sortField,
       sortDirection,
       selectedItems: [],
-      rollups: SampleGetRollupJobs,
+      rollups: [],
       loadingRollups: false,
       isPopoverOpen: false,
       isDeleteModalVisible: false,
+      rollupExplain: {},
     };
 
     this.getRollups = _.debounce(this.getRollups, 500, { leading: true });
   }
 
-  //TODO: Get rollup jobs when backend is done.
   async componentDidMount() {
     chrome.breadcrumbs.set([BREADCRUMBS.INDEX_MANAGEMENT, BREADCRUMBS.ROLLUPS]);
-    // await this.getRollups();
+    await this.getRollups();
+    const { rollups } = this.state;
+    if (rollups.length != 0) await this.getExplains();
   }
 
   async componentDidUpdate(prevProps: RollupsProps, prevState: RollupsState) {
-    // const prevQuery = Rollups.getQueryObjectFromState(prevState);
-    // const currQuery = Rollups.getQueryObjectFromState(this.state);
-    // if (!_.isEqual(prevQuery, currQuery)) {
-    //   await this.getRollups();
-    // }
+    const prevQuery = Rollups.getQueryObjectFromState(prevState);
+    const currQuery = Rollups.getQueryObjectFromState(this.state);
+    if (!_.isEqual(prevQuery, currQuery)) {
+      await this.getRollups();
+      const { rollups } = this.state;
+      if (rollups.length != 0) await this.getExplains();
+    }
   }
 
   static getQueryObjectFromState({ from, size, search, sortField, sortDirection }: RollupsState): RollupsQueryParams {
@@ -243,6 +132,38 @@ export default class Rollups extends Component<RollupsProps, RollupsState> {
       }
     } catch (err) {
       toastNotifications.addDanger(getErrorMessage(err, "There was a problem loading the rollups"));
+    }
+    this.setState({ loadingRollups: false });
+  };
+
+  getExplains = async (): Promise<void> => {
+    this.setState({ loadingRollups: true });
+    try {
+      const { rollupService } = this.props;
+      const { rollups } = this.state;
+      //Concat the rollup job ids to form params for explain api:
+      let paramString = "";
+      rollups.map((rollup) => {
+        if (rollups.indexOf(rollup) == 0) {
+          paramString = paramString + rollup._id;
+        } else {
+          paramString = paramString + "," + rollup._id;
+        }
+      });
+      const rollupJobsResponse = await rollupService.explainRollup(paramString);
+      if (rollupJobsResponse.ok) {
+        const rollupExplain = rollupJobsResponse.response;
+        this.setState({ rollupExplain });
+        // Assuming the order of rollup jobs is identical to metadata.
+        rollups.map((rollup: RollupItem) => {
+          rollup.rollup.metadata = rollupExplain[rollup._id];
+        });
+        this.setState({ rollups });
+      } else {
+        toastNotifications.addDanger(rollupJobsResponse.error);
+      }
+    } catch (err) {
+      toastNotifications.addDanger(getErrorMessage(err, "There was a problem loading the metadata of rollups"));
     }
     this.setState({ loadingRollups: false });
   };
@@ -269,7 +190,7 @@ export default class Rollups extends Component<RollupsProps, RollupsState> {
 
         if (response.ok) {
           this.closeDeleteModal();
-          //TODO: Update status or pull jobs again
+          await this.getRollups();
           //Show success message
           toastNotifications.addSuccess(`"${rollupId}" successfully deleted!`);
         } else {
@@ -292,6 +213,7 @@ export default class Rollups extends Component<RollupsProps, RollupsState> {
 
         if (response.ok) {
           //TODO: Update status or pull jobs again
+          await this.getRollups();
           //Show success message
           toastNotifications.addSuccess(`${rollupId} is disabled`);
         } else {
@@ -314,6 +236,7 @@ export default class Rollups extends Component<RollupsProps, RollupsState> {
 
         if (response.ok) {
           //TODO: Update status or pull jobs again
+          this.getRollups();
           //Show success message
           toastNotifications.addSuccess(`${rollupId} is enabled`);
         } else {
@@ -432,13 +355,75 @@ export default class Rollups extends Component<RollupsProps, RollupsState> {
       </EuiContextMenuItem>,
     ];
 
-    //TODO: Add action buttons here
+    const rollupsColumns: EuiTableFieldDataColumnType<RollupItem>[] = [
+      {
+        field: "_id",
+        name: "Name",
+        sortable: true,
+        textOnly: true,
+        truncateText: true,
+        render: (_id) => (
+          <EuiLink
+            href={"opendistro_index_management_kibana#/rollup-details?" + _id}
+            onClick={() => this.props.history.push(`${ROUTES.ROLLUP_DETAILS}?id=${_id}`)}
+          >
+            {_id}
+          </EuiLink>
+        ),
+      },
+      {
+        field: "rollup.rollup.source_index",
+        name: "Source index",
+        sortable: true,
+        textOnly: true,
+        truncateText: true,
+      },
+      {
+        field: "rollup.rollup.target_index",
+        name: "Target index",
+        sortable: true,
+        textOnly: true,
+        truncateText: true,
+      },
+      {
+        field: "rollup.rollup.enabled",
+        name: "Job state",
+        sortable: true,
+        textOnly: true,
+        truncateText: true,
+        render: renderEnabled,
+      },
+      {
+        field: "rollup.rollup.continuous",
+        name: "Continuous",
+        sortable: true,
+        textOnly: true,
+        truncateText: true,
+        render: renderContinuous,
+      },
+      {
+        field: "rollup.metadata.rollup_metadata.continuous",
+        name: "Next rollup window",
+        sortable: true,
+        textOnly: true,
+        render: (metadata) =>
+          metadata == null ? "-" : renderTime(metadata.next_window_start_time) + " - " + renderTime(metadata.next_window_end_time),
+      },
+      {
+        field: "rollup.metadata.rollup_metadata.status",
+        name: "Rollup job status",
+        sortable: true,
+        textOnly: true,
+        render: (status) => (status == null ? "-" : status),
+      },
+    ];
+
     return (
       <EuiPanel style={{ paddingLeft: "0px", paddingRight: "0px" }}>
         <EuiFlexGroup style={{ padding: "0px 10px" }} justifyContent="spaceBetween" alignItems="center">
           <EuiFlexItem>
             <EuiTitle size={"m"}>
-              <h3>Rollup jobs</h3>
+              <h3>{"Rollup jobs (" + `${rollups.length}` + ")"}</h3>
             </EuiTitle>
           </EuiFlexItem>
           <EuiFlexItem grow={false}>
@@ -449,7 +434,12 @@ export default class Rollups extends Component<RollupsProps, RollupsState> {
                 </EuiButton>
               </EuiFlexItem>
               <EuiFlexItem grow={false}>
-                <EuiButton disabled={!selectedItems.length} onClick={this.onEnable}>
+                <EuiButton
+                  disabled={!selectedItems.length}
+                  onClick={() => {
+                    this.onEnable();
+                  }}
+                >
                   Enable
                 </EuiButton>
               </EuiFlexItem>
@@ -467,7 +457,7 @@ export default class Rollups extends Component<RollupsProps, RollupsState> {
               </EuiFlexItem>
               <EuiFlexItem grow={false}>
                 <EuiButton onClick={this.onClickCreate} fill={true}>
-                  Create Rollup Job
+                  Create rollup job
                 </EuiButton>
               </EuiFlexItem>
             </EuiFlexGroup>

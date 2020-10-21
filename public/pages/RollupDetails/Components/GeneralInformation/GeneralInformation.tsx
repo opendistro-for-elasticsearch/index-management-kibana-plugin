@@ -17,24 +17,25 @@ import React, { Component } from "react";
 import { EuiFlexGrid, EuiSpacer, EuiFlexItem, EuiText } from "@elastic/eui";
 import { ContentPanel, ContentPanelActions } from "../../../../components/ContentPanel";
 import { ModalConsumer } from "../../../../components/Modal";
-import { IndexItem } from "../../../../../models/interfaces";
 
-interface JobNameAndIndicesProps {
+interface GeneralInformationProps {
   rollupId: string;
   description: string;
-  sourceIndex: { label: string; value?: IndexItem }[];
-  targetIndex: { label: string; value?: IndexItem }[];
-  onChangeStep: (step: number) => void;
+  sourceIndex: string;
+  targetIndex: string;
+  scheduleText: string;
+  pageSize: number;
+  lastUpdated: string;
+  onEdit: () => void;
 }
 
-export default class JobNameAndIndices extends Component<JobNameAndIndicesProps> {
-  constructor(props: JobNameAndIndicesProps) {
+export default class GeneralInformation extends Component<GeneralInformationProps> {
+  constructor(props: GeneralInformationProps) {
     super(props);
   }
 
   render() {
-    const { rollupId, description, onChangeStep, sourceIndex, targetIndex } = this.props;
-
+    const { rollupId, description, onEdit, sourceIndex, targetIndex, scheduleText, pageSize, lastUpdated } = this.props;
     return (
       <ContentPanel
         actions={
@@ -45,7 +46,7 @@ export default class JobNameAndIndices extends Component<JobNameAndIndicesProps>
                   {
                     text: "Edit",
                     buttonProps: {
-                      onClick: () => onChangeStep(1),
+                      onClick: () => onEdit(),
                     },
                   },
                 ]}
@@ -54,12 +55,12 @@ export default class JobNameAndIndices extends Component<JobNameAndIndicesProps>
           </ModalConsumer>
         }
         bodyStyles={{ padding: "initial" }}
-        title="Job name and indices"
+        title="General Information"
         titleSize="m"
       >
-        <div style={{ padding: "15px" }}>
+        <div style={{ paddingLeft: "10px" }}>
           <EuiSpacer size={"s"} />
-          <EuiFlexGrid columns={3}>
+          <EuiFlexGrid columns={4}>
             <EuiFlexItem>
               <EuiText size={"xs"}>
                 <dt>Name</dt>
@@ -69,19 +70,37 @@ export default class JobNameAndIndices extends Component<JobNameAndIndicesProps>
             <EuiFlexItem>
               <EuiText size={"xs"}>
                 <dt>Source Index</dt>
-                <dd>{sourceIndex[0].label}</dd>
+                <dd>{sourceIndex}</dd>
               </EuiText>
             </EuiFlexItem>
             <EuiFlexItem>
               <EuiText size={"xs"}>
                 <dt>Target index</dt>
-                <dd>{targetIndex[0].label}</dd>
+                <dd>{targetIndex}</dd>
+              </EuiText>
+            </EuiFlexItem>
+            <EuiFlexItem>
+              <EuiText size={"xs"}>
+                <dt>Schedule</dt>
+                <dd>{scheduleText}</dd>
               </EuiText>
             </EuiFlexItem>
             <EuiFlexItem>
               <EuiText size={"xs"}>
                 <dt>Description</dt>
                 <dd>{description == "" ? "-" : description}</dd>
+              </EuiText>
+            </EuiFlexItem>
+            <EuiFlexItem>
+              <EuiText size={"xs"}>
+                <dt>Last updated</dt>
+                <dd>{lastUpdated}</dd>
+              </EuiText>
+            </EuiFlexItem>
+            <EuiFlexItem>
+              <EuiText size={"xs"}>
+                <dt>Pages per execution</dt>
+                <dd>{pageSize}</dd>
               </EuiText>
             </EuiFlexItem>
           </EuiFlexGrid>

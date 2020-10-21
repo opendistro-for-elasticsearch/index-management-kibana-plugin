@@ -13,7 +13,7 @@
  * permissions and limitations under the License.
  */
 
-import React, { ChangeEvent, Component } from "react";
+import React, { ChangeEvent, Component, Fragment } from "react";
 import {
   EuiSpacer,
   EuiBasicTable,
@@ -33,17 +33,28 @@ import {
   EuiComboBoxOptionOption,
   // @ts-ignore
   Pagination,
-  EuiTableSortingType,
+  CustomItemAction,
   EuiTableSelectionType,
+  EuiTableFieldDataColumnType,
+  EuiFormRow,
+  EuiSelect,
+  EuiText,
+  EuiLink,
+  EuiIcon,
+  EuiPanel,
+  EuiTitle,
+  EuiFormHelpText,
+  EuiHorizontalRule,
+  EuiCallOut,
+  EuiFieldNumber,
 } from "@elastic/eui";
-import { ContentPanel, ContentPanelActions } from "../../../../components/ContentPanel";
-import { ModalConsumer } from "../../../../components/Modal";
-import { DimensionItem, FieldItem } from "../../../../../models/interfaces";
-import { DEFAULT_PAGE_SIZE_OPTIONS } from "../../../Rollups/utils/constants";
+import { DimensionItem, FieldItem } from "../../models/interfaces";
+import { AddFieldsColumns } from "../../utils/constants";
+import { isNumericMapping } from "../../utils/helpers";
 
 interface AdvancedAggregationProps {
-  fieldsOption: { label: string; value?: FieldItem }[];
-  // selectedFields: { label: string; value?: FieldItem }[];
+  fieldsOption: FieldItem[];
+  // selectedFields: FieldItem [];
   onDimensionSelectionChange: (selectedFields: DimensionItem[]) => void;
   selectedDimensionField: DimensionItem[];
 }
@@ -52,8 +63,8 @@ interface AdvancedAggregationState {
   isModalVisible: boolean;
   searchText: string;
   selectedFieldType: EuiComboBoxOptionOption<String>[];
-  selectedFields: { label: string; value?: FieldItem }[];
-  page: number;
+  selectedFields: FieldItem[];
+  from: number;
   size: number;
   sortField: string;
   sortDirection: string;
@@ -64,75 +75,6 @@ const fieldTypeOption = [
   { label: "number", value: "number" },
 ];
 
-const aggregationColumns = [
-  {
-    field: "sequence",
-    name: "Sequence",
-    sortable: true,
-  },
-  {
-    field: "fieldName",
-    name: "Field Name",
-  },
-  {
-    field: "fieldType",
-    name: "Field Type",
-    truncateText: true,
-  },
-  {
-    field: "aggregationMethod",
-    name: "Aggregation method",
-  },
-  {
-    field: "interval",
-    name: "Interval",
-    dataType: "number",
-    render: (interval: null | number) => {
-      if (interval == null) return "-";
-      else return `${interval}`;
-    },
-  },
-  {
-    field: "actions",
-    name: "Actions",
-  },
-];
-
-const sampleDimenionItems: DimensionItem[] = [
-  {
-    sequence: 1,
-    fieldName: "Dest",
-    fieldType: "keyword",
-    aggregationMethod: "terms",
-  },
-  {
-    sequence: 2,
-    fieldName: "FlightDelayMin",
-    fieldType: "integer",
-    aggregationMethod: "histogram",
-    interval: 10,
-  },
-  {
-    sequence: 3,
-    fieldName: "FlightNum",
-    fieldType: "keyword",
-    aggregationMethod: "terms",
-  },
-];
-
-const addFieldsColumns = [
-  {
-    field: "label",
-    name: "Field name",
-    sortable: true,
-  },
-  {
-    field: "value.type",
-    name: "Field type",
-    sortable: true,
-  },
-];
-
 export default class AdvancedAggregation extends Component<AdvancedAggregationProps, AdvancedAggregationState> {
   constructor(props: AdvancedAggregationProps) {
     super(props);
@@ -141,9 +83,9 @@ export default class AdvancedAggregation extends Component<AdvancedAggregationPr
       isModalVisible: false,
       searchText: "",
       selectedFieldType: [],
-      page: 1,
+      from: 0,
       size: 10,
-      sortField: "label",
+      sortField: "sequence",
       sortDirection: "desc",
       selectedFields: [],
     };
@@ -155,84 +97,339 @@ export default class AdvancedAggregation extends Component<AdvancedAggregationPr
 
   onChangeSearch = (e: ChangeEvent<HTMLInputElement>): void => {
     this.setState({ searchText: e.target.value });
-    console.log(this.state);
   };
 
   onChangeFieldType = (options: EuiComboBoxOptionOption<String>[]): void => {
     this.setState({ selectedFieldType: options });
   };
 
-  onSelectionChange = (selectedFields: { label: string; value?: FieldItem }[]): void => {
-    console.log("We are inside onSelectionChange");
+  onSelectionChange = (selectedFields: FieldItem[]): void => {
     this.setState({ selectedFields });
   };
 
-  //TODO: Save the fields to selectedDimensionsField as DimensionItem
-  onClickSave() {}
+  //TODO: Save the fields to selectedDimensionsField as DimensionItem, and perhaps only update the ones changed instead of recreating every time.
+  onClickAdd() {
+    const { onDimensionSelectionChange, selectedDimensionField } = this.props;
+    const { selectedFields } = this.state;
+    //Clone selectedDimensionField
+    let updatedDimensions = Array.from(selectedDimensionField);
+    const toAddFields = Array.from(selectedFields);
+    // Loop through selectedFields to see if existing Dimensions are removed
 
-  // onTableChange = ({ page: tablePage , sort)}: Criteria<{ label: string; value?: FieldItem }>) => {
-  //   const { index: page, size} = tablePage;
-  //
-  //   const { field: sortField, direction: sortDirection } = sort;
-  //   this.setState({page, size:pageSize , sortField,sortDirection})
+    selectedDimensionField.map((dimension) => {
+      //If does not exist in new selection, don't add this dimension.
+      if (!selectedFields.includes(dimension.field)) {
+        updatedDimensions.splice(updatedDimensions.indexOf(dimension), 1);
+      }
+      //If exists, delete it from toAddFields so that it doesn't get added again.
+      else {
+        const index = toAddFields.indexOf(dimension.field);
+        toAddFields.splice(index, 1);
+      }
+    });
+    //Update sequence number
+    this.updateSequence(updatedDimensions);
+    //Parse selectedFields to an array of DimensionItem if any of the field does not exist
+    let i = updatedDimensions.length + 1;
+    const toAdd: DimensionItem[] = toAddFields.map((field) => {
+      return isNumericMapping(field.type)
+        ? {
+            sequence: i++,
+            field: field,
+            aggregationMethod: "histogram",
+            interval: 5,
+          }
+        : {
+            sequence: i++,
+            field: field,
+            aggregationMethod: "terms",
+          };
+    });
+    onDimensionSelectionChange(updatedDimensions.length ? updatedDimensions.concat(toAdd) : toAdd);
+  }
+
+  //Check the dimension num
+  updateSequence(items: DimensionItem[]) {
+    if (items.length == 0) return;
+    const { onDimensionSelectionChange } = this.props;
+    let dimensionNum;
+    for (dimensionNum = 0; dimensionNum < items.length; dimensionNum++) {
+      items[dimensionNum].sequence = dimensionNum + 1;
+    }
+    onDimensionSelectionChange(items);
+  }
+
+  moveUp(item: DimensionItem) {
+    const { selectedDimensionField } = this.props;
+    const toMoveindex = selectedDimensionField.indexOf(item);
+    if (toMoveindex == 0) return;
+    let toSwap = selectedDimensionField[toMoveindex - 1];
+    selectedDimensionField[toMoveindex] = toSwap;
+    selectedDimensionField[toMoveindex - 1] = item;
+    this.updateSequence(selectedDimensionField);
+  }
+
+  moveDown(item: DimensionItem) {
+    const { selectedDimensionField } = this.props;
+    const toMoveindex = selectedDimensionField.indexOf(item);
+    if (toMoveindex == selectedDimensionField.length - 1) return;
+    let toSwap = selectedDimensionField[toMoveindex + 1];
+    selectedDimensionField[toMoveindex] = toSwap;
+    selectedDimensionField[toMoveindex + 1] = item;
+    this.updateSequence(selectedDimensionField);
+  }
+
+  deleteField = (item: DimensionItem) => {
+    const { selectedDimensionField } = this.props;
+    const { selectedFields } = this.state;
+
+    //Remove the dimension item and then update sequence.
+    selectedDimensionField.splice(selectedDimensionField.indexOf(item), 1);
+    selectedFields.splice(selectedFields.indexOf(item.field), 1);
+    this.setState({ selectedFields });
+    this.updateSequence(selectedDimensionField);
+  };
+
+  onChangeInterval = (e: ChangeEvent<HTMLInputElement>, item: DimensionItem): void => {
+    const { selectedDimensionField, onDimensionSelectionChange } = this.props;
+    const index = selectedDimensionField.indexOf(item);
+    const newItem: DimensionItem = {
+      sequence: item.sequence,
+      field: item.field,
+      aggregationMethod: e.target.value,
+      interval: e.target.valueAsNumber,
+    };
+    selectedDimensionField[index] = newItem;
+    onDimensionSelectionChange(selectedDimensionField);
+  };
+
+  onChangeAggregationMethod = (e: ChangeEvent<HTMLSelectElement>, item: DimensionItem): void => {
+    const { selectedDimensionField, onDimensionSelectionChange } = this.props;
+    const index = selectedDimensionField.indexOf(item);
+    const newItem: DimensionItem = {
+      sequence: item.sequence,
+      field: item.field,
+      aggregationMethod: e.target.value,
+    };
+    if (e.target.value == "histogram") {
+      newItem.interval = 5;
+    }
+    selectedDimensionField[index] = newItem;
+    onDimensionSelectionChange(selectedDimensionField);
+  };
+
+  // onTableChange = ({ page: tablePage, sort }: Criteria<DimensionItem>): void => {
+  //   const { index: page, size } = tablePage;
+  //   const { field: sortField, direction: sosrtDirection } = sort;
+  //   this.setState({ from: page * size, size, sortField, sortDirection });
   // };
-
   render() {
-    const { fieldsOption, selectedDimensionField, onDimensionSelectionChange } = this.props;
-    const { isModalVisible, searchText, selectedFieldType, page, size, sortDirection, sortField } = this.state;
-    const pagination: Pagination = {
-      pageIndex: page,
-      pageSize: size,
-      pageSizeOptions: DEFAULT_PAGE_SIZE_OPTIONS,
-      totalItemCount: fieldsOption.length,
-    };
+    const { fieldsOption, selectedDimensionField } = this.props;
+    const { selectedFields, isModalVisible, searchText, selectedFieldType, page, size, sortDirection, sortField } = this.state;
+    // const pagination: Pagination = {
+    //   pageIndex: page,
+    //   pageSize: size,
+    //   pageSizeOptions: DEFAULT_PAGE_SIZE_OPTIONS,
+    //   totalItemCount: fieldsOption.length,
+    // };
 
-    const sorting: EuiTableSortingType<{ label: string; value?: FieldItem }> = {
-      sort: {
-        direction: sortDirection,
-        field: sortField,
-      },
-    };
+    // const sorting: EuiTableSortingType<{ label: string; value?: FieldItem }> = {
+    //   sort: {
+    //     direction: sortDirection,
+    //     field: sortField,
+    //   },
+    // };
 
-    const selection: EuiTableSelectionType<{ label: string; value?: FieldItem }> = {
+    //TODO: make selection working, currently limiting selection to certain tyoe
+    const selection: EuiTableSelectionType<FieldItem> = {
       onSelectionChange: this.onSelectionChange,
+      initialSelected: selectedFields,
     };
+
+    const actions: CustomItemAction[] = [
+      {
+        render: (item: DimensionItem) => {
+          return (
+            <EuiFlexGroup>
+              <EuiFlexItem grow={false}>
+                <EuiLink onClick={() => this.moveUp(item)} disabled={item.sequence == 1}>
+                  Move up
+                </EuiLink>
+              </EuiFlexItem>
+              <EuiFlexItem grow={false}>
+                <EuiLink onClick={() => this.moveDown(item)} disabled={item.sequence == selectedDimensionField.length}>
+                  Move down
+                </EuiLink>
+              </EuiFlexItem>
+            </EuiFlexGroup>
+          );
+        },
+      },
+      {
+        render: (item: DimensionItem) => {
+          return <EuiIcon type={"crossInACircleFilled"} onClick={() => this.deleteField(item)} />;
+        },
+      },
+    ];
+
+    const aggregationColumns: EuiTableFieldDataColumnType<DimensionItem>[] = [
+      {
+        field: "sequence",
+        name: "Sequence",
+        sortable: true,
+        dataType: "number",
+        align: "left",
+      },
+      {
+        field: "field.label",
+        name: "Field name",
+        align: "left",
+      },
+      {
+        field: "field.type",
+        name: "Field type",
+        align: "left",
+        render: (type) => (type == null ? "-" : type),
+      },
+      {
+        field: "aggregationMethod",
+        name: "Aggregation method",
+        align: "left",
+        render: (aggregationMethod, item) => (
+          <EuiForm>
+            <EuiFormRow compressed={true}>
+              <EuiSelect
+                compressed={true}
+                value={aggregationMethod}
+                disabled={
+                  !(
+                    item.field.type == "long" ||
+                    item.field.type == "double" ||
+                    item.field.type == "float" ||
+                    item.field.type == "integer" ||
+                    item.field.type == "number"
+                  )
+                }
+                options={[
+                  { value: "terms", text: "Terms" },
+                  { value: "histogram", text: "Histogram" },
+                ]}
+                onChange={(e) => this.onChangeAggregationMethod(e, item)}
+              />
+            </EuiFormRow>
+          </EuiForm>
+        ),
+      },
+      {
+        field: "interval",
+        name: "Interval",
+        dataType: "number",
+        align: "left",
+        render: (interval: number, item) =>
+          interval == null ? (
+            "-"
+          ) : (
+            <EuiForm>
+              <EuiFormRow>
+                <EuiFieldNumber min={1} value={interval} onChange={(e) => this.onChangeInterval(e, item)} />
+              </EuiFormRow>
+            </EuiForm>
+          ),
+      },
+      {
+        name: "Actions",
+        actions: actions,
+      },
+    ];
 
     return (
-      <ContentPanel
-        actions={
-          <ModalConsumer>
-            {() => (
-              <ContentPanelActions
-                actions={[
-                  {
-                    text: "Add fields",
-                    buttonProps: {
-                      onClick: () => this.showModal(),
-                    },
-                  },
-                ]}
-              />
+      <EuiPanel>
+        <EuiFlexGroup style={{ padding: "0px 10px" }} justifyContent="spaceBetween" alignItems="center">
+          <EuiFlexGroup gutterSize={"xs"} direction={"column"} justifyContent="spaceAround" style={{ padding: "5px 10px" }}>
+            <EuiFlexItem>
+              <EuiFlexGroup gutterSize={"xs"}>
+                <EuiFlexItem grow={false}>
+                  <EuiTitle size={"m"}>
+                    <h3>Additional aggregation </h3>
+                  </EuiTitle>
+                </EuiFlexItem>
+                <EuiFlexItem grow={false}>
+                  <EuiText size={"m"} color={"subdued"}>
+                    <h2>{` (${selectedDimensionField.length})`}</h2>
+                  </EuiText>
+                </EuiFlexItem>
+                <EuiFlexItem grow={false}>
+                  <EuiTitle size={"m"}>
+                    <i>{" - optional "}</i>
+                  </EuiTitle>
+                </EuiFlexItem>
+              </EuiFlexGroup>
+            </EuiFlexItem>
+            <EuiFlexItem>
+              <EuiFormHelpText>
+                You can aggregate additional fields from the source index into the target index. Rollup supports the terms aggregation (for
+                all field types) and histogram aggregation (for numeric fields).
+              </EuiFormHelpText>
+            </EuiFlexItem>
+            {selectedDimensionField.length != 0 && (
+              <Fragment>
+                <EuiFlexItem>
+                  <EuiCallOut>
+                    <p>
+                      The order of fields impacts rollup performance. Aggregating by smaller buckets and then by larger buckets is faster
+                      than the opposite. For example, if you are rolling up flight data for five airlines with 100 destinations, aggregating
+                      by airline and then by destination is faster than aggregating by destination first.
+                    </p>
+                  </EuiCallOut>
+                  <EuiSpacer size={"s"} />
+                </EuiFlexItem>
+              </Fragment>
             )}
-          </ModalConsumer>
-        }
-        bodyStyles={{ padding: "initial" }}
-        title={`Additional metrics - optional (${sampleDimenionItems.length})`}
-        titleSize="m"
-      >
+          </EuiFlexGroup>
+          <EuiFlexItem grow={false}>
+            <EuiFlexGroup direction={"column"} justifyContent="spaceBetween" style={{ padding: "0px 10px" }}>
+              <EuiFlexItem grow={false}>
+                <EuiButton onClick={this.showModal}>Add fields</EuiButton>
+              </EuiFlexItem>
+              <EuiFlexItem />
+            </EuiFlexGroup>
+          </EuiFlexItem>
+        </EuiFlexGroup>
+
+        <EuiSpacer size={"s"} />
+        <EuiHorizontalRule margin="xs" />
         <div style={{ paddingLeft: "10px" }}>
           {/*Need to create array of dimension items after selection*/}
           <EuiBasicTable
-            items={sampleDimenionItems}
-            rowHeader="fieldName"
+            items={selectedDimensionField}
+            itemId={"sequence"}
             columns={aggregationColumns}
-            noItemsMessage="No field added for aggregation"
             tableLayout={"auto"}
+            hasActions={true}
+            // onChange={this.onTableChange}
+            noItemsMessage={
+              <Fragment>
+                <EuiSpacer />
+                <EuiText>No fields added for aggregations</EuiText>
+                <EuiSpacer />
+                <EuiFlexGroup style={{ padding: "5px 10px" }} alignItems="center">
+                  <EuiFlexItem>
+                    <EuiSpacer />
+                  </EuiFlexItem>
+                  <EuiFlexItem grow={false}>
+                    <EuiButton onClick={this.showModal}>Add fields</EuiButton>
+                  </EuiFlexItem>
+                  <EuiFlexItem>
+                    <EuiSpacer size={"m"} />
+                  </EuiFlexItem>
+                </EuiFlexGroup>
+              </Fragment>
+            }
           />
           <EuiSpacer size="s" />
           {isModalVisible && (
             <EuiOverlayMask>
-              <EuiModal onClose={this.closeModal} maxWidth={700}>
+              <EuiModal onClose={this.closeModal} style={{ padding: "5px 30px" }}>
                 <EuiModalHeader>
                   <EuiModalHeaderTitle>Add fields</EuiModalHeaderTitle>
                 </EuiModalHeader>
@@ -242,7 +439,7 @@ export default class AdvancedAggregation extends Component<AdvancedAggregationPr
                     <EuiFlexGroup>
                       <EuiFlexItem grow={2}>
                         <EuiFieldSearch
-                          placeholder="Search field name"
+                          placeholder={"Search field name"}
                           value={searchText}
                           onChange={this.onChangeSearch}
                           isClearable={true}
@@ -250,7 +447,7 @@ export default class AdvancedAggregation extends Component<AdvancedAggregationPr
                       </EuiFlexItem>
                       <EuiFlexItem grow={1}>
                         <EuiComboBox
-                          placeholder="Field type"
+                          placeholder={"Field type"}
                           options={fieldTypeOption}
                           selectedOptions={selectedFieldType}
                           onChange={this.onChangeFieldType}
@@ -260,13 +457,14 @@ export default class AdvancedAggregation extends Component<AdvancedAggregationPr
                       </EuiFlexItem>
                     </EuiFlexGroup>
                     <EuiBasicTable
-                      columns={addFieldsColumns}
+                      columns={AddFieldsColumns}
                       items={fieldsOption}
-                      rowHeader="fieldName"
-                      noItemsMessage="No fields available"
+                      itemId={"label"}
+                      rowHeader={"fieldName"}
+                      noItemsMessage={"No fields available"}
                       isSelectable={true}
                       selection={selection}
-                      tableLayout={"auto"}
+                      tableLayout={"fixed"}
                       // onChange={this.onTableChange}
                       // pagination={pagination}
                       // sorting={sorting}
@@ -276,25 +474,21 @@ export default class AdvancedAggregation extends Component<AdvancedAggregationPr
 
                 <EuiModalFooter>
                   <EuiButtonEmpty onClick={this.closeModal}>Cancel</EuiButtonEmpty>
-
-                  <EuiButton onClick={this.closeModal}>Save</EuiButton>
+                  <EuiButton
+                    fill
+                    onClick={() => {
+                      this.closeModal();
+                      this.onClickAdd();
+                    }}
+                  >
+                    Add
+                  </EuiButton>
                 </EuiModalFooter>
               </EuiModal>
             </EuiOverlayMask>
           )}
-          <EuiFlexGroup alignItems="center">
-            <EuiFlexItem>
-              <EuiSpacer />
-            </EuiFlexItem>
-            <EuiFlexItem grow={false}>
-              <EuiButton onClick={this.showModal}>Add fields</EuiButton>
-            </EuiFlexItem>
-            <EuiFlexItem>
-              <EuiSpacer />
-            </EuiFlexItem>
-          </EuiFlexGroup>
         </div>
-      </ContentPanel>
+      </EuiPanel>
     );
   }
 }

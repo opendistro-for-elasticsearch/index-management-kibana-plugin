@@ -13,8 +13,8 @@
  * permissions and limitations under the License.
  */
 
-import React, { ChangeEvent, Component } from "react";
-import { EuiConfirmModal, EuiForm, EuiFormRow, EuiFieldText, EuiOverlayMask, EuiSpacer } from "@elastic/eui";
+import React, { ChangeEvent, Component, Fragment } from "react";
+import { EuiConfirmModal, EuiForm, EuiFormRow, EuiFieldText, EuiOverlayMask, EuiSpacer, EuiFormHelpText } from "@elastic/eui";
 
 interface DeleteModalProps {
   rollupId: string;
@@ -46,7 +46,7 @@ export default class DeleteModal extends Component<DeleteModalProps, DeleteModal
     return (
       <EuiOverlayMask>
         <EuiConfirmModal
-          title={`Delete job "${rollupId}"`}
+          title={`Delete job(s)`}
           onCancel={closeDeleteModal}
           onConfirm={onClickDelete}
           cancelButtonText="Cancel"
@@ -56,11 +56,11 @@ export default class DeleteModal extends Component<DeleteModalProps, DeleteModal
           confirmButtonDisabled={confirmDeleteText != "delete"}
         >
           <EuiForm>
-            <EuiFormRow
-              helpText={`By deleting this "${rollupId}", all future scheduled rollup execution will be canceled and any rollup history will be removed. However, your target index will remain as it is.`}
-            >
-              <EuiSpacer size={"s"} />
-            </EuiFormRow>
+            <Fragment>
+              By deleting "<b>{rollupId}</b>", all future scheduled rollup execution will be canceled and any rollup history will be
+              removed. However, your target index will remain as it is.
+            </Fragment>
+            <EuiSpacer size={"s"} />
             <EuiFormRow helpText={"To confirm deletion, enter delete in the text field"}>
               <EuiFieldText value={confirmDeleteText} placeholder={"delete"} onChange={this.onChange} />
             </EuiFormRow>

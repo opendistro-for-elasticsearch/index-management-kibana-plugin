@@ -1,5 +1,5 @@
 /*
- * Copyright 2019 Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ * Copyright 2020 Amazon.com, Inc. or its affiliates. All Rights Reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License").
  * You may not use this file except in compliance with the License.
@@ -29,6 +29,7 @@ import { BrowserServices } from "../../models/interfaces";
 import { ROUTES } from "../../utils/constants";
 import CreateRollupForm from "../CreateRollup/containers/CreateRollupForm";
 import EditRollup from "../EditRollup/containers";
+import RollupDetails from "../RollupDetails/contatiners/RollupDetails";
 
 enum Navigation {
   IndexManagement = "Index Management",
@@ -163,6 +164,14 @@ export default class Main extends Component<MainProps, object> {
                       render={(props: RouteComponentProps) => (
                         <div style={{ padding: "25px 25px" }}>
                           <EditRollup {...props} rollupService={services.rollupService} />
+                        </div>
+                      )}
+                    />
+                    <Route
+                      path={ROUTES.ROLLUP_DETAILS}
+                      render={(props: RouteComponentProps) => (
+                        <div style={{ padding: "25px 25px" }}>
+                          <RollupDetails {...props} rollupService={services.rollupService} />
                         </div>
                       )}
                     />

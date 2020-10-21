@@ -14,48 +14,27 @@
  */
 
 import React, { Component, Fragment } from "react";
-
 import {
-  EuiComboBoxOptionOption,
   EuiFlexGrid,
-  EuiFlexItem,
   EuiSpacer,
+  EuiFlexItem,
   EuiText,
-  EuiBasicTable,
-  EuiTableFieldDataColumnType,
-  EuiPanel,
   EuiFlexGroup,
-  // @ts-ignore
-  Criteria,
-  // @ts-ignore
-  Pagination,
+  EuiPanel,
+  EuiBasicTable,
   EuiIcon,
+  EuiTableFieldDataColumnType,
 } from "@elastic/eui";
-import { ContentPanel, ContentPanelActions } from "../../../../components/ContentPanel";
-import { ModalConsumer } from "../../../../components/Modal";
-import { DimensionItem, MetricItem } from "../../models/interfaces";
-import { DEFAULT_PAGE_SIZE_OPTIONS } from "../../../Rollups/utils/constants";
-import { parseTimeunit } from "../../utils/helpers";
+import { ContentPanel } from "../../../../components/ContentPanel";
+import { DimensionItem, MetricItem } from "../../../CreateRollup/models/interfaces";
 
-interface HistogramAndMetricsProps {
-  rollupId: string;
-  onChangeStep: (step: number) => void;
-  timestamp: EuiComboBoxOptionOption<String>[];
-  intervalType: string;
-  intervalValue: number;
+interface AggregationAndMetricsSettingsProps {
+  timestamp: string;
+  histogramInterval: string;
   timezone: string;
-  timeunit: string;
   selectedDimensionField: DimensionItem[];
   selectedMetrics: MetricItem[];
 }
-
-interface HistogramAndMetricsState {
-  from: number;
-  size: number;
-  sortField: string;
-  sortDirection: string;
-}
-
 const aggregationColumns: EuiTableFieldDataColumnType<DimensionItem>[] = [
   {
     field: "sequence",
@@ -73,7 +52,7 @@ const aggregationColumns: EuiTableFieldDataColumnType<DimensionItem>[] = [
     field: "field.type",
     name: "Field type",
     align: "left",
-    render: (type) => (type == null ? "-" : type),
+    render: (type: string) => (type == null ? "-" : type),
   },
   {
     field: "aggregationMethod",
@@ -94,14 +73,8 @@ const aggregationColumns: EuiTableFieldDataColumnType<DimensionItem>[] = [
 
 const metricsColumns = [
   {
-    field: "source_field.label",
+    field: "source_field",
     name: "Field Name",
-  },
-  {
-    field: "all",
-    name: "All",
-    align: "center",
-    render: (all: boolean) => all && <EuiIcon type={"check"} />,
   },
   {
     field: "min",
@@ -135,87 +108,32 @@ const metricsColumns = [
   },
 ];
 
-export default class HistogramAndMetrics extends Component<HistogramAndMetricsProps, HistogramAndMetricsState> {
-  constructor(props: HistogramAndMetricsProps) {
+export default class AggregationAndMetricsSettings extends Component<AggregationAndMetricsSettingsProps> {
+  constructor(props: AggregationAndMetricsSettingsProps) {
     super(props);
-    this.state = {
-      from: 0,
-      size: 10,
-      sortField: "sequence",
-      sortDirection: "desc",
-    };
-  }
-
-  onTableChange = ({ page: tablePage, sort }: Criteria<DimensionItem>): void => {
-    const { index: page, size } = tablePage;
-    const { field: sortField, direction: sortDirection } = sort;
-    this.setState({ from: page * size, size, sortField, sortDirection });
-  };
-
-  parseInterval(intervalType: string, intervalValue: number, timeunit: string): string {
-    if (intervalType == "calendar") return "1 " + parseTimeunit(timeunit);
-    return intervalValue + " " + parseTimeunit(timeunit);
   }
 
   render() {
-    const {
-      onChangeStep,
-      intervalType,
-      intervalValue,
-      timestamp,
-      timezone,
-      timeunit,
-      selectedDimensionField,
-      selectedMetrics,
-    } = this.props;
-    const { from, size } = this.state;
-    const page = Math.floor(from / size);
-    const pagination: Pagination = {
-      pageIndex: page,
-      pageSize: size,
-      pageSizeOptions: DEFAULT_PAGE_SIZE_OPTIONS,
-      totalItemCount: selectedDimensionField.length,
-    };
+    const { timestamp, histogramInterval, timezone, selectedDimensionField, selectedMetrics } = this.props;
 
     return (
-      <ContentPanel
-        actions={
-          <ModalConsumer>
-            {() => (
-              <ContentPanelActions
-                actions={[
-                  {
-                    text: "Edit",
-                    buttonProps: {
-                      onClick: () => onChangeStep(2),
-                    },
-                  },
-                ]}
-              />
-            )}
-          </ModalConsumer>
-        }
-        bodyStyles={{ padding: "initial" }}
-        title="Aggregation and metrics setting"
-        titleSize="m"
-      >
-        <div style={{ padding: "15px" }}>
-          <EuiSpacer size={"xs"} />
-          <EuiText>
-            <h3>Time aggregation</h3>
-          </EuiText>
+      <ContentPanel bodyStyles={{ padding: "initial" }} title="Aggregation and metrics settings" titleSize="m">
+        <div style={{ paddingLeft: "10px" }}>
           <EuiSpacer size={"s"} />
+          <EuiText>
+            <h3>Additional metrics</h3>
+          </EuiText>
           <EuiFlexGrid columns={3}>
             <EuiFlexItem>
               <EuiText size={"xs"}>
                 <dt>Timestamp field</dt>
-                <dd>{timestamp.length ? timestamp[0].label : ""}</dd>
+                <dd>{timestamp}</dd>
               </EuiText>
             </EuiFlexItem>
             <EuiFlexItem>
               <EuiText size={"xs"}>
                 <dt>Interval</dt>
-                <dd>{this.parseInterval(intervalType, intervalValue, timeunit)}</dd>
+                <dd>{histogramInterval}</dd>
               </EuiText>
             </EuiFlexItem>
             <EuiFlexItem>
@@ -225,7 +143,7 @@ export default class HistogramAndMetrics extends Component<HistogramAndMetricsPr
               </EuiText>
             </EuiFlexItem>
           </EuiFlexGrid>
-          <EuiSpacer size={"m"} />
+          <EuiSpacer size={"s"} />
           <EuiFlexGroup gutterSize={"xs"}>
             <EuiFlexItem grow={false}>
               <EuiText>
@@ -248,8 +166,6 @@ export default class HistogramAndMetrics extends Component<HistogramAndMetricsPr
                   columns={aggregationColumns}
                   tableLayout={"auto"}
                   noItemsMessage={"No fields added for aggregations"}
-                  pagination={pagination}
-                  onChange={this.onTableChange}
                 />
               </EuiPanel>
             </Fragment>
@@ -276,14 +192,7 @@ export default class HistogramAndMetrics extends Component<HistogramAndMetricsPr
           {selectedMetrics.length ? (
             <Fragment>
               <EuiPanel>
-                <EuiBasicTable
-                  items={selectedMetrics}
-                  rowHeader="source_field"
-                  columns={metricsColumns}
-                  tableLayout={"auto"}
-                  pagination={pagination}
-                  onChange={this.onTableChange}
-                />
+                <EuiBasicTable items={selectedMetrics} rowHeader="source_field" columns={metricsColumns} tableLayout={"auto"} />
               </EuiPanel>
             </Fragment>
           ) : (
@@ -291,8 +200,6 @@ export default class HistogramAndMetrics extends Component<HistogramAndMetricsPr
               <dd>No fields added for metrics</dd>
             </EuiText>
           )}
-
-          <EuiSpacer size={"s"} />
         </div>
       </ContentPanel>
     );

@@ -13,11 +13,8 @@
  * permissions and limitations under the License.
  */
 
-import { ManagedCatIndex } from "../../../../server/models/interfaces";
-import { FieldItem } from "../../../../models/interfaces";
-
-export interface MappingsItem {
-  properties?: {};
+export interface FieldItem {
+  label: string;
   type?: string;
 }
 

@@ -33,12 +33,15 @@ interface CreateRollupProps extends RouteComponentProps {
   recurringDefinition: string;
   interval: number;
   intervalTimeunit: string;
+  intervalError: string;
   cronExpression: string;
+  cronTimezone: string;
   pageSize: number;
   delayTime: number | undefined;
   delayTimeunit: string;
   onChangeJobEnabledByDefault: () => void;
   onChangeCron: (e: ChangeEvent<HTMLTextAreaElement>) => void;
+  onChangeCronTimezone: (e: ChangeEvent<HTMLSelectElement>) => void;
   onChangeDelayTime: (e: ChangeEvent<HTMLInputElement>) => void;
   onChangeIntervalTime: (e: ChangeEvent<HTMLInputElement>) => void;
   onChangePage: (e: ChangeEvent<HTMLInputElement>) => void;
@@ -160,6 +163,7 @@ export default class CreateRollupStep3 extends Component<CreateRollupProps, Crea
             </EuiTitle>
             <EuiSpacer />
             <Schedule
+              {...this.props}
               isEdit={false}
               rollupId={rollupId}
               rollupIdError={rollupIdError}
@@ -182,7 +186,6 @@ export default class CreateRollupStep3 extends Component<CreateRollupProps, Crea
               onChangeDelayTimeunit={onChangeDelayTimeunit}
               onChangeIntervalTimeunit={onChangeIntervalTimeunit}
             />
-            <EuiSpacer />
           </EuiFlexItem>
         </EuiFlexGroup>
         <EuiSpacer />
