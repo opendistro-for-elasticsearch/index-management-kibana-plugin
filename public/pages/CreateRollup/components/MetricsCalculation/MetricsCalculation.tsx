@@ -227,6 +227,7 @@ export default class MetricsCalculation extends Component<MetricsCalculationProp
       {
         field: "all",
         name: "All",
+        align: "center",
         truncateText: true,
         render: (all: boolean, item: MetricItem) => (
           <EuiForm>
@@ -239,6 +240,7 @@ export default class MetricsCalculation extends Component<MetricsCalculationProp
       {
         field: "min",
         name: "Min",
+        align: "center",
         render: (min: boolean, item: MetricItem) => (
           <EuiForm>
             <EuiFormRow compressed={true}>
@@ -250,6 +252,7 @@ export default class MetricsCalculation extends Component<MetricsCalculationProp
       {
         field: "max",
         name: "Max",
+        align: "center",
         render: (max: boolean, item: MetricItem) => (
           <EuiForm>
             <EuiFormRow compressed={true}>
@@ -261,6 +264,7 @@ export default class MetricsCalculation extends Component<MetricsCalculationProp
       {
         field: "sum",
         name: "Sum",
+        align: "center",
         render: (sum: boolean, item: MetricItem) => (
           <EuiForm>
             <EuiFormRow compressed={true}>
@@ -272,6 +276,7 @@ export default class MetricsCalculation extends Component<MetricsCalculationProp
       {
         field: "avg",
         name: "Avg",
+        align: "center",
         render: (avg: boolean, item: MetricItem) => (
           <EuiForm>
             <EuiFormRow compressed={true}>
@@ -283,6 +288,7 @@ export default class MetricsCalculation extends Component<MetricsCalculationProp
       {
         field: "value_count",
         name: "Value count",
+        align: "center",
         render: (value_count: boolean, item: MetricItem) => (
           <EuiForm>
             <EuiFormRow compressed={true}>

@@ -96,15 +96,15 @@ export default class CreateRollupStep2 extends Component<CreateRollupStep2Props>
               <h1>Define aggregations and metrics</h1>
             </EuiTitle>
             <EuiSpacer />
-            <EuiCallOut color="warning">
-              <p>You can't change aggregations or metrics after creating a job. Double-check your choices before proceeding.</p>
-            </EuiCallOut>
-            <EuiSpacer />
             <TimeAggregation {...this.props} selectedTimestamp={timestamp} fieldsOption={this.parseFieldOptions("", fields)} />
             <EuiSpacer />
             <AdvancedAggregation {...this.props} fieldsOption={this.parseFieldOptions("", fields)} />
             <EuiSpacer />
             <MetricsCalculation {...this.props} fieldsOption={this.parseFieldOptions("", fields)} />
+            <EuiSpacer />
+            <EuiCallOut color="warning">
+              <p>You can't change aggregations or metrics after creating a job. Double-check your choices before proceeding.</p>
+            </EuiCallOut>
           </EuiFlexItem>
         </EuiFlexGroup>
         <EuiSpacer />

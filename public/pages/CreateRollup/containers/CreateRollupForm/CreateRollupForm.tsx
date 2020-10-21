@@ -193,15 +193,17 @@ export default class CreateRollupForm extends Component<CreateRollupFormProps, C
       if (selectedMetrics.length != 0) {
         //Check if there's any metric item with no method selected.
         //TODO: Could Probably store all invalid fields in an array and highlight them in table.
+        let invalidMetric = false;
         selectedMetrics.map((metric) => {
           if (!(metric.min || metric.max || metric.sum || metric.avg || metric.value_count)) {
             const errorMsg = "Must specify at least one metric to aggregate on for: " + metric.source_field.label;
             this.setState({ submitError: errorMsg, metricError: errorMsg });
+            invalidMetric = true;
             error = true;
           }
         });
         //If nothing invalid found, clear error.
-        if (!error) this.setState({ metricError: "" });
+        if (!invalidMetric) this.setState({ metricError: "" });
       }
     } else if (currentStep == 3) {
       //Check if interval is a valid value and is specified.

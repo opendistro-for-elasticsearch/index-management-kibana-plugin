@@ -100,32 +100,37 @@ const metricsColumns = [
   {
     field: "all",
     name: "All",
-    align: "left",
+    align: "center",
     render: (all: boolean) => all && <EuiIcon type={"check"} />,
   },
   {
     field: "min",
     name: "Min",
+    align: "center",
     render: (min: boolean) => min && <EuiIcon type={"check"} />,
   },
   {
     field: "max",
     name: "Max",
+    align: "center",
     render: (max: boolean) => max && <EuiIcon type={"check"} />,
   },
   {
     field: "sum",
     name: "Sum",
+    align: "center",
     render: (sum: boolean) => sum && <EuiIcon type={"check"} />,
   },
   {
     field: "avg",
     name: "Avg",
+    align: "center",
     render: (avg: boolean) => avg && <EuiIcon type={"check"} />,
   },
   {
     field: "value_count",
     name: "Value count",
+    align: "center",
     render: (value_count: boolean) => value_count && <EuiIcon type={"check"} />,
   },
 ];

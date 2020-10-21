@@ -14,7 +14,7 @@
  */
 
 import React, { Component } from "react";
-import { EuiSpacer, EuiTitle, EuiFlexGroup, EuiFlexItem, EuiComboBoxOptionOption } from "@elastic/eui";
+import { EuiSpacer, EuiTitle, EuiFlexGroup, EuiFlexItem, EuiComboBoxOptionOption, EuiCallOut } from "@elastic/eui";
 import chrome from "ui/chrome";
 import { RouteComponentProps } from "react-router-dom";
 import { RollupService } from "../../../../services";
@@ -84,6 +84,10 @@ export default class CreateRollupStep4 extends Component<CreateRollupProps> {
             </EuiTitle>
             <EuiSpacer />
             <JobNameAndIndices {...this.props} />
+            <EuiSpacer />
+            <EuiCallOut color="warning">
+              <p>You can't change aggregations or metrics after creating a job. Double-check your choices before proceeding.</p>
+            </EuiCallOut>
             <EuiSpacer />
             <HistogramAndMetrics {...this.props} />
             <EuiSpacer />
