@@ -28,6 +28,7 @@ import {
   EuiModalHeaderTitle,
   EuiModalBody,
   EuiCodeBlock,
+  EuiHealth,
 } from "@elastic/eui";
 import chrome from "ui/chrome";
 import { RouteComponentProps } from "react-router-dom";
@@ -317,11 +318,19 @@ export default class RollupDetails extends Component<RollupDetailsProps, RollupD
     return (
       <div style={{ padding: "5px 50px" }}>
         <EuiFlexGroup style={{ padding: "0px 10px" }} justifyContent="spaceBetween" alignItems="center">
-          <EuiFlexItem>
+          <EuiFlexItem grow={false}>
             <EuiTitle size={"m"}>
-              <h3>{rollupId}</h3>
+              <h2>{rollupId}</h2>
             </EuiTitle>
           </EuiFlexItem>
+          <EuiFlexItem>
+            {enabled ? (
+              <EuiHealth color="success">{"Enabled on " + lastUpdated}</EuiHealth>
+            ) : (
+              <EuiHealth color="danger">{"Disabled on " + lastUpdated}</EuiHealth>
+            )}
+          </EuiFlexItem>
+
           <EuiFlexItem grow={false}>
             <EuiFlexGroup alignItems="center" gutterSize="s">
               <EuiFlexItem grow={false}>
