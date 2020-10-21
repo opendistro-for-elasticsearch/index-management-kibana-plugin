@@ -85,13 +85,13 @@ export default class CreateRollupStep4 extends Component<CreateRollupProps> {
             <EuiSpacer />
             <JobNameAndIndices {...this.props} />
             <EuiSpacer />
-            <EuiCallOut color="warning">
-              <p>You can't change aggregations or metrics after creating a job. Double-check your choices before proceeding.</p>
-            </EuiCallOut>
-            <EuiSpacer />
             <HistogramAndMetrics {...this.props} />
             <EuiSpacer />
             <ScheduleRolesAndNotifications {...this.props} />
+            <EuiSpacer />
+            <EuiCallOut color="warning">
+              <p>You can't change aggregations or metrics after creating a job. Double-check your choices before proceeding.</p>
+            </EuiCallOut>
           </EuiFlexItem>
         </EuiFlexGroup>
         <EuiSpacer />

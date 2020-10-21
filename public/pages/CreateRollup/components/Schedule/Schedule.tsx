@@ -183,7 +183,7 @@ export default class Schedule extends Component<ScheduleProps> {
 
           <EuiFormRow
             label="Page per execution"
-            helpText={"The number of pages every execution processes. A larger number means faster execution and more cost on memory."}
+            helpText={"The number of pages every execution processes. A larger number means faster execution and higher costs on memory."}
           >
             <EuiFieldNumber min={1} placeholder={"1000"} value={pageSize} onChange={onChangePage} />
           </EuiFormRow>
@@ -213,7 +213,7 @@ export default class Schedule extends Component<ScheduleProps> {
             </EuiFlexItem>
           </EuiFlexGroup>
           <EuiFormHelpText style={{ maxWidth: 400 }}>
-            The amount of time the job wait for data ingestion to accommodate any necessary processing time.
+            The amount of time the job waits for data ingestion to accommodate any necessary processing time.
           </EuiFormHelpText>
         </div>
       </ContentPanel>
