@@ -128,7 +128,7 @@ export default class AdvancedAggregation extends Component<AdvancedAggregationPr
     });
     //Update sequence number
     this.updateSequence(updatedDimensions);
-    //Parse selectedFields to an array of DimensionItem if it does not exist
+    //Parse selectedFields to an array of DimensionItem if any of the field does not exist
     let i = updatedDimensions.length + 1;
     const toAdd: DimensionItem[] = toAddFields.map((field) => {
       return field.type == "long" ||
