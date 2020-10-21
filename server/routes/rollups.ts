@@ -59,7 +59,7 @@ export default function (server: Server, services: NodeServices) {
   });
 
   server.route({
-    path: NODE_API._MAPPINGS,
+    path: `${NODE_API._MAPPINGS}`,
     method: REQUEST.POST,
     handler: rollupService.getMappings,
   });

@@ -14,8 +14,59 @@
  */
 
 import { ManagedCatIndex } from "../../../../server/models/interfaces";
+import { FieldItem } from "../../../../models/interfaces";
 
-export interface IndexOption {
-  label: string;
-  index?: ManagedCatIndex;
+export interface MappingsItem {
+  properties?: {};
+  type?: string;
+}
+
+export interface DimensionItem {
+  sequence: number;
+  field: FieldItem;
+  aggregationMethod: string;
+  interval?: number;
+}
+
+export interface MetricItem {
+  source_field: FieldItem;
+  all: boolean;
+  min: boolean;
+  max: boolean;
+  sum: boolean;
+  avg: boolean;
+  value_count: boolean;
+}
+
+//From backend
+export interface RollupDimensionItem {
+  date_histogram?: {
+    fixed_interval?: string;
+    calendar_interval?: string;
+    source_field: string;
+    target_field: string;
+    timezone: string;
+  };
+  terms?: {
+    source_field: string;
+    target_field: string;
+  };
+  histogram?: {
+    source_field: string;
+    target_field: string;
+    interval: number;
+  };
+}
+
+export interface RollupMetricItem {
+  source_field: string;
+  metrics: [
+    {
+      min?: Object;
+      max?: Object;
+      sum?: Object;
+      avg?: Object;
+      value_count?: Object;
+    }
+  ];
 }

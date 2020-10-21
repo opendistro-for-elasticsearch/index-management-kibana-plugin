@@ -24,11 +24,13 @@ import { ManagedCatIndex } from "../../../../../server/models/interfaces";
 import CreateRollup from "../CreateRollup";
 import CreateRollupStep2 from "../CreateRollupStep2";
 import { toastNotifications } from "ui/notify";
-import { DimensionItem, FieldItem, IndexItem, Rollup } from "../../../../../models/interfaces";
+import { IndexItem, Rollup } from "../../../../../models/interfaces";
 import { getErrorMessage } from "../../../../utils/helpers";
 import { EMPTY_ROLLUP } from "../../utils/constants";
 import CreateRollupStep3 from "../CreateRollupStep3";
 import CreateRollupStep4 from "../CreateRollupStep4";
+import { DimensionItem, FieldItem, MetricItem } from "../../models/interfaces";
+import moment from "moment";
 
 interface CreateRollupFormProps extends RouteComponentProps {
   rollupService: RollupService;
@@ -55,8 +57,9 @@ interface CreateRollupFormState {
   roles: EuiComboBoxOptionOption<String>[];
 
   mappings: any;
-  fields: any;
-  selectedTerms: { label: string; value?: FieldItem }[];
+
+  fields: FieldItem[];
+  selectedTerms: FieldItem[];
   selectedDimensionField: DimensionItem[];
   timestamp: EuiComboBoxOptionOption<String>[];
   intervalType: string;
@@ -108,28 +111,35 @@ export default class CreateRollupForm extends Component<CreateRollupFormProps, C
       totalIndices: 0,
 
       mappings: "",
-      fields: undefined,
+      fields: [],
       selectedFields: [],
       selectedTerms: [],
       selectedDimensionField: [],
+      selectedMetrics: [],
+      metricError: "",
       description: "",
+
       sourceIndex: [],
       sourceIndexError: "",
       targetIndex: [],
-      roles: [],
+      targetIndexError: "",
 
       timestamp: [],
+      timestampError: "",
       intervalType: "fixed",
       intervalValue: 1,
-      timezone: "America/Los_Angeles",
+      intervalError: "",
+      timezone: "Africa/Abidjan",
       timeunit: "ms",
 
       jobEnabledByDefault: false,
       recurringJob: "no",
       recurringDefinition: "fixed",
       interval: 2,
-      intervalTimeunit: "M",
+      intervalTimeunit: "MINUTES",
       cronExpression: "",
+      cronTimezone: "Africa/Abidjan",
+
       pageSize: 1000,
       delayTime: undefined,
       delayTimeunit: "MINUTES",
@@ -143,20 +153,21 @@ export default class CreateRollupForm extends Component<CreateRollupFormProps, C
   componentDidMount = async (): Promise<void> => {
     chrome.breadcrumbs.set([BREADCRUMBS.INDEX_MANAGEMENT, BREADCRUMBS.ROLLUPS]);
     chrome.breadcrumbs.push(BREADCRUMBS.CREATE_ROLLUP);
-    await this.getMappings();
   };
 
-  getMappings = async (): Promise<void> => {
+  getMappings = async (srcIndex: string): Promise<void> => {
+    if (!srcIndex.length) return;
     try {
       const { rollupService } = this.props;
-      const { sourceIndex } = this.state;
-      const response = await rollupService.getMappings("kibana_sample_data_flights");
+      const response = await rollupService.getMappings(srcIndex);
       if (response.ok) {
-        //Set mapping when there is source index selected.
-        this.setState({
-          mappings: response.response,
-          fields: sourceIndex.length ? `response.response.${sourceIndex[0].label}.mappings.properties` : undefined,
-        });
+        //Make mappings array to help parsing fields
+        let fields: FieldItem[] = [];
+        const mappings = response.response;
+        for (let index in mappings) {
+          fields = this.parseFieldOptions("", mappings[index].mappings.properties);
+        }
+        this.setState({ mappings, fields });
       } else {
         toastNotifications.addDanger(`Could not load fields: ${response.error}`);
       }
@@ -164,21 +175,68 @@ export default class CreateRollupForm extends Component<CreateRollupFormProps, C
       toastNotifications.addDanger(getErrorMessage(err, "Could not load fields"));
     }
   };
-
+  parseFieldOptions = (prefix: string, mappings: any): FieldItem[] => {
+    let fieldsOption: FieldItem[] = [];
+    console.log("Entering: " + prefix + mappings);
+    for (let field in mappings) {
+      if (mappings.hasOwnProperty(field)) {
+        if (mappings[field].type != "object" && mappings[field].type != null && mappings[field].type != "nested")
+          fieldsOption.push({ label: prefix + field, type: mappings[field].type });
+        if (mappings[field].fields != null)
+          fieldsOption = fieldsOption.concat(this.parseFieldOptions(prefix + field + ".", mappings[field].fields));
+        if (mappings[field].properties != null)
+          fieldsOption = fieldsOption.concat(this.parseFieldOptions(prefix + field + ".", mappings[field].properties));
+      }
+    }
+    return fieldsOption;
+  };
   _next() {
     let currentStep = this.state.currentStep;
     //Verification here
     if (currentStep == 1) {
       const { rollupId, sourceIndex, targetIndex } = this.state;
       if (!rollupId) {
-        this.setState({ submitError: "Job name is required." });
-        return;
-      } else if (sourceIndex.length == 0) {
-        this.setState({ submitError: "Source index is required." });
-        return;
-      } else if (targetIndex.length == 0) {
-        this.setState({ submitError: "Target index is required." });
-        return;
+        this.setState({ submitError: "Job name is required.", rollupIdError: "Job name is required." });
+        error = true;
+      }
+      if (sourceIndex.length == 0) {
+        this.setState({ submitError: "Source index is required.", sourceIndexError: "Source index is required." });
+        error = true;
+      }
+      if (targetIndex.length == 0) {
+        this.setState({ submitError: "Target index is required.", targetIndexError: "Target index is required." });
+        error = true;
+      }
+    } else if (currentStep == 2) {
+      const { timestamp, selectedMetrics } = this.state;
+      if (timestamp.length == 0) {
+        this.setState({ submitError: "Timestamp is required.", timestampError: "Timestamp is required." });
+        error = true;
+      }
+      if (selectedMetrics.length != 0) {
+        //Check if there's any metric item with no method selected.
+        //TODO: Could Probably store all invalid fields in an array and highlight them in table.
+        let invalidMetric = false;
+        selectedMetrics.map((metric) => {
+          if (!(metric.min || metric.max || metric.sum || metric.avg || metric.value_count)) {
+            const errorMsg = "Must specify at least one metric to aggregate on for: " + metric.source_field.label;
+            this.setState({ submitError: errorMsg, metricError: errorMsg });
+            invalidMetric = true;
+            error = true;
+          }
+        });
+        //If nothing invalid found, clear error.
+        if (!invalidMetric) this.setState({ metricError: "" });
+      }
+    } else if (currentStep == 3) {
+      //Check if interval is a valid value and is specified.
+      const { intervalError, recurringDefinition } = this.state;
+      if (recurringDefinition == "fixed") {
+        if (intervalError != "") {
+          const intervalErrorMsg = "Interval value is required.";
+          this.setState({ submitError: intervalErrorMsg, intervalError: intervalErrorMsg });
+          error = true;
+        }
       }
     }
     currentStep = currentStep >= 3 ? 4 : currentStep + 1;
@@ -225,13 +283,10 @@ export default class CreateRollupForm extends Component<CreateRollupFormProps, C
   onChangeName = (e: ChangeEvent<HTMLInputElement>): void => {
     const { hasSubmitted } = this.state;
     const rollupId = e.target.value;
-    if (hasSubmitted) this.setState({ rollupId, rollupIdError: rollupId ? "" : "Required" });
-    else this.setState({ rollupId });
+    this.setState({ rollupId, rollupIdError: rollupId ? "" : "Name is required" });
   };
 
-  onChangeSourceIndex = (options: EuiComboBoxOptionOption<IndexItem>[]): void => {
-    const { mappings } = this.state;
-    //Try to get label text from option from the only array element in options if exists
+  onChangeSourceIndex = async (options: EuiComboBoxOptionOption<IndexItem>[]): Promise<void> => {
     let newJSON = this.state.rollupJSON;
     let sourceIndex = options.map(function (option) {
       return option.label;
@@ -240,8 +295,11 @@ export default class CreateRollupForm extends Component<CreateRollupFormProps, C
     const srcIndexText = sourceIndex.length ? sourceIndex[0] : "";
     newJSON.rollup.source_index = srcIndexText;
     this.setState({ sourceIndex: options, rollupJSON: newJSON, sourceIndexError: sourceIndexError });
-    //Update fields
-    this.setState({ fields: sourceIndex.length ? mappings[srcIndexText].mappings.properties : undefined });
+    this.setState({
+      selectedDimensionField: [],
+      selectedMetrics: [],
+    });
+    await this.getMappings(srcIndexText);
   };
 
   onChangeTargetIndex = (options: EuiComboBoxOptionOption<IndexItem>[]): void => {
@@ -250,7 +308,8 @@ export default class CreateRollupForm extends Component<CreateRollupFormProps, C
     let targetIndex = options.map(function (option) {
       return option.label;
     });
-    const rollupError = targetIndex.length ? "" : "Target index is required";
+
+    const targetIndexError = targetIndex.length ? "" : "Target index is required";
 
     newJSON.rollup.target_index = targetIndex[0];
     this.setState({ targetIndex: options, rollupJSON: newJSON, rollupIdError: rollupError });
@@ -299,10 +358,10 @@ export default class CreateRollupForm extends Component<CreateRollupFormProps, C
       return option.label;
     });
 
-    const rollupError = timestamp.length ? "" : "Source field (date) is required.";
+    const timestampError = timestamp.length ? "" : "Timestamp is required.";
 
-    newJSON.rollup.dimensions[0].date_histogram.source_field = timestamp[0];
-    this.setState({ timestamp: selectedOptions, rollupJSON: newJSON, rollupIdError: rollupError });
+    newJSON.rollup.dimensions[0].date_histogram.source_field = timestamp.length ? timestamp[0] : "";
+    this.setState({ timestamp: selectedOptions, rollupJSON: newJSON, timestampError: timestampError });
   };
 
   onChangeTimezone = (e: ChangeEvent<HTMLSelectElement>): void => {
@@ -333,14 +392,21 @@ export default class CreateRollupForm extends Component<CreateRollupFormProps, C
   //TODO: Figure out the correct format of delay time, do we need to convert the value along with timeunit?
   onChangeDelayTime = (e: ChangeEvent<HTMLInputElement>): void => {
     let newJSON = this.state.rollupJSON;
-    newJSON.rollup.delay = e.target.valueAsNumber ? e.target.value : 0;
-    this.setState({ delayTime: e.target.valueAsNumber, rollupJSON: newJSON });
+
+    newJSON.rollup.delay = e.target.value == "" ? 0 : e.target.valueAsNumber;
+    this.setState({ delayTime: e.target.value == "" ? 0 : e.target.valueAsNumber, rollupJSON: newJSON });
   };
 
   onChangeIntervalTime = (e: ChangeEvent<HTMLInputElement>): void => {
     let newJSON = this.state.rollupJSON;
     newJSON.rollup.schedule.interval.period = e.target.value;
     this.setState({ interval: e.target.valueAsNumber, rollupJSON: newJSON });
+    if (interval == "") {
+      const intervalErrorMsg = "Interval value is required.";
+      this.setState({ submitError: intervalErrorMsg, intervalError: intervalErrorMsg });
+    } else {
+      this.setState({ intervalError: "" });
+    }
   };
 
   onChangePage = (e: ChangeEvent<HTMLInputElement>): void => {
@@ -358,8 +424,9 @@ export default class CreateRollupForm extends Component<CreateRollupFormProps, C
   updateSchedule = (): void => {
     const { recurringDefinition, cronExpression, interval, intervalTimeunit, timezone } = this.state;
     let newJSON = this.state.rollupJSON;
+
     if (recurringDefinition == "cron") {
-      newJSON.rollup.schedule.cron = JSON.parse(`{expression: ${cronExpression}, timezone: ${timezone}`);
+      newJSON.rollup.schedule.cron = { expression: `${cronExpression}`, timezone: `${cronTimezone}` };
       delete newJSON.rollup.schedule["interval"];
     } else {
       //TODO: remove this placeholder when start_time can be correctly generated by system.
@@ -371,6 +438,7 @@ export default class CreateRollupForm extends Component<CreateRollupFormProps, C
 
   onChangeRecurringJob = (optionId: string): void => {
     let newJSON = this.state.rollupJSON;
+
     newJSON.rollup.continuous = optionId == "yes";
     this.setState({ recurringJob: optionId, rollupJSON: newJSON });
   };
@@ -384,6 +452,48 @@ export default class CreateRollupForm extends Component<CreateRollupFormProps, C
     let newJSON = this.state.rollupJSON;
     newJSON.rollup.schedule.interval.unit = e.target.value;
     this.setState({ intervalTimeunit: e.target.value, rollupJSON: newJSON });
+  };
+
+  updateDimension = (): void => {
+    const { rollupJSON, selectedDimensionField } = this.state;
+    let newJSON = rollupJSON;
+    //Push rest of dimensions
+    selectedDimensionField.map((dimension) => {
+      if (dimension.aggregationMethod == "terms") {
+        newJSON.rollup.dimensions.push({
+          terms: {
+            source_field: dimension.field.label,
+          },
+        });
+      } else {
+        newJSON.rollup.dimensions.push({
+          histogram: {
+            source_field: dimension.field.label,
+            interval: dimension.interval,
+          },
+        });
+      }
+    });
+    this.setState({ rollupJSON: newJSON });
+  };
+
+  updateMetric = (): void => {
+    const { rollupJSON, selectedMetrics } = this.state;
+    let newJSON = rollupJSON;
+    //Push all metrics
+    selectedMetrics.map((metric) => {
+      const metrics = [];
+      if (metric.min) metrics.push({ min: {} });
+      if (metric.max) metrics.push({ max: {} });
+      if (metric.sum) metrics.push({ sum: {} });
+      if (metric.avg) metrics.push({ avg: {} });
+      if (metric.value_count) metrics.push({ value_count: {} });
+      newJSON.rollup.metrics.push({
+        source_field: metric.source_field.label,
+        metrics: metrics,
+      });
+    });
+    this.setState({ rollupJSON: newJSON });
   };
 
   //TODO: Complete submit logistic
@@ -422,6 +532,7 @@ export default class CreateRollupForm extends Component<CreateRollupFormProps, C
       }
     } catch (err) {
       this.setState({ submitError: getErrorMessage(err, "There was a problem creating the rollup job") });
+      toastNotifications.addDanger(`Failed to create rollup: ${getErrorMessage(err, "There was a problem creating the rollup job")}`);
     }
   };
 
@@ -561,7 +672,7 @@ export default class CreateRollupForm extends Component<CreateRollupFormProps, C
           {currentStep == 4 ? (
             <EuiFlexItem grow={false}>
               <EuiButton fill onClick={this.onSubmit} isLoading={isSubmitting} data-test-subj="createRollupSubmitButton">
-                {"Submit"}
+                {"Create"}
               </EuiButton>
             </EuiFlexItem>
           ) : (
