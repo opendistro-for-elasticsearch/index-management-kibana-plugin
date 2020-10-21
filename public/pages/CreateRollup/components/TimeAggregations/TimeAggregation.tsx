@@ -107,7 +107,7 @@ export default class TimeAggregation extends Component<TimeAggregationProps, Tim
               options={dateFields}
               selectedOptions={selectedTimestamp}
               onChange={onChangeTimestamp}
-              singleSelection={true}
+              singleSelection={{ asPlainText: true }}
               isInvalid={!!timestampError}
             />
           </EuiFormRow>
