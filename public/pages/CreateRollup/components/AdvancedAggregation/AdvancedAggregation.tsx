@@ -33,7 +33,10 @@ import {
   EuiComboBoxOptionOption,
   // @ts-ignore
   Pagination,
+  // @ts-ignore
   CustomItemAction,
+  // @ts-ignore
+  Criteria,
   EuiTableSelectionType,
   EuiTableFieldDataColumnType,
   EuiFormRow,
@@ -47,13 +50,15 @@ import {
   EuiHorizontalRule,
   EuiCallOut,
   EuiFieldNumber,
+  EuiTableSortingType,
 } from "@elastic/eui";
 import { DimensionItem, FieldItem } from "../../models/interfaces";
 import { AddFieldsColumns } from "../../utils/constants";
+import { DEFAULT_PAGE_SIZE_OPTIONS } from "../../../Rollups/utils/constants";
+import _ from "lodash";
 
 interface AdvancedAggregationProps {
   fieldsOption: FieldItem[];
-  // selectedFields: FieldItem [];
   onDimensionSelectionChange: (selectedFields: DimensionItem[]) => void;
   selectedDimensionField: DimensionItem[];
 }
@@ -63,10 +68,17 @@ interface AdvancedAggregationState {
   searchText: string;
   selectedFieldType: EuiComboBoxOptionOption<String>[];
   selectedFields: FieldItem[];
+  allSelectedFields: FieldItem[];
+  fieldsShown: FieldItem[];
+  dimensionsShown: DimensionItem[];
   from: number;
   size: number;
   sortField: string;
   sortDirection: string;
+  dimension_from: number;
+  dimension_size: number;
+  dimension_sortField: string;
+  dimension_sortDirection: string;
 }
 
 const fieldTypeOption = [
@@ -77,16 +89,23 @@ const fieldTypeOption = [
 export default class AdvancedAggregation extends Component<AdvancedAggregationProps, AdvancedAggregationState> {
   constructor(props: AdvancedAggregationProps) {
     super(props);
-
+    const { fieldsOption } = this.props;
     this.state = {
       isModalVisible: false,
       searchText: "",
       selectedFieldType: [],
+      allSelectedFields: [],
+      fieldsShown: fieldsOption.slice(0, 10),
+      dimensionsShown: [],
       from: 0,
       size: 10,
-      sortField: "sequence",
+      sortField: "label",
       sortDirection: "desc",
       selectedFields: [],
+      dimension_from: 0,
+      dimension_size: 10,
+      dimension_sortField: "sequence",
+      dimension_sortDirection: "desc",
     };
   }
 
@@ -106,10 +125,9 @@ export default class AdvancedAggregation extends Component<AdvancedAggregationPr
     this.setState({ selectedFields });
   };
 
-  //TODO: Save the fields to selectedDimensionsField as DimensionItem, and perhaps only update the ones changed instead of recreating every time.
   onClickAdd() {
     const { onDimensionSelectionChange, selectedDimensionField } = this.props;
-    const { selectedFields } = this.state;
+    const { selectedFields, allSelectedFields, dimension_from, dimension_size } = this.state;
     //Clone selectedDimensionField
     let updatedDimensions = Array.from(selectedDimensionField);
     const toAddFields = Array.from(selectedFields);
@@ -117,11 +135,13 @@ export default class AdvancedAggregation extends Component<AdvancedAggregationPr
 
     selectedDimensionField.map((dimension) => {
       //If does not exist in new selection, don't add this dimension.
-      if (!selectedFields.includes(dimension.field)) {
-        updatedDimensions.splice(updatedDimensions.indexOf(dimension), 1);
-      }
-      //If exists, delete it from toAddFields so that it doesn't get added again.
-      else {
+      // if (!selectedFields.includes(dimension.field)) {
+      //   updatedDimensions.splice(updatedDimensions.indexOf(dimension), 1);
+      // }
+      // If exists, delete it from toAddFields so that it doesn't get added again.
+      // else {
+      if (allSelectedFields.includes(dimension.field)) {
+        console.log("Duplicate found: " + dimension.field);
         const index = toAddFields.indexOf(dimension.field);
         toAddFields.splice(index, 1);
       }
@@ -149,7 +169,11 @@ export default class AdvancedAggregation extends Component<AdvancedAggregationPr
             aggregationMethod: "terms",
           };
     });
-    onDimensionSelectionChange(updatedDimensions.length ? updatedDimensions.concat(toAdd) : toAdd);
+    const result = updatedDimensions.length ? updatedDimensions.concat(toAdd) : toAdd;
+    onDimensionSelectionChange(result);
+    this.setState({ allSelectedFields: allSelectedFields.concat(toAddFields) });
+    this.setState({ dimensionsShown: result.slice(dimension_from, dimension_from + dimension_size) });
+    this.forceUpdate();
   }
 
   //Check the dimension num
@@ -185,12 +209,13 @@ export default class AdvancedAggregation extends Component<AdvancedAggregationPr
 
   deleteField = (item: DimensionItem) => {
     const { selectedDimensionField } = this.props;
-    const { selectedFields } = this.state;
+    const { selectedFields, allSelectedFields } = this.state;
 
     //Remove the dimension item and then update sequence.
     selectedDimensionField.splice(selectedDimensionField.indexOf(item), 1);
     selectedFields.splice(selectedFields.indexOf(item.field), 1);
-    this.setState({ selectedFields });
+    allSelectedFields.splice(allSelectedFields.indexOf(item.field), 1);
+    this.setState({ selectedFields, allSelectedFields });
     this.updateSequence(selectedDimensionField);
   };
 
@@ -222,32 +247,78 @@ export default class AdvancedAggregation extends Component<AdvancedAggregationPr
     onDimensionSelectionChange(selectedDimensionField);
   };
 
-  // onTableChange = ({ page: tablePage, sort }: Criteria<DimensionItem>): void => {
+  // onTableChange = ({ page: tablePage, sort }: Criteria<FieldItem>): void => {
   //   const { index: page, size } = tablePage;
-  //   const { field: sortField, direction: sosrtDirection } = sort;
-  //   this.setState({ from: page * size, size, sortField, sortDirection });
+  //   const { field: sortField, direction: sortDirection } = sort;
+  //   const {fieldsOption} = this.props;
+  //   this.setState({ from: page * size, size, sortField, sortDirection,
+  //     fieldsShown: fieldsOption.slice(page*size, page*size + size)  });
   // };
+
+  onDimensionTableChange = ({ page: tablePage, sort }: Criteria<DimensionItem>): void => {
+    const { index: page, size } = tablePage;
+    const { field: sortField, direction: sortDirection } = sort;
+    const { selectedDimensionField } = this.props;
+    this.setState({
+      dimension_from: page * size,
+      dimension_size: size,
+      dimension_sortField: sortField,
+      dimension_sortDirection: sortDirection,
+      dimensionsShown: selectedDimensionField.slice(page * size, page * size + size),
+    });
+  };
+
   render() {
     const { fieldsOption, selectedDimensionField } = this.props;
-    const { selectedFields, isModalVisible, searchText, selectedFieldType, page, size, sortDirection, sortField } = this.state;
+    const {
+      allSelectedFields,
+      isModalVisible,
+      searchText,
+      selectedFieldType,
+      from,
+      size,
+      sortDirection,
+      sortField,
+      dimension_from,
+      dimension_size,
+      dimension_sortDirection,
+      dimension_sortField,
+      fieldsShown,
+      dimensionsShown,
+    } = this.state;
+    // const page = Math.floor(from / size);
+    const dimension_page = Math.floor(dimension_from / dimension_size);
     // const pagination: Pagination = {
     //   pageIndex: page,
     //   pageSize: size,
     //   pageSizeOptions: DEFAULT_PAGE_SIZE_OPTIONS,
     //   totalItemCount: fieldsOption.length,
     // };
-
-    // const sorting: EuiTableSortingType<{ label: string; value?: FieldItem }> = {
+    //
+    // const sorting: EuiTableSortingType<FieldItem> = {
     //   sort: {
     //     direction: sortDirection,
     //     field: sortField,
     //   },
     // };
 
-    //TODO: make selection working, currently limiting selection to certain tyoe
+    const dimension_pagination: Pagination = {
+      pageIndex: dimension_page,
+      pageSize: dimension_size,
+      pageSizeOptions: DEFAULT_PAGE_SIZE_OPTIONS,
+      totalItemCount: selectedDimensionField.length,
+    };
+
+    const dimension_sorting: EuiTableSortingType<DimensionItem> = {
+      sort: {
+        direction: dimension_sortDirection,
+        field: dimension_sortField,
+      },
+    };
+
     const selection: EuiTableSelectionType<FieldItem> = {
+      selectable: (field) => !allSelectedFields.includes(field),
       onSelectionChange: this.onSelectionChange,
-      initialSelected: selectedFields,
     };
 
     const actions: CustomItemAction[] = [
@@ -403,14 +474,15 @@ export default class AdvancedAggregation extends Component<AdvancedAggregationPr
         <EuiSpacer size={"s"} />
         <EuiHorizontalRule margin="xs" />
         <div style={{ paddingLeft: "10px" }}>
-          {/*Need to create array of dimension items after selection*/}
           <EuiBasicTable
-            items={selectedDimensionField}
+            items={dimensionsShown}
             itemId={"sequence"}
             columns={aggregationColumns}
             tableLayout={"auto"}
             hasActions={true}
-            // onChange={this.onTableChange}
+            onChange={this.onDimensionTableChange}
+            pagination={dimension_pagination}
+            sorting={dimension_sorting}
             noItemsMessage={
               <Fragment>
                 <EuiSpacer />

@@ -44,9 +44,15 @@ import {
   EuiContextMenuPanel,
   EuiContextMenuItem,
   EuiCallOut,
+  EuiTableSortingType,
+  // @ts-ignore
+  Pagination,
+  // @ts-ignore
+  Criteria,
 } from "@elastic/eui";
 import { AddFieldsColumns } from "../../utils/constants";
 import { FieldItem, MetricItem } from "../../models/interfaces";
+import { DEFAULT_PAGE_SIZE_OPTIONS } from "../../../Rollups/utils/constants";
 
 interface MetricsCalculationProps {
   fieldsOption: FieldItem[];
@@ -60,6 +66,12 @@ interface MetricsCalculationState {
   searchText: string;
   selectedFieldType: EuiComboBoxOptionOption<String>[];
   selectedFields: FieldItem[];
+  allSelectedFields: FieldItem[];
+  metricsShown: MetricItem[];
+  from: number;
+  size: number;
+  sortField: string;
+  sortDirection: string;
   isDisableOpen: boolean;
   isEnableOpen: boolean;
 }
@@ -69,12 +81,17 @@ const tempFieldTypeOptions = [{ label: "string" }, { label: "location" }, { labe
 export default class MetricsCalculation extends Component<MetricsCalculationProps, MetricsCalculationState> {
   constructor(props: MetricsCalculationProps) {
     super(props);
-
     this.state = {
       isModalVisible: false,
       searchText: "",
       selectedFieldType: [],
       selectedFields: [],
+      allSelectedFields: [],
+      metricsShown: [],
+      from: 0,
+      size: 10,
+      sortField: "source_field",
+      sortDirection: "desc",
       isDisableOpen: false,
       isEnableOpen: false,
     };
@@ -106,7 +123,7 @@ export default class MetricsCalculation extends Component<MetricsCalculationProp
 
   onClickAdd() {
     const { onMetricSelectionChange, selectedMetrics } = this.props;
-    const { selectedFields } = this.state;
+    const { selectedFields, allSelectedFields, from, size } = this.state;
     // Clone selectedMetrics
     let updatedMetrics = Array.from(selectedMetrics);
     const toAddFields = Array.from(selectedFields);
@@ -114,11 +131,12 @@ export default class MetricsCalculation extends Component<MetricsCalculationProp
 
     selectedMetrics.map((metric) => {
       //If does not exist in new selection, don't add this metric.
-      if (!selectedFields.includes(metric.source_field)) {
-        updatedMetrics.splice(updatedMetrics.indexOf(metric), 1);
-      }
+      // if (!selectedFields.includes(metric.source_field)) {
+      //   updatedMetrics.splice(updatedMetrics.indexOf(metric), 1);
+      // }
       //If exists, delete it from toAddFields so that it doesn't get added again.
-      else {
+      // else {
+      if (allSelectedFields.includes(metric.source_field)) {
         const index = toAddFields.indexOf(metric.source_field);
         toAddFields.splice(index, 1);
       }
@@ -134,13 +152,22 @@ export default class MetricsCalculation extends Component<MetricsCalculationProp
         value_count: false,
       };
     });
-    onMetricSelectionChange(updatedMetrics.length ? updatedMetrics.concat(toAdd) : toAdd);
+    const result = updatedMetrics.length ? updatedMetrics.concat(toAdd) : toAdd;
+    onMetricSelectionChange(result);
+    this.setState({ allSelectedFields: allSelectedFields.concat(toAddFields), metricsShown: result.slice(from, from + size) });
+    this.forceUpdate();
   }
 
   deleteField(item: MetricItem) {
     const { selectedMetrics, onMetricSelectionChange } = this.props;
+    const { selectedFields, allSelectedFields } = this.state;
+
     selectedMetrics.splice(selectedMetrics.indexOf(item), 1);
+    selectedFields.splice(selectedFields.indexOf(item.source_field), 1);
+    allSelectedFields.splice(allSelectedFields.indexOf(item.source_field), 1);
+
     onMetricSelectionChange(selectedMetrics);
+    this.setState({ selectedFields, allSelectedFields });
   }
 
   setChecked = (e: ChangeEvent<HTMLInputElement>, method: string, item: MetricItem): void => {
@@ -203,9 +230,61 @@ export default class MetricsCalculation extends Component<MetricsCalculationProp
     onMetricSelectionChange(selectedMetrics);
   }
 
+  onTableChange = ({ page: tablePage, sort }: Criteria<FieldItem>): void => {
+    const { index: page, size } = tablePage;
+    const { field: sortField, direction: sortDirection } = sort;
+    const { selectedMetrics } = this.props;
+    this.setState({
+      from: page * size,
+      size,
+      sortField,
+      sortDirection,
+      metricsShown: selectedMetrics.slice(page * size, page * size + size),
+    });
+  };
+
   render() {
     const { fieldsOption, selectedMetrics, metricError } = this.props;
-    const { isModalVisible, searchText, selectedFieldType, selectedFields, isDisableOpen, isEnableOpen } = this.state;
+    const {
+      isModalVisible,
+      searchText,
+      selectedFieldType,
+      selectedFields,
+      isDisableOpen,
+      isEnableOpen,
+      from,
+      size,
+      sortDirection,
+      sortField,
+      metricsShown,
+    } = this.state;
+    const page = Math.floor(from / size);
+    const pagination: Pagination = {
+      pageIndex: page,
+      pageSize: size,
+      pageSizeOptions: DEFAULT_PAGE_SIZE_OPTIONS,
+      totalItemCount: selectedMetrics.length,
+    };
+
+    const sorting: EuiTableSortingType<MetricItem> = {
+      sort: {
+        direction: sortDirection,
+        field: sortField,
+      },
+    };
+    // const metric_pagination: Pagination = {
+    //   pageIndex: metric_page,
+    //   pageSize: metric_size,
+    //   pageSizeOptions: DEFAULT_PAGE_SIZE_OPTIONS,
+    //   totalItemCount: fieldsOption.length,
+    // };
+    //
+    // const metric_sorting: EuiTableSortingType<MetricItem> = {
+    //   sort: {
+    //     direction: metric_sortDirection,
+    //     field: metric_sortField,
+    //   },
+    // };
 
     const selection: EuiTableSelectionType<FieldItem> = {
       selectable: (field) =>
@@ -425,7 +504,6 @@ export default class MetricsCalculation extends Component<MetricsCalculationProp
       </EuiContextMenuItem>,
     ];
 
-    // @ts-ignore
     return (
       <EuiPanel>
         <EuiFlexGroup style={{ padding: "0px 10px" }} justifyContent="spaceBetween" alignItems="center">
@@ -509,7 +587,7 @@ export default class MetricsCalculation extends Component<MetricsCalculationProp
           )}
 
           <EuiBasicTable
-            items={selectedMetrics}
+            items={metricsShown}
             itemId={"source_field"}
             rowHeader="source_field"
             columns={metricsColumns}
@@ -533,6 +611,9 @@ export default class MetricsCalculation extends Component<MetricsCalculationProp
               </Fragment>
             }
             tableLayout={"auto"}
+            onChange={this.onTableChange}
+            pagination={pagination}
+            sorting={sorting}
           />
           <EuiSpacer size="s" />
           {isModalVisible && (

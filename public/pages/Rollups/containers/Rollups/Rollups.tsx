@@ -79,7 +79,7 @@ export default class Rollups extends Component<RollupsProps, RollupsState> {
     const { from, size, search, sortField, sortDirection } = getURLQueryParams(this.props.location);
 
     this.state = {
-      totalRollups: 1,
+      totalRollups: 0,
       from,
       size,
       search,
