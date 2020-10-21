@@ -216,6 +216,7 @@ export default class RollupDetails extends Component<RollupDetailsProps, RollupD
       if (response.ok) {
         this.setState({ enabled: false });
         //Show success message
+        await this.getRollup(rollupId);
         toastNotifications.addSuccess(`${rollupId} is disabled`);
       } else {
         toastNotifications.addDanger(`Could not stop the rollup job "${rollupId}" : ${response.error}`);
@@ -235,6 +236,7 @@ export default class RollupDetails extends Component<RollupDetailsProps, RollupD
       if (response.ok) {
         this.setState({ enabled: true });
         //Show success message
+        await this.getRollup(rollupId);
         toastNotifications.addSuccess(`${rollupId} is enabled`);
       } else {
         toastNotifications.addDanger(`Could not start the rollup job "${rollupId}" : ${response.error}`);
