@@ -255,7 +255,6 @@ export default class CreateRollupForm extends Component<CreateRollupFormProps, C
     let newJSON = this.state.rollupJSON;
     newJSON.rollup.description = description;
     this.setState({ description: description, rollupJSON: newJSON });
-    console.log(this.state);
   };
 
   onChangeName = (e: ChangeEvent<HTMLInputElement>): void => {

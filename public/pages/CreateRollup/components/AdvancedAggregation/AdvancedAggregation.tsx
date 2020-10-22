@@ -108,7 +108,6 @@ export default class AdvancedAggregation extends Component<AdvancedAggregationPr
 
     selectedDimensionField.map((dimension) => {
       if (allSelectedFields.includes(dimension.field)) {
-        console.log("Duplicate found: " + dimension.field);
         const index = toAddFields.indexOf(dimension.field);
         toAddFields.splice(index, 1);
       }

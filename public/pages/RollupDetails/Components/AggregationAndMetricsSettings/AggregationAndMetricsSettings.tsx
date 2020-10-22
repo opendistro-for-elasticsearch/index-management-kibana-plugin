@@ -140,8 +140,6 @@ export default class AggregationAndMetricsSettings extends Component<
       dimension_sortField: "sequence",
       dimension_sortDirection: "desc",
     };
-    console.log(this.props);
-    console.log(this.state);
   }
 
   onTableChange = ({ page: tablePage, sort }: Criteria<FieldItem>): void => {
