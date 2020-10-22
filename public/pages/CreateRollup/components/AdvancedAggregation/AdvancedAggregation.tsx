@@ -72,10 +72,6 @@ interface AdvancedAggregationState {
   allSelectedFields: FieldItem[];
   fieldsShown: FieldItem[];
   dimensionsShown: DimensionItem[];
-  from: number;
-  size: number;
-  sortField: string;
-  sortDirection: string;
   dimension_from: number;
   dimension_size: number;
   dimension_sortField: string;
@@ -98,10 +94,6 @@ export default class AdvancedAggregation extends Component<AdvancedAggregationPr
       allSelectedFields: [],
       fieldsShown: fieldsOption.slice(0, 10),
       dimensionsShown: selectedDimensionField.slice(0, 10),
-      from: 0,
-      size: 10,
-      sortField: "label",
-      sortDirection: "desc",
       selectedFields: [],
       dimension_from: 0,
       dimension_size: 10,
@@ -271,32 +263,13 @@ export default class AdvancedAggregation extends Component<AdvancedAggregationPr
       isModalVisible,
       searchText,
       selectedFieldType,
-      from,
-      size,
-      sortDirection,
-      sortField,
       dimension_from,
       dimension_size,
       dimension_sortDirection,
       dimension_sortField,
-      fieldsShown,
       dimensionsShown,
     } = this.state;
-    // const page = Math.floor(from / size);
     const dimension_page = Math.floor(dimension_from / dimension_size);
-    // const pagination: Pagination = {
-    //   pageIndex: page,
-    //   pageSize: size,
-    //   pageSizeOptions: DEFAULT_PAGE_SIZE_OPTIONS,
-    //   totalItemCount: fieldsOption.length,
-    // };
-    //
-    // const sorting: EuiTableSortingType<FieldItem> = {
-    //   sort: {
-    //     direction: sortDirection,
-    //     field: sortField,
-    //   },
-    // };
 
     const dimension_pagination: Pagination = {
       pageIndex: dimension_page,

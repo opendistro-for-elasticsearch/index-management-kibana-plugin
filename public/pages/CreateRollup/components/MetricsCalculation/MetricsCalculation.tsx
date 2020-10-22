@@ -68,7 +68,6 @@ interface MetricsCalculationState {
   selectedFieldType: EuiComboBoxOptionOption<String>[];
   selectedFields: FieldItem[];
   allSelectedFields: FieldItem[];
-  metricsShown: MetricItem[];
   from: number;
   size: number;
   sortField: string;

@@ -30,10 +30,11 @@ import {
   // @ts-ignore
   Pagination,
   EuiIcon,
+  EuiTableSortingType,
 } from "@elastic/eui";
 import { ContentPanel, ContentPanelActions } from "../../../../components/ContentPanel";
 import { ModalConsumer } from "../../../../components/Modal";
-import { DimensionItem, MetricItem } from "../../models/interfaces";
+import { DimensionItem, FieldItem, MetricItem } from "../../models/interfaces";
 import { DEFAULT_PAGE_SIZE_OPTIONS } from "../../../Rollups/utils/constants";
 import { parseTimeunit } from "../../utils/helpers";
 
@@ -54,6 +55,12 @@ interface HistogramAndMetricsState {
   size: number;
   sortField: string;
   sortDirection: string;
+  metricsShown: MetricItem[];
+  dimension_from: number;
+  dimension_size: number;
+  dimension_sortField: string;
+  dimension_sortDirection: string;
+  dimensionsShown: DimensionItem[];
 }
 
 const aggregationColumns: EuiTableFieldDataColumnType<DimensionItem>[] = [
@@ -138,18 +145,45 @@ const metricsColumns = [
 export default class HistogramAndMetrics extends Component<HistogramAndMetricsProps, HistogramAndMetricsState> {
   constructor(props: HistogramAndMetricsProps) {
     super(props);
+    const { selectedDimensionField, selectedMetrics } = this.props;
     this.state = {
       from: 0,
       size: 10,
       sortField: "sequence",
       sortDirection: "desc",
+      metricsShown: selectedMetrics.slice(0, 10),
+      dimensionsShown: selectedDimensionField.slice(0, 10),
+      dimension_from: 0,
+      dimension_size: 10,
+      dimension_sortField: "sequence",
+      dimension_sortDirection: "desc",
     };
   }
 
-  onTableChange = ({ page: tablePage, sort }: Criteria<DimensionItem>): void => {
+  onTableChange = ({ page: tablePage, sort }: Criteria<FieldItem>): void => {
     const { index: page, size } = tablePage;
     const { field: sortField, direction: sortDirection } = sort;
-    this.setState({ from: page * size, size, sortField, sortDirection });
+    const { selectedMetrics } = this.props;
+    this.setState({
+      from: page * size,
+      size,
+      sortField,
+      sortDirection,
+      metricsShown: selectedMetrics.slice(page * size, page * size + size),
+    });
+  };
+
+  onDimensionTableChange = ({ page: tablePage, sort }: Criteria<DimensionItem>): void => {
+    const { index: page, size } = tablePage;
+    const { field: sortField, direction: sortDirection } = sort;
+    const { selectedDimensionField } = this.props;
+    this.setState({
+      dimension_from: page * size,
+      dimension_size: size,
+      dimension_sortField: sortField,
+      dimension_sortDirection: sortDirection,
+      dimensionsShown: selectedDimensionField.slice(page * size, page * size + size),
+    });
   };
 
   parseInterval(intervalType: string, intervalValue: number, timeunit: string): string {
@@ -168,13 +202,44 @@ export default class HistogramAndMetrics extends Component<HistogramAndMetricsPr
       selectedDimensionField,
       selectedMetrics,
     } = this.props;
-    const { from, size } = this.state;
+    const {
+      from,
+      size,
+      sortDirection,
+      sortField,
+      metricsShown,
+      dimension_from,
+      dimension_size,
+      dimension_sortDirection,
+      dimension_sortField,
+      dimensionsShown,
+    } = this.state;
     const page = Math.floor(from / size);
+    const dimension_page = Math.floor(dimension_from / dimension_size);
     const pagination: Pagination = {
       pageIndex: page,
       pageSize: size,
       pageSizeOptions: DEFAULT_PAGE_SIZE_OPTIONS,
+      totalItemCount: selectedMetrics.length,
+    };
+    const sorting: EuiTableSortingType<MetricItem> = {
+      sort: {
+        direction: sortDirection,
+        field: sortField,
+      },
+    };
+    const dimension_pagination: Pagination = {
+      pageIndex: dimension_page,
+      pageSize: dimension_size,
+      pageSizeOptions: DEFAULT_PAGE_SIZE_OPTIONS,
       totalItemCount: selectedDimensionField.length,
+    };
+
+    const dimension_sorting: EuiTableSortingType<DimensionItem> = {
+      sort: {
+        direction: dimension_sortDirection,
+        field: dimension_sortField,
+      },
     };
 
     return (
@@ -243,13 +308,14 @@ export default class HistogramAndMetrics extends Component<HistogramAndMetricsPr
             <Fragment>
               <EuiPanel>
                 <EuiBasicTable
-                  items={selectedDimensionField}
+                  items={dimensionsShown}
                   rowHeader={"sequence"}
                   columns={aggregationColumns}
                   tableLayout={"auto"}
                   noItemsMessage={"No fields added for aggregations"}
-                  pagination={pagination}
-                  onChange={this.onTableChange}
+                  pagination={dimension_pagination}
+                  sorting={dimension_sorting}
+                  onChange={this.onDimensionTableChange}
                 />
               </EuiPanel>
             </Fragment>
@@ -277,11 +343,12 @@ export default class HistogramAndMetrics extends Component<HistogramAndMetricsPr
             <Fragment>
               <EuiPanel>
                 <EuiBasicTable
-                  items={selectedMetrics}
+                  items={metricsShown}
                   rowHeader="source_field"
                   columns={metricsColumns}
                   tableLayout={"auto"}
                   pagination={pagination}
+                  sorting={sorting}
                   onChange={this.onTableChange}
                 />
               </EuiPanel>
