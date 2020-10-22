@@ -489,7 +489,7 @@ export default class MetricsCalculation extends Component<MetricsCalculationProp
 
     return (
       <EuiPanel>
-        <EuiFlexGroup style={{ padding: "0px 10px" }} justifyContent="spaceBetween" alignItems="center">
+        <EuiFlexGroup style={{ padding: "0px 10px" }} justifyContent="spaceBetween">
           <EuiFlexItem>
             <EuiFlexGroup gutterSize={"xs"}>
               <EuiFlexItem grow={false}>
@@ -608,26 +608,6 @@ export default class MetricsCalculation extends Component<MetricsCalculationProp
 
                 <EuiModalBody>
                   <EuiForm title={"Add fields"}>
-                    <EuiFlexGroup>
-                      <EuiFlexItem grow={2}>
-                        <EuiFieldSearch
-                          placeholder="Search field name"
-                          value={searchText}
-                          onChange={this.onChangeSearch}
-                          isClearable={true}
-                        />
-                      </EuiFlexItem>
-                      <EuiFlexItem grow={1}>
-                        <EuiComboBox
-                          placeholder="Field type"
-                          options={tempFieldTypeOptions}
-                          selectedOptions={selectedFieldType}
-                          onChange={this.onChangeFieldType}
-                          isClearable={true}
-                          singleSelection={true}
-                        />
-                      </EuiFlexItem>
-                    </EuiFlexGroup>
                     <EuiBasicTable
                       items={fieldsOption}
                       itemId={"label"}

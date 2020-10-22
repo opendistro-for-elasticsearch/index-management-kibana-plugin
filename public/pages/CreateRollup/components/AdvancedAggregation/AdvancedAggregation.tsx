@@ -477,26 +477,6 @@ export default class AdvancedAggregation extends Component<AdvancedAggregationPr
 
                 <EuiModalBody>
                   <EuiForm title={"Add fields"}>
-                    <EuiFlexGroup>
-                      <EuiFlexItem grow={2}>
-                        <EuiFieldSearch
-                          placeholder={"Search field name"}
-                          value={searchText}
-                          onChange={this.onChangeSearch}
-                          isClearable={true}
-                        />
-                      </EuiFlexItem>
-                      <EuiFlexItem grow={1}>
-                        <EuiComboBox
-                          placeholder={"Field type"}
-                          options={fieldTypeOption}
-                          selectedOptions={selectedFieldType}
-                          onChange={this.onChangeFieldType}
-                          isClearable={true}
-                          singleSelection={true}
-                        />
-                      </EuiFlexItem>
-                    </EuiFlexGroup>
                     <EuiBasicTable
                       columns={AddFieldsColumns}
                       items={fieldsOption}
@@ -506,9 +486,6 @@ export default class AdvancedAggregation extends Component<AdvancedAggregationPr
                       isSelectable={true}
                       selection={selection}
                       tableLayout={"fixed"}
-                      // onChange={this.onTableChange}
-                      // pagination={pagination}
-                      // sorting={sorting}
                     />
                   </EuiForm>
                 </EuiModalBody>
