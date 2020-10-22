@@ -74,6 +74,7 @@ interface MetricsCalculationState {
   sortDirection: string;
   isDisableOpen: boolean;
   isEnableOpen: boolean;
+  metricsShown: MetricItem[];
 }
 
 const tempFieldTypeOptions = [{ label: "string" }, { label: "location" }, { label: "number" }, { label: "timestamp" }];
@@ -161,14 +162,14 @@ export default class MetricsCalculation extends Component<MetricsCalculationProp
 
   deleteField(item: MetricItem) {
     const { selectedMetrics, onMetricSelectionChange } = this.props;
-    const { selectedFields, allSelectedFields } = this.state;
+    const { selectedFields, allSelectedFields, from, size } = this.state;
 
     selectedMetrics.splice(selectedMetrics.indexOf(item), 1);
     selectedFields.splice(selectedFields.indexOf(item.source_field), 1);
     allSelectedFields.splice(allSelectedFields.indexOf(item.source_field), 1);
 
     onMetricSelectionChange(selectedMetrics);
-    this.setState({ selectedFields, allSelectedFields });
+    this.setState({ selectedFields, allSelectedFields, metricsShown: selectedMetrics.slice(from, size) });
   }
 
   setChecked = (e: ChangeEvent<HTMLInputElement>, method: string, item: MetricItem): void => {
@@ -273,19 +274,6 @@ export default class MetricsCalculation extends Component<MetricsCalculationProp
         field: sortField,
       },
     };
-    // const metric_pagination: Pagination = {
-    //   pageIndex: metric_page,
-    //   pageSize: metric_size,
-    //   pageSizeOptions: DEFAULT_PAGE_SIZE_OPTIONS,
-    //   totalItemCount: fieldsOption.length,
-    // };
-    //
-    // const metric_sorting: EuiTableSortingType<MetricItem> = {
-    //   sort: {
-    //     direction: metric_sortDirection,
-    //     field: metric_sortField,
-    //   },
-    // };
 
     const selection: EuiTableSelectionType<FieldItem> = {
       selectable: (field) => isNumericMapping(field.type),
