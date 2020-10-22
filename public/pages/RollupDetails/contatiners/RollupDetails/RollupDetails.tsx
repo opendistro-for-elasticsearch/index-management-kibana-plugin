@@ -325,7 +325,7 @@ export default class RollupDetails extends Component<RollupDetailsProps, RollupD
             {enabled ? (
               <EuiHealth color="success">{"Enabled on " + lastUpdated}</EuiHealth>
             ) : (
-              <EuiHealth color="danger">{"Disabled on " + lastUpdated}</EuiHealth>
+              <EuiHealth color="danger">{"Disabled"}</EuiHealth>
             )}
           </EuiFlexItem>
 

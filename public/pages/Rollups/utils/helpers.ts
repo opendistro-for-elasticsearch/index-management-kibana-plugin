@@ -19,6 +19,7 @@ import moment from "moment";
 import { DEFAULT_QUERY_PARAMS } from "./constants";
 import { PoliciesQueryParams } from "../../Policies/models/interfaces";
 
+//TODO: check if this is needed and change type name, or remove.
 export function getURLQueryParams(location: { search: string }): PoliciesQueryParams {
   const { from, size, search, sortField, sortDirection } = queryString.parse(location.search);
 
@@ -45,10 +46,4 @@ export const renderEnabled = (isEnabled: boolean): string => {
 
 export const renderContinuous = (continuous: boolean): string => {
   return continuous ? "Yes" : "No";
-};
-
-export const renderNextWindow = (continuous: boolean): string => {
-  if (!continuous) return "-";
-
-  return continuous ? "Yes" : "-";
 };
