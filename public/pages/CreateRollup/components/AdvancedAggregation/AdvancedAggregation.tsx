@@ -124,15 +124,8 @@ export default class AdvancedAggregation extends Component<AdvancedAggregationPr
     //Clone selectedDimensionField
     let updatedDimensions = Array.from(selectedDimensionField);
     const toAddFields = Array.from(selectedFields);
-    // Loop through selectedFields to see if existing Dimensions are removed
 
     selectedDimensionField.map((dimension) => {
-      //If does not exist in new selection, don't add this dimension.
-      // if (!selectedFields.includes(dimension.field)) {
-      //   updatedDimensions.splice(updatedDimensions.indexOf(dimension), 1);
-      // }
-      // If exists, delete it from toAddFields so that it doesn't get added again.
-      // else {
       if (allSelectedFields.includes(dimension.field)) {
         console.log("Duplicate found: " + dimension.field);
         const index = toAddFields.indexOf(dimension.field);
@@ -168,11 +161,13 @@ export default class AdvancedAggregation extends Component<AdvancedAggregationPr
   updateSequence(items: DimensionItem[]) {
     if (items.length == 0) return;
     const { onDimensionSelectionChange } = this.props;
+    const { dimension_size, dimension_from } = this.state;
     let dimensionNum;
     for (dimensionNum = 0; dimensionNum < items.length; dimensionNum++) {
       items[dimensionNum].sequence = dimensionNum + 1;
     }
     onDimensionSelectionChange(items);
+    this.setState({ dimensionsShown: items.slice(dimension_from, dimension_from + dimension_size) });
   }
 
   moveUp(item: DimensionItem) {
@@ -235,14 +230,6 @@ export default class AdvancedAggregation extends Component<AdvancedAggregationPr
     onDimensionSelectionChange(selectedDimensionField);
   };
 
-  // onTableChange = ({ page: tablePage, sort }: Criteria<FieldItem>): void => {
-  //   const { index: page, size } = tablePage;
-  //   const { field: sortField, direction: sortDirection } = sort;
-  //   const {fieldsOption} = this.props;
-  //   this.setState({ from: page * size, size, sortField, sortDirection,
-  //     fieldsShown: fieldsOption.slice(page*size, page*size + size)  });
-  // };
-
   onDimensionTableChange = ({ page: tablePage, sort }: Criteria<DimensionItem>): void => {
     const { index: page, size } = tablePage;
     const { field: sortField, direction: sortDirection } = sort;
@@ -290,21 +277,28 @@ export default class AdvancedAggregation extends Component<AdvancedAggregationPr
       onSelectionChange: this.onSelectionChange,
     };
 
-    const actions: CustomItemAction[] = [
+    const actions = [
       {
+        name: "move",
+        color: "primary",
+        isPrimary: true,
         render: (item: DimensionItem) => {
           return (
             <EuiFlexGroup>
-              <EuiFlexItem grow={false}>
-                <EuiLink onClick={() => this.moveUp(item)} disabled={item.sequence == 1}>
-                  Move up
-                </EuiLink>
-              </EuiFlexItem>
-              <EuiFlexItem grow={false}>
-                <EuiLink onClick={() => this.moveDown(item)} disabled={item.sequence == selectedDimensionField.length}>
-                  Move down
-                </EuiLink>
-              </EuiFlexItem>
+              {item.sequence != 1 && (
+                <EuiFlexItem grow={false}>
+                  <EuiLink color={"primary"} onClick={() => this.moveUp(item)} disabled={item.sequence == 1}>
+                    Move up
+                  </EuiLink>
+                </EuiFlexItem>
+              )}
+              {item.sequence != selectedDimensionField.length && (
+                <EuiFlexItem grow={false}>
+                  <EuiLink color={"primary"} onClick={() => this.moveDown(item)} disabled={item.sequence == selectedDimensionField.length}>
+                    Move down
+                  </EuiLink>
+                </EuiFlexItem>
+              )}
             </EuiFlexGroup>
           );
         },
