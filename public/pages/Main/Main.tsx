@@ -94,7 +94,7 @@ export default class Main extends Component<MainProps, object> {
               <ModalRoot services={services} />
               <EuiPage>
                 {/*Hide side navigation bar when creating or editing rollup job*/}
-                {pathname != ROUTES.CREATE_ROLLUP && pathname != ROUTES.EDIT_ROLLUP && (
+                {pathname != ROUTES.CREATE_ROLLUP && pathname != ROUTES.EDIT_ROLLUP && pathname != ROUTES.ROLLUP_DETAILS && (
                   <EuiPageSideBar style={{ minWidth: 150 }}>
                     <EuiSideNav style={{ width: 150 }} items={sideNav} />
                   </EuiPageSideBar>
