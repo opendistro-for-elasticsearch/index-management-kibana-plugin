@@ -247,19 +247,7 @@ export default class MetricsCalculation extends Component<MetricsCalculationProp
 
   render() {
     const { fieldsOption, selectedMetrics, metricError } = this.props;
-    const {
-      isModalVisible,
-      searchText,
-      selectedFieldType,
-      selectedFields,
-      isDisableOpen,
-      isEnableOpen,
-      from,
-      size,
-      sortDirection,
-      sortField,
-      metricsShown,
-    } = this.state;
+    const { isModalVisible, selectedFields, isDisableOpen, isEnableOpen, from, size, sortDirection, sortField, metricsShown } = this.state;
     const page = Math.floor(from / size);
     const pagination: Pagination = {
       pageIndex: page,

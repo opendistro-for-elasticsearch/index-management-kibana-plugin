@@ -140,7 +140,10 @@ export default class AdvancedAggregation extends Component<AdvancedAggregationPr
 
   //Check the dimension num
   updateSequence(items: DimensionItem[]) {
-    if (items.length == 0) return;
+    if (items.length == 0) {
+      this.setState({ dimensionsShown: [] });
+      return;
+    }
     const { onDimensionSelectionChange } = this.props;
     const { dimension_size, dimension_from } = this.state;
     let dimensionNum;
@@ -229,8 +232,6 @@ export default class AdvancedAggregation extends Component<AdvancedAggregationPr
     const {
       allSelectedFields,
       isModalVisible,
-      searchText,
-      selectedFieldType,
       dimension_from,
       dimension_size,
       dimension_sortDirection,
