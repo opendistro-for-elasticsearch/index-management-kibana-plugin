@@ -28,7 +28,7 @@ import { DimensionItem, FieldItem, MetricItem } from "../../models/interfaces";
 interface CreateRollupStep2Props extends RouteComponentProps {
   rollupService: RollupService;
   currentStep: number;
-  fields: any;
+  fields: FieldItem[];
   selectedTerms: FieldItem[];
   selectedDimensionField: DimensionItem[];
   selectedMetrics: MetricItem[];
@@ -61,25 +61,6 @@ export default class CreateRollupStep2 extends Component<CreateRollupStep2Props>
     this.props.history.push(ROUTES.ROLLUPS);
   };
 
-  parseFieldOptions = (prefix: string, fields: any): FieldItem[] => {
-    let fieldsOption: FieldItem[] = [];
-    for (var key in fields) {
-      //Push the first layer
-      if (fields.hasOwnProperty(key)) {
-        //Check if there are internal layers of fields and append the name
-        if (fields[key].fields != null) {
-          fieldsOption.push({ label: prefix + key, type: fields[key].type ? fields[key].type : null });
-          fieldsOption = fieldsOption.concat(this.parseFieldOptions(prefix + key + ".", fields[key].fields));
-        } else if (fields[key].properties != null) {
-          fieldsOption = fieldsOption.concat(this.parseFieldOptions(prefix + key + ".", fields[key].properties));
-        } else {
-          fieldsOption.push({ label: prefix + key, type: fields[key].type ? fields[key].type : null });
-        }
-      }
-    }
-    return fieldsOption;
-  };
-
   render() {
     if (this.props.currentStep !== 2) return null;
     const { fields, timestamp } = this.props;
@@ -96,11 +77,12 @@ export default class CreateRollupStep2 extends Component<CreateRollupStep2Props>
               <h1>Define aggregations and metrics</h1>
             </EuiTitle>
             <EuiSpacer />
-            <TimeAggregation {...this.props} selectedTimestamp={timestamp} fieldsOption={this.parseFieldOptions("", fields)} />
+
+            <TimeAggregation {...this.props} selectedTimestamp={timestamp} fieldsOption={fields} />
             <EuiSpacer />
-            <AdvancedAggregation {...this.props} fieldsOption={this.parseFieldOptions("", fields)} />
+            <AdvancedAggregation {...this.props} fieldsOption={fields} />
             <EuiSpacer />
-            <MetricsCalculation {...this.props} fieldsOption={this.parseFieldOptions("", fields)} />
+            <MetricsCalculation {...this.props} fieldsOption={fields} />
             <EuiSpacer />
             <EuiCallOut color="warning">
               <p>You can't change aggregations or metrics after creating a job. Double-check your choices before proceeding.</p>

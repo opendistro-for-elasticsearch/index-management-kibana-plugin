@@ -31,6 +31,7 @@ import CreateRollupStep3 from "../CreateRollupStep3";
 import CreateRollupStep4 from "../CreateRollupStep4";
 import { DimensionItem, FieldItem, MetricItem } from "../../models/interfaces";
 import moment from "moment";
+import { compareFieldItem, parseFieldOptions } from "../../utils/helpers";
 
 interface CreateRollupFormProps extends RouteComponentProps {
   rollupService: RollupService;
@@ -57,7 +58,8 @@ interface CreateRollupFormState {
   targetIndexError: string;
 
   mappings: any;
-  fields: any;
+  allMappings: FieldItem[][];
+  fields: FieldItem[];
   selectedTerms: FieldItem[];
   selectedDimensionField: DimensionItem[];
   selectedMetrics: MetricItem[];
@@ -102,13 +104,15 @@ export default class CreateRollupForm extends Component<CreateRollupFormProps, C
       totalIndices: 0,
 
       mappings: "",
-      fields: undefined,
+      allMappings: [],
+      fields: [],
       selectedFields: [],
       selectedTerms: [],
       selectedDimensionField: [],
       selectedMetrics: [],
       metricError: "",
       description: "",
+
       sourceIndex: [],
       sourceIndexError: "",
       targetIndex: [],
@@ -141,22 +145,25 @@ export default class CreateRollupForm extends Component<CreateRollupFormProps, C
   componentDidMount = async (): Promise<void> => {
     chrome.breadcrumbs.set([BREADCRUMBS.INDEX_MANAGEMENT, BREADCRUMBS.ROLLUPS]);
     chrome.breadcrumbs.push(BREADCRUMBS.CREATE_ROLLUP);
-    await this.getMappings();
   };
 
-  //TODO: Try to get only the mapping of specified source index instead of all indices. And maybe get mappings after selecting src index
-  getMappings = async (): Promise<void> => {
+  getMappings = async (srcIndex: string): Promise<void> => {
+    if (!srcIndex.length) return;
     try {
       const { rollupService } = this.props;
-      const { sourceIndex } = this.state;
-      //TODO: modify this to actual src index when onChangeSourceIndex is called.
-      const response = await rollupService.getMappings("kibana_sample_data_flights");
+      const response = await rollupService.getMappings(srcIndex);
       if (response.ok) {
-        //Set mapping when there is source index selected.
-        this.setState({
-          mappings: response.response,
-          fields: sourceIndex.length ? response.response[sourceIndex[0].label].mappings.properties : undefined,
-        });
+        let allMappings: FieldItem[][] = [];
+        const mappings = response.response;
+        //Push mappings array to allMappings 2D array first
+        for (let index in mappings) {
+          allMappings.push(parseFieldOptions("", mappings[index].mappings.properties));
+        }
+        //Find intersect from all mappings
+        const fields = allMappings.reduce((mappingA, mappingB) =>
+          mappingA.filter((itemA) => mappingB.some((itemB) => compareFieldItem(itemA, itemB)))
+        );
+        this.setState({ mappings, fields, allMappings });
       } else {
         toastNotifications.addDanger(`Could not load fields: ${response.error}`);
       }
@@ -256,10 +263,7 @@ export default class CreateRollupForm extends Component<CreateRollupFormProps, C
     this.setState({ rollupId, rollupIdError: rollupId ? "" : "Name is required" });
   };
 
-  //TODO: Should do getMapping here and with actual source index name so that wildcard values are also working
-  onChangeSourceIndex = (options: EuiComboBoxOptionOption<IndexItem>[]): void => {
-    const { mappings } = this.state;
-    //Try to get label text from option from the only array element in options, if exists
+  onChangeSourceIndex = async (options: EuiComboBoxOptionOption<IndexItem>[]): Promise<void> => {
     let newJSON = this.state.rollupJSON;
     let sourceIndex = options.map(function (option) {
       return option.label;
@@ -269,10 +273,10 @@ export default class CreateRollupForm extends Component<CreateRollupFormProps, C
     newJSON.rollup.source_index = srcIndexText;
     this.setState({ sourceIndex: options, rollupJSON: newJSON, sourceIndexError: sourceIndexError });
     this.setState({
-      fields: sourceIndex.length ? mappings[srcIndexText].mappings.properties : undefined,
       selectedDimensionField: [],
       selectedMetrics: [],
     });
+    await this.getMappings(srcIndexText);
   };
 
   onChangeTargetIndex = (options: EuiComboBoxOptionOption<IndexItem>[]): void => {
@@ -281,6 +285,7 @@ export default class CreateRollupForm extends Component<CreateRollupFormProps, C
     let targetIndex = options.map(function (option) {
       return option.label;
     });
+
     const targetIndexError = targetIndex.length ? "" : "Target index is required";
 
     newJSON.rollup.target_index = targetIndex[0];
@@ -388,6 +393,7 @@ export default class CreateRollupForm extends Component<CreateRollupFormProps, C
   updateSchedule = (): void => {
     const { recurringDefinition, cronExpression, interval, intervalTimeunit, cronTimezone } = this.state;
     let newJSON = this.state.rollupJSON;
+
     if (recurringDefinition == "cron") {
       newJSON.rollup.schedule.cron = { expression: `${cronExpression}`, timezone: `${cronTimezone}` };
       delete newJSON.rollup.schedule["interval"];
@@ -404,7 +410,6 @@ export default class CreateRollupForm extends Component<CreateRollupFormProps, C
 
   onChangeRecurringJob = (optionId: string): void => {
     let newJSON = this.state.rollupJSON;
-    s;
     newJSON.rollup.continuous = optionId == "yes";
     this.setState({ recurringJob: optionId, rollupJSON: newJSON });
   };

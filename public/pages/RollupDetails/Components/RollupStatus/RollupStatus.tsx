@@ -13,8 +13,8 @@
  * permissions and limitations under the License.
  */
 
-import React, { Component } from "react";
-import { EuiFlexGrid, EuiSpacer, EuiFlexItem, EuiText, EuiIcon } from "@elastic/eui";
+import React, { Component, Fragment } from "react";
+import { EuiFlexGrid, EuiSpacer, EuiFlexItem, EuiText, EuiIcon, EuiFlexGroup, EuiLink } from "@elastic/eui";
 import { ContentPanel } from "../../../../components/ContentPanel";
 import { RollupMetadata } from "../../../../../models/interfaces";
 import { renderTime } from "../../../Rollups/utils/helpers";
@@ -50,19 +50,66 @@ export default class RollupStatus extends Component<RollupStatusProps> {
             <EuiFlexItem>
               <EuiText size={"xs"}>
                 <dt>Status</dt>
-                <dd>
-                  {!(metadata == null || metadata.rollup_metadata == null) && metadata.rollup_metadata.status == "failed" ? (
-                    <EuiIcon type={"alert"} color={"danger"} />
-                  ) : (
-                    ""
-                  )}
-                  {metadata == null || metadata.rollup_metadata == null ? "-" : metadata.rollup_metadata.status}
-                </dd>
-                <dd>
-                  {!(metadata == null || metadata.rollup_metadata == null) && metadata.rollup_metadata.status == "failed"
-                    ? "Failure reason: " + metadata.rollup_metadata.failure_reason
-                    : ""}
-                </dd>
+                {metadata == null || metadata.rollup_metadata == null ? (
+                  <dd>-</dd>
+                ) : metadata.rollup_metadata.status == "failed" ? (
+                  <EuiFlexGroup gutterSize={"xs"}>
+                    <EuiFlexItem grow={false}>
+                      <EuiIcon size={"s"} type={"alert"} color={"danger"} />
+                    </EuiFlexItem>
+                    <EuiFlexItem grow={false}>
+                      <EuiText size="xs" color={"danger"}>
+                        {"Failed:" + metadata.rollup_metadata.failure_reason}
+                      </EuiText>
+                    </EuiFlexItem>
+                  </EuiFlexGroup>
+                ) : metadata.rollup_metadata.status == "finished" ? (
+                  <EuiFlexGroup gutterSize={"xs"}>
+                    <EuiFlexItem grow={false}>
+                      <EuiIcon size={"s"} type={"check"} color={"success"} />
+                    </EuiFlexItem>
+                    <EuiFlexItem grow={false}>
+                      <EuiText size="xs" color={"secondary"}>
+                        Complete
+                      </EuiText>
+                    </EuiFlexItem>
+                  </EuiFlexGroup>
+                ) : metadata.rollup_metadata.status == "init" ? (
+                  <EuiFlexGroup gutterSize={"xs"}>
+                    <EuiFlexItem grow={false}>
+                      <EuiIcon size={"s"} type={"clock"} color={"primary"} />
+                    </EuiFlexItem>
+                    <EuiFlexItem grow={false}>
+                      <EuiText size="xs" style={{ color: "#006BB4" }}>
+                        Initializing
+                      </EuiText>
+                    </EuiFlexItem>
+                  </EuiFlexGroup>
+                ) : metadata.rollup_metadata.status == "started" ? (
+                  <EuiFlexGroup gutterSize={"xs"}>
+                    <EuiFlexItem grow={false}>
+                      <EuiIcon size={"s"} type={"play"} color={"success"} />
+                    </EuiFlexItem>
+                    <EuiFlexItem grow={false}>
+                      <EuiText size="xs" color={"secondary"}>
+                        Started
+                      </EuiText>
+                    </EuiFlexItem>
+                  </EuiFlexGroup>
+                ) : metadata.rollup_metadata.status == "stopped" ? (
+                  <EuiFlexGroup gutterSize={"xs"}>
+                    <EuiFlexItem grow={false}>
+                      <EuiIcon size={"s"} type={"stop"} color={"subdued"} />
+                    </EuiFlexItem>
+                    <EuiFlexItem grow={false}>
+                      <EuiText size="xs" color={"subdued"}>
+                        Stopped
+                      </EuiText>
+                    </EuiFlexItem>
+                  </EuiFlexGroup>
+                ) : (
+                  <dd>-</dd>
+                )}
               </EuiText>
             </EuiFlexItem>
             <EuiFlexItem>

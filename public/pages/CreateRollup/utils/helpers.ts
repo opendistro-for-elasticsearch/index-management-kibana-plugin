@@ -13,6 +13,8 @@
  * permissions and limitations under the License.
  */
 
+import { FieldItem } from "../models/interfaces";
+
 export const parseTimeunit = (timeunit: string): string => {
   if (timeunit == "MINUTES" || timeunit == "m" || timeunit == "Minutes") return "minute(s)";
   else if (timeunit == "HOURS" || timeunit == "h" || timeunit == "Hours") return "hour(s)";
@@ -125,4 +127,23 @@ export const isNumericMapping = (fieldType: string | null): boolean => {
     fieldType == "half_float" ||
     fieldType == "scaled_float"
   );
+};
+
+export const compareFieldItem = (itemA: FieldItem, itemB: FieldItem): boolean => {
+  return itemB.label == itemA.label && itemA.type == itemB.type;
+};
+
+export const parseFieldOptions = (prefix: string, mappings: any): FieldItem[] => {
+  let fieldsOption: FieldItem[] = [];
+  for (let field in mappings) {
+    if (mappings.hasOwnProperty(field)) {
+      if (mappings[field].type != "object" && mappings[field].type != null && mappings[field].type != "nested")
+        fieldsOption.push({ label: prefix + field, type: mappings[field].type });
+      if (mappings[field].fields != null)
+        fieldsOption = fieldsOption.concat(parseFieldOptions(prefix + field + ".", mappings[field].fields));
+      if (mappings[field].properties != null)
+        fieldsOption = fieldsOption.concat(parseFieldOptions(prefix + field + ".", mappings[field].properties));
+    }
+  }
+  return fieldsOption;
 };

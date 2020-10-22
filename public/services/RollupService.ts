@@ -85,9 +85,10 @@ export default class RollupService {
   };
 
   //Function to search for fields from a source index using GET /${source_index}/_mapping
-  getMappings = async (index: string): Promise<ServerResponse<GetFieldsResponse>> => {
+  getMappings = async (index: string): Promise<ServerResponse<any>> => {
     const url = `..${NODE_API._MAPPINGS}`;
-    const response = (await this.httpClient.post(url, { index })) as IHttpResponse<ServerResponse<GetFieldsResponse>>;
+    const body = { index: index };
+    const response = (await this.httpClient.post(url, body)) as IHttpResponse<ServerResponse<GetFieldsResponse>>;
     return response.data;
   };
 
