@@ -417,7 +417,7 @@ export default class Rollups extends Component<RollupsProps, RollupsState> {
         sortable: true,
         textOnly: true,
         render: (metadata) =>
-          metadata == null || metadata.rollup_metadata.status == undefined || metadata.rollup_metadata.status == null ? (
+          metadata == null || metadata.rollup_metadata == undefined || metadata.rollup_metadata == null ? (
             "-"
           ) : metadata.rollup_metadata.status == "failed" ? (
             <EuiFlexGroup gutterSize={"xs"}>
