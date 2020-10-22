@@ -415,7 +415,7 @@ export default class CreateRollupForm extends Component<CreateRollupFormProps, C
         unit: `${intervalTimeunit}`,
         period: `${interval}`,
       };
-      // delete newJSON.rollup.schedule["cron"];
+      delete newJSON.rollup.schedule["cron"];
     }
     this.setState({ rollupJSON: newJSON });
   };
