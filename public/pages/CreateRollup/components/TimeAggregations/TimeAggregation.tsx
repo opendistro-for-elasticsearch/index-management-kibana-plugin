@@ -116,10 +116,10 @@ export default class TimeAggregation extends Component<TimeAggregationProps, Tim
           <EuiFormRow label="Interval type">
             <EuiRadioGroup options={radios} idSelected={intervalType} onChange={(id) => onChangeIntervalType(id)} name="intervalType" />
           </EuiFormRow>
-          <EuiSpacer size="m" />
           <EuiFlexGroup style={{ maxWidth: 300 }}>
             {intervalType == "fixed" ? (
               <Fragment>
+                <EuiSpacer size="m" />
                 <EuiFlexItem grow={false} style={{ width: 100 }}>
                   <EuiFormRow label="Interval">
                     <EuiFieldNumber
@@ -145,7 +145,9 @@ export default class TimeAggregation extends Component<TimeAggregationProps, Tim
               <Fragment>
                 <EuiFlexItem grow={false}>
                   <EuiFormRow hasEmptyLabelSpace={true}>
-                    <EuiText size={"m"}>Every 1 </EuiText>
+                    <EuiText size={"m"}>
+                      <dd>Every 1</dd>{" "}
+                    </EuiText>
                   </EuiFormRow>
                 </EuiFlexItem>
                 <EuiFlexItem>
