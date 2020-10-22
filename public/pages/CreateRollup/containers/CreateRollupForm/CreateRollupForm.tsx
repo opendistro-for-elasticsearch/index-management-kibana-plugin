@@ -358,11 +358,24 @@ export default class CreateRollupForm extends Component<CreateRollupFormProps, C
     this.setState({ cronTimezone: e.target.value });
   };
 
-  //TODO: Figure out the correct format of delay time, do we need to convert the value along with timeunit?
   onChangeDelayTime = (e: ChangeEvent<HTMLInputElement>): void => {
+    this.setState({ delayTime: e.target.valueAsNumber });
+  };
+
+  updateDelay = (): void => {
+    const { delayTimeunit, delayTime } = this.state;
     let newJSON = this.state.rollupJSON;
-    newJSON.rollup.delay = e.target.value == "" ? 0 : e.target.valueAsNumber;
-    this.setState({ delayTime: e.target.value == "" ? 0 : e.target.valueAsNumber, rollupJSON: newJSON });
+    if (delayTime == undefined) newJSON.rollup.delay = 0;
+    else if (delayTimeunit == "SECONDS") {
+      newJSON.rollup.delay = moment.duration(delayTime, "seconds").asMilliseconds();
+    } else if (delayTimeunit == "MINUTES") {
+      newJSON.rollup.delay = moment.duration(delayTime, "minutes").asMilliseconds();
+    } else if (delayTimeunit == "HOURS") {
+      newJSON.rollup.delay = moment.duration(delayTime, "hours").asMilliseconds();
+    } else {
+      newJSON.rollup.delay = moment.duration(delayTime, "days").asMilliseconds();
+    }
+    this.setState({ rollupJSON: newJSON });
   };
 
   onChangeIntervalTime = (e: ChangeEvent<HTMLInputElement>): void => {
@@ -466,7 +479,6 @@ export default class CreateRollupForm extends Component<CreateRollupFormProps, C
     this.setState({ rollupJSON: newJSON });
   };
 
-  //TODO: Complete submit logistic
   onSubmit = async (): Promise<void> => {
     const { rollupId, rollupJSON } = this.state;
     this.setState({ submitError: "", isSubmitting: true, hasSubmitted: true });
@@ -478,6 +490,7 @@ export default class CreateRollupForm extends Component<CreateRollupFormProps, C
         this.updateDimension();
         this.updateMetric();
         this.updateSchedule();
+        this.updateDelay();
         await this.onCreate(rollupId, rollupJSON);
       }
     } catch (err) {
