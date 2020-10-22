@@ -28,8 +28,6 @@ import {
   EuiFlexGroup,
   EuiFlexItem,
   EuiForm,
-  EuiFieldSearch,
-  EuiComboBox,
   EuiComboBoxOptionOption,
   // @ts-ignore
   Pagination,
@@ -66,8 +64,6 @@ interface AdvancedAggregationProps {
 
 interface AdvancedAggregationState {
   isModalVisible: boolean;
-  searchText: string;
-  selectedFieldType: EuiComboBoxOptionOption<String>[];
   selectedFields: FieldItem[];
   allSelectedFields: FieldItem[];
   fieldsShown: FieldItem[];
@@ -78,19 +74,12 @@ interface AdvancedAggregationState {
   dimension_sortDirection: string;
 }
 
-const fieldTypeOption = [
-  { label: "string", value: "string" },
-  { label: "number", value: "number" },
-];
-
 export default class AdvancedAggregation extends Component<AdvancedAggregationProps, AdvancedAggregationState> {
   constructor(props: AdvancedAggregationProps) {
     super(props);
     const { selectedDimensionField, fieldsOption } = this.props;
     this.state = {
       isModalVisible: false,
-      searchText: "",
-      selectedFieldType: [],
       allSelectedFields: [],
       fieldsShown: fieldsOption.slice(0, 10),
       dimensionsShown: selectedDimensionField.slice(0, 10),
@@ -105,14 +94,6 @@ export default class AdvancedAggregation extends Component<AdvancedAggregationPr
   closeModal = () => this.setState({ isModalVisible: false });
 
   showModal = () => this.setState({ isModalVisible: true });
-
-  onChangeSearch = (e: ChangeEvent<HTMLInputElement>): void => {
-    this.setState({ searchText: e.target.value });
-  };
-
-  onChangeFieldType = (options: EuiComboBoxOptionOption<String>[]): void => {
-    this.setState({ selectedFieldType: options });
-  };
 
   onSelectionChange = (selectedFields: FieldItem[]): void => {
     this.setState({ selectedFields });
@@ -277,39 +258,6 @@ export default class AdvancedAggregation extends Component<AdvancedAggregationPr
       onSelectionChange: this.onSelectionChange,
     };
 
-    const actions = [
-      {
-        name: "move",
-        color: "primary",
-        isPrimary: true,
-        render: (item: DimensionItem) => {
-          return (
-            <EuiFlexGroup>
-              {item.sequence != 1 && (
-                <EuiFlexItem grow={false}>
-                  <EuiLink color={"primary"} onClick={() => this.moveUp(item)} disabled={item.sequence == 1}>
-                    Move up
-                  </EuiLink>
-                </EuiFlexItem>
-              )}
-              {item.sequence != selectedDimensionField.length && (
-                <EuiFlexItem grow={false}>
-                  <EuiLink color={"primary"} onClick={() => this.moveDown(item)} disabled={item.sequence == selectedDimensionField.length}>
-                    Move down
-                  </EuiLink>
-                </EuiFlexItem>
-              )}
-            </EuiFlexGroup>
-          );
-        },
-      },
-      {
-        render: (item: DimensionItem) => {
-          return <EuiIcon type={"crossInACircleFilled"} onClick={() => this.deleteField(item)} />;
-        },
-      },
-    ];
-
     const aggregationColumns: EuiTableFieldDataColumnType<DimensionItem>[] = [
       {
         field: "sequence",
@@ -375,8 +323,38 @@ export default class AdvancedAggregation extends Component<AdvancedAggregationPr
           ),
       },
       {
+        field: "sequence",
+        name: "",
+        align: "center",
+        render: (sequence, item: DimensionItem) => {
+          return (
+            <EuiFlexGroup justifyContent={"spaceBetween"}>
+              <EuiFlexItem grow={false}>
+                {item.sequence != 1 && (
+                  <EuiLink color={"primary"} onClick={() => this.moveUp(item)} disabled={item.sequence == 1}>
+                    Move up
+                  </EuiLink>
+                )}
+              </EuiFlexItem>
+              <EuiFlexItem grow={false}>
+                {item.sequence != selectedDimensionField.length && (
+                  <EuiLink color={"primary"} onClick={() => this.moveDown(item)} disabled={item.sequence == selectedDimensionField.length}>
+                    Move down
+                  </EuiLink>
+                )}
+              </EuiFlexItem>
+            </EuiFlexGroup>
+          );
+        },
+      },
+
+      {
+        field: "sequence",
         name: "Actions",
-        actions: actions,
+        align: "center",
+        render: (sequence, item: DimensionItem) => {
+          return <EuiIcon type={"crossInACircleFilled"} onClick={() => this.deleteField(item)} />;
+        },
       },
     ];
 

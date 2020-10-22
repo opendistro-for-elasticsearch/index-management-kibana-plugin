@@ -13,8 +13,8 @@
  * permissions and limitations under the License.
  */
 
-import React, { Component, Fragment } from "react";
-import { EuiFlexGrid, EuiSpacer, EuiFlexItem, EuiText, EuiIcon, EuiFlexGroup, EuiLink } from "@elastic/eui";
+import React, { Component } from "react";
+import { EuiFlexGrid, EuiSpacer, EuiFlexItem, EuiText, EuiIcon, EuiFlexGroup } from "@elastic/eui";
 import { ContentPanel } from "../../../../components/ContentPanel";
 import { RollupMetadata } from "../../../../../models/interfaces";
 import { renderTime } from "../../../Rollups/utils/helpers";
