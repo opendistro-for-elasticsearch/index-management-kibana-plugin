@@ -51,12 +51,10 @@ interface AggregationAndMetricsSettingsState {
   size: number;
   sortField: string;
   sortDirection: string;
-  // metricsShown: MetricItem[];
   dimension_from: number;
   dimension_size: number;
   dimension_sortField: string;
   dimension_sortDirection: string;
-  // dimensionsShown: DimensionItem[];
 }
 
 const aggregationColumns: EuiTableFieldDataColumnType<DimensionItem>[] = [
@@ -71,12 +69,6 @@ const aggregationColumns: EuiTableFieldDataColumnType<DimensionItem>[] = [
     field: "field.label",
     name: "Field name",
     align: "left",
-  },
-  {
-    field: "field.type",
-    name: "Field type",
-    align: "left",
-    render: (type: string) => (type == null ? "-" : type),
   },
   {
     field: "aggregationMethod",
@@ -138,14 +130,11 @@ export default class AggregationAndMetricsSettings extends Component<
 > {
   constructor(props: AggregationAndMetricsSettingsProps) {
     super(props);
-    const { selectedDimensionField, selectedMetrics } = this.props;
     this.state = {
       from: 0,
       size: 10,
       sortField: "sequence",
       sortDirection: "desc",
-      // metricsShown: selectedMetrics.slice(0, 10),
-      // dimensionsShown: selectedDimensionField.slice(0, 10),
       dimension_from: 0,
       dimension_size: 10,
       dimension_sortField: "sequence",
@@ -154,15 +143,6 @@ export default class AggregationAndMetricsSettings extends Component<
     console.log(this.props);
     console.log(this.state);
   }
-
-  // componentDidMount = async (): Promise<void> => {
-  //  const{selectedMetrics, selectedDimensionField }=this.props;
-  //   const {from, size, dimension_from, dimension_size } = this.state;
-  //   this.setState(
-  //     { metricsShown: selectedMetrics.slice(from, from + size),
-  //       dimensionsShown: selectedDimensionField.slice(dimension_from, dimension_from + dimension_size) },
-  //   )
-  // };
 
   onTableChange = ({ page: tablePage, sort }: Criteria<FieldItem>): void => {
     const { index: page, size } = tablePage;
