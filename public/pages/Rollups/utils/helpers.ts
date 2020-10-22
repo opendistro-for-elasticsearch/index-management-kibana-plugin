@@ -17,14 +17,13 @@ import queryString from "query-string";
 // @ts-ignore
 import moment from "moment";
 import { DEFAULT_QUERY_PARAMS } from "./constants";
-import { PoliciesQueryParams } from "../../Policies/models/interfaces";
+import { RollupQueryParams } from "../models/interfaces";
 
-//TODO: check if this is needed and change type name, or remove.
-export function getURLQueryParams(location: { search: string }): PoliciesQueryParams {
+export function getURLQueryParams(location: { search: string }): RollupQueryParams {
   const { from, size, search, sortField, sortDirection } = queryString.parse(location.search);
 
-  return <PoliciesQueryParams>{
-    // @ts-ignore
+  return <RollupQueryParams>{
+    // @ts-ignores
     from: isNaN(parseInt(from, 10)) ? DEFAULT_QUERY_PARAMS.from : parseInt(from, 10),
     // @ts-ignore
     size: isNaN(parseInt(size, 10)) ? DEFAULT_QUERY_PARAMS.size : parseInt(size, 10),

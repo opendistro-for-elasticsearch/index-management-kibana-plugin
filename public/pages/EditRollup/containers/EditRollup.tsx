@@ -294,7 +294,6 @@ export default class EditRollup extends Component<EditRollupProps, EditRollupSta
           <h1>Edit rollup job</h1>
         </EuiTitle>
         <EuiSpacer />
-        {/*TODO: Disable change name function*/}
         <ConfigureRollup
           isEdit={true}
           rollupId={rollupId}

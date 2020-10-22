@@ -13,8 +13,6 @@
  * permissions and limitations under the License.
  */
 
-//TODO: Create actual rollup service here when backend is done.
-
 import { IHttpResponse, IHttpService } from "angular";
 import { GetIndicesResponse, PutRollupResponse, GetRollupsResponse, GetFieldsResponse } from "../../server/models/interfaces";
 import { ServerResponse } from "../../server/models/types";

@@ -76,8 +76,6 @@ export default class CreateRollupStep3 extends Component<CreateRollupProps, Crea
     };
   }
 
-  //TODO: Figure out what to do with the DEFAULT_POLICY part.
-
   componentDidMount = async (): Promise<void> => {
     chrome.breadcrumbs.set([BREADCRUMBS.INDEX_MANAGEMENT, BREADCRUMBS.ROLLUPS]);
   };

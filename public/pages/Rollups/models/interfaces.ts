@@ -24,7 +24,7 @@ export interface RollupItem {
   rollup: Rollup; // only dumped to view as JSON as of now, don't need to type
 }
 
-export interface RollupsQueryParams {
+export interface RollupQueryParams {
   from: number;
   size: number;
   search: string;
