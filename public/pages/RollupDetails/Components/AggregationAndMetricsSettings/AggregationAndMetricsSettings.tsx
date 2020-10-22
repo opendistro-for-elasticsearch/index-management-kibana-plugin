@@ -40,19 +40,25 @@ interface AggregationAndMetricsSettingsProps {
   timezone: string;
   selectedDimensionField: DimensionItem[];
   selectedMetrics: MetricItem[];
-}
-interface AggregationAndMetricsSettingsState {
-  dimensionsShown: DimensionItem[];
   metricsShown: MetricItem[];
+  dimensionsShown: DimensionItem[];
+  onChangeDimensionsShown: (from: number, size: number) => void;
+  onChangeMetricsShown: (from: number, size: number) => void;
+}
+
+interface AggregationAndMetricsSettingsState {
   from: number;
   size: number;
   sortField: string;
   sortDirection: string;
+  // metricsShown: MetricItem[];
   dimension_from: number;
   dimension_size: number;
   dimension_sortField: string;
   dimension_sortDirection: string;
+  // dimensionsShown: DimensionItem[];
 }
+
 const aggregationColumns: EuiTableFieldDataColumnType<DimensionItem>[] = [
   {
     field: "sequence",
@@ -134,75 +140,82 @@ export default class AggregationAndMetricsSettings extends Component<
     super(props);
     const { selectedDimensionField, selectedMetrics } = this.props;
     this.state = {
-      dimensionsShown: selectedDimensionField.slice(0, 10),
-      metricsShown: selectedMetrics.slice(0, 10),
       from: 0,
       size: 10,
-      sortField: "source_field",
+      sortField: "sequence",
       sortDirection: "desc",
+      // metricsShown: selectedMetrics.slice(0, 10),
+      // dimensionsShown: selectedDimensionField.slice(0, 10),
       dimension_from: 0,
       dimension_size: 10,
       dimension_sortField: "sequence",
       dimension_sortDirection: "desc",
     };
+    console.log(this.props);
+    console.log(this.state);
   }
+
+  // componentDidMount = async (): Promise<void> => {
+  //  const{selectedMetrics, selectedDimensionField }=this.props;
+  //   const {from, size, dimension_from, dimension_size } = this.state;
+  //   this.setState(
+  //     { metricsShown: selectedMetrics.slice(from, from + size),
+  //       dimensionsShown: selectedDimensionField.slice(dimension_from, dimension_from + dimension_size) },
+  //   )
+  // };
+
   onTableChange = ({ page: tablePage, sort }: Criteria<FieldItem>): void => {
     const { index: page, size } = tablePage;
     const { field: sortField, direction: sortDirection } = sort;
-    const { selectedMetrics } = this.props;
+    const { onChangeMetricsShown } = this.props;
     this.setState({
       from: page * size,
       size,
       sortField,
       sortDirection,
-      metricsShown: selectedMetrics.slice(page * size, page * size + size),
     });
-    this.forceUpdate();
+    onChangeMetricsShown(page * size, page * size + size);
   };
 
   onDimensionTableChange = ({ page: tablePage, sort }: Criteria<DimensionItem>): void => {
-    const { index: dimension_page, dimension_size } = tablePage;
-    const { field: dimension_sortField, direction: dimension_sortDirection } = sort;
-    const { selectedDimensionField } = this.props;
+    const { index: page, size } = tablePage;
+    const { field: sortField, direction: sortDirection } = sort;
+    const { onChangeDimensionsShown } = this.props;
     this.setState({
-      dimension_from: dimension_page * dimension_size,
-      dimension_size: dimension_size,
-      dimension_sortField: dimension_sortField,
-      dimension_sortDirection: dimension_sortDirection,
-      dimensionsShown: selectedDimensionField.slice(dimension_page * dimension_size, dimension_page * dimension_size + dimension_size),
+      dimension_from: page * size,
+      dimension_size: size,
+      dimension_sortField: sortField,
+      dimension_sortDirection: sortDirection,
     });
-    this.forceUpdate();
+    onChangeDimensionsShown(page * size, size);
   };
 
   render() {
-    const { timestamp, histogramInterval, timezone, selectedDimensionField, selectedMetrics } = this.props;
+    const { timestamp, histogramInterval, timezone, selectedDimensionField, selectedMetrics, dimensionsShown, metricsShown } = this.props;
     const {
       from,
       size,
       sortDirection,
       sortField,
-      metricsShown,
       dimension_from,
       dimension_size,
       dimension_sortDirection,
       dimension_sortField,
-      dimensionsShown,
     } = this.state;
     const page = Math.floor(from / size);
+    const dimension_page = Math.floor(dimension_from / dimension_size);
     const pagination: Pagination = {
       pageIndex: page,
       pageSize: size,
       pageSizeOptions: DEFAULT_PAGE_SIZE_OPTIONS,
       totalItemCount: selectedMetrics.length,
     };
-
     const sorting: EuiTableSortingType<MetricItem> = {
       sort: {
         direction: sortDirection,
         field: sortField,
       },
     };
-    const dimension_page = Math.floor(dimension_from / dimension_size);
     const dimension_pagination: Pagination = {
       pageIndex: dimension_page,
       pageSize: dimension_size,
@@ -267,15 +280,15 @@ export default class AggregationAndMetricsSettings extends Component<
                   columns={aggregationColumns}
                   tableLayout={"auto"}
                   noItemsMessage={"No fields added for aggregations"}
-                  onChange={this.onDimensionTableChange}
                   pagination={dimension_pagination}
                   sorting={dimension_sorting}
+                  onChange={this.onDimensionTableChange}
                 />
               </EuiPanel>
             </Fragment>
           ) : (
             <EuiText>
-              <dd>No field added for aggregation</dd>
+              <dd>No fields added for aggregation</dd>
             </EuiText>
           )}
           <EuiSpacer size={"m"} />
@@ -301,9 +314,10 @@ export default class AggregationAndMetricsSettings extends Component<
                   rowHeader="source_field"
                   columns={metricsColumns}
                   tableLayout={"auto"}
-                  onChange={this.onTableChange}
                   pagination={pagination}
                   sorting={sorting}
+                  onChange={this.onTableChange}
+                  noItemsMessage={"No fields added for metrics"}
                 />
               </EuiPanel>
             </Fragment>
@@ -312,6 +326,7 @@ export default class AggregationAndMetricsSettings extends Component<
               <dd>No fields added for metrics</dd>
             </EuiText>
           )}
+          <EuiSpacer size={"s"} />
         </div>
       </ContentPanel>
     );

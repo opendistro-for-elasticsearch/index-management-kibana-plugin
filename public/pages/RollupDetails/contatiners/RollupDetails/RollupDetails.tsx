@@ -46,9 +46,6 @@ import { RollupMetadata } from "../../../../../models/interfaces";
 import { renderTime } from "../../../Rollups/utils/helpers";
 import { DimensionItem, MetricItem, RollupDimensionItem, RollupMetricItem } from "../../../CreateRollup/models/interfaces";
 import DeleteModal from "../../../Rollups/components/DeleteModal";
-import _ from "lodash";
-import Policies from "../../../Policies/containers/Policies";
-import Rollups from "../../../Rollups/containers/Rollups";
 
 interface RollupDetailsProps extends RouteComponentProps {
   rollupService: RollupService;
@@ -76,6 +73,8 @@ interface RollupDetailsState {
   timezone: string;
   selectedDimensionField: DimensionItem[];
   selectedMetrics: MetricItem[];
+  metricsShown: MetricItem[];
+  dimensionsShown: DimensionItem[];
 
   isModalOpen: boolean;
   enabled: boolean;
@@ -109,6 +108,8 @@ export default class RollupDetails extends Component<RollupDetailsProps, RollupD
       timezone: "UTC +0",
       selectedDimensionField: [],
       selectedMetrics: [],
+      dimensionsShown: [],
+      metricsShown: [],
       isModalOpen: false,
       enabled: false,
       isDeleteModalVisible: false,
@@ -120,7 +121,9 @@ export default class RollupDetails extends Component<RollupDetailsProps, RollupD
     const { id } = queryString.parse(this.props.location.search);
     if (typeof id === "string") {
       chrome.breadcrumbs.push({ text: id });
+      this.props.history.push(`${ROUTES.ROLLUP_DETAILS}?id=${id}`);
       await this.getRollup(id);
+      this.forceUpdate();
     } else {
       toastNotifications.addDanger(`Invalid rollup id: ${id}`);
       this.props.history.push(ROUTES.ROLLUPS);
@@ -135,6 +138,8 @@ export default class RollupDetails extends Component<RollupDetailsProps, RollupD
 
       if (response.ok) {
         let newJSON = response.response.rollup;
+        const selectedMetrics = this.parseMetric(response.response.rollup.metrics);
+        const selectedDimensionField = this.parseDimension(response.response.rollup.dimensions);
         this.setState({
           rollupId: response.response.id,
           description: response.response.rollup.description,
@@ -149,8 +154,10 @@ export default class RollupDetails extends Component<RollupDetailsProps, RollupD
             ? response.response.rollup.dimensions[0].date_histogram.fixed_interval
             : response.response.rollup.dimensions[0].date_histogram.calendar_interval,
           timezone: response.response.rollup.dimensions[0].date_histogram.timezone,
-          selectedDimensionField: this.parseDimension(response.response.rollup.dimensions),
-          selectedMetrics: this.parseMetric(response.response.rollup.metrics),
+          selectedDimensionField,
+          selectedMetrics,
+          metricsShown: selectedMetrics.slice(0, 10),
+          dimensionsShown: selectedDimensionField.slice(0, 10),
           enabled: response.response.rollup.enabled,
         });
         if (response.response.rollup.schedule.cron == undefined) {
@@ -193,7 +200,7 @@ export default class RollupDetails extends Component<RollupDetailsProps, RollupD
     if (metrics.length == 0) return [];
     const result = metrics.map((metric) => ({
       source_field: metric.source_field,
-      all: null,
+      all: false,
       min: metric.metrics.filter((item) => item.min != null).length > 0,
       max: metric.metrics.filter((item) => item.max != null).length > 0,
       sum: metric.metrics.filter((item) => item.sum != null).length > 0,
@@ -213,6 +220,7 @@ export default class RollupDetails extends Component<RollupDetailsProps, RollupD
         this.setState({ enabled: false });
         //Show success message
         await this.getRollup(rollupId);
+        this.forceUpdate();
         toastNotifications.addSuccess(`${rollupId} is disabled`);
       } else {
         toastNotifications.addDanger(`Could not stop the rollup job "${rollupId}" : ${response.error}`);
@@ -233,6 +241,7 @@ export default class RollupDetails extends Component<RollupDetailsProps, RollupD
         this.setState({ enabled: true });
         //Show success message
         await this.getRollup(rollupId);
+        this.forceUpdate();
         toastNotifications.addSuccess(`${rollupId} is enabled`);
       } else {
         toastNotifications.addDanger(`Could not start the rollup job "${rollupId}" : ${response.error}`);
@@ -280,6 +289,15 @@ export default class RollupDetails extends Component<RollupDetailsProps, RollupD
     }
   };
 
+  onChangeDimensionsShown = (from: number, size: number): void => {
+    const { selectedDimensionField } = this.state;
+    this.setState({ dimensionsShown: selectedDimensionField.slice(from, from + size) });
+  };
+  onChangeMetricsShown = (from: number, size: number): void => {
+    const { selectedMetrics } = this.state;
+    this.setState({ metricsShown: selectedMetrics.slice(from, from + size) });
+  };
+
   render() {
     const {
       rollupId,
@@ -300,6 +318,8 @@ export default class RollupDetails extends Component<RollupDetailsProps, RollupD
       timezone,
       selectedDimensionField,
       selectedMetrics,
+      metricsShown,
+      dimensionsShown,
       isModalOpen,
       rollupJSON,
       enabled,
@@ -376,6 +396,10 @@ export default class RollupDetails extends Component<RollupDetailsProps, RollupD
           timezone={timezone}
           selectedDimensionField={selectedDimensionField}
           selectedMetrics={selectedMetrics}
+          metricsShown={metricsShown}
+          dimensionsShown={dimensionsShown}
+          onChangeMetricsShown={this.onChangeMetricsShown}
+          onChangeDimensionsShown={this.onChangeDimensionsShown}
         />
         <EuiSpacer />
 

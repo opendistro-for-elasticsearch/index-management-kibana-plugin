@@ -34,7 +34,7 @@ import {
 } from "@elastic/eui";
 import { ContentPanel, ContentPanelActions } from "../../../../components/ContentPanel";
 import { ModalConsumer } from "../../../../components/Modal";
-import { DimensionItem, FieldItem, MetricItem } from "../../models/interfaces";
+import { DimensionItem, MetricItem } from "../../models/interfaces";
 import { DEFAULT_PAGE_SIZE_OPTIONS } from "../../../Rollups/utils/constants";
 import { parseTimeunit } from "../../utils/helpers";
 
@@ -160,7 +160,7 @@ export default class HistogramAndMetrics extends Component<HistogramAndMetricsPr
     };
   }
 
-  onTableChange = ({ page: tablePage, sort }: Criteria<FieldItem>): void => {
+  onTableChange = ({ page: tablePage, sort }: Criteria<MetricItem>): void => {
     const { index: page, size } = tablePage;
     const { field: sortField, direction: sortDirection } = sort;
     const { selectedMetrics } = this.props;
@@ -321,7 +321,7 @@ export default class HistogramAndMetrics extends Component<HistogramAndMetricsPr
             </Fragment>
           ) : (
             <EuiText>
-              <dd>No field added for aggregation</dd>
+              <dd>No fields added for aggregation</dd>
             </EuiText>
           )}
           <EuiSpacer size={"m"} />
@@ -350,6 +350,7 @@ export default class HistogramAndMetrics extends Component<HistogramAndMetricsPr
                   pagination={pagination}
                   sorting={sorting}
                   onChange={this.onTableChange}
+                  noItemsMessage={"No fields added for metrics"}
                 />
               </EuiPanel>
             </Fragment>

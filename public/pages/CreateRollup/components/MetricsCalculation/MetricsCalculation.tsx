@@ -231,7 +231,7 @@ export default class MetricsCalculation extends Component<MetricsCalculationProp
     onMetricSelectionChange(selectedMetrics);
   }
 
-  onTableChange = ({ page: tablePage, sort }: Criteria<FieldItem>): void => {
+  onTableChange = ({ page: tablePage, sort }: Criteria<MetricItem>): void => {
     const { index: page, size } = tablePage;
     const { field: sortField, direction: sortDirection } = sort;
     const { selectedMetrics } = this.props;
