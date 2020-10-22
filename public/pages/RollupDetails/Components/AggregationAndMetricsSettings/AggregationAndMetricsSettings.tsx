@@ -33,6 +33,7 @@ import {
 import { ContentPanel } from "../../../../components/ContentPanel";
 import { DimensionItem, FieldItem, MetricItem } from "../../../CreateRollup/models/interfaces";
 import { DEFAULT_PAGE_SIZE_OPTIONS } from "../../../Rollups/utils/constants";
+import { parseTimeunit } from "../../../CreateRollup/utils/helpers";
 
 interface AggregationAndMetricsSettingsProps {
   timestamp: string;
@@ -208,6 +209,13 @@ export default class AggregationAndMetricsSettings extends Component<
       },
     };
 
+    const intervalValue = histogramInterval.match(/(\d+)/);
+    console.log(intervalValue);
+    const intervalUnit = histogramInterval.match(/[a-zA-Z]+/g);
+    let interval = "";
+    if (intervalValue && intervalUnit) {
+      interval = intervalValue[0] + " " + parseTimeunit(intervalUnit[0]);
+    }
     return (
       <ContentPanel bodyStyles={{ padding: "initial" }} title="Aggregation and metrics settings" titleSize="m">
         <div style={{ paddingLeft: "10px" }}>
@@ -225,7 +233,7 @@ export default class AggregationAndMetricsSettings extends Component<
             <EuiFlexItem>
               <EuiText size={"xs"}>
                 <dt>Interval</dt>
-                <dd>{histogramInterval}</dd>
+                <dd>{interval}</dd>
               </EuiText>
             </EuiFlexItem>
             <EuiFlexItem>
