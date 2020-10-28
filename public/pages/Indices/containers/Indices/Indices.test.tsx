@@ -52,7 +52,7 @@ function renderWithRouter(Component: React.ComponentType<any>) {
   };
 }
 
-describe("<RollupIndices /> spec", () => {
+describe("<Indices /> spec", () => {
   it("renders the component", async () => {
     browserServicesMock.indexService.getIndices = jest.fn().mockResolvedValue({ ok: true, response: { indices: [], totalIndices: 0 } });
     const { container } = renderWithRouter(Indices);

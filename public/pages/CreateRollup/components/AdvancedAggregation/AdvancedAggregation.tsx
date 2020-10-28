@@ -151,6 +151,7 @@ export default class AdvancedAggregation extends Component<AdvancedAggregationPr
     }
     onDimensionSelectionChange(items);
     this.setState({ dimensionsShown: items.slice(dimension_from, dimension_from + dimension_size) });
+    this.forceUpdate();
   }
 
   moveUp(item: DimensionItem) {
@@ -191,10 +192,11 @@ export default class AdvancedAggregation extends Component<AdvancedAggregationPr
     const newItem: DimensionItem = {
       sequence: item.sequence,
       field: item.field,
-      aggregationMethod: e.target.value,
+      aggregationMethod: "histogram",
       interval: e.target.valueAsNumber,
     };
     selectedDimensionField[index] = newItem;
+    this.updateSequence(selectedDimensionField);
     onDimensionSelectionChange(selectedDimensionField);
   };
 
@@ -210,6 +212,7 @@ export default class AdvancedAggregation extends Component<AdvancedAggregationPr
       newItem.interval = 5;
     }
     selectedDimensionField[index] = newItem;
+    this.updateSequence(selectedDimensionField);
     onDimensionSelectionChange(selectedDimensionField);
   };
 
@@ -254,8 +257,8 @@ export default class AdvancedAggregation extends Component<AdvancedAggregationPr
     };
 
     const selection: EuiTableSelectionType<FieldItem> = {
-      selectable: (field) => !allSelectedFields.includes(field),
       onSelectionChange: this.onSelectionChange,
+      initialSelected: allSelectedFields,
     };
 
     const aggregationColumns: EuiTableFieldDataColumnType<DimensionItem>[] = [
