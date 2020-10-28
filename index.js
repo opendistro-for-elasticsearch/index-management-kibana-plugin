@@ -31,6 +31,10 @@ export default function (kibana) {
         description: "Kibana plugin for Index Management",
         main: "plugins/opendistro_index_management_kibana/app",
         category: DEFAULT_APP_CATEGORIES.management,
+
+        //To insert the title - "Index Management" in between "Dev Tools" and "Stack management" in Kibana Side menu.
+        // Dev Tools is at 9010  and Stack Management is at 9040
+        order: 9020,
       },
       hacks: [],
       styleSheetPaths: [resolve(__dirname, "public/app.scss"), resolve(__dirname, "public/app.css")].find((p) => existsSync(p)),
