@@ -290,15 +290,7 @@ export default class AdvancedAggregation extends Component<AdvancedAggregationPr
               <EuiSelect
                 compressed={true}
                 value={aggregationMethod}
-                disabled={
-                  !(
-                    item.field.type == "long" ||
-                    item.field.type == "double" ||
-                    item.field.type == "float" ||
-                    item.field.type == "integer" ||
-                    item.field.type == "number"
-                  )
-                }
+                disabled={!isNumericMapping(item.field.type)}
                 options={[
                   { value: "terms", text: "Terms" },
                   { value: "histogram", text: "Histogram" },
