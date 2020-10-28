@@ -42,8 +42,13 @@ function RootController($scope, $element, $http) {
   const indexService = new IndexService($http);
   const managedIndexService = new ManagedIndexService($http);
   const policyService = new PolicyService($http);
-  const rollupService = new RollupService($http);
-  const services = { indexService, managedIndexService, policyService, rollupService };
+  // const rollupService = new RollupService($http);
+  const services = {
+    indexService,
+    managedIndexService,
+    policyService,
+    // rollupService
+  };
   const isDarkMode = chrome.getUiSettingsClient().get("theme:darkMode") || false;
 
   // render react to DOM
