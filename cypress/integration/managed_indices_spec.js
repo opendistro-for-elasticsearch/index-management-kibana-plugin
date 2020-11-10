@@ -205,8 +205,8 @@ describe("Managed indices", () => {
       // Confirm we got the change policy toaster
       cy.contains("Changed policy on 1 indices");
 
-      // Click back to Managed RollupIndices page
-      cy.contains("Managed RollupIndices").click();
+      // Click back to Managed Indices page
+      cy.contains("Managed Indices").click();
 
       // Speed up execution of managed index
       cy.updateManagedIndexConfigStartTime(SAMPLE_INDEX);
