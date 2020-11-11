@@ -15,7 +15,7 @@
 
 import queryString from "query-string";
 import { IHttpResponse, IHttpService } from "angular";
-import { GetPoliciesResponse, PutRollupResponse } from "../../server/models/interfaces";
+import { GetPoliciesResponse, PutPolicyResponse } from "../../server/models/interfaces";
 import { ServerResponse } from "../../server/models/types";
 import { NODE_API } from "../../utils/constants";
 import { DocumentPolicy, Policy } from "../../models/interfaces";
@@ -39,11 +39,11 @@ export default class PolicyService {
     policyId: string,
     seqNo?: number,
     primaryTerm?: number
-  ): Promise<ServerResponse<PutRollupResponse>> => {
+  ): Promise<ServerResponse<PutPolicyResponse>> => {
     const queryParamsString = queryString.stringify({ seqNo, primaryTerm });
     let url = `..${NODE_API.POLICIES}/${policyId}`;
     if (queryParamsString) url += `?${queryParamsString}`;
-    const response = (await this.httpClient.put(url, policy)) as IHttpResponse<ServerResponse<PutRollupResponse>>;
+    const response = (await this.httpClient.put(url, policy)) as IHttpResponse<ServerResponse<PutPolicyResponse>>;
     return response.data;
   };
 
