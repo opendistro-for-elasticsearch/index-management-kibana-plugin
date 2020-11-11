@@ -14,6 +14,7 @@
  */
 
 import React, { ChangeEvent, Component } from "react";
+import moment from "moment-timezone";
 import {
   EuiSpacer,
   EuiCheckbox,
@@ -29,7 +30,6 @@ import {
 } from "@elastic/eui";
 import { CalendarTimeunitOptions, DelayTimeunitOptions } from "../../utils/constants";
 import { ContentPanel } from "../../../../components/ContentPanel";
-import moment from "moment-timezone";
 
 interface ScheduleProps {
   isEdit: boolean;

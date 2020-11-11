@@ -28,11 +28,8 @@ import {
   EuiFlexGroup,
   EuiFlexItem,
   EuiForm,
-  EuiComboBoxOptionOption,
   // @ts-ignore
   Pagination,
-  // @ts-ignore
-  CustomItemAction,
   // @ts-ignore
   Criteria,
   EuiTableSelectionType,
@@ -53,7 +50,6 @@ import {
 import { DimensionItem, FieldItem } from "../../models/interfaces";
 import { AddFieldsColumns } from "../../utils/constants";
 import { DEFAULT_PAGE_SIZE_OPTIONS } from "../../../Rollups/utils/constants";
-import _ from "lodash";
 import { isNumericMapping } from "../../utils/helpers";
 
 interface AdvancedAggregationProps {
