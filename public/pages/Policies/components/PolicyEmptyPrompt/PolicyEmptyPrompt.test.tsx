@@ -18,7 +18,7 @@ import "@testing-library/jest-dom/extend-expect";
 import { render, fireEvent } from "@testing-library/react";
 import PolicyEmptyPrompt, { TEXT } from "./PolicyEmptyPrompt";
 
-describe("<RollupEmptyPrompt /> spec", () => {
+describe("<PolicyEmptyPrompt /> spec", () => {
   it("renders the component", async () => {
     const { container } = render(<PolicyEmptyPrompt filterIsApplied={false} loading={false} resetFilters={() => {}} />);
 
