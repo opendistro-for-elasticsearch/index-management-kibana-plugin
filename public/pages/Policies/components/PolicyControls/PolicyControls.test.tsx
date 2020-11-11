@@ -20,7 +20,7 @@ import { render, fireEvent, wait } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import PolicyControls from "./PolicyControls";
 
-describe("<RollupControls /> spec", () => {
+describe("<PolicyControls /> spec", () => {
   it("renders the component", async () => {
     const { container } = render(
       <PolicyControls
