@@ -32,10 +32,10 @@ import {
 } from "@elastic/eui";
 import chrome from "ui/chrome";
 import { RouteComponentProps } from "react-router-dom";
-import { RollupService } from "../../../../services";
-import { BREADCRUMBS, ROUTES } from "../../../../utils/constants";
 import { toastNotifications } from "ui/notify";
 import queryString from "query-string";
+import { RollupService } from "../../../../services";
+import { BREADCRUMBS, ROUTES } from "../../../../utils/constants";
 import { getErrorMessage } from "../../../../utils/helpers";
 import { EMPTY_ROLLUP } from "../../../CreateRollup/utils/constants";
 import GeneralInformation from "../../components/GeneralInformation/GeneralInformation";

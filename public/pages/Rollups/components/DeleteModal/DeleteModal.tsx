@@ -14,7 +14,7 @@
  */
 
 import React, { ChangeEvent, Component, Fragment } from "react";
-import { EuiConfirmModal, EuiForm, EuiFormRow, EuiFieldText, EuiOverlayMask, EuiSpacer, EuiFormHelpText } from "@elastic/eui";
+import { EuiConfirmModal, EuiForm, EuiFormRow, EuiFieldText, EuiOverlayMask, EuiSpacer } from "@elastic/eui";
 
 interface DeleteModalProps {
   rollupId: string;
@@ -27,13 +27,7 @@ interface DeleteModalState {
 }
 
 export default class DeleteModal extends Component<DeleteModalProps, DeleteModalState> {
-  constructor(props: DeleteModalProps) {
-    super(props);
-
-    this.state = {
-      confirmDeleteText: "",
-    };
-  }
+  state = { confirmDeleteText: "" };
 
   onChange = (e: ChangeEvent<HTMLInputElement>): void => {
     this.setState({ confirmDeleteText: e.target.value });
@@ -46,7 +40,7 @@ export default class DeleteModal extends Component<DeleteModalProps, DeleteModal
     return (
       <EuiOverlayMask>
         <EuiConfirmModal
-          title={`Delete job(s)`}
+          title="Delete job(s)"
           onCancel={closeDeleteModal}
           onConfirm={onClickDelete}
           cancelButtonText="Cancel"
@@ -57,12 +51,12 @@ export default class DeleteModal extends Component<DeleteModalProps, DeleteModal
         >
           <EuiForm>
             <Fragment>
-              By deleting "<b>{rollupId}</b>", all future scheduled rollup execution will be canceled and any rollup history will be
-              removed. However, your target index will remain as it is.
+              By deleting "<strong>{rollupId}</strong>", all future scheduled rollup execution will be canceled. However, your target index
+              will remain as it is.
             </Fragment>
-            <EuiSpacer size={"s"} />
-            <EuiFormRow helpText={"To confirm deletion, enter delete in the text field"}>
-              <EuiFieldText value={confirmDeleteText} placeholder={"delete"} onChange={this.onChange} />
+            <EuiSpacer size="s" />
+            <EuiFormRow helpText="To confirm deletion, enter delete in the text field">
+              <EuiFieldText value={confirmDeleteText} placeholder="delete" onChange={this.onChange} />
             </EuiFormRow>
           </EuiForm>
         </EuiConfirmModal>

@@ -13,6 +13,6 @@
  * permissions and limitations under the License.
  */
 
-import GeneralInformation from "./containers/GeneralInformation";
+import GeneralInformation from "./GeneralInformation";
 
 export default GeneralInformation;

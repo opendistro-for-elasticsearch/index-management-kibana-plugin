@@ -13,6 +13,6 @@
  * permissions and limitations under the License.
  */
 
-import RollupStatus from "./containers/RollupStatus";
+import RollupStatus from "./RollupStatus";
 
 export default RollupStatus;

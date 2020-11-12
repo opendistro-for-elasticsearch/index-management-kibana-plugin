@@ -29,7 +29,7 @@ import { BrowserServices } from "../../models/interfaces";
 import { ROUTES } from "../../utils/constants";
 import CreateRollupForm from "../CreateRollup/containers/CreateRollupForm";
 import EditRollup from "../EditRollup/containers";
-import RollupDetails from "../RollupDetails/contatiners/RollupDetails";
+import RollupDetails from "../RollupDetails/containers/RollupDetails";
 
 enum Navigation {
   IndexManagement = "Index Management",

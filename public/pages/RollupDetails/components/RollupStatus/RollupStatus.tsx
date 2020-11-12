@@ -23,133 +23,125 @@ interface RollupStatusProps {
   metadata: RollupMetadata | null;
 }
 
-export default class RollupStatus extends Component<RollupStatusProps> {
-  constructor(props: RollupStatusProps) {
-    super(props);
-  }
-
-  render() {
-    const { metadata } = this.props;
-    return (
-      <ContentPanel bodyStyles={{ padding: "initial" }} title="Rollup status" titleSize="m">
-        <div style={{ paddingLeft: "10px" }}>
-          <EuiSpacer size={"s"} />
-          <EuiFlexGrid columns={4}>
-            <EuiFlexItem>
-              <EuiText size={"xs"}>
-                <dt>Current rollup window</dt>
-                <dd>
-                  {metadata == null || metadata.rollup_metadata == null || metadata.rollup_metadata.continuous == null
-                    ? "-"
-                    : renderTime(metadata.rollup_metadata.continuous.next_window_start_time) +
-                      " - " +
-                      renderTime(metadata.rollup_metadata.continuous.next_window_end_time)}
-                </dd>
-              </EuiText>
-            </EuiFlexItem>
-            <EuiFlexItem>
-              <EuiText size={"xs"}>
-                <dt>Status</dt>
-                {metadata == null || metadata.rollup_metadata == null ? (
-                  <dd>-</dd>
-                ) : metadata.rollup_metadata.status == "failed" ? (
-                  <EuiFlexGroup gutterSize={"xs"}>
-                    <EuiFlexItem grow={false}>
-                      <EuiIcon size={"s"} type={"alert"} color={"danger"} />
-                    </EuiFlexItem>
-                    <EuiFlexItem grow={false}>
-                      <EuiText size="xs" color={"danger"}>
-                        {"Failed:" + metadata.rollup_metadata.failure_reason}
-                      </EuiText>
-                    </EuiFlexItem>
-                  </EuiFlexGroup>
-                ) : metadata.rollup_metadata.status == "finished" ? (
-                  <EuiFlexGroup gutterSize={"xs"}>
-                    <EuiFlexItem grow={false}>
-                      <EuiIcon size={"s"} type={"check"} color={"success"} />
-                    </EuiFlexItem>
-                    <EuiFlexItem grow={false}>
-                      <EuiText size="xs" color={"secondary"}>
-                        Complete
-                      </EuiText>
-                    </EuiFlexItem>
-                  </EuiFlexGroup>
-                ) : metadata.rollup_metadata.status == "init" ? (
-                  <EuiFlexGroup gutterSize={"xs"}>
-                    <EuiFlexItem grow={false}>
-                      <EuiIcon size={"s"} type={"clock"} color={"primary"} />
-                    </EuiFlexItem>
-                    <EuiFlexItem grow={false}>
-                      <EuiText size="xs" style={{ color: "#006BB4" }}>
-                        Initializing
-                      </EuiText>
-                    </EuiFlexItem>
-                  </EuiFlexGroup>
-                ) : metadata.rollup_metadata.status == "started" ? (
-                  <EuiFlexGroup gutterSize={"xs"}>
-                    <EuiFlexItem grow={false}>
-                      <EuiIcon size={"s"} type={"play"} color={"success"} />
-                    </EuiFlexItem>
-                    <EuiFlexItem grow={false}>
-                      <EuiText size="xs" color={"secondary"}>
-                        Started
-                      </EuiText>
-                    </EuiFlexItem>
-                  </EuiFlexGroup>
-                ) : metadata.rollup_metadata.status == "stopped" ? (
-                  <EuiFlexGroup gutterSize={"xs"}>
-                    <EuiFlexItem grow={false}>
-                      <EuiIcon size={"s"} type={"stop"} color={"subdued"} />
-                    </EuiFlexItem>
-                    <EuiFlexItem grow={false}>
-                      <EuiText size="xs" color={"subdued"}>
-                        Stopped
-                      </EuiText>
-                    </EuiFlexItem>
-                  </EuiFlexGroup>
-                ) : (
-                  <dd>-</dd>
-                )}
-              </EuiText>
-            </EuiFlexItem>
-            <EuiFlexItem>
-              <EuiText size={"xs"}>
-                <dt>Rollup indexed</dt>
-                <dd>{metadata == null || metadata.rollup_metadata == null ? "-" : metadata.rollup_metadata.stats.rollups_indexed}</dd>
-              </EuiText>
-            </EuiFlexItem>
-            <EuiFlexItem>
-              <EuiText size={"xs"}>
-                <dt>Indexed time (ms)</dt>
-                <dd>{metadata == null || metadata.rollup_metadata == null ? "-" : metadata.rollup_metadata.stats.index_time_in_millis}</dd>
-              </EuiText>
-            </EuiFlexItem>
-            <EuiFlexItem></EuiFlexItem>
-            <EuiFlexItem></EuiFlexItem>
-            <EuiFlexItem>
-              <EuiText size={"xs"}>
-                <dt>Document processed</dt>
-                <dd>{metadata == null || metadata.rollup_metadata == null ? "-" : metadata.rollup_metadata.stats.documents_processed}</dd>
-              </EuiText>
-            </EuiFlexItem>
-            <EuiFlexItem>
-              <EuiText size={"xs"}>
-                <dt>Search time (ms)</dt>
-                <dd>{metadata == null || metadata.rollup_metadata == null ? "-" : metadata.rollup_metadata.stats.search_time_in_millis}</dd>
-              </EuiText>
-            </EuiFlexItem>
-            <EuiFlexItem></EuiFlexItem>
-            <EuiFlexItem></EuiFlexItem>
-            <EuiFlexItem>
-              <EuiText size={"xs"}>
-                <dt>Page processed</dt>
-                <dd>{metadata == null || metadata.rollup_metadata == null ? "-" : metadata.rollup_metadata.stats.pages_processed}</dd>
-              </EuiText>
-            </EuiFlexItem>
-          </EuiFlexGrid>
-          <EuiSpacer size={"s"} />
-        </div>
-      </ContentPanel>
-    );
-  }
-}
+const RollupStatus = ({ metadata }: RollupStatusProps) => (
+  <ContentPanel bodyStyles={{ padding: "initial" }} title="Rollup status" titleSize="m">
+    <div style={{ paddingLeft: "10px" }}>
+      <EuiSpacer size={"s"} />
+      <EuiFlexGrid columns={4}>
+        <EuiFlexItem>
+          <EuiText size={"xs"}>
+            <dt>Current rollup window</dt>
+            <dd>
+              {metadata == null || metadata.rollup_metadata == null || metadata.rollup_metadata.continuous == null
+                ? "-"
+                : renderTime(metadata.rollup_metadata.continuous.next_window_start_time) +
+                  " - " +
+                  renderTime(metadata.rollup_metadata.continuous.next_window_end_time)}
+            </dd>
+          </EuiText>
+        </EuiFlexItem>
+        <EuiFlexItem>
+          <EuiText size={"xs"}>
+            <dt>Status</dt>
+            {metadata == null || metadata.rollup_metadata == null ? (
+              <dd>-</dd>
+            ) : metadata.rollup_metadata.status == "failed" ? (
+              <EuiFlexGroup gutterSize={"xs"}>
+                <EuiFlexItem grow={false}>
+                  <EuiIcon size={"s"} type={"alert"} color={"danger"} />
+                </EuiFlexItem>
+                <EuiFlexItem grow={false}>
+                  <EuiText size="xs" color={"danger"}>
+                    {"Failed:" + metadata.rollup_metadata.failure_reason}
+                  </EuiText>
+                </EuiFlexItem>
+              </EuiFlexGroup>
+            ) : metadata.rollup_metadata.status == "finished" ? (
+              <EuiFlexGroup gutterSize={"xs"}>
+                <EuiFlexItem grow={false}>
+                  <EuiIcon size={"s"} type={"check"} color={"success"} />
+                </EuiFlexItem>
+                <EuiFlexItem grow={false}>
+                  <EuiText size="xs" color={"secondary"}>
+                    Complete
+                  </EuiText>
+                </EuiFlexItem>
+              </EuiFlexGroup>
+            ) : metadata.rollup_metadata.status == "init" ? (
+              <EuiFlexGroup gutterSize={"xs"}>
+                <EuiFlexItem grow={false}>
+                  <EuiIcon size={"s"} type={"clock"} color={"primary"} />
+                </EuiFlexItem>
+                <EuiFlexItem grow={false}>
+                  <EuiText size="xs" style={{ color: "#006BB4" }}>
+                    Initializing
+                  </EuiText>
+                </EuiFlexItem>
+              </EuiFlexGroup>
+            ) : metadata.rollup_metadata.status == "started" ? (
+              <EuiFlexGroup gutterSize={"xs"}>
+                <EuiFlexItem grow={false}>
+                  <EuiIcon size={"s"} type={"play"} color={"success"} />
+                </EuiFlexItem>
+                <EuiFlexItem grow={false}>
+                  <EuiText size="xs" color={"secondary"}>
+                    Started
+                  </EuiText>
+                </EuiFlexItem>
+              </EuiFlexGroup>
+            ) : metadata.rollup_metadata.status == "stopped" ? (
+              <EuiFlexGroup gutterSize={"xs"}>
+                <EuiFlexItem grow={false}>
+                  <EuiIcon size={"s"} type={"stop"} color={"subdued"} />
+                </EuiFlexItem>
+                <EuiFlexItem grow={false}>
+                  <EuiText size="xs" color={"subdued"}>
+                    Stopped
+                  </EuiText>
+                </EuiFlexItem>
+              </EuiFlexGroup>
+            ) : (
+              <dd>-</dd>
+            )}
+          </EuiText>
+        </EuiFlexItem>
+        <EuiFlexItem>
+          <EuiText size={"xs"}>
+            <dt>Rollup indexed</dt>
+            <dd>{metadata == null || metadata.rollup_metadata == null ? "-" : metadata.rollup_metadata.stats.rollups_indexed}</dd>
+          </EuiText>
+        </EuiFlexItem>
+        <EuiFlexItem>
+          <EuiText size={"xs"}>
+            <dt>Indexed time (ms)</dt>
+            <dd>{metadata == null || metadata.rollup_metadata == null ? "-" : metadata.rollup_metadata.stats.index_time_in_millis}</dd>
+          </EuiText>
+        </EuiFlexItem>
+        <EuiFlexItem></EuiFlexItem>
+        <EuiFlexItem></EuiFlexItem>
+        <EuiFlexItem>
+          <EuiText size={"xs"}>
+            <dt>Document processed</dt>
+            <dd>{metadata == null || metadata.rollup_metadata == null ? "-" : metadata.rollup_metadata.stats.documents_processed}</dd>
+          </EuiText>
+        </EuiFlexItem>
+        <EuiFlexItem>
+          <EuiText size={"xs"}>
+            <dt>Search time (ms)</dt>
+            <dd>{metadata == null || metadata.rollup_metadata == null ? "-" : metadata.rollup_metadata.stats.search_time_in_millis}</dd>
+          </EuiText>
+        </EuiFlexItem>
+        <EuiFlexItem></EuiFlexItem>
+        <EuiFlexItem></EuiFlexItem>
+        <EuiFlexItem>
+          <EuiText size={"xs"}>
+            <dt>Page processed</dt>
+            <dd>{metadata == null || metadata.rollup_metadata == null ? "-" : metadata.rollup_metadata.stats.pages_processed}</dd>
+          </EuiText>
+        </EuiFlexItem>
+      </EuiFlexGrid>
+      <EuiSpacer size={"s"} />
+    </div>
+  </ContentPanel>
+);
+export default RollupStatus;
