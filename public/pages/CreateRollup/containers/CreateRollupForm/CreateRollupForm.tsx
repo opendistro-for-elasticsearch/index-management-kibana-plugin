@@ -664,7 +664,7 @@ export default class CreateRollupForm extends Component<CreateRollupFormProps, C
           {currentStep != 1 && (
             <EuiFlexItem grow={false}>
               <EuiButton onClick={this._prev} isLoading={isSubmitting} data-test-subj="createRollupPreviousButton">
-                {"Previous"}
+                "Previous"
               </EuiButton>
             </EuiFlexItem>
           )}
@@ -672,13 +672,13 @@ export default class CreateRollupForm extends Component<CreateRollupFormProps, C
           {currentStep == 4 ? (
             <EuiFlexItem grow={false}>
               <EuiButton fill onClick={this.onSubmit} isLoading={isSubmitting} data-test-subj="createRollupSubmitButton">
-                {"Create"}
+                "Create"
               </EuiButton>
             </EuiFlexItem>
           ) : (
             <EuiFlexItem grow={false}>
               <EuiButton fill onClick={this._next} isLoading={isSubmitting} data-test-subj="createRollupNextButton">
-                {"Next"}
+                "Next"
               </EuiButton>
             </EuiFlexItem>
           )}

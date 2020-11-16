@@ -333,7 +333,7 @@ export default class Rollups extends Component<RollupsProps, RollupsState> {
     };
 
     const actionButton = (
-      <EuiButton iconType={"arrowDown"} iconSide={"right"} disabled={!selectedItems.length} onClick={this.onActionButtonClick}>
+      <EuiButton iconType="arrowDown" iconSide="right" disabled={!selectedItems.length} onClick={this.onActionButtonClick}>
         Actions
       </EuiButton>
     );
@@ -364,7 +364,7 @@ export default class Rollups extends Component<RollupsProps, RollupsState> {
           this.showDeleteModal();
         }}
       >
-        <EuiTextColor color={"danger"}>Delete</EuiTextColor>
+        <EuiTextColor color="danger">Delete</EuiTextColor>
       </EuiContextMenuItem>,
     ];
 
@@ -431,31 +431,31 @@ export default class Rollups extends Component<RollupsProps, RollupsState> {
           metadata == null || metadata.rollup_metadata == undefined || metadata.rollup_metadata == null ? (
             "-"
           ) : metadata.rollup_metadata.status == "failed" ? (
-            <EuiFlexGroup gutterSize={"xs"}>
+            <EuiFlexGroup gutterSize="xs">
               <EuiFlexItem grow={false}>
-                <EuiIcon size={"s"} type={"alert"} color={"danger"} />
+                <EuiIcon size="s" type="alert" color="danger" />
               </EuiFlexItem>
               <EuiFlexItem grow={false}>
-                <EuiText size="xs" color={"danger"}>
+                <EuiText size="xs" color="danger">
                   {"Failed:" + metadata.rollup_metadata.failure_reason}
                 </EuiText>
               </EuiFlexItem>
             </EuiFlexGroup>
           ) : metadata.rollup_metadata.status == "finished" ? (
-            <EuiFlexGroup gutterSize={"xs"}>
+            <EuiFlexGroup gutterSize="xs">
               <EuiFlexItem grow={false}>
-                <EuiIcon size={"s"} type={"check"} color={"success"} />
+                <EuiIcon size="s" type="check" color="success" />
               </EuiFlexItem>
               <EuiFlexItem grow={false}>
-                <EuiText size="xs" color={"secondary"}>
+                <EuiText size="xs" color="secondary">
                   Complete
                 </EuiText>
               </EuiFlexItem>
             </EuiFlexGroup>
           ) : metadata.rollup_metadata.status == "init" ? (
-            <EuiFlexGroup gutterSize={"xs"}>
+            <EuiFlexGroup gutterSize="xs">
               <EuiFlexItem grow={false}>
-                <EuiIcon size={"s"} type={"clock"} color={"primary"} />
+                <EuiIcon size="s" type="clock" color="primary" />
               </EuiFlexItem>
               <EuiFlexItem grow={false}>
                 <EuiText size="xs" style={{ color: "#006BB4" }}>
@@ -464,23 +464,23 @@ export default class Rollups extends Component<RollupsProps, RollupsState> {
               </EuiFlexItem>
             </EuiFlexGroup>
           ) : metadata.rollup_metadata.status == "started" ? (
-            <EuiFlexGroup gutterSize={"xs"}>
+            <EuiFlexGroup gutterSize="xs">
               <EuiFlexItem grow={false}>
-                <EuiIcon size={"s"} type={"play"} color={"success"} />
+                <EuiIcon size="s" type="play" color="success" />
               </EuiFlexItem>
               <EuiFlexItem grow={false}>
-                <EuiText size="xs" color={"secondary"}>
+                <EuiText size="xs" color="secondary">
                   Started
                 </EuiText>
               </EuiFlexItem>
             </EuiFlexGroup>
           ) : metadata.rollup_metadata.status == "stopped" ? (
-            <EuiFlexGroup gutterSize={"xs"}>
+            <EuiFlexGroup gutterSize="xs">
               <EuiFlexItem grow={false}>
-                <EuiIcon size={"s"} type={"stop"} color={"subdued"} />
+                <EuiIcon size="s" type="stop" color="subdued" />
               </EuiFlexItem>
               <EuiFlexItem grow={false}>
-                <EuiText size="xs" color={"subdued"}>
+                <EuiText size="xs" color="subdued">
                   Stopped
                 </EuiText>
               </EuiFlexItem>
@@ -495,7 +495,7 @@ export default class Rollups extends Component<RollupsProps, RollupsState> {
       <EuiPanel style={{ paddingLeft: "0px", paddingRight: "0px" }}>
         <EuiFlexGroup style={{ padding: "0px 10px" }} justifyContent="spaceBetween" alignItems="center">
           <EuiFlexItem>
-            <EuiTitle size={"m"}>
+            <EuiTitle size="m">
               <h3>{"Rollup jobs (" + `${rollups.length}` + ")"}</h3>
             </EuiTitle>
           </EuiFlexItem>
@@ -568,7 +568,7 @@ export default class Rollups extends Component<RollupsProps, RollupsState> {
             pagination={pagination}
             selection={selection}
             sorting={sorting}
-            tableLayout={"auto"}
+            tableLayout="auto"
           />
           {isDeleteModalVisible && (
             <DeleteModal

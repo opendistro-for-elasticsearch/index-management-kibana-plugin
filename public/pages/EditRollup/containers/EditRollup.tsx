@@ -340,7 +340,7 @@ export default class EditRollup extends Component<EditRollupProps, EditRollupSta
           </EuiFlexItem>
           <EuiFlexItem grow={false}>
             <EuiButton fill onClick={this.onSubmit} isLoading={isSubmitting} data-test-subj="editRollupSaveChangesButton">
-              {"Save changes"}
+              "Save changes"
             </EuiButton>
           </EuiFlexItem>
         </EuiFlexGroup>

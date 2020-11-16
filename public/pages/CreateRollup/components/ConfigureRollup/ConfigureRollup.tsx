@@ -34,19 +34,19 @@ const ConfigureRollup = ({ isEdit, rollupId, rollupIdError, onChangeName, onChan
         <EuiFieldText isInvalid={!!rollupIdError} placeholder="my-rollupjob1" value={rollupId} onChange={onChangeName} disabled={isEdit} />
       </EuiFormRow>
       <EuiSpacer />
-      <EuiFlexGroup gutterSize={"xs"}>
+      <EuiFlexGroup gutterSize="xs">
         <EuiFlexItem grow={false}>
-          <EuiText size={"xs"}>
+          <EuiText size="xs">
             <h4>Description</h4>
           </EuiText>
         </EuiFlexItem>
         <EuiFlexItem>
-          <EuiText size={"xs"} color={"subdued"}>
+          <EuiText size="xs" color="subdued">
             <i> - optional</i>
           </EuiText>
         </EuiFlexItem>
       </EuiFlexGroup>
-      <EuiSpacer size={"xs"} />
+      <EuiSpacer size="xs" />
       <EuiFormRow>
         <EuiTextArea compressed={true} value={description} onChange={onChangeDescription} />
       </EuiFormRow>

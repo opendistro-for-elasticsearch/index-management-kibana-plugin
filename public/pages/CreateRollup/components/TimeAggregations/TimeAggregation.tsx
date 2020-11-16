@@ -93,11 +93,11 @@ export default class TimeAggregation extends Component<TimeAggregationProps, Tim
 
     return (
       <EuiPanel>
-        <EuiTitle size={"m"}>
+        <EuiTitle size="m">
           <h3>Time aggregation </h3>
         </EuiTitle>
         <EuiFormHelpText>
-          Your source indices must include a timestamp field. The rollup job creates a date histogram for the field you specify.{" "}
+          Your source indices must include a timestamp field. The rollup job creates a date histogram for the field you specify." "
         </EuiFormHelpText>
         <EuiHorizontalRule margin="xs" />
         <div style={{ paddingLeft: "10px" }}>
@@ -145,8 +145,8 @@ export default class TimeAggregation extends Component<TimeAggregationProps, Tim
               <Fragment>
                 <EuiFlexItem grow={false}>
                   <EuiFormRow hasEmptyLabelSpace={true}>
-                    <EuiText size={"m"}>
-                      <dd>Every 1</dd>{" "}
+                    <EuiText size="m">
+                      <dd>Every 1</dd>" "
                     </EuiText>
                   </EuiFormRow>
                 </EuiFlexItem>
@@ -162,19 +162,9 @@ export default class TimeAggregation extends Component<TimeAggregationProps, Tim
                 </EuiFlexItem>
               </Fragment>
             )}
-            {/*<EuiFlexItem>*/}
-            {/*  <EuiFormRow hasEmptyLabelSpace={true}>*/}
-            {/*    <EuiSelect*/}
-            {/*      id="selectTimeunit"*/}
-            {/*      options={intervalType == 'fixed' ? FixedTimeunitOptions : CalendarTimeunitOptions}*/}
-            {/*      value={timeunit}*/}
-            {/*      onChange={onChangeTimeunit}*/}
-            {/*    />*/}
-            {/*  </EuiFormRow>*/}
-            {/*</EuiFlexItem>*/}
           </EuiFlexGroup>
           <EuiSpacer size="m" />
-          <EuiFormRow label="Timezone" helpText={"A day starts from 00:00:00 in the specified timezone."}>
+          <EuiFormRow label="Timezone" helpText="A day starts from 00:00:00 in the specified timezone.">
             <EuiSelect id="timezone" options={timezones} value={timezone} onChange={onChangeTimezone} />
           </EuiFormRow>
         </div>

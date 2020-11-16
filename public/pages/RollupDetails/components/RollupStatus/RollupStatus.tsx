@@ -26,10 +26,10 @@ interface RollupStatusProps {
 const RollupStatus = ({ metadata }: RollupStatusProps) => (
   <ContentPanel bodyStyles={{ padding: "initial" }} title="Rollup status" titleSize="m">
     <div style={{ paddingLeft: "10px" }}>
-      <EuiSpacer size={"s"} />
+      <EuiSpacer size="s" />
       <EuiFlexGrid columns={4}>
         <EuiFlexItem>
-          <EuiText size={"xs"}>
+          <EuiText size="xs">
             <dt>Current rollup window</dt>
             <dd>
               {metadata == null || metadata.rollupMetadata == null || metadata.rollupMetadata.continuous == null
@@ -41,36 +41,36 @@ const RollupStatus = ({ metadata }: RollupStatusProps) => (
           </EuiText>
         </EuiFlexItem>
         <EuiFlexItem>
-          <EuiText size={"xs"}>
+          <EuiText size="xs">
             <dt>Status</dt>
             {metadata == null || metadata.rollupMetadata == null ? (
               <dd>-</dd>
             ) : metadata.rollupMetadata.status == "failed" ? (
-              <EuiFlexGroup gutterSize={"xs"}>
+              <EuiFlexGroup gutterSize="xs">
                 <EuiFlexItem grow={false}>
-                  <EuiIcon size={"s"} type={"alert"} color={"danger"} />
+                  <EuiIcon size="s" type="alert" color="danger" />
                 </EuiFlexItem>
                 <EuiFlexItem grow={false}>
-                  <EuiText size="xs" color={"danger"}>
+                  <EuiText size="xs" color="danger">
                     {"Failed:" + metadata.rollupMetadata.failureReason}
                   </EuiText>
                 </EuiFlexItem>
               </EuiFlexGroup>
             ) : metadata.rollupMetadata.status == "finished" ? (
-              <EuiFlexGroup gutterSize={"xs"}>
+              <EuiFlexGroup gutterSize="xs">
                 <EuiFlexItem grow={false}>
-                  <EuiIcon size={"s"} type={"check"} color={"success"} />
+                  <EuiIcon size="s" type="check" color="success" />
                 </EuiFlexItem>
                 <EuiFlexItem grow={false}>
-                  <EuiText size="xs" color={"secondary"}>
+                  <EuiText size="xs" color="secondary">
                     Complete
                   </EuiText>
                 </EuiFlexItem>
               </EuiFlexGroup>
             ) : metadata.rollupMetadata.status == "init" ? (
-              <EuiFlexGroup gutterSize={"xs"}>
+              <EuiFlexGroup gutterSize="xs">
                 <EuiFlexItem grow={false}>
-                  <EuiIcon size={"s"} type={"clock"} color={"primary"} />
+                  <EuiIcon size="s" type="clock" color="primary" />
                 </EuiFlexItem>
                 <EuiFlexItem grow={false}>
                   <EuiText size="xs" style={{ color: "#006BB4" }}>
@@ -79,23 +79,23 @@ const RollupStatus = ({ metadata }: RollupStatusProps) => (
                 </EuiFlexItem>
               </EuiFlexGroup>
             ) : metadata.rollupMetadata.status == "started" ? (
-              <EuiFlexGroup gutterSize={"xs"}>
+              <EuiFlexGroup gutterSize="xs">
                 <EuiFlexItem grow={false}>
-                  <EuiIcon size={"s"} type={"play"} color={"success"} />
+                  <EuiIcon size="s" type="play" color="success" />
                 </EuiFlexItem>
                 <EuiFlexItem grow={false}>
-                  <EuiText size="xs" color={"secondary"}>
+                  <EuiText size="xs" color="secondary">
                     Started
                   </EuiText>
                 </EuiFlexItem>
               </EuiFlexGroup>
             ) : metadata.rollupMetadata.status == "stopped" ? (
-              <EuiFlexGroup gutterSize={"xs"}>
+              <EuiFlexGroup gutterSize="xs">
                 <EuiFlexItem grow={false}>
-                  <EuiIcon size={"s"} type={"stop"} color={"subdued"} />
+                  <EuiIcon size="s" type="stop" color="subdued" />
                 </EuiFlexItem>
                 <EuiFlexItem grow={false}>
-                  <EuiText size="xs" color={"subdued"}>
+                  <EuiText size="xs" color="subdued">
                     Stopped
                   </EuiText>
                 </EuiFlexItem>
@@ -106,13 +106,13 @@ const RollupStatus = ({ metadata }: RollupStatusProps) => (
           </EuiText>
         </EuiFlexItem>
         <EuiFlexItem>
-          <EuiText size={"xs"}>
+          <EuiText size="xs">
             <dt>Rollup indexed</dt>
             <dd>{metadata == null || metadata.rollupMetadata == null ? "-" : metadata.rollupMetadata.stats.rollups_indexed}</dd>
           </EuiText>
         </EuiFlexItem>
         <EuiFlexItem>
-          <EuiText size={"xs"}>
+          <EuiText size="xs">
             <dt>Indexed time (ms)</dt>
             <dd>{metadata == null || metadata.rollupMetadata == null ? "-" : metadata.rollupMetadata.stats.index_time_in_millis}</dd>
           </EuiText>
@@ -120,13 +120,13 @@ const RollupStatus = ({ metadata }: RollupStatusProps) => (
         <EuiFlexItem></EuiFlexItem>
         <EuiFlexItem></EuiFlexItem>
         <EuiFlexItem>
-          <EuiText size={"xs"}>
+          <EuiText size="xs">
             <dt>Document processed</dt>
             <dd>{metadata == null || metadata.rollupMetadata == null ? "-" : metadata.rollupMetadata.stats.documents_processed}</dd>
           </EuiText>
         </EuiFlexItem>
         <EuiFlexItem>
-          <EuiText size={"xs"}>
+          <EuiText size="xs">
             <dt>Search time (ms)</dt>
             <dd>{metadata == null || metadata.rollupMetadata == null ? "-" : metadata.rollupMetadata.stats.search_time_in_millis}</dd>
           </EuiText>
@@ -134,13 +134,13 @@ const RollupStatus = ({ metadata }: RollupStatusProps) => (
         <EuiFlexItem></EuiFlexItem>
         <EuiFlexItem></EuiFlexItem>
         <EuiFlexItem>
-          <EuiText size={"xs"}>
+          <EuiText size="xs">
             <dt>Page processed</dt>
             <dd>{metadata == null || metadata.rollupMetadata == null ? "-" : metadata.rollupMetadata.stats.pages_processed}</dd>
           </EuiText>
         </EuiFlexItem>
       </EuiFlexGrid>
-      <EuiSpacer size={"s"} />
+      <EuiSpacer size="s" />
     </div>
   </ContentPanel>
 );

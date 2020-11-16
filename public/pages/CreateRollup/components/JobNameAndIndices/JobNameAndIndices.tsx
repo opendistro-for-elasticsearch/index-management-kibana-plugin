@@ -58,34 +58,34 @@ export default class JobNameAndIndices extends Component<JobNameAndIndicesProps>
         titleSize="m"
       >
         <div style={{ padding: "15px" }}>
-          <EuiSpacer size={"s"} />
+          <EuiSpacer size="s" />
           <EuiFlexGrid columns={3}>
             <EuiFlexItem>
-              <EuiText size={"xs"}>
+              <EuiText size="xs">
                 <dt>Name</dt>
                 <dd>{rollupId}</dd>
               </EuiText>
             </EuiFlexItem>
             <EuiFlexItem>
-              <EuiText size={"xs"}>
+              <EuiText size="xs">
                 <dt>Source Index</dt>
                 <dd>{sourceIndex[0].label}</dd>
               </EuiText>
             </EuiFlexItem>
             <EuiFlexItem>
-              <EuiText size={"xs"}>
+              <EuiText size="xs">
                 <dt>Target index</dt>
                 <dd>{targetIndex[0].label}</dd>
               </EuiText>
             </EuiFlexItem>
             <EuiFlexItem>
-              <EuiText size={"xs"}>
+              <EuiText size="xs">
                 <dt>Description</dt>
                 <dd>{description == "" ? "-" : description}</dd>
               </EuiText>
             </EuiFlexItem>
           </EuiFlexGrid>
-          <EuiSpacer size={"s"} />
+          <EuiSpacer size="s" />
         </div>
       </ContentPanel>
     );

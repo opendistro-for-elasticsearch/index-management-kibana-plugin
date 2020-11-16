@@ -18,9 +18,7 @@ import {
   EuiBasicTable,
   EuiButton,
   EuiButtonEmpty,
-  EuiComboBox,
   EuiComboBoxOptionOption,
-  EuiFieldSearch,
   EuiFlexGroup,
   EuiFlexItem,
   EuiForm,
@@ -51,9 +49,9 @@ import {
   Criteria,
 } from "@elastic/eui";
 import { AddFieldsColumns } from "../../utils/constants";
-import { FieldItem, MetricItem } from "../../models/interfaces";
 import { DEFAULT_PAGE_SIZE_OPTIONS } from "../../../Rollups/utils/constants";
 import { isNumericMapping } from "../../utils/helpers";
+import { FieldItem, MetricItem } from "../../../../../models/interfaces";
 
 interface MetricsCalculationProps {
   fieldsOption: FieldItem[];
@@ -76,8 +74,6 @@ interface MetricsCalculationState {
   isEnableOpen: boolean;
   metricsShown: MetricItem[];
 }
-
-const tempFieldTypeOptions = [{ label: "string" }, { label: "location" }, { label: "number" }, { label: "timestamp" }];
 
 export default class MetricsCalculation extends Component<MetricsCalculationProps, MetricsCalculationState> {
   constructor(props: MetricsCalculationProps) {
@@ -282,7 +278,7 @@ export default class MetricsCalculation extends Component<MetricsCalculationProp
         render: (all: boolean, item: MetricItem) => (
           <EuiForm>
             <EuiFormRow compressed={true}>
-              <EuiCheckbox id={"all"} checked={all} onChange={(e) => this.setChecked(e, "all", item)} />
+              <EuiCheckbox id="all" checked={all} onChange={(e) => this.setChecked(e, "all", item)} />
             </EuiFormRow>
           </EuiForm>
         ),
@@ -294,7 +290,7 @@ export default class MetricsCalculation extends Component<MetricsCalculationProp
         render: (min: boolean, item: MetricItem) => (
           <EuiForm>
             <EuiFormRow compressed={true}>
-              <EuiCheckbox id={"min"} checked={min} onChange={(e) => this.setChecked(e, "min", item)} />
+              <EuiCheckbox id="min" checked={min} onChange={(e) => this.setChecked(e, "min", item)} />
             </EuiFormRow>
           </EuiForm>
         ),
@@ -306,7 +302,7 @@ export default class MetricsCalculation extends Component<MetricsCalculationProp
         render: (max: boolean, item: MetricItem) => (
           <EuiForm>
             <EuiFormRow compressed={true}>
-              <EuiCheckbox id={"max"} checked={max} onChange={(e) => this.setChecked(e, "max", item)} />
+              <EuiCheckbox id="max" checked={max} onChange={(e) => this.setChecked(e, "max", item)} />
             </EuiFormRow>
           </EuiForm>
         ),
@@ -318,7 +314,7 @@ export default class MetricsCalculation extends Component<MetricsCalculationProp
         render: (sum: boolean, item: MetricItem) => (
           <EuiForm>
             <EuiFormRow compressed={true}>
-              <EuiCheckbox id={"sum"} checked={sum} onChange={(e) => this.setChecked(e, "sum", item)} />
+              <EuiCheckbox id="sum" checked={sum} onChange={(e) => this.setChecked(e, "sum", item)} />
             </EuiFormRow>
           </EuiForm>
         ),
@@ -330,7 +326,7 @@ export default class MetricsCalculation extends Component<MetricsCalculationProp
         render: (avg: boolean, item: MetricItem) => (
           <EuiForm>
             <EuiFormRow compressed={true}>
-              <EuiCheckbox id={"avg"} checked={avg} onChange={(e) => this.setChecked(e, "avg", item)} />
+              <EuiCheckbox id="avg" checked={avg} onChange={(e) => this.setChecked(e, "avg", item)} />
             </EuiFormRow>
           </EuiForm>
         ),
@@ -342,7 +338,7 @@ export default class MetricsCalculation extends Component<MetricsCalculationProp
         render: (value_count: boolean, item: MetricItem) => (
           <EuiForm>
             <EuiFormRow compressed={true}>
-              <EuiCheckbox id={"value_count"} checked={value_count} onChange={(e) => this.setChecked(e, "value_count", item)} />
+              <EuiCheckbox id="value_count" checked={value_count} onChange={(e) => this.setChecked(e, "value_count", item)} />
             </EuiFormRow>
           </EuiForm>
         ),
@@ -352,7 +348,7 @@ export default class MetricsCalculation extends Component<MetricsCalculationProp
         actions: [
           {
             render: (item: MetricItem) => {
-              return <EuiIcon type={"crossInACircleFilled"} onClick={() => this.deleteField(item)} />;
+              return <EuiIcon type="crossInACircleFilled" onClick={() => this.deleteField(item)} />;
             },
           },
         ],
@@ -479,31 +475,31 @@ export default class MetricsCalculation extends Component<MetricsCalculationProp
       <EuiPanel>
         <EuiFlexGroup style={{ padding: "0px 10px" }} justifyContent="spaceBetween">
           <EuiFlexItem>
-            <EuiFlexGroup gutterSize={"xs"}>
+            <EuiFlexGroup gutterSize="xs">
               <EuiFlexItem grow={false}>
-                <EuiTitle size={"m"}>
+                <EuiTitle size="m">
                   <h3>Additional metrics </h3>
                 </EuiTitle>
               </EuiFlexItem>
               <EuiFlexItem grow={false}>
-                <EuiText size={"m"} color={"subdued"}>
+                <EuiText size="m" color="subdued">
                   <h2>{` (${selectedMetrics.length})`}</h2>
                 </EuiText>
               </EuiFlexItem>
               <EuiFlexItem grow={false}>
-                <EuiTitle size={"m"}>
-                  <i>{" - optional "}</i>
+                <EuiTitle size="m">
+                  <i>" - optional "</i>
                 </EuiTitle>
               </EuiFlexItem>
             </EuiFlexGroup>
           </EuiFlexItem>
 
           <EuiFlexItem grow={false}>
-            <EuiFlexGroup gutterSize={"xs"}>
+            <EuiFlexGroup gutterSize="xs">
               <EuiFlexItem grow={false}>
                 <EuiPopover
                   button={
-                    <EuiButton iconType={"arrowDown"} iconSide={"right"} onClick={this.showDisable} disabled={selectedMetrics.length == 0}>
+                    <EuiButton iconType="arrowDown" iconSide="right" onClick={this.showDisable} disabled={selectedMetrics.length == 0}>
                       Disable all
                     </EuiButton>
                   }
@@ -518,7 +514,7 @@ export default class MetricsCalculation extends Component<MetricsCalculationProp
               <EuiFlexItem grow={false}>
                 <EuiPopover
                   button={
-                    <EuiButton iconType={"arrowDown"} iconSide={"right"} onClick={this.showEnable} disabled={selectedMetrics.length == 0}>
+                    <EuiButton iconType="arrowDown" iconSide="right" onClick={this.showEnable} disabled={selectedMetrics.length == 0}>
                       Enable all
                     </EuiButton>
                   }
@@ -550,7 +546,7 @@ export default class MetricsCalculation extends Component<MetricsCalculationProp
         <div style={{ paddingLeft: "10px" }}>
           {metricError != "" && (
             <Fragment>
-              <EuiCallOut color={"danger"}>
+              <EuiCallOut color="danger">
                 <p>{metricError}</p>
               </EuiCallOut>
               <EuiSpacer />
@@ -559,7 +555,7 @@ export default class MetricsCalculation extends Component<MetricsCalculationProp
 
           <EuiBasicTable
             items={metricsShown}
-            itemId={"source_field"}
+            itemId="source_field"
             rowHeader="source_field"
             columns={metricsColumns}
             hasActions={true}
@@ -581,7 +577,7 @@ export default class MetricsCalculation extends Component<MetricsCalculationProp
                 </EuiFlexGroup>
               </Fragment>
             }
-            tableLayout={"auto"}
+            tableLayout="auto"
             onChange={this.onTableChange}
             pagination={pagination}
             sorting={sorting}
@@ -595,15 +591,15 @@ export default class MetricsCalculation extends Component<MetricsCalculationProp
                 </EuiModalHeader>
 
                 <EuiModalBody>
-                  <EuiForm title={"Add fields"}>
+                  <EuiForm title="Add fields">
                     <EuiBasicTable
                       items={fieldsOption}
-                      itemId={"label"}
+                      itemId="label"
                       rowHeader="fieldName"
                       columns={AddFieldsColumns}
                       isSelectable={true}
                       selection={selection}
-                      tableLayout={"fixed"}
+                      tableLayout="fixed"
                     />
                   </EuiForm>
                 </EuiModalBody>

@@ -319,17 +319,17 @@ export default class AdvancedAggregation extends Component<AdvancedAggregationPr
         align: "center",
         render: (sequence, item: DimensionItem) => {
           return (
-            <EuiFlexGroup justifyContent={"spaceBetween"}>
+            <EuiFlexGroup justifyContent="spaceBetween">
               <EuiFlexItem grow={false}>
                 {item.sequence != 1 && (
-                  <EuiLink color={"primary"} onClick={() => this.moveUp(item)}>
+                  <EuiLink color="primary" onClick={() => this.moveUp(item)}>
                     Move up
                   </EuiLink>
                 )}
               </EuiFlexItem>
               <EuiFlexItem grow={false}>
                 {item.sequence != selectedDimensionField.length && (
-                  <EuiLink color={"primary"} onClick={() => this.moveDown(item)}>
+                  <EuiLink color="primary" onClick={() => this.moveDown(item)}>
                     Move down
                   </EuiLink>
                 )}
@@ -344,7 +344,7 @@ export default class AdvancedAggregation extends Component<AdvancedAggregationPr
         name: "Actions",
         align: "center",
         render: (sequence, item: DimensionItem) => {
-          return <EuiIcon type={"crossInACircleFilled"} onClick={() => this.deleteField(item)} />;
+          return <EuiIcon type="crossInACircleFilled" onClick={() => this.deleteField(item)} />;
         },
       },
     ];
@@ -353,22 +353,22 @@ export default class AdvancedAggregation extends Component<AdvancedAggregationPr
       <EuiPanel>
         <EuiFlexGroup style={{ padding: "0px 0px 0px 10px" }} justifyContent="spaceBetween">
           <EuiFlexItem>
-            <EuiFlexGroup gutterSize={"xs"} direction={"column"}>
+            <EuiFlexGroup gutterSize="xs" direction="column">
               <EuiFlexItem>
-                <EuiFlexGroup gutterSize={"xs"}>
+                <EuiFlexGroup gutterSize="xs">
                   <EuiFlexItem grow={false}>
-                    <EuiTitle size={"m"}>
+                    <EuiTitle size="m">
                       <h3>Additional aggregation </h3>
                     </EuiTitle>
                   </EuiFlexItem>
                   <EuiFlexItem grow={false}>
-                    <EuiText size={"m"} color={"subdued"}>
+                    <EuiText size="m" color="subdued">
                       <h2>{` (${selectedDimensionField.length})`}</h2>
                     </EuiText>
                   </EuiFlexItem>
                   <EuiFlexItem grow={false}>
-                    <EuiTitle size={"m"}>
-                      <i>{" - optional "}</i>
+                    <EuiTitle size="m">
+                      <i>" - optional "</i>
                     </EuiTitle>
                   </EuiFlexItem>
                 </EuiFlexGroup>
@@ -389,30 +389,30 @@ export default class AdvancedAggregation extends Component<AdvancedAggregationPr
                         aggregating by airline and then by destination is faster than aggregating by destination first.
                       </p>
                     </EuiCallOut>
-                    <EuiSpacer size={"s"} />
+                    <EuiSpacer size="s" />
                   </EuiFlexItem>
                 </Fragment>
               )}
             </EuiFlexGroup>
           </EuiFlexItem>
           <EuiFlexItem grow={false}>
-            <EuiFlexGroup direction={"column"} justifyContent="spaceBetween" style={{ padding: "0px 10px" }}>
+            <EuiFlexGroup direction="column" justifyContent="spaceBetween" style={{ padding: "0px 10px" }}>
               <EuiFlexItem grow={false}>
                 <EuiButton onClick={this.showModal}>Add fields</EuiButton>
               </EuiFlexItem>
-              <EuiFlexItem>{""}</EuiFlexItem>
+              <EuiFlexItem>""</EuiFlexItem>
             </EuiFlexGroup>
           </EuiFlexItem>
         </EuiFlexGroup>
 
-        <EuiSpacer size={"s"} />
+        <EuiSpacer size="s" />
         <EuiHorizontalRule margin="xs" />
         <div style={{ paddingLeft: "10px" }}>
           <EuiBasicTable
             items={dimensionsShown}
-            itemId={"sequence"}
+            itemId="sequence"
             columns={aggregationColumns}
-            tableLayout={"auto"}
+            tableLayout="auto"
             hasActions={true}
             onChange={this.onDimensionTableChange}
             pagination={dimensionPagination}
@@ -430,7 +430,7 @@ export default class AdvancedAggregation extends Component<AdvancedAggregationPr
                     <EuiButton onClick={this.showModal}>Add fields</EuiButton>
                   </EuiFlexItem>
                   <EuiFlexItem>
-                    <EuiSpacer size={"m"} />
+                    <EuiSpacer size="m" />
                   </EuiFlexItem>
                 </EuiFlexGroup>
               </Fragment>
@@ -445,16 +445,16 @@ export default class AdvancedAggregation extends Component<AdvancedAggregationPr
                 </EuiModalHeader>
 
                 <EuiModalBody>
-                  <EuiForm title={"Add fields"}>
+                  <EuiForm title="Add fields">
                     <EuiBasicTable
                       columns={AddFieldsColumns}
                       items={fieldsOption}
-                      itemId={"label"}
-                      rowHeader={"fieldName"}
-                      noItemsMessage={"No fields available"}
+                      itemId="label"
+                      rowHeader="fieldName"
+                      noItemsMessage="No fields available"
                       isSelectable={true}
                       selection={selection}
-                      tableLayout={"fixed"}
+                      tableLayout="fixed"
                     />
                   </EuiForm>
                 </EuiModalBody>

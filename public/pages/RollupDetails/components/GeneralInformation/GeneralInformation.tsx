@@ -59,52 +59,52 @@ export default class GeneralInformation extends Component<GeneralInformationProp
         titleSize="m"
       >
         <div style={{ paddingLeft: "10px" }}>
-          <EuiSpacer size={"s"} />
+          <EuiSpacer size="s" />
           <EuiFlexGrid columns={4}>
             <EuiFlexItem>
-              <EuiText size={"xs"}>
+              <EuiText size="xs">
                 <dt>Name</dt>
                 <dd>{rollupId}</dd>
               </EuiText>
             </EuiFlexItem>
             <EuiFlexItem>
-              <EuiText size={"xs"}>
+              <EuiText size="xs">
                 <dt>Source Index</dt>
                 <dd>{sourceIndex}</dd>
               </EuiText>
             </EuiFlexItem>
             <EuiFlexItem>
-              <EuiText size={"xs"}>
+              <EuiText size="xs">
                 <dt>Target index</dt>
                 <dd>{targetIndex}</dd>
               </EuiText>
             </EuiFlexItem>
             <EuiFlexItem>
-              <EuiText size={"xs"}>
+              <EuiText size="xs">
                 <dt>Schedule</dt>
                 <dd>{scheduleText}</dd>
               </EuiText>
             </EuiFlexItem>
             <EuiFlexItem>
-              <EuiText size={"xs"}>
+              <EuiText size="xs">
                 <dt>Description</dt>
                 <dd>{description == "" ? "-" : description}</dd>
               </EuiText>
             </EuiFlexItem>
             <EuiFlexItem>
-              <EuiText size={"xs"}>
+              <EuiText size="xs">
                 <dt>Last updated</dt>
                 <dd>{lastUpdated}</dd>
               </EuiText>
             </EuiFlexItem>
             <EuiFlexItem>
-              <EuiText size={"xs"}>
+              <EuiText size="xs">
                 <dt>Pages per execution</dt>
                 <dd>{pageSize}</dd>
               </EuiText>
             </EuiFlexItem>
           </EuiFlexGrid>
-          <EuiSpacer size={"s"} />
+          <EuiSpacer size="s" />
         </div>
       </ContentPanel>
     );

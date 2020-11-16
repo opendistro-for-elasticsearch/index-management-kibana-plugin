@@ -107,37 +107,37 @@ const metricsColumns = [
     field: "all",
     name: "All",
     align: "center",
-    render: (all: boolean) => all && <EuiIcon type={"check"} />,
+    render: (all: boolean) => all && <EuiIcon type="check" />,
   },
   {
     field: "min",
     name: "Min",
     align: "center",
-    render: (min: boolean) => min && <EuiIcon type={"check"} />,
+    render: (min: boolean) => min && <EuiIcon type="check" />,
   },
   {
     field: "max",
     name: "Max",
     align: "center",
-    render: (max: boolean) => max && <EuiIcon type={"check"} />,
+    render: (max: boolean) => max && <EuiIcon type="check" />,
   },
   {
     field: "sum",
     name: "Sum",
     align: "center",
-    render: (sum: boolean) => sum && <EuiIcon type={"check"} />,
+    render: (sum: boolean) => sum && <EuiIcon type="check" />,
   },
   {
     field: "avg",
     name: "Avg",
     align: "center",
-    render: (avg: boolean) => avg && <EuiIcon type={"check"} />,
+    render: (avg: boolean) => avg && <EuiIcon type="check" />,
   },
   {
     field: "value_count",
     name: "Value count",
     align: "center",
-    render: (value_count: boolean) => value_count && <EuiIcon type={"check"} />,
+    render: (value_count: boolean) => value_count && <EuiIcon type="check" />,
   },
 ];
 
@@ -264,40 +264,40 @@ export default class HistogramAndMetrics extends Component<HistogramAndMetricsPr
         titleSize="m"
       >
         <div style={{ padding: "15px" }}>
-          <EuiSpacer size={"xs"} />
+          <EuiSpacer size="xs" />
           <EuiText>
             <h3>Time aggregation</h3>
           </EuiText>
-          <EuiSpacer size={"s"} />
+          <EuiSpacer size="s" />
           <EuiFlexGrid columns={3}>
             <EuiFlexItem>
-              <EuiText size={"xs"}>
+              <EuiText size="xs">
                 <dt>Timestamp field</dt>
                 <dd>{timestamp.length ? timestamp[0].label : ""}</dd>
               </EuiText>
             </EuiFlexItem>
             <EuiFlexItem>
-              <EuiText size={"xs"}>
+              <EuiText size="xs">
                 <dt>Interval</dt>
                 <dd>{this.parseInterval(intervalType, intervalValue, timeunit)}</dd>
               </EuiText>
             </EuiFlexItem>
             <EuiFlexItem>
-              <EuiText size={"xs"}>
+              <EuiText size="xs">
                 <dt>Timezone</dt>
                 <dd>{timezone}</dd>
               </EuiText>
             </EuiFlexItem>
           </EuiFlexGrid>
-          <EuiSpacer size={"m"} />
-          <EuiFlexGroup gutterSize={"xs"}>
+          <EuiSpacer size="m" />
+          <EuiFlexGroup gutterSize="xs">
             <EuiFlexItem grow={false}>
               <EuiText>
                 <h3>Additional aggregations</h3>
               </EuiText>
             </EuiFlexItem>
             <EuiFlexItem grow={false}>
-              <EuiText color={"subdued"} textAlign={"left"}>
+              <EuiText color="subdued" textAlign="left">
                 <h3>{`(${selectedDimensionField.length})`}</h3>
               </EuiText>
             </EuiFlexItem>
@@ -308,10 +308,10 @@ export default class HistogramAndMetrics extends Component<HistogramAndMetricsPr
               <EuiPanel>
                 <EuiBasicTable
                   items={dimensionsShown}
-                  rowHeader={"sequence"}
+                  rowHeader="sequence"
                   columns={aggregationColumns}
-                  tableLayout={"auto"}
-                  noItemsMessage={"No fields added for aggregations"}
+                  tableLayout="auto"
+                  noItemsMessage="No fields added for aggregations"
                   pagination={dimensionPagination}
                   sorting={dimensionSorting}
                   onChange={this.onDimensionTableChange}
@@ -323,17 +323,17 @@ export default class HistogramAndMetrics extends Component<HistogramAndMetricsPr
               <dd>No fields added for aggregation</dd>
             </EuiText>
           )}
-          <EuiSpacer size={"m"} />
+          <EuiSpacer size="m" />
 
           <EuiSpacer />
-          <EuiFlexGroup gutterSize={"xs"}>
+          <EuiFlexGroup gutterSize="xs">
             <EuiFlexItem grow={false}>
               <EuiText>
                 <h3>Additional metrics</h3>
               </EuiText>
             </EuiFlexItem>
             <EuiFlexItem grow={false}>
-              <EuiText color={"subdued"} textAlign={"left"}>
+              <EuiText color="subdued" textAlign="left">
                 <h3>{`(${selectedMetrics.length})`}</h3>
               </EuiText>
             </EuiFlexItem>
@@ -345,11 +345,11 @@ export default class HistogramAndMetrics extends Component<HistogramAndMetricsPr
                   items={metricsShown}
                   rowHeader="source_field"
                   columns={metricsColumns}
-                  tableLayout={"auto"}
+                  tableLayout="auto"
                   pagination={pagination}
                   sorting={sorting}
                   onChange={this.onTableChange}
-                  noItemsMessage={"No fields added for metrics"}
+                  noItemsMessage="No fields added for metrics"
                 />
               </EuiPanel>
             </Fragment>
@@ -359,7 +359,7 @@ export default class HistogramAndMetrics extends Component<HistogramAndMetricsPr
             </EuiText>
           )}
 
-          <EuiSpacer size={"s"} />
+          <EuiSpacer size="s" />
         </div>
       </ContentPanel>
     );

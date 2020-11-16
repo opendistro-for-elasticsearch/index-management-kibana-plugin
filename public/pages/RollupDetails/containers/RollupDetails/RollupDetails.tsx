@@ -336,7 +336,7 @@ export default class RollupDetails extends Component<RollupDetailsProps, RollupD
       <div style={{ padding: "5px 50px" }}>
         <EuiFlexGroup style={{ padding: "0px 10px" }} justifyContent="spaceBetween" alignItems="center">
           <EuiFlexItem grow={false}>
-            <EuiTitle size={"m"}>
+            <EuiTitle size="m">
               <h2>{rollupId}</h2>
             </EuiTitle>
           </EuiFlexItem>
@@ -344,7 +344,7 @@ export default class RollupDetails extends Component<RollupDetailsProps, RollupD
             {enabled ? (
               <EuiHealth color="success">{"Enabled on " + lastUpdated}</EuiHealth>
             ) : (
-              <EuiHealth color="danger">{"Disabled"}</EuiHealth>
+              <EuiHealth color="danger">"Disabled"</EuiHealth>
             )}
           </EuiFlexItem>
 
@@ -364,7 +364,7 @@ export default class RollupDetails extends Component<RollupDetailsProps, RollupD
                 <EuiButton onClick={this.showModal}>View JSON</EuiButton>
               </EuiFlexItem>
               <EuiFlexItem grow={false}>
-                <EuiButton onClick={this.showDeleteModal} color={"danger"}>
+                <EuiButton onClick={this.showDeleteModal} color="danger">
                   Delete
                 </EuiButton>
               </EuiFlexItem>

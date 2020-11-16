@@ -83,28 +83,28 @@ export default class ScheduleRolesAndNotifications extends Component<ScheduleRol
         titleSize="m"
       >
         <div style={{ padding: "15px" }}>
-          <EuiSpacer size={"s"} />
+          <EuiSpacer size="s" />
           <EuiFlexGrid columns={4}>
             <EuiFlexItem>
-              <EuiText size={"xs"}>
+              <EuiText size="xs">
                 <dt>Enabled by default</dt>
                 <dd>{jobEnabledByDefault ? "Yes" : "No"}</dd>
               </EuiText>
             </EuiFlexItem>
             <EuiFlexItem>
-              <EuiText size={"xs"}>
+              <EuiText size="xs">
                 <dt>Schedule</dt>
                 <dd>{scheduleText}</dd>
               </EuiText>
             </EuiFlexItem>
             <EuiFlexItem>
-              <EuiText size={"xs"}>
+              <EuiText size="xs">
                 <dt>Pages per execution</dt>
                 <dd>{pageSize}</dd>
               </EuiText>
             </EuiFlexItem>
             <EuiFlexItem>
-              <EuiText size={"xs"}>
+              <EuiText size="xs">
                 <dt>Execution delay</dt>
                 <dd>
                   {isNaN(delayTime) || delayTime == undefined || delayTime == 0 ? "-" : delayTime + " " + parseTimeunit(delayTimeunit)}
@@ -112,7 +112,7 @@ export default class ScheduleRolesAndNotifications extends Component<ScheduleRol
               </EuiText>
             </EuiFlexItem>
           </EuiFlexGrid>
-          <EuiSpacer size={"s"} />
+          <EuiSpacer size="s" />
         </div>
       </ContentPanel>
     );

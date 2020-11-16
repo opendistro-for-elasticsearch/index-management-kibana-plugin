@@ -153,7 +153,7 @@ export default class Schedule extends Component<ScheduleProps> {
           <EuiSpacer size="m" />
           {!isEdit && isRecurring(recurringJob, onChangeRecurringJob)}
 
-          <EuiFormRow label={"Rollup execution frequency"}>
+          <EuiFormRow label="Rollup execution frequency">
             <EuiSelect
               id="recurringDefinition"
               options={[
@@ -173,7 +173,7 @@ export default class Schedule extends Component<ScheduleProps> {
               <EuiFormRow label="Define by cron expression">
                 <EuiTextArea value={cronExpression} onChange={onChangeCron} compressed={true} />
               </EuiFormRow>
-              <EuiFormRow label="Timezone" helpText={"A day starts from 00:00:00 in the specified timezone."}>
+              <EuiFormRow label="Timezone" helpText="A day starts from 00:00:00 in the specified timezone.">
                 <EuiSelect id="timezone" options={timezones} value={cronTimezone} onChange={onChangeCronTimezone} />
               </EuiFormRow>
             </React.Fragment>
@@ -183,21 +183,21 @@ export default class Schedule extends Component<ScheduleProps> {
 
           <EuiFormRow
             label="Page per execution"
-            helpText={"The number of pages every execution processes. A larger number means faster execution and higher costs on memory."}
+            helpText="The number of pages every execution processes. A larger number means faster execution and higher costs on memory."
           >
-            <EuiFieldNumber min={1} placeholder={"1000"} value={pageSize} onChange={onChangePage} />
+            <EuiFieldNumber min={1} placeholder="1000" value={pageSize} onChange={onChangePage} />
           </EuiFormRow>
           <EuiSpacer size="m" />
           <EuiFlexGroup style={{ maxWidth: 400 }}>
             <EuiFlexItem grow={false} style={{ width: 200 }}>
-              <EuiFlexGroup gutterSize={"xs"}>
+              <EuiFlexGroup gutterSize="xs">
                 <EuiFlexItem grow={false}>
-                  <EuiText size={"xs"}>
+                  <EuiText size="xs">
                     <h4>Execution delay</h4>
                   </EuiText>
                 </EuiFlexItem>
                 <EuiFlexItem>
-                  <EuiText size={"xs"} color={"subdued"}>
+                  <EuiText size="xs" color="subdued">
                     <i> - optional</i>
                   </EuiText>
                 </EuiFlexItem>
