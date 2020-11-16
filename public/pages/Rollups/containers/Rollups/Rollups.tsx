@@ -359,6 +359,7 @@ export default class Rollups extends Component<RollupsProps, RollupsState> {
         key="Delete"
         icon="empty"
         disabled={selectedItems.length == 0}
+        data-test-subj="DeleteButton"
         onClick={() => {
           this.closePopover();
           this.showDeleteModal();
