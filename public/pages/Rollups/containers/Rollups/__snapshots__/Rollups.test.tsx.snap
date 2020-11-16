@@ -1,0 +1,515 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`<Rollups /> spec renders the component 1`] = `
+<div
+  style="padding: 25px 25px;"
+>
+  <div
+    class="euiPanel euiPanel--paddingMedium"
+    style="padding-left: 0px; padding-right: 0px;"
+  >
+    <div
+      class="euiFlexGroup euiFlexGroup--gutterLarge euiFlexGroup--alignItemsCenter euiFlexGroup--justifyContentSpaceBetween euiFlexGroup--directionRow euiFlexGroup--responsive"
+      style="padding: 0px 10px;"
+    >
+      <div
+        class="euiFlexItem"
+      >
+        <h3
+          class="euiTitle euiTitle--medium"
+        >
+          Rollup jobs (0)
+        </h3>
+      </div>
+      <div
+        class="euiFlexItem euiFlexItem--flexGrowZero"
+      >
+        <div
+          class="euiFlexGroup euiFlexGroup--gutterSmall euiFlexGroup--alignItemsCenter euiFlexGroup--directionRow euiFlexGroup--responsive"
+        >
+          <div
+            class="euiFlexItem euiFlexItem--flexGrowZero"
+          >
+            <button
+              class="euiButton euiButton--primary"
+              disabled=""
+              type="button"
+            >
+              <span
+                class="euiButton__content"
+              >
+                <span
+                  class="euiButton__text"
+                >
+                  Disable
+                </span>
+              </span>
+            </button>
+          </div>
+          <div
+            class="euiFlexItem euiFlexItem--flexGrowZero"
+          >
+            <button
+              class="euiButton euiButton--primary"
+              disabled=""
+              type="button"
+            >
+              <span
+                class="euiButton__content"
+              >
+                <span
+                  class="euiButton__text"
+                >
+                  Enable
+                </span>
+              </span>
+            </button>
+          </div>
+          <div
+            class="euiFlexItem euiFlexItem--flexGrowZero"
+          >
+            <div
+              class="euiPopover euiPopover--anchorDownLeft"
+              id="action"
+            >
+              <div
+                class="euiPopover__anchor"
+              >
+                <button
+                  class="euiButton euiButton--primary euiButton--iconRight"
+                  disabled=""
+                  type="button"
+                >
+                  <span
+                    class="euiButton__content"
+                  >
+                    EuiIconMock
+                    <span
+                      class="euiButton__text"
+                    >
+                      Actions
+                    </span>
+                  </span>
+                </button>
+              </div>
+            </div>
+          </div>
+          <div
+            class="euiFlexItem euiFlexItem--flexGrowZero"
+          >
+            <button
+              class="euiButton euiButton--primary euiButton--fill"
+              data-test-subj="createRollupButton"
+              type="button"
+            >
+              <span
+                class="euiButton__content"
+              >
+                <span
+                  class="euiButton__text"
+                >
+                  Create rollup job
+                </span>
+              </span>
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div
+      style="padding: initial;"
+    >
+      <div
+        class="euiFlexGroup euiFlexGroup--gutterLarge euiFlexGroup--directionRow euiFlexGroup--responsive"
+        style="padding: 0px 5px;"
+      >
+        <div
+          class="euiFlexItem"
+        >
+          <div
+            class="euiFormControlLayout euiFormControlLayout--fullWidth"
+          >
+            <div
+              class="euiFormControlLayout__childrenWrapper"
+            >
+              <input
+                class="euiFieldSearch euiFieldSearch--fullWidth"
+                placeholder="Search"
+                type="search"
+                value=""
+              />
+              <div
+                class="euiFormControlLayoutIcons"
+              >
+                <span
+                  class="euiFormControlLayoutCustomIcon"
+                >
+                  EuiIconMock
+                </span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <hr
+        class="euiHorizontalRule euiHorizontalRule--full euiHorizontalRule--marginXSmall"
+      />
+      <div
+        class="euiBasicTable"
+      >
+        <div>
+          <div
+            class="euiTableHeaderMobile"
+          >
+            <div
+              class="euiFlexGroup euiFlexGroup--gutterLarge euiFlexGroup--alignItemsBaseline euiFlexGroup--justifyContentSpaceBetween euiFlexGroup--directionRow"
+            >
+              <div
+                class="euiFlexItem euiFlexItem--flexGrowZero"
+              >
+                <div
+                  class="euiCheckbox"
+                >
+                  <input
+                    aria-label="Select all rows"
+                    class="euiCheckbox__input"
+                    disabled=""
+                    id="_selection_column-checkbox_some_html_id"
+                    type="checkbox"
+                  />
+                  <div
+                    class="euiCheckbox__square"
+                  />
+                  <label
+                    class="euiCheckbox__label"
+                    for="_selection_column-checkbox_some_html_id"
+                  >
+                    Select all rows
+                  </label>
+                </div>
+              </div>
+              <div
+                class="euiFlexItem euiFlexItem--flexGrowZero"
+              >
+                <div
+                  class="euiTableSortMobile"
+                >
+                  <div
+                    class="euiPopover euiPopover--anchorDownRight"
+                  >
+                    <div
+                      class="euiPopover__anchor"
+                    >
+                      <button
+                        class="euiButtonEmpty euiButtonEmpty--primary euiButtonEmpty--xSmall euiButtonEmpty--iconRight euiButtonEmpty--flushRight"
+                        type="button"
+                      >
+                        <span
+                          class="euiButtonEmpty__content"
+                        >
+                          EuiIconMock
+                          <span
+                            class="euiButtonEmpty__text"
+                          >
+                            Sorting
+                          </span>
+                        </span>
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <table
+            class="euiTable euiTable--responsive euiTable--auto"
+            id="some_html_id"
+            tabindex="-1"
+          >
+            <caption
+              class="euiScreenReaderOnly euiTableCaption"
+            />
+            <thead>
+              <tr>
+                <th
+                  class="euiTableHeaderCellCheckbox"
+                  scope="col"
+                >
+                  <div
+                    class="euiTableCellContent"
+                  >
+                    <div
+                      class="euiCheckbox euiCheckbox--inList euiCheckbox--noLabel"
+                    >
+                      <input
+                        aria-label="Select all rows"
+                        class="euiCheckbox__input"
+                        data-test-subj="checkboxSelectAll"
+                        disabled=""
+                        id="_selection_column-checkbox_some_html_id"
+                        type="checkbox"
+                      />
+                      <div
+                        class="euiCheckbox__square"
+                      />
+                    </div>
+                  </div>
+                </th>
+                <th
+                  aria-live="polite"
+                  aria-sort="none"
+                  class="euiTableHeaderCell"
+                  data-test-subj="tableHeaderCell__id_0"
+                  role="columnheader"
+                  scope="col"
+                >
+                  <button
+                    class="euiTableHeaderButton"
+                    data-test-subj="tableHeaderSortButton"
+                    type="button"
+                  >
+                    <span
+                      class="euiTableCellContent"
+                    >
+                      <span
+                        class="euiTableCellContent__text"
+                        title="Name"
+                      >
+                        Name
+                      </span>
+                      <span
+                        class="euiScreenReaderOnly"
+                      >
+                        Click to sort in ascending order
+                      </span>
+                    </span>
+                  </button>
+                </th>
+                <th
+                  aria-live="polite"
+                  aria-sort="none"
+                  class="euiTableHeaderCell"
+                  data-test-subj="tableHeaderCell_rollup.rollup.source_index_1"
+                  role="columnheader"
+                  scope="col"
+                >
+                  <button
+                    class="euiTableHeaderButton"
+                    data-test-subj="tableHeaderSortButton"
+                    type="button"
+                  >
+                    <span
+                      class="euiTableCellContent"
+                    >
+                      <span
+                        class="euiTableCellContent__text"
+                        title="Source index"
+                      >
+                        Source index
+                      </span>
+                      <span
+                        class="euiScreenReaderOnly"
+                      >
+                        Click to sort in ascending order
+                      </span>
+                    </span>
+                  </button>
+                </th>
+                <th
+                  aria-live="polite"
+                  aria-sort="none"
+                  class="euiTableHeaderCell"
+                  data-test-subj="tableHeaderCell_rollup.rollup.target_index_2"
+                  role="columnheader"
+                  scope="col"
+                >
+                  <button
+                    class="euiTableHeaderButton"
+                    data-test-subj="tableHeaderSortButton"
+                    type="button"
+                  >
+                    <span
+                      class="euiTableCellContent"
+                    >
+                      <span
+                        class="euiTableCellContent__text"
+                        title="Target index"
+                      >
+                        Target index
+                      </span>
+                      <span
+                        class="euiScreenReaderOnly"
+                      >
+                        Click to sort in ascending order
+                      </span>
+                    </span>
+                  </button>
+                </th>
+                <th
+                  aria-live="polite"
+                  aria-sort="none"
+                  class="euiTableHeaderCell"
+                  data-test-subj="tableHeaderCell_rollup.rollup.enabled_3"
+                  role="columnheader"
+                  scope="col"
+                >
+                  <button
+                    class="euiTableHeaderButton"
+                    data-test-subj="tableHeaderSortButton"
+                    type="button"
+                  >
+                    <span
+                      class="euiTableCellContent"
+                    >
+                      <span
+                        class="euiTableCellContent__text"
+                        title="Job state"
+                      >
+                        Job state
+                      </span>
+                      <span
+                        class="euiScreenReaderOnly"
+                      >
+                        Click to sort in ascending order
+                      </span>
+                    </span>
+                  </button>
+                </th>
+                <th
+                  aria-live="polite"
+                  aria-sort="none"
+                  class="euiTableHeaderCell"
+                  data-test-subj="tableHeaderCell_rollup.rollup.continuous_4"
+                  role="columnheader"
+                  scope="col"
+                >
+                  <button
+                    class="euiTableHeaderButton"
+                    data-test-subj="tableHeaderSortButton"
+                    type="button"
+                  >
+                    <span
+                      class="euiTableCellContent"
+                    >
+                      <span
+                        class="euiTableCellContent__text"
+                        title="Continuous"
+                      >
+                        Continuous
+                      </span>
+                      <span
+                        class="euiScreenReaderOnly"
+                      >
+                        Click to sort in ascending order
+                      </span>
+                    </span>
+                  </button>
+                </th>
+                <th
+                  aria-live="polite"
+                  aria-sort="none"
+                  class="euiTableHeaderCell"
+                  data-test-subj="tableHeaderCell_rollup.metadata.rollup_metadata.continuous_5"
+                  role="columnheader"
+                  scope="col"
+                >
+                  <button
+                    class="euiTableHeaderButton"
+                    data-test-subj="tableHeaderSortButton"
+                    type="button"
+                  >
+                    <span
+                      class="euiTableCellContent"
+                    >
+                      <span
+                        class="euiTableCellContent__text"
+                        title="Next rollup window"
+                      >
+                        Next rollup window
+                      </span>
+                      <span
+                        class="euiScreenReaderOnly"
+                      >
+                        Click to sort in ascending order
+                      </span>
+                    </span>
+                  </button>
+                </th>
+                <th
+                  aria-live="polite"
+                  aria-sort="none"
+                  class="euiTableHeaderCell"
+                  data-test-subj="tableHeaderCell_rollup.metadata_6"
+                  role="columnheader"
+                  scope="col"
+                >
+                  <button
+                    class="euiTableHeaderButton"
+                    data-test-subj="tableHeaderSortButton"
+                    type="button"
+                  >
+                    <span
+                      class="euiTableCellContent"
+                    >
+                      <span
+                        class="euiTableCellContent__text"
+                        title="Rollup job status"
+                      >
+                        Rollup job status
+                      </span>
+                      <span
+                        class="euiScreenReaderOnly"
+                      >
+                        Click to sort in ascending order
+                      </span>
+                    </span>
+                  </button>
+                </th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr
+                class="euiTableRow"
+              >
+                <td
+                  class="euiTableRowCell euiTableRowCell--isMobileFullWidth"
+                  colspan="8"
+                >
+                  <div
+                    class="euiTableCellContent euiTableCellContent--alignCenter"
+                  >
+                    <span
+                      class="euiTableCellContent__text"
+                    >
+                      <div
+                        class="euiEmptyPrompt"
+                        style="max-width: 45em;"
+                      >
+                        <span
+                          class="euiTextColor euiTextColor--subdued"
+                        >
+                          <div
+                            class="euiText euiText--medium"
+                          >
+                            <div
+                              class="euiText euiText--medium"
+                            >
+                              <p>
+                                Loading rollup jobs...
+                              </p>
+                            </div>
+                          </div>
+                        </span>
+                      </div>
+                    </span>
+                  </div>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+`;

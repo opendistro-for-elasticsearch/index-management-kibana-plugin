@@ -64,10 +64,10 @@ interface AdvancedAggregationState {
   allSelectedFields: FieldItem[];
   fieldsShown: FieldItem[];
   dimensionsShown: DimensionItem[];
-  dimension_from: number;
-  dimension_size: number;
-  dimension_sortField: string;
-  dimension_sortDirection: string;
+  dimensionFrom: number;
+  dimensionSize: number;
+  dimensionSortField: string;
+  dimensionSortDirection: string;
 }
 
 export default class AdvancedAggregation extends Component<AdvancedAggregationProps, AdvancedAggregationState> {
@@ -80,10 +80,10 @@ export default class AdvancedAggregation extends Component<AdvancedAggregationPr
       fieldsShown: fieldsOption.slice(0, 10),
       dimensionsShown: selectedDimensionField.slice(0, 10),
       selectedFields: [],
-      dimension_from: 0,
-      dimension_size: 10,
-      dimension_sortField: "sequence",
-      dimension_sortDirection: "desc",
+      dimensionFrom: 0,
+      dimensionSize: 10,
+      dimensionSortField: "sequence",
+      dimensionSortDirection: "desc",
     };
   }
 
@@ -97,7 +97,7 @@ export default class AdvancedAggregation extends Component<AdvancedAggregationPr
 
   onClickAdd() {
     const { onDimensionSelectionChange, selectedDimensionField } = this.props;
-    const { selectedFields, allSelectedFields, dimension_from, dimension_size } = this.state;
+    const { selectedFields, allSelectedFields, dimensionFrom, dimensionSize } = this.state;
     //Clone selectedDimensionField
     let updatedDimensions = Array.from(selectedDimensionField);
     const toAddFields = Array.from(selectedFields);
@@ -129,7 +129,7 @@ export default class AdvancedAggregation extends Component<AdvancedAggregationPr
     const result = updatedDimensions.length ? updatedDimensions.concat(toAdd) : toAdd;
     onDimensionSelectionChange(result);
     this.setState({ allSelectedFields: allSelectedFields.concat(toAddFields) });
-    this.setState({ dimensionsShown: result.slice(dimension_from, dimension_from + dimension_size) });
+    this.setState({ dimensionsShown: result.slice(dimensionFrom, dimensionFrom + dimensionSize) });
     this.forceUpdate();
   }
 
@@ -140,13 +140,13 @@ export default class AdvancedAggregation extends Component<AdvancedAggregationPr
       return;
     }
     const { onDimensionSelectionChange } = this.props;
-    const { dimension_size, dimension_from } = this.state;
+    const { dimensionSize: dimensionSize, dimensionFrom } = this.state;
     let dimensionNum;
     for (dimensionNum = 0; dimensionNum < items.length; dimensionNum++) {
       items[dimensionNum].sequence = dimensionNum + 1;
     }
     onDimensionSelectionChange(items);
-    this.setState({ dimensionsShown: items.slice(dimension_from, dimension_from + dimension_size) });
+    this.setState({ dimensionsShown: items.slice(dimensionFrom, dimensionFrom + dimensionSize) });
     this.forceUpdate();
   }
 
@@ -217,10 +217,10 @@ export default class AdvancedAggregation extends Component<AdvancedAggregationPr
     const { field: sortField, direction: sortDirection } = sort;
     const { selectedDimensionField } = this.props;
     this.setState({
-      dimension_from: page * size,
-      dimension_size: size,
-      dimension_sortField: sortField,
-      dimension_sortDirection: sortDirection,
+      dimensionFrom: page * size,
+      dimensionSize: size,
+      dimensionSortField: sortField,
+      dimensionSortDirection: sortDirection,
       dimensionsShown: selectedDimensionField.slice(page * size, page * size + size),
     });
   };
@@ -230,25 +230,25 @@ export default class AdvancedAggregation extends Component<AdvancedAggregationPr
     const {
       allSelectedFields,
       isModalVisible,
-      dimension_from,
-      dimension_size,
-      dimension_sortDirection,
-      dimension_sortField,
+      dimensionFrom,
+      dimensionSize,
+      dimensionSortDirection,
+      dimensionSortField,
       dimensionsShown,
     } = this.state;
-    const dimension_page = Math.floor(dimension_from / dimension_size);
+    const dimensionPage = Math.floor(dimensionFrom / dimensionSize);
 
-    const dimension_pagination: Pagination = {
-      pageIndex: dimension_page,
-      pageSize: dimension_size,
+    const dimensionPagination: Pagination = {
+      pageIndex: dimensionPage,
+      pageSize: dimensionSize,
       pageSizeOptions: DEFAULT_PAGE_SIZE_OPTIONS,
       totalItemCount: selectedDimensionField.length,
     };
 
-    const dimension_sorting: EuiTableSortingType<DimensionItem> = {
+    const dimensionSorting: EuiTableSortingType<DimensionItem> = {
       sort: {
-        direction: dimension_sortDirection,
-        field: dimension_sortField,
+        direction: dimensionSortDirection,
+        field: dimensionSortField,
       },
     };
 
@@ -322,14 +322,14 @@ export default class AdvancedAggregation extends Component<AdvancedAggregationPr
             <EuiFlexGroup justifyContent={"spaceBetween"}>
               <EuiFlexItem grow={false}>
                 {item.sequence != 1 && (
-                  <EuiLink color={"primary"} onClick={() => this.moveUp(item)} disabled={item.sequence == 1}>
+                  <EuiLink color={"primary"} onClick={() => this.moveUp(item)}>
                     Move up
                   </EuiLink>
                 )}
               </EuiFlexItem>
               <EuiFlexItem grow={false}>
                 {item.sequence != selectedDimensionField.length && (
-                  <EuiLink color={"primary"} onClick={() => this.moveDown(item)} disabled={item.sequence == selectedDimensionField.length}>
+                  <EuiLink color={"primary"} onClick={() => this.moveDown(item)}>
                     Move down
                   </EuiLink>
                 )}
@@ -415,8 +415,8 @@ export default class AdvancedAggregation extends Component<AdvancedAggregationPr
             tableLayout={"auto"}
             hasActions={true}
             onChange={this.onDimensionTableChange}
-            pagination={dimension_pagination}
-            sorting={dimension_sorting}
+            pagination={dimensionPagination}
+            sorting={dimensionSorting}
             noItemsMessage={
               <Fragment>
                 <EuiSpacer />

@@ -156,6 +156,8 @@ export default function ismPlugin(Client: any, config: any, components: any) {
     method: "POST",
   });
 
+  // TODO add new APIs as they are being implemented: status, stop, start
+
   ism.getRollup = ca({
     url: {
       fmt: `${API.ROLLUP_JOBS_BASE}/<%=rollupId%>`,
@@ -166,7 +168,6 @@ export default function ismPlugin(Client: any, config: any, components: any) {
         },
       },
     },
-    needBody: true,
     method: "GET",
   });
 

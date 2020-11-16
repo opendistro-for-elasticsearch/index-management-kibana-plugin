@@ -347,6 +347,7 @@ export default class Rollups extends Component<RollupsProps, RollupsState> {
         key="Edit"
         icon="empty"
         disabled={selectedItems.length != 1}
+        data-test-subj="EditButton"
         onClick={() => {
           this.closePopover();
           this.onClickEdit();
@@ -528,7 +529,7 @@ export default class Rollups extends Component<RollupsProps, RollupsState> {
                 </EuiPopover>
               </EuiFlexItem>
               <EuiFlexItem grow={false}>
-                <EuiButton onClick={this.onClickCreate} fill={true}>
+                <EuiButton onClick={this.onClickCreate} fill={true} data-test-subj="createRollupButton">
                   Create rollup job
                 </EuiButton>
               </EuiFlexItem>

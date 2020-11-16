@@ -148,7 +148,7 @@ export default class RollupDetails extends Component<RollupDetailsProps, RollupD
           delayTime: response.response.rollup.delay,
           pageSize: response.response.rollup.page_size,
           rollupJSON: newJSON,
-          lastUpdated: renderTime(response.response.rollup.last_updated_time),
+          lastUpdated: renderTime(response.response.rollup.lastUpdatedTime),
           timestamp: response.response.rollup.dimensions[0].date_histogram.source_field,
           histogramInterval: response.response.rollup.dimensions[0].date_histogram.fixed_interval
             ? response.response.rollup.dimensions[0].date_histogram.fixed_interval
@@ -190,7 +190,7 @@ export default class RollupDetails extends Component<RollupDetailsProps, RollupD
     const result = sourceArray.map((dimension: RollupDimensionItem) => ({
       sequence: dimensions.indexOf(dimension),
       aggregationMethod: dimension.histogram == null ? "terms" : "histogram",
-      field: dimension.histogram == null ? { label: dimension.terms?.source_field } : { label: dimension.histogram?.source_field },
+      field: dimension.histogram == null ? { label: dimension.terms?.sourceField } : { label: dimension.histogram?.sourceField },
       interval: dimension.histogram == null ? null : dimension.histogram?.interval,
     }));
     return result;
@@ -199,7 +199,7 @@ export default class RollupDetails extends Component<RollupDetailsProps, RollupD
   parseMetric = (metrics: RollupMetricItem[]): MetricItem[] => {
     if (metrics.length == 0) return [];
     const result = metrics.map((metric) => ({
-      source_field: metric.source_field,
+      source_field: metric.sourceField,
       all: false,
       min: metric.metrics.filter((item) => item.min != null).length > 0,
       max: metric.metrics.filter((item) => item.max != null).length > 0,

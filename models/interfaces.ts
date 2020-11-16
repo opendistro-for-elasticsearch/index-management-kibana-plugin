@@ -14,7 +14,6 @@
  */
 
 // TODO: Backend has PR out to change this model, this needs to be updated once that goes through
-import { MetricItem } from "../public/pages/CreateRollup/models/interfaces";
 
 export interface ManagedIndexMetaData {
   index: string;
@@ -82,12 +81,12 @@ export interface State {
 
 export interface Rollup {
   continuous: boolean;
-  delay?: number;
-  description?: string;
+  delay: number | null;
+  description: string;
   dimensions: [
     {
       date_histogram: {
-        source_field: string;
+        sourceField: string;
         fixed_interval?: string;
         calendar_interval?: string;
         timezone: string;
@@ -95,45 +94,64 @@ export interface Rollup {
     }
   ];
   enabled: boolean;
-  enabled_time?: number;
-  last_updated_time?: number;
-  metadata_id?: number;
-  metrics?: MetricItem[];
+  enabled_time: number | null;
+  lastUpdatedTime: number;
+  metadata_id: number | null;
+  metrics: MetricItem[];
   page_size: number;
-  schedule: {
-    interval?: {
-      start_time?: number;
-      period: number;
-      unit: string;
-    };
-    cron?: {
-      expression: string;
-      timezone: string;
-    };
-  };
+  schedule: IntervalSchedule | CronSchedule;
   schema_version: number;
   source_index: string;
   target_index: string;
-  metadata?: RollupMetadata;
 }
 
 export interface RollupMetadata {
-  metadata_id: string;
-  rollup_metadata?: {
-    rollup_id?: string;
-    failure_reason?: string;
-    last_updated_time?: number;
-    continuous?: {
-      next_window_start_time: number;
-      next_window_end_time: number;
-    };
-    status?: string;
-    stats?: {
-      pages_processed?: number;
-      documents_processed?: number;
-      rollups_indexed?: number;
-      index_time_in_millis?: number;
-      search_time_in_millis?: number;
+  metadataId: string;
+  rollupMetadata: {
+    id: string;
+    seqNo: number;
+    primaryTerm: number;
+    rollupId: string;
+    afterKey: Map<String, any> | null;
+    lastUpdatedTime: number;
+    continuous: {
+      nextWindowStartTime: number;
+      nextWindowEndTime: number;
+    } | null;
+    status: string;
+    failureReason: string | null;
+    stats: {
+      pagesProcessed: number | null;
+      documentsProcessed: number | null;
+      rollupsIndexed: number | null;
+      indexTimeInMillis: number | null;
+      searchTimeInMillis: number | null;
     };
   };
+}
+
+export interface IntervalSchedule {
+  startTime: number | null;
+  period: number;
+  unit: string;
+}
+
+export interface CronSchedule {
+  expression: string;
+  timezone: string;
+}
+
+export interface MetricItem {
+  source_field: FieldItem;
+  all: boolean;
+  min: boolean;
+  max: boolean;
+  sum: boolean;
+  avg: boolean;
+  value_count: boolean;
+}
+
+export interface FieldItem {
+  label: string;
+  type?: string;
 }

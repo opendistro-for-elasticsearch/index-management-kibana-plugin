@@ -13,10 +13,7 @@
  * permissions and limitations under the License.
  */
 
-export interface FieldItem {
-  label: string;
-  type?: string;
-}
+import { FieldItem } from "../../../../models/interfaces";
 
 export interface DimensionItem {
   sequence: number;
@@ -25,38 +22,28 @@ export interface DimensionItem {
   interval?: number;
 }
 
-export interface MetricItem {
-  source_field: FieldItem;
-  all: boolean;
-  min: boolean;
-  max: boolean;
-  sum: boolean;
-  avg: boolean;
-  value_count: boolean;
-}
-
 //From backend
 export interface RollupDimensionItem {
-  date_histogram?: {
-    fixed_interval?: string;
-    calendar_interval?: string;
-    source_field: string;
-    target_field: string;
+  dateHistogram: {
+    fixedInterval?: string;
+    calendarInterval?: string;
+    sourceField: string;
+    targetField: string;
     timezone: string;
   };
   terms?: {
-    source_field: string;
-    target_field: string;
+    sourceField: string;
+    targetField: string;
   };
   histogram?: {
-    source_field: string;
-    target_field: string;
+    sourceField: string;
+    targetField: string;
     interval: number;
   };
 }
 
 export interface RollupMetricItem {
-  source_field: string;
+  sourceField: string;
   metrics: [
     {
       min?: Object;

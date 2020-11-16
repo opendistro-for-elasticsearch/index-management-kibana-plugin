@@ -17,11 +17,10 @@ import { Direction } from "@elastic/eui";
 import { Rollup } from "../../../../models/interfaces";
 
 export interface RollupItem {
-  _id: string;
-  _version: number;
-  _seq_no: number;
-  _primary_term: number;
-  rollup: Rollup; // only dumped to view as JSON as of now, don't need to type
+  id: string;
+  seqNo: number;
+  primaryTerm: number;
+  rollup: Rollup;
 }
 
 export interface RollupQueryParams {
