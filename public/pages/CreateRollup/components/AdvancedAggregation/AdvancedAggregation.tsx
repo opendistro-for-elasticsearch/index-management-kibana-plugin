@@ -368,7 +368,7 @@ export default class AdvancedAggregation extends Component<AdvancedAggregationPr
                   </EuiFlexItem>
                   <EuiFlexItem grow={false}>
                     <EuiTitle size="m">
-                      <i>" - optional "</i>
+                      <i> - optional </i>
                     </EuiTitle>
                   </EuiFlexItem>
                 </EuiFlexGroup>
@@ -400,7 +400,7 @@ export default class AdvancedAggregation extends Component<AdvancedAggregationPr
               <EuiFlexItem grow={false}>
                 <EuiButton onClick={this.showModal}>Add fields</EuiButton>
               </EuiFlexItem>
-              <EuiFlexItem>""</EuiFlexItem>
+              <EuiFlexItem> </EuiFlexItem>
             </EuiFlexGroup>
           </EuiFlexItem>
         </EuiFlexGroup>

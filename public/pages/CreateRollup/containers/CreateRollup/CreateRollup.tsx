@@ -45,10 +45,6 @@ interface CreateRollupProps extends RouteComponentProps {
 }
 
 export default class CreateRollup extends Component<CreateRollupProps> {
-  constructor(props: CreateRollupProps) {
-    super(props);
-  }
-
   render() {
     if (this.props.currentStep !== 1) {
       return null;

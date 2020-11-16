@@ -35,10 +35,6 @@ interface ScheduleRolesAndNotificationsProps {
 }
 
 export default class ScheduleRolesAndNotifications extends Component<ScheduleRolesAndNotificationsProps> {
-  constructor(props: ScheduleRolesAndNotificationsProps) {
-    super(props);
-  }
-
   render() {
     const {
       onChangeStep,
