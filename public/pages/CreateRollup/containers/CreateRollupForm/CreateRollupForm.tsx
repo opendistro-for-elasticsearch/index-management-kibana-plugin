@@ -143,8 +143,7 @@ export default class CreateRollupForm extends Component<CreateRollupFormProps, C
   }
 
   componentDidMount = async (): Promise<void> => {
-    chrome.breadcrumbs.set([BREADCRUMBS.INDEX_MANAGEMENT, BREADCRUMBS.ROLLUPS]);
-    chrome.breadcrumbs.push(BREADCRUMBS.CREATE_ROLLUP);
+    chrome.breadcrumbs.set([BREADCRUMBS.INDEX_MANAGEMENT, BREADCRUMBS.ROLLUPS, BREADCRUMBS.CREATE_ROLLUP]);
   };
 
   getMappings = async (srcIndex: string): Promise<void> => {
@@ -663,7 +662,7 @@ export default class CreateRollupForm extends Component<CreateRollupFormProps, C
           </EuiFlexItem>
           {currentStep != 1 && (
             <EuiFlexItem grow={false}>
-              <EuiButton onClick={this._prev} isLoading={isSubmitting} data-test-subj="createRollupPreviousButton">
+              <EuiButton onClick={this._prev} data-test-subj="createRollupPreviousButton">
                 Previous
               </EuiButton>
             </EuiFlexItem>
@@ -677,7 +676,7 @@ export default class CreateRollupForm extends Component<CreateRollupFormProps, C
             </EuiFlexItem>
           ) : (
             <EuiFlexItem grow={false}>
-              <EuiButton fill onClick={this._next} isLoading={isSubmitting} data-test-subj="createRollupNextButton">
+              <EuiButton fill onClick={this._next} data-test-subj="createRollupNextButton">
                 Next
               </EuiButton>
             </EuiFlexItem>

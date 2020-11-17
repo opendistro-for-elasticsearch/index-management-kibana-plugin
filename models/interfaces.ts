@@ -94,15 +94,15 @@ export interface Rollup {
     }
   ];
   enabled: boolean;
-  enabled_time: number | null;
+  enabledTime: number | null;
   lastUpdatedTime: number;
   metadata_id: number | null;
   metrics: MetricItem[];
   page_size: number;
   schedule: IntervalSchedule | CronSchedule;
-  schema_version: number;
-  source_index: string;
-  target_index: string;
+  schemaVersion: number;
+  sourceIndex: string;
+  targetIndex: string;
 }
 
 export interface RollupMetadata {

@@ -122,12 +122,7 @@ export default class TimeAggregation extends Component<TimeAggregationProps, Tim
                 <EuiSpacer size="m" />
                 <EuiFlexItem grow={false} style={{ width: 100 }}>
                   <EuiFormRow label="Interval">
-                    <EuiFieldNumber
-                      min={1}
-                      value={intervalType == "fixed" ? intervalValue : 1}
-                      // disabled={intervalType == 'calendar'}
-                      onChange={onChangeIntervalValue}
-                    />
+                    <EuiFieldNumber min={1} value={intervalType == "fixed" ? intervalValue : 1} onChange={onChangeIntervalValue} />
                   </EuiFormRow>
                 </EuiFlexItem>
                 <EuiFlexItem>

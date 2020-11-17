@@ -13,9 +13,12 @@
  * permissions and limitations under the License.
  */
 
-import { render, wait } from "@testing-library/react";
-import { MemoryRouter as Router } from "react-router";
 import React from "react";
+import chrome from "ui/chrome";
+import { toastNotifications } from "ui/notify";
+import { render, wait } from "@testing-library/react";
+import userEvent from "@testing-library/user-event";
+import { MemoryRouter as Router } from "react-router";
 import { browserServicesMock } from "../../../../../test/mocks";
 import { ServicesConsumer, ServicesContext } from "../../../../services";
 import { BrowserServices } from "../../../../models/interfaces";
@@ -23,61 +26,67 @@ import { ModalProvider, ModalRoot } from "../../../../components/Modal";
 import { Redirect, Route, RouteComponentProps, Switch } from "react-router-dom";
 import { BREADCRUMBS, ROUTES } from "../../../../utils/constants";
 import Rollups from "./Rollups";
-import userEvent from "@testing-library/user-event";
 import { TEXT } from "../../components/RollupEmptyPrompt/RollupEmptyPrompt";
-import chrome from "ui/chrome";
-import { toastNotifications } from "ui/notify";
 
 const testRollup = {
-  id: "test",
-  seqNo: 9,
-  primaryTerm: 1,
+  _id: "test1",
+  _version: 3,
+  _seq_no: 7,
+  _primary_term: 1,
   rollup: {
-    source_index: "kibana_sample_data_logs",
-    target_index: "other-index",
+    rollup_id: "test1",
+    enabled: true,
     schedule: {
       interval: {
-        start_time: 1602972619850,
         period: 1,
         unit: "Minutes",
+        start_time: 1602100553,
       },
     },
-    continuous: true,
-    description: "This should start soon",
-    enabled: true,
+    last_updated_time: 1602100553,
+    description: "An example policy that rolls up the sample ecommerce data",
+    source_index: "kibana_sample_data_ecommerce",
+    target_index: "test_rollup",
     page_size: 1000,
-    roles: [],
-    metrics: [
-      {
-        source_field: "total_order_quantity",
-        metrics: [
-          {
-            sum: {},
-          },
-          {
-            avg: {},
-          },
-        ],
-      },
-    ],
+    delay: 0,
+    continuous: false,
     dimensions: [
       {
         date_histogram: {
           source_field: "order_date",
-          fixed_interval: "1m",
+          fixed_interval: "90m",
           timezone: "America/Los_Angeles",
         },
       },
       {
         terms: {
-          source_field: "message",
+          source_field: "customer_gender",
         },
       },
       {
-        histogram: {
-          source_field: "bytes",
-          interval: 5,
+        terms: {
+          source_field: "geoip.city_name",
         },
+      },
+      {
+        terms: {
+          source_field: "geoip.region_name",
+        },
+      },
+      {
+        terms: {
+          source_field: "day_of_week",
+        },
+      },
+    ],
+    metrics: [
+      {
+        source_field: "taxless_total_price",
+        metrics: [{ avg: {} }, { sum: {} }, { max: {} }, { min: {} }, { value_count: {} }],
+      },
+      {
+        source_field: "total_quantity",
+        metrics: [{ avg: {} }, { max: {} }],
       },
     ],
   },
@@ -104,6 +113,7 @@ function renderRollupsWithRouter() {
                     />
                     <Route path={ROUTES.CREATE_ROLLUP} render={(props) => <div>Testing create rollup</div>} />
                     <Route path={ROUTES.EDIT_ROLLUP} render={(props) => <div>Testing edit rollup: {props.location.search}</div>} />
+                    <Route path={ROUTES.ROLLUP_DETAILS} render={(props) => <div>Testing rollup details: {props.location.search}</div>} />
                     <Redirect from="/" to={ROUTES.ROLLUPS} />
                   </Switch>
                 </ModalProvider>
@@ -128,14 +138,20 @@ describe("<Rollups /> spec", () => {
   });
 
   it("shows LOADING on mount", async () => {
-    browserServicesMock.rollupService.getRollups = jest.fn().mockResolvedValue({ ok: true, response: { rollups: [], totalRollups: 0 } });
+    browserServicesMock.rollupService.getRollups = jest.fn().mockResolvedValue({
+      ok: true,
+      response: { rollups: [], totalRollups: 0 },
+    });
     const { getByText } = renderRollupsWithRouter();
 
     getByText(TEXT.LOADING);
   });
 
   it("sets breadcrumbs when mounting", async () => {
-    browserServicesMock.rollupService.getRollups = jest.fn().mockResolvedValue({ ok: true, response: { rollups: [], totalRollups: 0 } });
+    browserServicesMock.rollupService.getRollups = jest.fn().mockResolvedValue({
+      ok: true,
+      response: { rollups: [], totalRollups: 0 },
+    });
     renderRollupsWithRouter();
 
     expect(chrome.breadcrumbs.set).toHaveBeenCalledTimes(1);
@@ -144,9 +160,14 @@ describe("<Rollups /> spec", () => {
 
   it("loads rollups", async () => {
     const rollups = [testRollup];
-    browserServicesMock.rollupService.getRollups = jest.fn().mockResolvedValue({ ok: true, response: { rollups, totalRollups: 1 } });
+    browserServicesMock.rollupService.getRollups = jest.fn().mockResolvedValue({
+      ok: true,
+      response: { rollups, totalRollups: 1 },
+    });
     const { getByText } = renderRollupsWithRouter();
-    await wait(() => getByText(testRollup.id));
+    await wait();
+
+    await wait(() => getByText(testRollup._id));
   });
 
   it("adds error toaster when get rollups has error", async () => {
@@ -169,34 +190,18 @@ describe("<Rollups /> spec", () => {
     expect(toastNotifications.addDanger).toHaveBeenCalledWith("rejected error");
   });
 
-  it("can delete a rollup job", async () => {
-    const rollups = [testRollup];
-    browserServicesMock.rollupService.getRollups = jest
-      .fn()
-      .mockResolvedValueOnce({ ok: true, response: { rollups, totalRollups: 1 } })
-      .mockResolvedValueOnce({ ok: true, response: { rollups: [], totalRollups: 0 } });
-    browserServicesMock.rollupService.deleteRollup = jest.fn().mockResolvedValue({ ok: true, response: true });
-    const { queryByText, getByText, getByTestId } = renderRollupsWithRouter();
-
-    await wait(() => getByText(testRollup.id));
-
-    expect(getByTestId("DeleteButton")).toBeDisabled();
-
-    userEvent.click(getByTestId(`checkboxSelectRow-${testRollup.id}`));
-
-    expect(getByTestId("DeleteButton")).toBeEnabled();
-
-    userEvent.click(getByTestId("DeleteButton"));
-    await wait(() => getByTestId("confirmationModalActionButton"));
-    userEvent.click(getByTestId("confirmationModalActionButton"));
+  it("can route to create rollup", async () => {
+    browserServicesMock.rollupService.getRollups = jest.fn().mockResolvedValue({
+      ok: true,
+      response: { rollups: [], totalrollups: 1 },
+    });
+    const { getByText, getByTestId } = renderRollupsWithRouter();
 
     await wait();
 
-    expect(browserServicesMock.policyService.deletePolicy).toHaveBeenCalledTimes(1);
-    expect(toastNotifications.addSuccess).toHaveBeenCalledTimes(1);
-    expect(toastNotifications.addSuccess).toHaveBeenCalledWith(`Deleted the policy: ${testRollup.id}`);
+    userEvent.click(getByTestId("createRollupButton"));
 
-    await wait(() => expect(queryByText(testRollup.id)).toBeNull());
+    await wait(() => getByText("Testing create rollup"));
   });
 
   it("can route to edit rollup", async () => {
@@ -207,27 +212,129 @@ describe("<Rollups /> spec", () => {
     });
     const { getByText, getByTestId } = renderRollupsWithRouter();
 
-    await wait(() => getByText(testRollup.id));
+    await wait(() => getByText(testRollup._id));
 
-    expect(getByTestId("EditButton")).toBeDisabled();
+    userEvent.click(getByTestId(`checkboxSelectRow-${testRollup._id}`));
 
-    userEvent.click(getByTestId(`checkboxSelectRow-${testRollup.id}`));
+    userEvent.click(getByTestId("actionButton"));
 
-    expect(getByTestId("EditButton")).toBeEnabled();
+    await wait(() => getByTestId("editButton"));
 
-    userEvent.click(getByTestId("EditButton"));
+    userEvent.click(getByTestId("editButton"));
 
-    await wait(() => getByText(`Testing edit rollup: ?id=${testRollup.id}`));
+    await wait(() => getByText(`Testing edit rollup: ?id=${testRollup._id}`));
   });
 
-  it("can route to create rollup", async () => {
-    browserServicesMock.rollupService.getRollups = jest.fn().mockResolvedValue({ ok: true, response: { rollups: [], totalrollups: 1 } });
+  it("can view details of a rollup job", async () => {
+    const rollups = [testRollup];
+    browserServicesMock.rollupService.getRollups = jest.fn().mockResolvedValue({
+      ok: true,
+      response: { rollups, totalRollups: 1 },
+    });
+    const { getByText } = renderRollupsWithRouter();
+
+    await wait(() => getByText(testRollup._id));
+
+    userEvent.click(getByText(testRollup._id));
+
+    await wait(() => getByText(`Testing rollup details: ?id=${testRollup._id}`));
+  });
+
+  it("can enable a rollup job", async () => {
+    const rollups = [testRollup];
+    browserServicesMock.rollupService.getRollups = jest.fn().mockResolvedValue({
+      ok: true,
+      response: { rollups, totalRollups: 1 },
+    });
+    browserServicesMock.rollupService.startRollup = jest.fn().mockResolvedValue({
+      ok: true,
+      response: true,
+    });
     const { getByText, getByTestId } = renderRollupsWithRouter();
+
+    await wait(() => getByText(testRollup._id));
+
+    expect(getByText("Enable")).toBeDisabled();
+
+    userEvent.click(getByTestId(`checkboxSelectRow-${testRollup._id}`));
+
+    expect(getByText("Enable")).toBeEnabled();
+
+    userEvent.click(getByText("Enable"));
 
     await wait();
 
-    userEvent.click(getByTestId("createRollupButton"));
+    expect(browserServicesMock.rollupService.startRollup).toHaveBeenCalledTimes(1);
+    expect(toastNotifications.addSuccess).toHaveBeenCalledTimes(1);
+    expect(toastNotifications.addSuccess).toHaveBeenCalledWith(`${testRollup._id} is enabled`);
+  });
 
-    await wait(() => getByText("Testing create rollup"));
+  it("can disable a rollup job", async () => {
+    const rollups = [testRollup];
+    browserServicesMock.rollupService.getRollups = jest.fn().mockResolvedValue({
+      ok: true,
+      response: { rollups, totalRollups: 1 },
+    });
+    browserServicesMock.rollupService.stopRollup = jest.fn().mockResolvedValue({
+      ok: true,
+      response: true,
+    });
+
+    const { getByText, getByTestId } = renderRollupsWithRouter();
+
+    await wait(() => getByText(testRollup._id));
+
+    expect(getByText("Disable")).toBeDisabled();
+
+    userEvent.click(getByTestId(`checkboxSelectRow-${testRollup._id}`));
+
+    expect(getByText("Disable")).toBeEnabled();
+
+    userEvent.click(getByText("Disable"));
+
+    await wait();
+
+    expect(browserServicesMock.rollupService.stopRollup).toHaveBeenCalledTimes(1);
+    expect(toastNotifications.addSuccess).toHaveBeenCalledTimes(1);
+    expect(toastNotifications.addSuccess).toHaveBeenCalledWith(`${testRollup._id} is disabled`);
+  });
+
+  it("can delete a rollup job", async () => {
+    const rollups = [testRollup];
+    browserServicesMock.rollupService.getRollups = jest
+      .fn()
+      .mockResolvedValueOnce({ ok: true, response: { rollups, totalRollups: 1 } })
+      .mockResolvedValueOnce({ ok: true, response: { rollups: [], totalRollups: 0 } });
+    browserServicesMock.rollupService.deleteRollup = jest.fn().mockResolvedValue({ ok: true, response: true });
+    const { queryByText, getByText, getByTestId } = renderRollupsWithRouter();
+
+    await wait(() => getByText(testRollup._id));
+
+    userEvent.click(getByTestId(`checkboxSelectRow-${testRollup._id}`));
+
+    userEvent.click(getByTestId("actionButton"));
+
+    expect(getByTestId("actionPopover")).toBeTruthy();
+
+    expect(getByTestId("deleteButton")).toBeEnabled();
+
+    userEvent.click(getByTestId("deleteButton"));
+
+    await wait(() => getByTestId("deleteTextField"));
+
+    //TODO: Find out a better way to locate this delete button.
+    expect(getByText("Delete")).toBeDisabled();
+
+    userEvent.type(getByTestId("deleteTextField"), "delete");
+
+    expect(getByText("Delete")).toBeEnabled();
+
+    userEvent.click(getByText("Delete"));
+
+    await wait(() => expect(queryByText(testRollup._id)).toBeNull());
+
+    expect(browserServicesMock.rollupService.deleteRollup).toHaveBeenCalledTimes(1);
+    expect(toastNotifications.addSuccess).toHaveBeenCalledTimes(1);
+    expect(toastNotifications.addSuccess).toHaveBeenCalledWith(`"${testRollup._id}" successfully deleted!`);
   });
 });

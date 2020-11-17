@@ -56,7 +56,7 @@ export default class DeleteModal extends Component<DeleteModalProps, DeleteModal
             </Fragment>
             <EuiSpacer size="s" />
             <EuiFormRow helpText="To confirm deletion, enter delete in the text field">
-              <EuiFieldText value={confirmDeleteText} placeholder="delete" onChange={this.onChange} />
+              <EuiFieldText value={confirmDeleteText} placeholder="delete" onChange={this.onChange} data-test-subj="deleteTextField" />
             </EuiFormRow>
           </EuiForm>
         </EuiConfirmModal>

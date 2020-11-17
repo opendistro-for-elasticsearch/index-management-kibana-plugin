@@ -333,7 +333,13 @@ export default class Rollups extends Component<RollupsProps, RollupsState> {
     };
 
     const actionButton = (
-      <EuiButton iconType="arrowDown" iconSide="right" disabled={!selectedItems.length} onClick={this.onActionButtonClick}>
+      <EuiButton
+        iconType="arrowDown"
+        iconSide="right"
+        disabled={!selectedItems.length}
+        onClick={this.onActionButtonClick}
+        data-test-subj="actionButton"
+      >
         Actions
       </EuiButton>
     );
@@ -347,7 +353,7 @@ export default class Rollups extends Component<RollupsProps, RollupsState> {
         key="Edit"
         icon="empty"
         disabled={selectedItems.length != 1}
-        data-test-subj="EditButton"
+        data-test-subj="editButton"
         onClick={() => {
           this.closePopover();
           this.onClickEdit();
@@ -359,7 +365,7 @@ export default class Rollups extends Component<RollupsProps, RollupsState> {
         key="Delete"
         icon="empty"
         disabled={selectedItems.length == 0}
-        data-test-subj="DeleteButton"
+        data-test-subj="deleteButton"
         onClick={() => {
           this.closePopover();
           this.showDeleteModal();
@@ -386,14 +392,14 @@ export default class Rollups extends Component<RollupsProps, RollupsState> {
         ),
       },
       {
-        field: "rollup.rollup.source_index",
+        field: "rollup.rollup.sourceIndex",
         name: "Source index",
         sortable: true,
         textOnly: true,
         truncateText: true,
       },
       {
-        field: "rollup.rollup.target_index",
+        field: "rollup.rollup.targetIndex",
         name: "Target index",
         sortable: true,
         textOnly: true,
@@ -525,6 +531,7 @@ export default class Rollups extends Component<RollupsProps, RollupsState> {
                   closePopover={this.closePopover}
                   panelPaddingSize="none"
                   anchorPosition="downLeft"
+                  data-test-subj="actionPopover"
                 >
                   <EuiContextMenuPanel items={actionItems} />
                 </EuiPopover>

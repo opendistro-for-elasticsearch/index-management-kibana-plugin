@@ -70,6 +70,7 @@ exports[`<Rollups /> spec renders the component 1`] = `
           >
             <div
               class="euiPopover euiPopover--anchorDownLeft"
+              data-test-subj="actionPopover"
               id="action"
             >
               <div
@@ -77,6 +78,7 @@ exports[`<Rollups /> spec renders the component 1`] = `
               >
                 <button
                   class="euiButton euiButton--primary euiButton--iconRight"
+                  data-test-subj="actionButton"
                   disabled=""
                   type="button"
                 >
@@ -289,7 +291,7 @@ exports[`<Rollups /> spec renders the component 1`] = `
                   aria-live="polite"
                   aria-sort="none"
                   class="euiTableHeaderCell"
-                  data-test-subj="tableHeaderCell_rollup.rollup.source_index_1"
+                  data-test-subj="tableHeaderCell_rollup.rollup.sourceIndex_1"
                   role="columnheader"
                   scope="col"
                 >
@@ -319,7 +321,7 @@ exports[`<Rollups /> spec renders the component 1`] = `
                   aria-live="polite"
                   aria-sort="none"
                   class="euiTableHeaderCell"
-                  data-test-subj="tableHeaderCell_rollup.rollup.target_index_2"
+                  data-test-subj="tableHeaderCell_rollup.rollup.targetIndex_2"
                   role="columnheader"
                   scope="col"
                 >

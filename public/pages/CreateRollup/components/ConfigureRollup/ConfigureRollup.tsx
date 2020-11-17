@@ -48,7 +48,7 @@ const ConfigureRollup = ({ isEdit, rollupId, rollupIdError, onChangeName, onChan
       </EuiFlexGroup>
       <EuiSpacer size="xs" />
       <EuiFormRow>
-        <EuiTextArea compressed={true} value={description} onChange={onChangeDescription} />
+        <EuiTextArea compressed={true} value={description} onChange={onChangeDescription} data-test-subj="description" />
       </EuiFormRow>
     </div>
   </ContentPanel>
