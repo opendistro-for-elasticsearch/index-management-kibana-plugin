@@ -392,14 +392,14 @@ export default class Rollups extends Component<RollupsProps, RollupsState> {
         ),
       },
       {
-        field: "rollup.rollup.sourceIndex",
+        field: "rollup.rollup.source_index",
         name: "Source index",
         sortable: true,
         textOnly: true,
         truncateText: true,
       },
       {
-        field: "rollup.rollup.targetIndex",
+        field: "rollup.rollup.target_index",
         name: "Target index",
         sortable: true,
         textOnly: true,

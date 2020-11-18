@@ -101,8 +101,8 @@ export interface Rollup {
   page_size: number;
   schedule: IntervalSchedule | CronSchedule;
   schemaVersion: number;
-  sourceIndex: string;
-  targetIndex: string;
+  source_index: string;
+  target_index: string;
 }
 
 export interface RollupMetadata {
