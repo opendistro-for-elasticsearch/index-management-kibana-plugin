@@ -31,9 +31,10 @@ import {
   EuiTableSortingType,
 } from "@elastic/eui";
 import { ContentPanel } from "../../../../components/ContentPanel";
-import { DimensionItem, FieldItem, MetricItem } from "../../../CreateRollup/models/interfaces";
+import { DimensionItem } from "../../../CreateRollup/models/interfaces";
 import { DEFAULT_PAGE_SIZE_OPTIONS } from "../../../Rollups/utils/constants";
 import { parseTimeunit } from "../../../CreateRollup/utils/helpers";
+import { FieldItem, MetricItem } from "../../../../../models/interfaces";
 
 interface AggregationAndMetricsSettingsProps {
   timestamp: string;
@@ -201,7 +202,6 @@ export default class AggregationAndMetricsSettings extends Component<
     };
 
     const intervalValue = histogramInterval.match(/(\d+)/);
-    console.log(intervalValue);
     const intervalUnit = histogramInterval.match(/[a-zA-Z]+/g);
     let interval = "";
     if (intervalValue && intervalUnit) {

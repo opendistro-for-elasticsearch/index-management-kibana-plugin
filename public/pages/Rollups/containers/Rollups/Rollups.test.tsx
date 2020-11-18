@@ -27,70 +27,7 @@ import { Redirect, Route, RouteComponentProps, Switch } from "react-router-dom";
 import { BREADCRUMBS, ROUTES } from "../../../../utils/constants";
 import Rollups from "./Rollups";
 import { TEXT } from "../../components/RollupEmptyPrompt/RollupEmptyPrompt";
-
-const testRollup = {
-  _id: "test1",
-  _version: 3,
-  _seq_no: 7,
-  _primary_term: 1,
-  rollup: {
-    rollup_id: "test1",
-    enabled: true,
-    schedule: {
-      interval: {
-        period: 1,
-        unit: "Minutes",
-        start_time: 1602100553,
-      },
-    },
-    last_updated_time: 1602100553,
-    description: "An example policy that rolls up the sample ecommerce data",
-    source_index: "kibana_sample_data_ecommerce",
-    target_index: "test_rollup",
-    page_size: 1000,
-    delay: 0,
-    continuous: false,
-    dimensions: [
-      {
-        date_histogram: {
-          source_field: "order_date",
-          fixed_interval: "90m",
-          timezone: "America/Los_Angeles",
-        },
-      },
-      {
-        terms: {
-          source_field: "customer_gender",
-        },
-      },
-      {
-        terms: {
-          source_field: "geoip.city_name",
-        },
-      },
-      {
-        terms: {
-          source_field: "geoip.region_name",
-        },
-      },
-      {
-        terms: {
-          source_field: "day_of_week",
-        },
-      },
-    ],
-    metrics: [
-      {
-        source_field: "taxless_total_price",
-        metrics: [{ avg: {} }, { sum: {} }, { max: {} }, { min: {} }, { value_count: {} }],
-      },
-      {
-        source_field: "total_quantity",
-        metrics: [{ avg: {} }, { max: {} }],
-      },
-    ],
-  },
-};
+import { testRollup } from "../../../CreateRollup/utils/constants";
 
 function renderRollupsWithRouter() {
   return {
@@ -190,10 +127,40 @@ describe("<Rollups /> spec", () => {
     expect(toastNotifications.addDanger).toHaveBeenCalledWith("rejected error");
   });
 
+  it("adds error toaster when explain API has error", async () => {
+    const rollups = [testRollup];
+    browserServicesMock.rollupService.getRollups = jest.fn().mockResolvedValue({
+      ok: true,
+      response: { rollups, totalRollups: 1 },
+    });
+    browserServicesMock.rollupService.explainRollup = jest.fn().mockResolvedValue({ ok: false, error: "some explain API error" });
+    renderRollupsWithRouter();
+
+    await wait();
+
+    expect(toastNotifications.addDanger).toHaveBeenCalledTimes(1);
+    expect(toastNotifications.addDanger).toHaveBeenCalledWith("some explain API error");
+  });
+
+  it("adds error toaster when explain throws error", async () => {
+    const rollups = [testRollup];
+    browserServicesMock.rollupService.getRollups = jest.fn().mockResolvedValue({
+      ok: true,
+      response: { rollups, totalRollups: 1 },
+    });
+    browserServicesMock.rollupService.explainRollup = jest.fn().mockRejectedValue(new Error("explain API rejected error"));
+    renderRollupsWithRouter();
+
+    await wait();
+
+    expect(toastNotifications.addDanger).toHaveBeenCalledTimes(1);
+    expect(toastNotifications.addDanger).toHaveBeenCalledWith("explain API rejected error");
+  });
+
   it("can route to create rollup", async () => {
     browserServicesMock.rollupService.getRollups = jest.fn().mockResolvedValue({
       ok: true,
-      response: { rollups: [], totalrollups: 1 },
+      response: { rollups: [], totalrollups: 0 },
     });
     const { getByText, getByTestId } = renderRollupsWithRouter();
 
@@ -336,5 +303,29 @@ describe("<Rollups /> spec", () => {
     expect(browserServicesMock.rollupService.deleteRollup).toHaveBeenCalledTimes(1);
     expect(toastNotifications.addSuccess).toHaveBeenCalledTimes(1);
     expect(toastNotifications.addSuccess).toHaveBeenCalledWith(`"${testRollup._id}" successfully deleted!`);
+  });
+
+  it("can cancel a delete", async () => {
+    const rollups = [testRollup];
+    browserServicesMock.rollupService.getRollups = jest.fn().mockResolvedValueOnce({ ok: true, response: { rollups, totalRollups: 1 } });
+    const { queryByText, getByText, getByTestId } = renderRollupsWithRouter();
+
+    await wait(() => getByText(testRollup._id));
+
+    userEvent.click(getByTestId(`checkboxSelectRow-${testRollup._id}`));
+
+    userEvent.click(getByTestId("actionButton"));
+
+    expect(getByTestId("actionPopover")).toBeTruthy();
+
+    expect(getByTestId("deleteButton")).toBeEnabled();
+
+    userEvent.click(getByTestId("deleteButton"));
+
+    await wait(() => getByTestId("deleteTextField"));
+
+    userEvent.click(getByText("Cancel"));
+
+    await wait(() => expect(queryByText(testRollup._id)).not.toBeNull());
   });
 });

@@ -42,9 +42,9 @@ import GeneralInformation from "../../components/GeneralInformation/GeneralInfor
 import RollupStatus from "../../components/RollupStatus/RollupStatus";
 import AggregationAndMetricsSettings from "../../components/AggregationAndMetricsSettings/AggregationAndMetricsSettings";
 import { parseTimeunit } from "../../../CreateRollup/utils/helpers";
-import { RollupMetadata } from "../../../../../models/interfaces";
+import { MetricItem, RollupMetadata } from "../../../../../models/interfaces";
 import { renderTime } from "../../../Rollups/utils/helpers";
-import { DimensionItem, MetricItem, RollupDimensionItem, RollupMetricItem } from "../../../CreateRollup/models/interfaces";
+import { DimensionItem, RollupDimensionItem, RollupMetricItem } from "../../../CreateRollup/models/interfaces";
 import DeleteModal from "../../../Rollups/components/DeleteModal";
 
 interface RollupDetailsProps extends RouteComponentProps {
@@ -170,7 +170,7 @@ export default class RollupDetails extends Component<RollupDetailsProps, RollupD
         }
       } else {
         toastNotifications.addDanger(`Could not load the rollup job: ${response.error}`);
-        this.props.history.push(ROUTES.ROLLUPS);
+        // this.props.history.push(ROUTES.ROLLUPS);
       }
       if (explainResponse.ok) {
         let metadata = explainResponse.response[rollupId];
@@ -190,7 +190,7 @@ export default class RollupDetails extends Component<RollupDetailsProps, RollupD
     const result = sourceArray.map((dimension: RollupDimensionItem) => ({
       sequence: dimensions.indexOf(dimension),
       aggregationMethod: dimension.histogram == null ? "terms" : "histogram",
-      field: dimension.histogram == null ? { label: dimension.terms?.sourceField } : { label: dimension.histogram?.sourceField },
+      field: dimension.histogram == null ? { label: dimension.terms?.source_field } : { label: dimension.histogram?.sourceField },
       interval: dimension.histogram == null ? null : dimension.histogram?.interval,
     }));
     return result;
@@ -199,7 +199,7 @@ export default class RollupDetails extends Component<RollupDetailsProps, RollupD
   parseMetric = (metrics: RollupMetricItem[]): MetricItem[] => {
     if (metrics.length == 0) return [];
     const result = metrics.map((metric) => ({
-      source_field: metric.sourceField,
+      source_field: metric.source_field,
       all: false,
       min: metric.metrics.filter((item) => item.min != null).length > 0,
       max: metric.metrics.filter((item) => item.max != null).length > 0,
@@ -351,12 +351,12 @@ export default class RollupDetails extends Component<RollupDetailsProps, RollupD
           <EuiFlexItem grow={false}>
             <EuiFlexGroup alignItems="center" gutterSize="s">
               <EuiFlexItem grow={false}>
-                <EuiButton disabled={!enabled} onClick={this.onDisable}>
+                <EuiButton disabled={!enabled} onClick={this.onDisable} data-test-subj="disableButton">
                   Disable
                 </EuiButton>
               </EuiFlexItem>
               <EuiFlexItem grow={false}>
-                <EuiButton disabled={enabled} onClick={this.onEnable}>
+                <EuiButton disabled={enabled} onClick={this.onEnable} data-test-subj="enableButton">
                   Enable
                 </EuiButton>
               </EuiFlexItem>
