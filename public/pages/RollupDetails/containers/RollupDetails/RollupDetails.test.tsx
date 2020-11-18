@@ -80,7 +80,7 @@ describe("<RollupDetails /> spec", () => {
   });
 
   it("adds error toaster when get rollup has error", async () => {
-    browserServicesMock.rollupService.getRollup() = jest.fn().mockResolvedValue({ ok: false, error: "some error" });
+    browserServicesMock.rollupService.getRollup = jest.fn().mockResolvedValue({ ok: false, error: "some error" });
     const { getByText } = renderRollupDetailsWithRouter([`${ROUTES.ROLLUP_DETAILS}?id=${testRollup._id}`]);
 
     await wait();

@@ -291,7 +291,7 @@ exports[`<Rollups /> spec renders the component 1`] = `
                   aria-live="polite"
                   aria-sort="none"
                   class="euiTableHeaderCell"
-                  data-test-subj="tableHeaderCell_rollup.rollup.sourceIndex_1"
+                  data-test-subj="tableHeaderCell_rollup.rollup.source_index_1"
                   role="columnheader"
                   scope="col"
                 >
@@ -321,7 +321,7 @@ exports[`<Rollups /> spec renders the component 1`] = `
                   aria-live="polite"
                   aria-sort="none"
                   class="euiTableHeaderCell"
-                  data-test-subj="tableHeaderCell_rollup.rollup.targetIndex_2"
+                  data-test-subj="tableHeaderCell_rollup.rollup.target_index_2"
                   role="columnheader"
                   scope="col"
                 >

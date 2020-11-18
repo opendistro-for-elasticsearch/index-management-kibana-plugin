@@ -15,6 +15,8 @@
 
 // TODO: Backend has PR out to change this model, this needs to be updated once that goes through
 
+import { RollupDimensionItem, RollupMetricItem } from "../public/pages/CreateRollup/models/interfaces";
+
 export interface ManagedIndexMetaData {
   index: string;
   indexUuid: string;
@@ -60,9 +62,36 @@ export interface DocumentPolicy {
 
 export interface DocumentRollup {
   id: string;
-  primaryTerm: number;
   seqNo: number;
-  rollup: Rollup;
+  primaryTerm: number;
+  rollup: {
+    rollup_id: string;
+    enabled: boolean;
+    schedule: {
+      interval?: {
+        start_time?: number;
+        period: number;
+        unit: string;
+      };
+      cron?: {
+        expression: string;
+        timezone: string;
+      };
+    };
+    last_updated_time: number;
+    enabled_time: number | null;
+    description: string;
+    schema_version: number;
+    source_index: string;
+    target_index: string;
+    metadata_id: number | null;
+    roles: string[];
+    page_size: number;
+    delay: number | null;
+    continuous: boolean;
+    dimensions: RollupDimensionItem[];
+    metrics: RollupMetricItem[];
+  };
 }
 
 // TODO: Fill out when needed

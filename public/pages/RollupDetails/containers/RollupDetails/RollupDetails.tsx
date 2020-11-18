@@ -148,7 +148,7 @@ export default class RollupDetails extends Component<RollupDetailsProps, RollupD
           delayTime: response.response.rollup.delay,
           pageSize: response.response.rollup.page_size,
           rollupJSON: newJSON,
-          lastUpdated: renderTime(response.response.rollup.lastUpdatedTime),
+          lastUpdated: renderTime(response.response.rollup.last_updated_time),
           timestamp: response.response.rollup.dimensions[0].date_histogram.source_field,
           histogramInterval: response.response.rollup.dimensions[0].date_histogram.fixed_interval
             ? response.response.rollup.dimensions[0].date_histogram.fixed_interval
@@ -160,6 +160,7 @@ export default class RollupDetails extends Component<RollupDetailsProps, RollupD
           dimensionsShown: selectedDimensionField.slice(0, 10),
           enabled: response.response.rollup.enabled,
         });
+        //TODO: fix this to match new data model
         if (response.response.rollup.schedule.cron == undefined) {
           this.setState({
             interval: response.response.rollup.schedule.interval.period,
@@ -190,7 +191,7 @@ export default class RollupDetails extends Component<RollupDetailsProps, RollupD
     const result = sourceArray.map((dimension: RollupDimensionItem) => ({
       sequence: dimensions.indexOf(dimension),
       aggregationMethod: dimension.histogram == null ? "terms" : "histogram",
-      field: dimension.histogram == null ? { label: dimension.terms?.source_field } : { label: dimension.histogram?.sourceField },
+      field: dimension.histogram == null ? { label: dimension.terms?.source_field } : { label: dimension.histogram?.source_field },
       interval: dimension.histogram == null ? null : dimension.histogram?.interval,
     }));
     return result;

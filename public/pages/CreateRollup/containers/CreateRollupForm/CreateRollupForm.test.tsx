@@ -97,7 +97,7 @@ describe("<CreateRollupForm /> spec", () => {
   });
 
   it("routes from step 1 to step 2", async () => {
-    const { getByTestId, getByLabelText, getByDisplayValue, queryByText, getByPlaceholderText } = renderCreateRollupFormWithRouter();
+    const { getByTestId, getByLabelText, getByDisplayValue, queryByText } = renderCreateRollupFormWithRouter();
     const indices = [
       {
         "docs.count": 5,

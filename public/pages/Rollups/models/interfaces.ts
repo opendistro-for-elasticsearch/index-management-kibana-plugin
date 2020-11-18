@@ -17,9 +17,9 @@ import { Direction } from "@elastic/eui";
 import { Rollup } from "../../../../models/interfaces";
 
 export interface RollupItem {
-  id: string;
-  seqNo: number;
-  primaryTerm: number;
+  _id: string;
+  _seqNo: number;
+  _primaryTerm: number;
   rollup: Rollup;
 }
 

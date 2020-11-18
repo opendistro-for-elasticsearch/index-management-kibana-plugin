@@ -111,7 +111,7 @@ export default class EditRollup extends Component<EditRollupProps, EditRollupSta
           description: response.response.rollup.description,
           jobEnabledByDefault: response.response.rollup.enabled,
           pageSize: response.response.rollup.page_size,
-          delayTime: response.response.rollup.delay,
+          delayTime: response.response.rollup.delay == 0 ? "" : response.response.rollup.delay,
           rollupJSON: newJSON,
         });
         if (response.response.rollup.schedule.cron == undefined) {
@@ -141,6 +141,7 @@ export default class EditRollup extends Component<EditRollupProps, EditRollupSta
     let newJSON = this.state.rollupJSON;
     newJSON.rollup.description = description;
     this.setState({ description: description, rollupJSON: newJSON });
+    console.log(this.state);
   };
 
   onChangeName = (e: ChangeEvent<HTMLInputElement>): void => {
@@ -220,13 +221,17 @@ export default class EditRollup extends Component<EditRollupProps, EditRollupSta
   updateSchedule = (): void => {
     const { recurringDefinition, cronExpression, interval, intervalTimeunit, cronTimezone } = this.state;
     let newJSON = this.state.rollupJSON;
+
     if (recurringDefinition == "cron") {
       newJSON.rollup.schedule.cron = { expression: `${cronExpression}`, timezone: `${cronTimezone}` };
       delete newJSON.rollup.schedule["interval"];
     } else {
-      //Using current time as start time.
-      newJSON.rollup.schedule.interval = { start_time: moment().unix(), unit: `${intervalTimeunit}`, period: `${interval}` };
-      // delete newJSON.rollup.schedule["cron"];
+      newJSON.rollup.schedule.interval = {
+        start_time: moment().unix(),
+        unit: intervalTimeunit,
+        period: interval,
+      };
+      delete newJSON.rollup.schedule["cron"];
     }
     this.setState({ rollupJSON: newJSON });
   };
@@ -340,7 +345,7 @@ export default class EditRollup extends Component<EditRollupProps, EditRollupSta
           </EuiFlexItem>
           <EuiFlexItem grow={false}>
             <EuiButton fill onClick={this.onSubmit} isLoading={isSubmitting} data-test-subj="editRollupSaveChangesButton">
-              "Save changes"
+              Save changes
             </EuiButton>
           </EuiFlexItem>
         </EuiFlexGroup>
