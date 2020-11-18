@@ -51,7 +51,7 @@ import {
 } from "@elastic/eui";
 import { RollupService } from "../../../../services";
 import RollupEmptyPrompt from "../../components/RollupEmptyPrompt";
-import { RollupItem, RollupsQueryParams } from "../../models/interfaces";
+import { RollupItem, RollupQueryParams } from "../../models/interfaces";
 import { getURLQueryParams, renderContinuous, renderEnabled, renderTime } from "../../utils/helpers";
 import DeleteModal from "../../components/DeleteModal";
 
@@ -115,7 +115,7 @@ export default class Rollups extends Component<RollupsProps, RollupsState> {
     }
   }
 
-  static getQueryObjectFromState({ from, size, search, sortField, sortDirection }: RollupsState): RollupsQueryParams {
+  static getQueryObjectFromState({ from, size, search, sortField, sortDirection }: RollupsState): RollupQueryParams {
     return { from, size, search, sortField, sortDirection };
   }
 
