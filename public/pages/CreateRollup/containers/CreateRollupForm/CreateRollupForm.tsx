@@ -349,8 +349,7 @@ export default class CreateRollupForm extends Component<CreateRollupFormProps, C
   };
 
   onChangeCron = (e: ChangeEvent<HTMLTextAreaElement>): void => {
-    let newJSON = this.state.rollupJSON;
-    this.setState({ cronExpression: e.target.value, rollupJSON: newJSON });
+    this.setState({ cronExpression: e.target.value });
   };
 
   onChangeCronTimezone = (e: ChangeEvent<HTMLSelectElement>): void => {
@@ -378,11 +377,8 @@ export default class CreateRollupForm extends Component<CreateRollupFormProps, C
   };
 
   onChangeIntervalTime = (e: ChangeEvent<HTMLInputElement>): void => {
-    const interval = e.target.value;
-    let newJSON = this.state.rollupJSON;
-    newJSON.rollup.schedule.interval.period = e.target.value;
-    this.setState({ interval: e.target.valueAsNumber, rollupJSON: newJSON });
-    if (interval == "") {
+    this.setState({ interval: e.target.valueAsNumber });
+    if (e.target.value == "") {
       const intervalErrorMsg = "Interval value is required.";
       this.setState({ submitError: intervalErrorMsg, intervalError: intervalErrorMsg });
     } else {
@@ -396,7 +392,6 @@ export default class CreateRollupForm extends Component<CreateRollupFormProps, C
     this.setState({ pageSize: e.target.valueAsNumber, rollupJSON: newJSON });
   };
 
-  //Trying to clear interval field when cron expression is defined,and bring back value when switched back
   onChangeRecurringDefinition = (e: ChangeEvent<HTMLSelectElement>): void => {
     this.setState({ recurringDefinition: e.target.value });
   };
@@ -431,9 +426,7 @@ export default class CreateRollupForm extends Component<CreateRollupFormProps, C
   };
 
   onChangeIntervalTimeunit = (e: ChangeEvent<HTMLSelectElement>): void => {
-    let newJSON = this.state.rollupJSON;
-    newJSON.rollup.schedule.interval.unit = e.target.value;
-    this.setState({ intervalTimeunit: e.target.value, rollupJSON: newJSON });
+    this.setState({ intervalTimeunit: e.target.value });
   };
 
   updateDimension = (): void => {

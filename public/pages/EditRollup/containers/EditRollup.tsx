@@ -26,6 +26,7 @@ import { BREADCRUMBS, ROUTES } from "../../../utils/constants";
 import { Rollup } from "../../../../models/interfaces";
 import { RollupService } from "../../../services";
 import moment from "moment";
+import { EMPTY_ROLLUP } from "../../CreateRollup/utils/constants";
 
 interface EditRollupProps extends RouteComponentProps {
   rollupService: RollupService;
@@ -71,13 +72,13 @@ export default class EditRollup extends Component<EditRollupProps, EditRollupSta
       recurringDefinition: "fixed",
       interval: 2,
       intervalError: "",
-      intervalTimeunit: "M",
+      intervalTimeunit: "MINUTES",
       cronExpression: "",
       cronTimezone: "Africa/Abidjan",
       pageSize: 1000,
       delayTime: undefined,
       delayTimeunit: "MINUTES",
-      rollupJSON: `{"rollup":{}}`,
+      rollupJSON: EMPTY_ROLLUP,
     };
   }
 
@@ -118,9 +119,10 @@ export default class EditRollup extends Component<EditRollupProps, EditRollupSta
           this.setState({
             interval: response.response.rollup.schedule.interval.period,
             intervalTimeunit: response.response.rollup.schedule.interval.unit,
+            recurringDefinition: "fixed",
           });
         } else {
-          this.setState({ cronExpression: response.response.rollup.schedule.cron.expression });
+          this.setState({ cronExpression: response.response.rollup.schedule.cron.expression, recurringDefinition: "cron" });
         }
       } else {
         toastNotifications.addDanger(`Could not load the rollup job: ${response.error}`);
@@ -161,9 +163,7 @@ export default class EditRollup extends Component<EditRollupProps, EditRollupSta
   };
 
   onChangeCron = (e: ChangeEvent<HTMLTextAreaElement>): void => {
-    let newJSON = this.state.rollupJSON;
-    newJSON.rollup.schedule.cron.expression = e.target.value;
-    this.setState({ cronExpression: e.target.value, rollupJSON: newJSON });
+    this.setState({ cronExpression: e.target.value });
   };
 
   onChangeCronTimezone = (e: ChangeEvent<HTMLSelectElement>): void => {
@@ -177,11 +177,8 @@ export default class EditRollup extends Component<EditRollupProps, EditRollupSta
   };
 
   onChangeIntervalTime = (e: ChangeEvent<HTMLInputElement>): void => {
-    let newJSON = this.state.rollupJSON;
-    const interval = e.target.value;
-    newJSON.rollup.schedule.interval.period = e.target.value;
-    this.setState({ interval: e.target.valueAsNumber, rollupJSON: newJSON });
-    if (interval == "") {
+    this.setState({ interval: e.target.valueAsNumber });
+    if (e.target.value == "") {
       const intervalErrorMsg = "Interval value is required.";
       this.setState({ submitError: intervalErrorMsg, intervalError: intervalErrorMsg });
     } else {
@@ -195,10 +192,8 @@ export default class EditRollup extends Component<EditRollupProps, EditRollupSta
     this.setState({ pageSize: e.target.valueAsNumber, rollupJSON: newJSON });
   };
 
-  //Try to clear interval field when cron expression is defined
   onChangeRecurringDefinition = (e: ChangeEvent<HTMLSelectElement>): void => {
-    let newJSON = this.state.rollupJSON;
-    this.setState({ recurringDefinition: e.target.value, rollupJSON: newJSON });
+    this.setState({ recurringDefinition: e.target.value });
   };
 
   onChangeRecurringJob = (optionId: string): void => {
@@ -213,9 +208,7 @@ export default class EditRollup extends Component<EditRollupProps, EditRollupSta
   };
 
   onChangeIntervalTimeunit = (e: ChangeEvent<HTMLSelectElement>): void => {
-    let newJSON = this.state.rollupJSON;
-    newJSON.rollup.schedule.interval.unit = e.target.value;
-    this.setState({ intervalTimeunit: e.target.value, rollupJSON: newJSON });
+    this.setState({ intervalTimeunit: e.target.value });
   };
 
   updateSchedule = (): void => {
