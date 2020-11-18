@@ -25,7 +25,7 @@ import { ModalProvider, ModalRoot } from "../../../../components/Modal";
 import { Redirect, Route, RouteComponentProps, Switch } from "react-router-dom";
 import { BREADCRUMBS, ROUTES } from "../../../../utils/constants";
 import RollupDetails from "./RollupDetails";
-import { testRollup, testRollup2 } from "../../../CreateRollup/utils/constants";
+import { test1Metadata, test2Metadata, testRollup, testRollup2 } from "../../../CreateRollup/utils/constants";
 import { ServicesConsumer, ServicesContext } from "../../../../services";
 
 function renderRollupDetailsWithRouter(initialEntries = ["/"]) {
@@ -76,7 +76,10 @@ describe("<RollupDetails /> spec", () => {
     renderRollupDetailsWithRouter([`${ROUTES.ROLLUP_DETAILS}?id=${testRollup._id}`]);
 
     expect(chrome.breadcrumbs.set).toHaveBeenCalledTimes(1);
-    expect(chrome.breadcrumbs.set).toHaveBeenCalledWith([BREADCRUMBS.INDEX_MANAGEMENT, BREADCRUMBS.ROLLUPS, { text: testRollup._id }]);
+    expect(chrome.breadcrumbs.set).toHaveBeenCalledWith([BREADCRUMBS.INDEX_MANAGEMENT, BREADCRUMBS.ROLLUPS]);
+
+    expect(chrome.breadcrumbs.push).toHaveBeenCalledTimes(1);
+    expect(chrome.breadcrumbs.push).toHaveBeenCalledWith({ text: testRollup._id });
   });
 
   it("adds error toaster when get rollup has error", async () => {
@@ -136,12 +139,23 @@ describe("<RollupDetails /> spec", () => {
       ok: true,
       response: testRollup,
     });
+
+    browserServicesMock.rollupService.explainRollup = jest.fn().mockResolvedValue({
+      ok: true,
+      response: test1Metadata,
+    });
+
     browserServicesMock.rollupService.stopRollup = jest.fn().mockResolvedValue({
       ok: true,
       response: true,
     });
     const { getByTestId } = renderRollupDetailsWithRouter([`${ROUTES.ROLLUP_DETAILS}?id=${testRollup._id}`]);
+
+    await wait();
+
     expect(getByTestId("disableButton")).toBeEnabled();
+
+    expect(getByTestId("enableButton")).toBeDisabled();
 
     userEvent.click(getByTestId("disableButton"));
 
@@ -152,17 +166,85 @@ describe("<RollupDetails /> spec", () => {
     expect(toastNotifications.addSuccess).toHaveBeenCalledWith(`${testRollup._id} is disabled`);
   });
 
+  it("shows toast when fail to disable rollup job", async () => {
+    browserServicesMock.rollupService.getRollup = jest.fn().mockResolvedValue({
+      ok: true,
+      response: testRollup,
+    });
+
+    browserServicesMock.rollupService.explainRollup = jest.fn().mockResolvedValue({
+      ok: true,
+      response: test1Metadata,
+    });
+
+    browserServicesMock.rollupService.stopRollup = jest.fn().mockResolvedValue({
+      ok: false,
+      response: "some error",
+    });
+    const { getByTestId } = renderRollupDetailsWithRouter([`${ROUTES.ROLLUP_DETAILS}?id=${testRollup._id}`]);
+
+    await wait();
+
+    expect(getByTestId("disableButton")).toBeEnabled();
+
+    expect(getByTestId("enableButton")).toBeDisabled();
+
+    userEvent.click(getByTestId("disableButton"));
+
+    await wait();
+
+    expect(browserServicesMock.rollupService.stopRollup).toHaveBeenCalledTimes(1);
+    expect(toastNotifications.addDanger).toHaveBeenCalledTimes(1);
+    expect(toastNotifications.addDanger).toHaveBeenCalledWith(`Could not stop the rollup job "${testRollup._id}" : some error`);
+  });
+
+  it("shows toast when disable rollup job throws error", async () => {
+    browserServicesMock.rollupService.getRollup = jest.fn().mockResolvedValue({
+      ok: true,
+      response: testRollup,
+    });
+
+    browserServicesMock.rollupService.explainRollup = jest.fn().mockResolvedValue({
+      ok: true,
+      response: test1Metadata,
+    });
+
+    browserServicesMock.rollupService.stopRollup = jest.fn().mockRejectedValue(new Error("rejected error"));
+
+    const { getByTestId } = renderRollupDetailsWithRouter([`${ROUTES.ROLLUP_DETAILS}?id=${testRollup._id}`]);
+
+    await wait();
+
+    userEvent.click(getByTestId("disableButton"));
+
+    expect(browserServicesMock.rollupService.stopRollup).toHaveBeenCalledTimes(1);
+    expect(toastNotifications.addDanger).toHaveBeenCalledTimes(1);
+    expect(toastNotifications.addDanger).toHaveBeenCalledWith("Could not stop the rollup job: " + testRollup._id);
+  });
+
   it("can enable rollup job", async () => {
     browserServicesMock.rollupService.getRollup = jest.fn().mockResolvedValue({
       ok: true,
       response: testRollup2,
     });
+
+    browserServicesMock.rollupService.explainRollup = jest.fn().mockResolvedValue({
+      ok: true,
+      response: test2Metadata,
+    });
+
     browserServicesMock.rollupService.startRollup = jest.fn().mockResolvedValue({
       ok: true,
       response: true,
     });
+
     const { getByTestId } = renderRollupDetailsWithRouter([`${ROUTES.ROLLUP_DETAILS}?id=${testRollup2._id}`]);
+
+    await wait();
+
     expect(getByTestId("enableButton")).toBeEnabled();
+
+    expect(getByTestId("disableButton")).toBeDisabled();
 
     userEvent.click(getByTestId("enableButton"));
 
@@ -172,4 +254,9 @@ describe("<RollupDetails /> spec", () => {
     expect(toastNotifications.addSuccess).toHaveBeenCalledTimes(1);
     expect(toastNotifications.addSuccess).toHaveBeenCalledWith(`${testRollup2._id} is enabled`);
   });
+
+  //disable with response error
+  //disable throws error
+  //enable with response error
+  //enable throws error
 });

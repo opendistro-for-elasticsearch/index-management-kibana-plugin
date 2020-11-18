@@ -75,7 +75,11 @@ describe("<EditRollup /> spec", () => {
     renderEditRollupWithRouter([`${ROUTES.EDIT_ROLLUP}?id=${testRollup._id}`]);
 
     expect(chrome.breadcrumbs.set).toHaveBeenCalledTimes(1);
-    expect(chrome.breadcrumbs.set).toHaveBeenCalledWith([BREADCRUMBS.INDEX_MANAGEMENT, BREADCRUMBS.EDIT_ROLLUP]);
+    expect(chrome.breadcrumbs.set).toHaveBeenCalledWith([BREADCRUMBS.INDEX_MANAGEMENT, BREADCRUMBS.ROLLUPS]);
+
+    expect(chrome.breadcrumbs.push).toHaveBeenCalledTimes(2);
+    expect(chrome.breadcrumbs.push).toHaveBeenCalledWith(BREADCRUMBS.EDIT_ROLLUP);
+    expect(chrome.breadcrumbs.push).toHaveBeenCalledWith({ text: testRollup._id });
   });
 
   it("adds error toaster when get rollup has error", async () => {
