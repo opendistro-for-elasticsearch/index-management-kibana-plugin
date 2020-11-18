@@ -106,26 +106,26 @@ export interface Rollup {
 }
 
 export interface RollupMetadata {
-  metadataId: string;
-  rollupMetadata: {
+  metadata_id: string;
+  rollup_metadata: {
     id: string;
-    seqNo: number;
-    primaryTerm: number;
-    rollupId: string;
-    afterKey: Map<String, any> | null;
-    lastUpdatedTime: number;
+    seq_no: number;
+    primary_term: number;
+    rollup_id: string;
+    after_key: Map<String, any> | null;
+    last_updated_time: number;
     continuous: {
-      nextWindowStartTime: number;
-      nextWindowEndTime: number;
+      next_window_start_time: number;
+      next_window_end_time: number;
     } | null;
     status: string;
-    failureReason: string | null;
+    failure_reason: string | null;
     stats: {
-      pagesProcessed: number | null;
-      documentsProcessed: number | null;
-      rollupsIndexed: number | null;
-      indexTimeInMillis: number | null;
-      searchTimeInMillis: number | null;
+      pages_processed: number | null;
+      documents_processed: number | null;
+      rollups_indexed: number | null;
+      index_time_in_millis: number | null;
+      search_time_in_millis: number | null;
     };
   };
 }

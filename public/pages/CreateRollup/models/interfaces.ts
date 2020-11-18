@@ -24,26 +24,26 @@ export interface DimensionItem {
 
 //From backend
 export interface RollupDimensionItem {
-  dateHistogram: {
-    fixedInterval?: string;
-    calendarInterval?: string;
-    sourceField: string;
-    targetField: string;
+  date_histogram: {
+    fixed_interval?: string;
+    calendar_interval?: string;
+    source_field: string;
+    target_field: string;
     timezone: string;
   };
   terms?: {
-    sourceField: string;
-    targetField: string;
+    source_field: string;
+    target_field: string;
   };
   histogram?: {
-    sourceField: string;
-    targetField: string;
+    source_field: string;
+    target_field: string;
     interval: number;
   };
 }
 
 export interface RollupMetricItem {
-  sourceField: string;
+  source_field: string;
   metrics: [
     {
       min?: Object;

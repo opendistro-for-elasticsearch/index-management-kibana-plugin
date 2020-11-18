@@ -13,7 +13,7 @@
  * permissions and limitations under the License.
  */
 
-import React, { Component } from "react";
+import React from "react";
 import { EuiFlexGrid, EuiSpacer, EuiFlexItem, EuiText, EuiIcon, EuiFlexGroup } from "@elastic/eui";
 import { ContentPanel } from "../../../../components/ContentPanel";
 import { RollupMetadata } from "../../../../../models/interfaces";
@@ -32,31 +32,31 @@ const RollupStatus = ({ metadata }: RollupStatusProps) => (
           <EuiText size="xs">
             <dt>Current rollup window</dt>
             <dd>
-              {metadata == null || metadata.rollupMetadata == null || metadata.rollupMetadata.continuous == null
+              {metadata == null || metadata.rollup_metadata == null || metadata.rollup_metadata.continuous == null
                 ? "-"
-                : renderTime(metadata.rollupMetadata.continuous.nextWindowStartTime) +
+                : renderTime(metadata.rollup_metadata.continuous.next_window_start_time) +
                   " - " +
-                  renderTime(metadata.rollupMetadata.continuous.nextWindowEndTime)}
+                  renderTime(metadata.rollup_metadata.continuous.next_window_end_time)}
             </dd>
           </EuiText>
         </EuiFlexItem>
         <EuiFlexItem>
           <EuiText size="xs">
             <dt>Status</dt>
-            {metadata == null || metadata.rollupMetadata == null ? (
+            {metadata == null || metadata.rollup_metadata == null ? (
               <dd>-</dd>
-            ) : metadata.rollupMetadata.status == "failed" ? (
+            ) : metadata.rollup_metadata.status == "failed" ? (
               <EuiFlexGroup gutterSize="xs">
                 <EuiFlexItem grow={false}>
                   <EuiIcon size="s" type="alert" color="danger" />
                 </EuiFlexItem>
                 <EuiFlexItem grow={false}>
                   <EuiText size="xs" color="danger">
-                    {"Failed:" + metadata.rollupMetadata.failureReason}
+                    {"Failed:" + metadata.rollup_metadata.failure_reason}
                   </EuiText>
                 </EuiFlexItem>
               </EuiFlexGroup>
-            ) : metadata.rollupMetadata.status == "finished" ? (
+            ) : metadata.rollup_metadata.status == "finished" ? (
               <EuiFlexGroup gutterSize="xs">
                 <EuiFlexItem grow={false}>
                   <EuiIcon size="s" type="check" color="success" />
@@ -67,7 +67,7 @@ const RollupStatus = ({ metadata }: RollupStatusProps) => (
                   </EuiText>
                 </EuiFlexItem>
               </EuiFlexGroup>
-            ) : metadata.rollupMetadata.status == "init" ? (
+            ) : metadata.rollup_metadata.status == "init" ? (
               <EuiFlexGroup gutterSize="xs">
                 <EuiFlexItem grow={false}>
                   <EuiIcon size="s" type="clock" color="primary" />
@@ -78,7 +78,7 @@ const RollupStatus = ({ metadata }: RollupStatusProps) => (
                   </EuiText>
                 </EuiFlexItem>
               </EuiFlexGroup>
-            ) : metadata.rollupMetadata.status == "started" ? (
+            ) : metadata.rollup_metadata.status == "started" ? (
               <EuiFlexGroup gutterSize="xs">
                 <EuiFlexItem grow={false}>
                   <EuiIcon size="s" type="play" color="success" />
@@ -89,7 +89,7 @@ const RollupStatus = ({ metadata }: RollupStatusProps) => (
                   </EuiText>
                 </EuiFlexItem>
               </EuiFlexGroup>
-            ) : metadata.rollupMetadata.status == "stopped" ? (
+            ) : metadata.rollup_metadata.status == "stopped" ? (
               <EuiFlexGroup gutterSize="xs">
                 <EuiFlexItem grow={false}>
                   <EuiIcon size="s" type="stop" color="subdued" />
@@ -108,13 +108,13 @@ const RollupStatus = ({ metadata }: RollupStatusProps) => (
         <EuiFlexItem>
           <EuiText size="xs">
             <dt>Rollup indexed</dt>
-            <dd>{metadata == null || metadata.rollupMetadata == null ? "-" : metadata.rollupMetadata.stats.rollups_indexed}</dd>
+            <dd>{metadata == null || metadata.rollup_metadata == null ? "-" : metadata.rollup_metadata.stats.rollups_indexed}</dd>
           </EuiText>
         </EuiFlexItem>
         <EuiFlexItem>
           <EuiText size="xs">
             <dt>Indexed time (ms)</dt>
-            <dd>{metadata == null || metadata.rollupMetadata == null ? "-" : metadata.rollupMetadata.stats.index_time_in_millis}</dd>
+            <dd>{metadata == null || metadata.rollup_metadata == null ? "-" : metadata.rollup_metadata.stats.index_time_in_millis}</dd>
           </EuiText>
         </EuiFlexItem>
         <EuiFlexItem></EuiFlexItem>
@@ -122,13 +122,13 @@ const RollupStatus = ({ metadata }: RollupStatusProps) => (
         <EuiFlexItem>
           <EuiText size="xs">
             <dt>Document processed</dt>
-            <dd>{metadata == null || metadata.rollupMetadata == null ? "-" : metadata.rollupMetadata.stats.documents_processed}</dd>
+            <dd>{metadata == null || metadata.rollup_metadata == null ? "-" : metadata.rollup_metadata.stats.documents_processed}</dd>
           </EuiText>
         </EuiFlexItem>
         <EuiFlexItem>
           <EuiText size="xs">
             <dt>Search time (ms)</dt>
-            <dd>{metadata == null || metadata.rollupMetadata == null ? "-" : metadata.rollupMetadata.stats.search_time_in_millis}</dd>
+            <dd>{metadata == null || metadata.rollup_metadata == null ? "-" : metadata.rollup_metadata.stats.search_time_in_millis}</dd>
           </EuiText>
         </EuiFlexItem>
         <EuiFlexItem></EuiFlexItem>
@@ -136,7 +136,7 @@ const RollupStatus = ({ metadata }: RollupStatusProps) => (
         <EuiFlexItem>
           <EuiText size="xs">
             <dt>Page processed</dt>
-            <dd>{metadata == null || metadata.rollupMetadata == null ? "-" : metadata.rollupMetadata.stats.pages_processed}</dd>
+            <dd>{metadata == null || metadata.rollup_metadata == null ? "-" : metadata.rollup_metadata.stats.pages_processed}</dd>
           </EuiText>
         </EuiFlexItem>
       </EuiFlexGrid>
