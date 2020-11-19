@@ -32,8 +32,8 @@ import {
 } from "@elastic/eui";
 import { CalendarTimeunitOptions, FixedTimeunitOptions } from "../../utils/constants";
 import { RollupService } from "../../../../services";
-import { FieldItem } from "../../models/interfaces";
 import moment from "moment-timezone";
+import { FieldItem } from "../../../../../models/interfaces";
 
 interface TimeAggregationProps {
   rollupService: RollupService;
@@ -141,7 +141,7 @@ export default class TimeAggregation extends Component<TimeAggregationProps, Tim
                 <EuiFlexItem grow={false}>
                   <EuiFormRow hasEmptyLabelSpace={true}>
                     <EuiText size="m">
-                      <dd>Every 1</dd>" "
+                      <dd>Every 1</dd>{" "}
                     </EuiText>
                   </EuiFormRow>
                 </EuiFlexItem>
