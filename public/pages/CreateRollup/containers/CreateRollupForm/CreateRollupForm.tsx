@@ -126,7 +126,7 @@ export default class CreateRollupForm extends Component<CreateRollupFormProps, C
       timezone: "UTC",
       timeunit: "h",
 
-      jobEnabledByDefault: false,
+      jobEnabledByDefault: true,
       recurringJob: "no",
       recurringDefinition: "fixed",
       interval: 2,

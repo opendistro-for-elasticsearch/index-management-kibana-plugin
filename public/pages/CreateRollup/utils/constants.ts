@@ -26,7 +26,7 @@ export const EMPTY_ROLLUP = JSON.stringify({
         },
       },
     ],
-    enabled: false,
+    enabled: true,
     metrics: [],
     page_size: 1000,
     roles: [],
