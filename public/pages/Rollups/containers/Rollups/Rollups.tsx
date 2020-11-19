@@ -579,11 +579,7 @@ export default class Rollups extends Component<RollupsProps, RollupsState> {
             tableLayout="auto"
           />
           {isDeleteModalVisible && (
-            <DeleteModal
-              rollupId={selectedItems.length ? this.concatName() : ""}
-              closeDeleteModal={this.closeDeleteModal}
-              onClickDelete={this.onClickDelete}
-            />
+            <DeleteModal rollupId={this.concatName()} closeDeleteModal={this.closeDeleteModal} onClickDelete={this.onClickDelete} />
           )}
         </div>
       </EuiPanel>

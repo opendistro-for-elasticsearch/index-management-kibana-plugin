@@ -38,7 +38,7 @@ const setOfSteps = (step: number) => {
     {
       title: "Review and create",
       children: null,
-      status: step < 4 ? "disabled" : "",
+      status: step < 4 ? "disabled" : null,
     },
   ];
 };
