@@ -64,7 +64,7 @@ export default class GeneralInformation extends Component<GeneralInformationProp
           </ModalConsumer>
         }
         bodyStyles={{ padding: "initial" }}
-        title="General Information"
+        title="General information"
         titleSize="m"
       >
         <div style={{ paddingLeft: "10px" }}>
