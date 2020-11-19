@@ -171,7 +171,7 @@ export default class RollupDetails extends Component<RollupDetailsProps, RollupD
         }
       } else {
         toastNotifications.addDanger(`Could not load the rollup job: ${response.error}`);
-        // this.props.history.push(ROUTES.ROLLUPS);
+        this.props.history.push(ROUTES.ROLLUPS);
       }
       if (explainResponse.ok) {
         let metadata = explainResponse.response[rollupId];

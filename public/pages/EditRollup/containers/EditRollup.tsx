@@ -74,7 +74,7 @@ export default class EditRollup extends Component<EditRollupProps, EditRollupSta
       intervalError: "",
       intervalTimeunit: "MINUTES",
       cronExpression: "",
-      cronTimezone: "Africa/Abidjan",
+      cronTimezone: "UTC",
       pageSize: 1000,
       delayTime: undefined,
       delayTimeunit: "MINUTES",

@@ -26,6 +26,96 @@ import CreateRollupForm from "./CreateRollupForm";
 import chrome from "ui/chrome";
 import userEvent from "@testing-library/user-event";
 
+const sampleMapping = {
+  index_1: {
+    mappings: {
+      properties: {
+        category: {
+          type: "text",
+          fields: {
+            keyword: {
+              type: "keyword",
+            },
+          },
+        },
+        customer_gender: {
+          type: "keyword",
+        },
+        day_of_week: {
+          type: "keyword",
+        },
+        day_of_week_i: {
+          type: "integer",
+        },
+        geoip: {
+          properties: {
+            city_name: {
+              type: "keyword",
+            },
+            region_name: {
+              type: "keyword",
+            },
+          },
+        },
+        order_date: {
+          type: "date",
+        },
+        products: {
+          properties: {
+            _id: {
+              type: "text",
+              fields: {
+                keyword: {
+                  type: "keyword",
+                  ignore_above: 256,
+                },
+              },
+            },
+            category: {
+              type: "text",
+              fields: {
+                keyword: {
+                  type: "keyword",
+                },
+              },
+            },
+            price: {
+              type: "half_float",
+            },
+            quantity: {
+              type: "integer",
+            },
+            tax_amount: {
+              type: "half_float",
+            },
+            taxful_price: {
+              type: "half_float",
+            },
+            taxless_price: {
+              type: "half_float",
+            },
+          },
+        },
+        taxful_total_price: {
+          type: "half_float",
+        },
+        taxless_total_price: {
+          type: "half_float",
+        },
+        total_quantity: {
+          type: "integer",
+        },
+        type: {
+          type: "keyword",
+        },
+        user: {
+          type: "keyword",
+        },
+      },
+    },
+  },
+};
+
 function renderCreateRollupFormWithRouter() {
   return {
     ...render(
@@ -97,7 +187,7 @@ describe("<CreateRollupForm /> spec", () => {
   });
 
   it("routes from step 1 to step 2", async () => {
-    const { getByTestId, getByLabelText, getByDisplayValue, queryByText } = renderCreateRollupFormWithRouter();
+    const { getByTestId, getByLabelText, debug, queryByText, getAllByTestId } = renderCreateRollupFormWithRouter();
     const indices = [
       {
         "docs.count": 5,
@@ -118,6 +208,11 @@ describe("<CreateRollupForm /> spec", () => {
       response: { indices, totalIndices: 1 },
     });
 
+    browserServicesMock.rollupService.getMappings = jest.fn().mockResolvedValue({
+      ok: true,
+      response: sampleMapping,
+    });
+
     fireEvent.focus(getByLabelText("Name"));
     userEvent.type(getByLabelText("Name"), "some_rollup_id");
     fireEvent.blur(getByLabelText("Name"));
@@ -126,15 +221,20 @@ describe("<CreateRollupForm /> spec", () => {
     userEvent.type(getByTestId("description"), "some description");
     fireEvent.blur(getByTestId("description"));
 
-    fireEvent.focus(getByLabelText("Source index"));
-    userEvent.type(getByLabelText("Source index"), "index_1");
-    userEvent.click(getByDisplayValue("index_1"));
-    fireEvent.blur(getByLabelText("Source index"));
+    // fireEvent.click(getByTestId("sourceIndexCombobox"));
+    // userEvent.type(getByTestId("sourceIndexCombobox"), "index_1");
 
-    fireEvent.focus(getByLabelText("Target index"));
-    userEvent.type(getByLabelText("Target index"), "some_target_index");
-    fireEvent.keyPress(getByLabelText("Target index"), { key: "Enter", code: "Enter" });
-    fireEvent.blur(getByLabelText("Target index"));
+    userEvent.click(getAllByTestId("comboBoxSearchInput")[0]);
+    await wait();
+    debug();
+    // userEvent.type(getAllByTestId("comboBoxSearchInput")[0], "index_1");
+    fireEvent.keyPress(getAllByTestId("comboBoxSearchInput")[0], { key: "Down Arrow", code: 40, charCode: 40 });
+    fireEvent.keyPress(getAllByTestId("comboBoxSearchInput")[0], { key: "Enter", code: "Enter" });
+
+    userEvent.click(getAllByTestId("comboBoxSearchInput")[1]);
+    userEvent.type(getAllByTestId("comboBoxSearchInput")[1], "some_target_index");
+    await wait();
+    fireEvent.keyPress(getAllByTestId("comboBoxSearchInput")[1], { key: "Enter", code: "Enter" });
 
     expect(queryByText("Job name is required.")).toBeNull();
 
@@ -142,11 +242,12 @@ describe("<CreateRollupForm /> spec", () => {
 
     expect(queryByText("Target index is required.")).toBeNull();
 
-    expect(getByTestId("createRollupNextButton")).toBeEnabled();
-
     userEvent.click(getByTestId("createRollupNextButton"));
-    getByLabelText("fake");
 
-    await wait(() => getByLabelText("Timestamp field"));
+    await wait();
+
+    //Check if target index is selected correctly
+    debug();
+    expect(queryByText("Timestamp field")).not.toBeNull();
   });
 });

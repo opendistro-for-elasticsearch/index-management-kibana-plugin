@@ -89,7 +89,7 @@ describe("<RollupDetails /> spec", () => {
     await wait();
 
     expect(toastNotifications.addDanger).toHaveBeenCalledTimes(1);
-    expect(toastNotifications.addDanger).toHaveBeenCalledWith("some error");
+    expect(toastNotifications.addDanger).toHaveBeenCalledWith("Could not load the rollup job: some error");
 
     await wait(() => getByText("Testing rollup landing page"));
   });
@@ -255,8 +255,6 @@ describe("<RollupDetails /> spec", () => {
     expect(toastNotifications.addSuccess).toHaveBeenCalledWith(`${testRollup2._id} is enabled`);
   });
 
-  //disable with response error
-  //disable throws error
   //enable with response error
   //enable throws error
 });

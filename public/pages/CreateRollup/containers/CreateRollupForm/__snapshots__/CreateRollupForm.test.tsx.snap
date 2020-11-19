@@ -319,6 +319,7 @@ exports[`<CreateRollupForm /> spec renders the component 1`] = `
                       aria-expanded="false"
                       aria-haspopup="listbox"
                       class="euiComboBox"
+                      data-test-subj="sourceIndexCombobox"
                       role="combobox"
                     >
                       <div

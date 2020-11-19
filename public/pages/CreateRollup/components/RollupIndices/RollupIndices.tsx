@@ -144,6 +144,7 @@ export default class RollupIndices extends Component<RollupIndicesProps, RollupI
               onSearchChange={this.onIndexSearchChange}
               isLoading={isLoading}
               isInvalid={sourceIndexError != ""}
+              data-test-subj="sourceIndexCombobox"
             />
           </EuiFormRow>
 

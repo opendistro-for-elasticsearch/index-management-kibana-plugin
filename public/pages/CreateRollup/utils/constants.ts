@@ -13,8 +13,6 @@
  * permissions and limitations under the License.
  */
 
-//Added last_updated_time and start_time to avoid error, but they should be system generated.
-//Added a delay as 0, but this should be optional, so null should be fine.
 export const EMPTY_ROLLUP = JSON.stringify({
   rollup: {
     continuous: false,
@@ -23,8 +21,8 @@ export const EMPTY_ROLLUP = JSON.stringify({
       {
         date_histogram: {
           source_field: "",
-          fixed_interval: "2ms",
-          timezone: "Africa/Abidjan",
+          fixed_interval: "1h",
+          timezone: "UTC",
         },
       },
     ],

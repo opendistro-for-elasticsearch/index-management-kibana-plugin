@@ -113,8 +113,8 @@ describe("<EditRollup /> spec", () => {
       ok: true,
       response: testRollup,
     });
-    const { getByTestId } = renderEditRollupWithRouter([`${ROUTES.EDIT_ROLLUP}?id=${testRollup._id}`]);
-
+    const { debug, getByTestId } = renderEditRollupWithRouter([`${ROUTES.EDIT_ROLLUP}?id=${testRollup._id}`]);
+    debug();
     fireEvent.focus(getByTestId("description"));
     userEvent.type(getByTestId("description"), "some description");
     fireEvent.blur(getByTestId("description"));
