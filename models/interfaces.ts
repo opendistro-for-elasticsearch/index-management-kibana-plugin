@@ -112,16 +112,7 @@ export interface Rollup {
   continuous: boolean;
   delay: number | null;
   description: string;
-  dimensions: [
-    {
-      date_histogram: {
-        sourceField: string;
-        fixed_interval?: string;
-        calendar_interval?: string;
-        timezone: string;
-      };
-    }
-  ];
+  dimensions: dateHistogramItem | termsItem | histogramItem[];
   enabled: boolean;
   enabledTime: number | null;
   lastUpdatedTime: number;
@@ -183,4 +174,26 @@ export interface MetricItem {
 export interface FieldItem {
   label: string;
   type?: string;
+}
+
+interface dateHistogramItem {
+  sourceField: string;
+  fixed_interval: string | null;
+  calendar_interval: string | null;
+  timezone: string;
+}
+
+interface termsItem {
+  terms: {
+    source_field: string;
+    target_field: string;
+  };
+}
+
+interface histogramItem {
+  histogram: {
+    source_field: string;
+    target_field: string;
+    interval: number;
+  };
 }
