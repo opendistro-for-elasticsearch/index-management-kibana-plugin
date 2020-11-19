@@ -19,12 +19,12 @@ import chrome from "ui/chrome";
 import { RouteComponentProps } from "react-router-dom";
 import { RollupService } from "../../../../services";
 import { BREADCRUMBS, ROUTES } from "../../../../utils/constants";
-import { IndexItem } from "../../../../../models/interfaces";
+import { IndexItem, MetricItem } from "../../../../../models/interfaces";
 import CreateRollupSteps from "../../components/CreateRollupSteps";
 import HistogramAndMetrics from "../../components/HistogramAndMetrics";
 import JobNameAndIndices from "../../components/JobNameAndIndices";
 import ScheduleRolesAndNotifications from "../../components/ScheduleRolesAndNotifications";
-import { DimensionItem, MetricItem } from "../../models/interfaces";
+import { DimensionItem } from "../../models/interfaces";
 
 interface CreateRollupProps extends RouteComponentProps {
   rollupService: RollupService;

@@ -13,7 +13,7 @@
  * permissions and limitations under the License.
  */
 
-import { FieldItem } from "../models/interfaces";
+import { FieldItem } from "../../../../models/interfaces";
 
 export const parseTimeunit = (timeunit: string): string => {
   if (timeunit == "MINUTES" || timeunit == "m" || timeunit == "Minutes") return "minute(s)";

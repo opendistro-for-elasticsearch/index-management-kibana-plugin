@@ -24,12 +24,12 @@ import { ManagedCatIndex } from "../../../../../server/models/interfaces";
 import CreateRollup from "../CreateRollup";
 import CreateRollupStep2 from "../CreateRollupStep2";
 import { toastNotifications } from "ui/notify";
-import { IndexItem, Rollup } from "../../../../../models/interfaces";
+import { FieldItem, IndexItem, MetricItem, Rollup } from "../../../../../models/interfaces";
 import { getErrorMessage } from "../../../../utils/helpers";
 import { EMPTY_ROLLUP } from "../../utils/constants";
 import CreateRollupStep3 from "../CreateRollupStep3";
 import CreateRollupStep4 from "../CreateRollupStep4";
-import { DimensionItem, FieldItem, MetricItem } from "../../models/interfaces";
+import { DimensionItem } from "../../models/interfaces";
 import moment from "moment";
 import { compareFieldItem, parseFieldOptions } from "../../utils/helpers";
 
