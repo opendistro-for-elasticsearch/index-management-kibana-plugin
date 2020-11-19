@@ -42,9 +42,8 @@ import GeneralInformation from "../../components/GeneralInformation/GeneralInfor
 import RollupStatus from "../../components/RollupStatus/RollupStatus";
 import AggregationAndMetricsSettings from "../../components/AggregationAndMetricsSettings/AggregationAndMetricsSettings";
 import { parseTimeunit } from "../../../CreateRollup/utils/helpers";
-import { MetricItem, RollupMetadata } from "../../../../../models/interfaces";
+import { DimensionItem, MetricItem, RollupDimensionItem, RollupMetadata, RollupMetricItem } from "../../../../../models/interfaces";
 import { renderTime } from "../../../Rollups/utils/helpers";
-import { DimensionItem, RollupDimensionItem, RollupMetricItem } from "../../../CreateRollup/models/interfaces";
 import DeleteModal from "../../../Rollups/components/DeleteModal";
 
 interface RollupDetailsProps extends RouteComponentProps {

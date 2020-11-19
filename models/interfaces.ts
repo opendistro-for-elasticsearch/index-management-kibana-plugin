@@ -112,7 +112,7 @@ export interface Rollup {
   continuous: boolean;
   delay: number | null;
   description: string;
-  dimensions: dateHistogramItem | termsItem | histogramItem[];
+  dimensions: RollupDimensionItem[];
   enabled: boolean;
   enabledTime: number | null;
   lastUpdatedTime: number;
@@ -161,6 +161,15 @@ export interface CronSchedule {
   timezone: string;
 }
 
+//Frontend dimension data model
+export interface DimensionItem {
+  sequence: number;
+  field: FieldItem;
+  aggregationMethod: string;
+  interval?: number;
+}
+
+//Frontend metric data model
 export interface MetricItem {
   source_field: FieldItem;
   all: boolean;
@@ -176,24 +185,36 @@ export interface FieldItem {
   type?: string;
 }
 
-interface dateHistogramItem {
-  sourceField: string;
-  fixed_interval: string | null;
-  calendar_interval: string | null;
-  timezone: string;
-}
-
-interface termsItem {
-  terms: {
+//Backend dimension data model
+export interface RollupDimensionItem {
+  date_histogram?: {
+    fixed_interval: string | null;
+    calendar_interval: string | null;
+    source_field: string;
+    target_field: string;
+    timezone: string;
+  };
+  terms?: {
     source_field: string;
     target_field: string;
   };
-}
-
-interface histogramItem {
-  histogram: {
+  histogram?: {
     source_field: string;
     target_field: string;
     interval: number;
   };
+}
+
+//Backend metric data model
+export interface RollupMetricItem {
+  source_field: string;
+  metrics: [
+    {
+      min?: Object;
+      max?: Object;
+      sum?: Object;
+      avg?: Object;
+      value_count?: Object;
+    }
+  ];
 }
