@@ -290,8 +290,8 @@ export default class CreateRollupForm extends Component<CreateRollupFormProps, C
     this.setState({ targetIndex: options, rollupJSON: newJSON, targetIndexError: targetIndexError });
   };
 
-  onChangeIntervalType = (optionId: string): void => {
-    this.setState({ intervalType: optionId });
+  onChangeIntervalType = (intervalType: string): void => {
+    this.setState({ intervalType, timeunit: "h" });
   };
 
   onChangeIntervalValue = (e: ChangeEvent<HTMLInputElement>): void => {

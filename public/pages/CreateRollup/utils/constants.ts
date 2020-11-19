@@ -225,9 +225,9 @@ export const DelayTimeunitOptions = [
 ];
 
 export const CalendarTimeunitOptions = [
-  { value: "MINUTES", text: "Minute(s)" },
-  { value: "HOURS", text: "Hour(s)" },
-  { value: "DAYS", text: "Day(s)" },
+  { value: "m", text: "Minute(s)" },
+  { value: "h", text: "Hour(s)" },
+  { value: "d", text: "Day(s)" },
 ];
 
 export const AddFieldsColumns = [
