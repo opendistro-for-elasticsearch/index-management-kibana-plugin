@@ -36,6 +36,15 @@ export default class GeneralInformation extends Component<GeneralInformationProp
 
   render() {
     const { rollupId, description, onEdit, sourceIndex, targetIndex, scheduleText, pageSize, lastUpdated } = this.props;
+    const infoItems = [
+      { term: "Name", value: rollupId },
+      { term: "Source index", value: sourceIndex },
+      { term: "Target index", value: targetIndex },
+      { term: "Schedule", value: scheduleText },
+      { term: "Description", value: description || "-" },
+      { term: "Last updated", value: lastUpdated },
+      { term: "Pages per execution", value: pageSize },
+    ];
     return (
       <ContentPanel
         actions={
@@ -61,48 +70,14 @@ export default class GeneralInformation extends Component<GeneralInformationProp
         <div style={{ paddingLeft: "10px" }}>
           <EuiSpacer size="s" />
           <EuiFlexGrid columns={4}>
-            <EuiFlexItem>
-              <EuiText size="xs">
-                <dt>Name</dt>
-                <dd>{rollupId}</dd>
-              </EuiText>
-            </EuiFlexItem>
-            <EuiFlexItem>
-              <EuiText size="xs">
-                <dt>Source Index</dt>
-                <dd>{sourceIndex}</dd>
-              </EuiText>
-            </EuiFlexItem>
-            <EuiFlexItem>
-              <EuiText size="xs">
-                <dt>Target index</dt>
-                <dd>{targetIndex}</dd>
-              </EuiText>
-            </EuiFlexItem>
-            <EuiFlexItem>
-              <EuiText size="xs">
-                <dt>Schedule</dt>
-                <dd>{scheduleText}</dd>
-              </EuiText>
-            </EuiFlexItem>
-            <EuiFlexItem>
-              <EuiText size="xs">
-                <dt>Description</dt>
-                <dd>{description == "" ? "-" : description}</dd>
-              </EuiText>
-            </EuiFlexItem>
-            <EuiFlexItem>
-              <EuiText size="xs">
-                <dt>Last updated</dt>
-                <dd>{lastUpdated}</dd>
-              </EuiText>
-            </EuiFlexItem>
-            <EuiFlexItem>
-              <EuiText size="xs">
-                <dt>Pages per execution</dt>
-                <dd>{pageSize}</dd>
-              </EuiText>
-            </EuiFlexItem>
+            {infoItems.map((item) => (
+              <EuiFlexItem>
+                <EuiText size="xs">
+                  <dt>{item.term}</dt>
+                  <dd>{item.value}</dd>
+                </EuiText>
+              </EuiFlexItem>
+            ))}
           </EuiFlexGrid>
           <EuiSpacer size="s" />
         </div>
