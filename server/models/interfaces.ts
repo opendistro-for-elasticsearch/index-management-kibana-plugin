@@ -173,22 +173,6 @@ export interface ExplainAPIManagedIndexMetaData {
   info?: object;
 }
 
-export interface ExplainAPIRollupMetaData {
-  "opendistro.index_state_management.policy_id": string | null;
-  index?: string;
-  index_uuid?: string;
-  policy_id?: string;
-  policy_seq_no?: number;
-  policy_primary_term?: number;
-  policy_completed?: boolean;
-  rolled_over?: boolean;
-  transition_to?: string;
-  state?: { name: string; start_time: number };
-  action?: { name: string; start_time: number; index: number; failed: boolean; consumed_retries: number };
-  retry_info?: { failed: boolean; consumed_retries: number };
-  info?: object;
-}
-
 export interface IndexManagementApi {
   [API_ROUTE: string]: string;
   readonly POLICY_BASE: string;
