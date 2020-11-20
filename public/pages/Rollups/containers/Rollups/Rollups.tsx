@@ -54,6 +54,7 @@ import RollupEmptyPrompt from "../../components/RollupEmptyPrompt";
 import { RollupItem, RollupQueryParams } from "../../models/interfaces";
 import { getURLQueryParams, renderContinuous, renderEnabled, renderTime } from "../../utils/helpers";
 import DeleteModal from "../../components/DeleteModal";
+import { renderStatus } from "../../../RollupDetails/utils/helpers";
 
 interface RollupsProps extends RouteComponentProps {
   rollupService: RollupService;
@@ -427,67 +428,7 @@ export default class Rollups extends Component<RollupsProps, RollupsState> {
         name: "Rollup job status",
         sortable: true,
         textOnly: true,
-        render: (metadata) =>
-          metadata == null || metadata.rollup_metadata == undefined || metadata.rollup_metadata == null ? (
-            "-"
-          ) : metadata.rollup_metadata.status == "failed" ? (
-            <EuiFlexGroup gutterSize="xs">
-              <EuiFlexItem grow={false}>
-                <EuiIcon size="s" type="alert" color="danger" />
-              </EuiFlexItem>
-              <EuiFlexItem grow={false}>
-                <EuiText size="xs" color="danger">
-                  {"Failed: " + metadata.rollup_metadata.failure_reason}
-                </EuiText>
-              </EuiFlexItem>
-            </EuiFlexGroup>
-          ) : metadata.rollup_metadata.status == "finished" ? (
-            <EuiFlexGroup gutterSize="xs">
-              <EuiFlexItem grow={false}>
-                <EuiIcon size="s" type="check" color="success" />
-              </EuiFlexItem>
-              <EuiFlexItem grow={false}>
-                <EuiText size="xs" color="secondary">
-                  Complete
-                </EuiText>
-              </EuiFlexItem>
-            </EuiFlexGroup>
-          ) : metadata.rollup_metadata.status == "init" ? (
-            <EuiFlexGroup gutterSize="xs">
-              <EuiFlexItem grow={false}>
-                <EuiIcon size="s" type="clock" color="primary" />
-              </EuiFlexItem>
-              <EuiFlexItem grow={false}>
-                <EuiText size="xs" style={{ color: "#006BB4" }}>
-                  Initializing
-                </EuiText>
-              </EuiFlexItem>
-            </EuiFlexGroup>
-          ) : metadata.rollup_metadata.status == "started" ? (
-            <EuiFlexGroup gutterSize="xs">
-              <EuiFlexItem grow={false}>
-                <EuiIcon size="s" type="play" color="success" />
-              </EuiFlexItem>
-              <EuiFlexItem grow={false}>
-                <EuiText size="xs" color="secondary">
-                  Started
-                </EuiText>
-              </EuiFlexItem>
-            </EuiFlexGroup>
-          ) : metadata.rollup_metadata.status == "stopped" ? (
-            <EuiFlexGroup gutterSize="xs">
-              <EuiFlexItem grow={false}>
-                <EuiIcon size="s" type="stop" color="subdued" />
-              </EuiFlexItem>
-              <EuiFlexItem grow={false}>
-                <EuiText size="xs" color="subdued">
-                  Stopped
-                </EuiText>
-              </EuiFlexItem>
-            </EuiFlexGroup>
-          ) : (
-            "-"
-          ),
+        render: (metadata) => renderStatus(metadata),
       },
     ];
 

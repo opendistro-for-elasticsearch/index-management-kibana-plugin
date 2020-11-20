@@ -180,7 +180,7 @@ export default class RollupDetails extends Component<RollupDetailsProps, RollupD
       }
     } catch (err) {
       toastNotifications.addDanger(getErrorMessage(err, "Could not load the rollup job"));
-      // this.props.history.push(ROUTES.ROLLUPS);
+      this.props.history.push(ROUTES.ROLLUPS);
     }
   };
 
