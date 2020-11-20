@@ -27,7 +27,7 @@ import { Redirect, Route, RouteComponentProps, Switch } from "react-router-dom";
 import { BREADCRUMBS, ROUTES } from "../../../../utils/constants";
 import Rollups from "./Rollups";
 import { TEXT } from "../../components/RollupEmptyPrompt/RollupEmptyPrompt";
-import { testRollup } from "../../../CreateRollup/utils/constants";
+import { testRollup, testRollup2 } from "../../../CreateRollup/utils/constants";
 
 function renderRollupsWithRouter() {
   return {
@@ -133,7 +133,10 @@ describe("<Rollups /> spec", () => {
       ok: true,
       response: { rollups, totalRollups: 1 },
     });
-    browserServicesMock.rollupService.explainRollup = jest.fn().mockResolvedValue({ ok: false, error: "some explain API error" });
+    browserServicesMock.rollupService.explainRollup = jest.fn().mockResolvedValue({
+      ok: false,
+      error: "some explain API error",
+    });
     renderRollupsWithRouter();
 
     await wait();
@@ -267,17 +270,17 @@ describe("<Rollups /> spec", () => {
   });
 
   it("can delete a rollup job", async () => {
-    const rollups = [testRollup];
+    const rollups = [testRollup2];
     browserServicesMock.rollupService.getRollups = jest
       .fn()
       .mockResolvedValueOnce({ ok: true, response: { rollups, totalRollups: 1 } })
       .mockResolvedValueOnce({ ok: true, response: { rollups: [], totalRollups: 0 } });
     browserServicesMock.rollupService.deleteRollup = jest.fn().mockResolvedValue({ ok: true, response: true });
-    const { queryByText, getByText, getByTestId } = renderRollupsWithRouter();
+    const { getByText, getByTestId } = renderRollupsWithRouter();
 
-    // await wait(() => getByText(testRollup._id));
+    await wait(() => getByText(testRollup2._id));
 
-    userEvent.click(getByTestId(`checkboxSelectRow-${testRollup._id}`));
+    userEvent.click(getByTestId(`checkboxSelectRow-${testRollup2._id}`));
 
     userEvent.click(getByTestId("actionButton"));
 
@@ -289,7 +292,6 @@ describe("<Rollups /> spec", () => {
 
     await wait(() => getByTestId("deleteTextField"));
 
-    //TODO: Find out a better way to locate this delete button.
     expect(getByText("Delete")).toBeDisabled();
 
     await userEvent.type(getByTestId("deleteTextField"), "delete");
@@ -298,34 +300,10 @@ describe("<Rollups /> spec", () => {
 
     userEvent.click(getByText("Delete"));
 
-    await wait(() => expect(queryByText(testRollup._id)).toBeNull());
+    await wait();
 
     expect(browserServicesMock.rollupService.deleteRollup).toHaveBeenCalledTimes(1);
     expect(toastNotifications.addSuccess).toHaveBeenCalledTimes(1);
-    expect(toastNotifications.addSuccess).toHaveBeenCalledWith(`"${testRollup._id}" successfully deleted!`);
-  });
-
-  it("can cancel a delete", async () => {
-    const rollups = [testRollup];
-    browserServicesMock.rollupService.getRollups = jest.fn().mockResolvedValue({ ok: true, response: { rollups, totalRollups: 1 } });
-    const { queryByText, getByText, getByTestId } = renderRollupsWithRouter();
-
-    await wait(() => getByText(testRollup._id));
-
-    userEvent.click(getByTestId(`checkboxSelectRow-${testRollup._id}`));
-
-    userEvent.click(getByTestId("actionButton"));
-
-    expect(getByTestId("actionPopover")).toBeTruthy();
-
-    expect(getByTestId("deleteButton")).toBeEnabled();
-
-    userEvent.click(getByTestId("deleteButton"));
-
-    await wait(() => getByTestId("deleteTextField"));
-
-    userEvent.click(getByText("Cancel"));
-
-    await wait(() => expect(queryByText(testRollup._id)).not.toBeNull());
+    expect(toastNotifications.addSuccess).toHaveBeenCalledWith(`"${testRollup2._id}" successfully deleted!`);
   });
 });
