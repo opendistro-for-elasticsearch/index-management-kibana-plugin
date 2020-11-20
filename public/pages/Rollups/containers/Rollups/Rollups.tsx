@@ -444,7 +444,7 @@ export default class Rollups extends Component<RollupsProps, RollupsState> {
               </EuiFlexItem>
               <EuiFlexItem grow={false}>
                 <EuiText size="xs" color="danger">
-                  {"Failed:" + metadata.rollup_metadata.failure_reason}
+                  {"Failed: " + metadata.rollup_metadata.failure_reason}
                 </EuiText>
               </EuiFlexItem>
             </EuiFlexGroup>
