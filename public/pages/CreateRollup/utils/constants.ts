@@ -225,9 +225,19 @@ export const DelayTimeunitOptions = [
 ];
 
 export const CalendarTimeunitOptions = [
-  { value: "m", text: "Minute(s)" },
-  { value: "h", text: "Hour(s)" },
-  { value: "d", text: "Day(s)" },
+  { value: "m", text: "Minute" },
+  { value: "h", text: "Hour" },
+  { value: "d", text: "Day" },
+  { value: "w", text: "Week" },
+  { value: "M", text: "Month" },
+  { value: "q", text: "Quarter" },
+  { value: "y", text: "Year" },
+];
+
+export const ScheduleIntervalTimeunitOptions = [
+  { value: "MINUTES", text: "Minute(s)" },
+  { value: "HOURS", text: "Hour(s)" },
+  { value: "DAYS", text: "Day(s)" },
 ];
 
 export const AddFieldsColumns = [

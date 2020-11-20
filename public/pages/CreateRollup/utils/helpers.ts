@@ -16,11 +16,15 @@
 import { FieldItem } from "../../../../models/interfaces";
 
 export const parseTimeunit = (timeunit: string): string => {
-  if (timeunit == "MINUTES" || timeunit == "m" || timeunit == "Minutes") return "minute(s)";
-  else if (timeunit == "HOURS" || timeunit == "h" || timeunit == "Hours") return "hour(s)";
+  if (timeunit == "ms" || timeunit == "Milliseconds") return "millisecond(s)";
   else if (timeunit == "SECONDS" || timeunit == "s" || timeunit == "Seconds") return "second(s)";
+  else if (timeunit == "MINUTES" || timeunit == "m" || timeunit == "Minutes") return "minute(s)";
+  else if (timeunit == "HOURS" || timeunit == "h" || timeunit == "Hours") return "hour(s)";
   else if (timeunit == "DAYS" || timeunit == "d" || timeunit == "Days") return "day(s)";
-  else if (timeunit == "ms" || timeunit == "Milliseconds") return "millisecond(s)";
+  else if (timeunit == "w") return "week";
+  else if (timeunit == "M") return "month";
+  else if (timeunit == "q") return "quarter";
+  else if (timeunit == "y") return "year";
 
   return timeunit;
 };
