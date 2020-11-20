@@ -98,7 +98,7 @@ export default class RollupDetails extends Component<RollupDetailsProps, RollupD
       pageSize: 1000,
       delayTime: undefined,
       delayTimeunit: "MINUTES",
-      rollupJSON: EMPTY_ROLLUP,
+      rollupJSON: "",
       lastUpdated: "-",
       metadata: null,
 
@@ -136,7 +136,7 @@ export default class RollupDetails extends Component<RollupDetailsProps, RollupD
       const explainResponse = await rollupService.explainRollup(rollupId);
 
       if (response.ok) {
-        let newJSON = response.response.rollup;
+        const newJSON = response.response;
         const selectedMetrics = this.parseMetric(response.response.rollup.metrics);
         const selectedDimensionField = this.parseDimension(response.response.rollup.dimensions);
         this.setState({
