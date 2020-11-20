@@ -364,7 +364,7 @@ export default class Rollups extends Component<RollupsProps, RollupsState> {
       <EuiContextMenuItem
         key="Delete"
         icon="empty"
-        disabled={selectedItems.length == 0}
+        disabled={!selectedItems.length}
         data-test-subj="deleteButton"
         onClick={() => {
           this.closePopover();
