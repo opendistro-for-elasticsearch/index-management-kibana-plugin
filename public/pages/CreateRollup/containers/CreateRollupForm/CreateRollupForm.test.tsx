@@ -187,7 +187,6 @@ describe("<CreateRollupForm /> spec", () => {
   });
 
   it("routes from step 1 to step 2", async () => {
-    const { getByTestId, getByLabelText, debug, queryByText, getAllByTestId } = renderCreateRollupFormWithRouter();
     const indices = [
       {
         "docs.count": 5,
@@ -212,29 +211,23 @@ describe("<CreateRollupForm /> spec", () => {
       ok: true,
       response: sampleMapping,
     });
+    const { getByTestId, getByLabelText, queryByText, getAllByTestId } = renderCreateRollupFormWithRouter();
 
     fireEvent.focus(getByLabelText("Name"));
-    userEvent.type(getByLabelText("Name"), "some_rollup_id");
+    await userEvent.type(getByLabelText("Name"), "some_rollup_id");
     fireEvent.blur(getByLabelText("Name"));
 
     fireEvent.focus(getByTestId("description"));
-    userEvent.type(getByTestId("description"), "some description");
+    await userEvent.type(getByTestId("description"), "some description");
     fireEvent.blur(getByTestId("description"));
 
-    // fireEvent.click(getByTestId("sourceIndexCombobox"));
-    // userEvent.type(getByTestId("sourceIndexCombobox"), "index_1");
+    await userEvent.type(getAllByTestId("comboBoxSearchInput")[0], "index_1");
+    fireEvent.keyDown(getAllByTestId("comboBoxSearchInput")[0], { key: "Enter", code: "Enter" });
 
-    userEvent.click(getAllByTestId("comboBoxSearchInput")[0]);
-    await wait();
-    debug();
-    // userEvent.type(getAllByTestId("comboBoxSearchInput")[0], "index_1");
-    fireEvent.keyPress(getAllByTestId("comboBoxSearchInput")[0], { key: "Down Arrow", code: 40, charCode: 40 });
-    fireEvent.keyPress(getAllByTestId("comboBoxSearchInput")[0], { key: "Enter", code: "Enter" });
+    await userEvent.type(getAllByTestId("comboBoxSearchInput")[1], "some_target_index");
+    fireEvent.keyDown(getAllByTestId("comboBoxSearchInput")[1], { key: "Enter", code: "Enter" });
 
-    userEvent.click(getAllByTestId("comboBoxSearchInput")[1]);
-    userEvent.type(getAllByTestId("comboBoxSearchInput")[1], "some_target_index");
-    await wait();
-    fireEvent.keyPress(getAllByTestId("comboBoxSearchInput")[1], { key: "Enter", code: "Enter" });
+    userEvent.click(getByTestId("createRollupNextButton"));
 
     expect(queryByText("Job name is required.")).toBeNull();
 
@@ -242,12 +235,7 @@ describe("<CreateRollupForm /> spec", () => {
 
     expect(queryByText("Target index is required.")).toBeNull();
 
-    userEvent.click(getByTestId("createRollupNextButton"));
-
-    await wait();
-
-    //Check if target index is selected correctly
-    debug();
+    //Check that it routes to step 2
     expect(queryByText("Timestamp field")).not.toBeNull();
   });
 });

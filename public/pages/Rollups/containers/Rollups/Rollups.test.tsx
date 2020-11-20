@@ -275,7 +275,7 @@ describe("<Rollups /> spec", () => {
     browserServicesMock.rollupService.deleteRollup = jest.fn().mockResolvedValue({ ok: true, response: true });
     const { queryByText, getByText, getByTestId } = renderRollupsWithRouter();
 
-    await wait(() => getByText(testRollup._id));
+    // await wait(() => getByText(testRollup._id));
 
     userEvent.click(getByTestId(`checkboxSelectRow-${testRollup._id}`));
 
@@ -292,7 +292,7 @@ describe("<Rollups /> spec", () => {
     //TODO: Find out a better way to locate this delete button.
     expect(getByText("Delete")).toBeDisabled();
 
-    userEvent.type(getByTestId("deleteTextField"), "delete");
+    await userEvent.type(getByTestId("deleteTextField"), "delete");
 
     expect(getByText("Delete")).toBeEnabled();
 
@@ -307,7 +307,7 @@ describe("<Rollups /> spec", () => {
 
   it("can cancel a delete", async () => {
     const rollups = [testRollup];
-    browserServicesMock.rollupService.getRollups = jest.fn().mockResolvedValueOnce({ ok: true, response: { rollups, totalRollups: 1 } });
+    browserServicesMock.rollupService.getRollups = jest.fn().mockResolvedValue({ ok: true, response: { rollups, totalRollups: 1 } });
     const { queryByText, getByText, getByTestId } = renderRollupsWithRouter();
 
     await wait(() => getByText(testRollup._id));
