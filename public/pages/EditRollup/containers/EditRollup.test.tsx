@@ -98,6 +98,8 @@ describe("<EditRollup /> spec", () => {
     browserServicesMock.rollupService.getRollup = jest.fn().mockRejectedValue(new Error("rejected error"));
     const { getByText } = renderEditRollupWithRouter([`${ROUTES.EDIT_ROLLUP}?id=${testRollup._id}`]);
 
+    await wait();
+
     expect(toastNotifications.addDanger).toHaveBeenCalledTimes(1);
     expect(toastNotifications.addDanger).toHaveBeenCalledWith("rejected error");
     await wait(() => getByText("Testing rollup landing page"));
@@ -113,10 +115,12 @@ describe("<EditRollup /> spec", () => {
       ok: true,
       response: testRollup,
     });
-    const { debug, getByTestId } = renderEditRollupWithRouter([`${ROUTES.EDIT_ROLLUP}?id=${testRollup._id}`]);
-    debug();
+    const { getByTestId } = renderEditRollupWithRouter([`${ROUTES.EDIT_ROLLUP}?id=${testRollup._id}`]);
+
+    await wait();
+
     fireEvent.focus(getByTestId("description"));
-    userEvent.type(getByTestId("description"), "some description");
+    await userEvent.type(getByTestId("description"), "some description");
     fireEvent.blur(getByTestId("description"));
   });
 });
