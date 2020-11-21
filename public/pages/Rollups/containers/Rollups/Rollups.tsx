@@ -46,8 +46,6 @@ import {
   EuiTextColor,
   EuiLink,
   EuiTableFieldDataColumnType,
-  EuiIcon,
-  EuiText,
 } from "@elastic/eui";
 import { RollupService } from "../../../../services";
 import RollupEmptyPrompt from "../../components/RollupEmptyPrompt";
@@ -90,7 +88,7 @@ export default class Rollups extends Component<RollupsProps, RollupsState> {
       sortDirection,
       selectedItems: [],
       rollups: [],
-      loadingRollups: false,
+      loadingRollups: true,
       isPopoverOpen: false,
       isDeleteModalVisible: false,
       rollupExplain: {},
