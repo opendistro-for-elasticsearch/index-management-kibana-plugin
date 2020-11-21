@@ -190,7 +190,6 @@ export default class Rollups extends Component<RollupsProps, RollupsState> {
 
         if (response.ok) {
           this.closeDeleteModal();
-          await this.getRollups();
           //Show success message
           toastNotifications.addSuccess(`"${rollupId}" successfully deleted!`);
         } else {
@@ -200,6 +199,8 @@ export default class Rollups extends Component<RollupsProps, RollupsState> {
         toastNotifications.addDanger(getErrorMessage(err, "Could not delete the rollup job"));
       }
     }
+    await this.getRollups();
+    await this.getExplains();
   };
 
   onDisable = async (): Promise<void> => {
@@ -211,8 +212,6 @@ export default class Rollups extends Component<RollupsProps, RollupsState> {
         const response = await rollupService.stopRollup(rollupId);
 
         if (response.ok) {
-          await this.getRollups();
-          await this.getExplains();
           //Show success message
           toastNotifications.addSuccess(`${rollupId} is disabled`);
         } else {
@@ -222,6 +221,8 @@ export default class Rollups extends Component<RollupsProps, RollupsState> {
         toastNotifications.addDanger(getErrorMessage(err, "Could not stop the rollup job"));
       }
     }
+    await this.getRollups();
+    await this.getExplains();
   };
 
   onEnable = async (): Promise<void> => {
@@ -233,8 +234,6 @@ export default class Rollups extends Component<RollupsProps, RollupsState> {
         const response = await rollupService.startRollup(rollupId);
 
         if (response.ok) {
-          await this.getRollups();
-          await this.getExplains();
           //Show success message
           toastNotifications.addSuccess(`${rollupId} is enabled`);
         } else {
@@ -244,6 +243,8 @@ export default class Rollups extends Component<RollupsProps, RollupsState> {
         toastNotifications.addDanger(getErrorMessage(err, "Could not start the rollup job"));
       }
     }
+    await this.getRollups();
+    await this.getExplains();
   };
 
   onTableChange = ({ page: tablePage, sort }: Criteria<ManagedCatIndex>): void => {
