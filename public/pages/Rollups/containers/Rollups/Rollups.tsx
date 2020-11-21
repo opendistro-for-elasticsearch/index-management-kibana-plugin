@@ -185,8 +185,7 @@ export default class Rollups extends Component<RollupsProps, RollupsState> {
   onClickDelete = async (): Promise<void> => {
     const { rollupService } = this.props;
     const { selectedItems } = this.state;
-    var item;
-    for (item of selectedItems) {
+    for (let item of selectedItems) {
       const rollupId = item._id;
       try {
         const response = await rollupService.deleteRollup(rollupId);
@@ -208,8 +207,7 @@ export default class Rollups extends Component<RollupsProps, RollupsState> {
   onDisable = async (): Promise<void> => {
     const { rollupService } = this.props;
     const { selectedItems } = this.state;
-    var item;
-    for (item of selectedItems) {
+    for (let item of selectedItems) {
       const rollupId = item._id;
       try {
         const response = await rollupService.stopRollup(rollupId);
@@ -231,8 +229,7 @@ export default class Rollups extends Component<RollupsProps, RollupsState> {
   onEnable = async (): Promise<void> => {
     const { rollupService } = this.props;
     const { selectedItems } = this.state;
-    var item;
-    for (item of selectedItems) {
+    for (let item of selectedItems) {
       const rollupId = item._id;
       try {
         const response = await rollupService.startRollup(rollupId);
@@ -293,8 +290,7 @@ export default class Rollups extends Component<RollupsProps, RollupsState> {
   concatName = (): string => {
     const { selectedItems } = this.state;
     let result = "";
-    var item;
-    for (item of selectedItems) {
+    for (let item of selectedItems) {
       if (selectedItems.indexOf(item) == 0) result = result + item._id;
       else result = result + ", " + item._id;
     }
