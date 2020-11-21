@@ -195,6 +195,8 @@ describe("<Rollups /> spec", () => {
     await wait(() => getByText(`Testing edit rollup: ?id=${testRollup._id}`));
   });
 
+  //Cannot edit multiple jobs (P1)
+
   it("can view details of a rollup job", async () => {
     const rollups = [testRollup];
     browserServicesMock.rollupService.getRollups = jest.fn().mockResolvedValue({
@@ -203,6 +205,7 @@ describe("<Rollups /> spec", () => {
     });
     const { getByText } = renderRollupsWithRouter();
 
+    await wait();
     await wait(() => getByText(testRollup._id));
 
     userEvent.click(getByText(testRollup._id));
@@ -239,6 +242,8 @@ describe("<Rollups /> spec", () => {
     expect(toastNotifications.addSuccess).toHaveBeenCalledWith(`${testRollup._id} is enabled`);
   });
 
+  //Cannot enable a job
+
   it("can disable a rollup job", async () => {
     const rollups = [testRollup];
     browserServicesMock.rollupService.getRollups = jest.fn().mockResolvedValue({
@@ -269,6 +274,8 @@ describe("<Rollups /> spec", () => {
     expect(toastNotifications.addSuccess).toHaveBeenCalledWith(`${testRollup._id} is disabled`);
   });
 
+  //Cannot disable a job
+
   it("can delete a rollup job", async () => {
     const rollups = [testRollup2];
     browserServicesMock.rollupService.getRollups = jest
@@ -292,13 +299,13 @@ describe("<Rollups /> spec", () => {
 
     await wait(() => getByTestId("deleteTextField"));
 
-    expect(getByText("Delete")).toBeDisabled();
+    expect(getByTestId("confirmModalConfirmButton")).toBeDisabled();
 
     await userEvent.type(getByTestId("deleteTextField"), "delete");
 
-    expect(getByText("Delete")).toBeEnabled();
+    expect(getByTestId("confirmModalConfirmButton")).toBeEnabled();
 
-    userEvent.click(getByText("Delete"));
+    userEvent.click(getByTestId("confirmModalConfirmButton"));
 
     await wait();
 
@@ -306,4 +313,6 @@ describe("<Rollups /> spec", () => {
     expect(toastNotifications.addSuccess).toHaveBeenCalledTimes(1);
     expect(toastNotifications.addSuccess).toHaveBeenCalledWith(`"${testRollup2._id}" successfully deleted!`);
   });
+
+  // Cannot delete a job
 });

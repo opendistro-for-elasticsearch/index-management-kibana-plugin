@@ -295,6 +295,7 @@ export default class Rollups extends Component<RollupsProps, RollupsState> {
     }
     return result;
   };
+
   render() {
     const {
       totalRollups,
@@ -378,7 +379,14 @@ export default class Rollups extends Component<RollupsProps, RollupsState> {
         sortable: true,
         textOnly: true,
         truncateText: true,
-        render: (_id) => <EuiLink href={`opendistro_index_management_kibana#/rollup-details?id=${_id}`}>{_id}</EuiLink>,
+        render: (_id) => (
+          <EuiLink
+            // href={`opendistro_index_management_kibana#/rollup-details?id=${_id}`}
+            onClick={() => this.props.history.push(`${ROUTES.ROLLUP_DETAILS}?id=${_id}`)}
+          >
+            {_id}
+          </EuiLink>
+        ),
       },
       {
         field: "rollup.rollup.source_index",

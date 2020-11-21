@@ -143,7 +143,6 @@ export default class EditRollup extends Component<EditRollupProps, EditRollupSta
     let newJSON = this.state.rollupJSON;
     newJSON.rollup.description = description;
     this.setState({ description: description, rollupJSON: newJSON });
-    console.log(this.state);
   };
 
   onChangeName = (e: ChangeEvent<HTMLInputElement>): void => {
