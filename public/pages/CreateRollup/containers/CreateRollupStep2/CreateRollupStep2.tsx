@@ -23,7 +23,7 @@ import CreateRollupSteps from "../../components/CreateRollupSteps";
 import TimeAggregation from "../../components/TimeAggregations";
 import AdvancedAggregation from "../../components/AdvancedAggregation";
 import MetricsCalculation from "../../components/MetricsCalculation";
-import { DimensionItem, FieldItem, MetricItem } from "../../models/interfaces";
+import { DimensionItem, FieldItem, MetricItem } from "../../../../../models/interfaces";
 
 interface CreateRollupStep2Props extends RouteComponentProps {
   rollupService: RollupService;
