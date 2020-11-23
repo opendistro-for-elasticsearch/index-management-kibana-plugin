@@ -398,7 +398,9 @@ export default class AdvancedAggregation extends Component<AdvancedAggregationPr
           <EuiFlexItem grow={false}>
             <EuiFlexGroup direction="column" justifyContent="spaceBetween" style={{ padding: "0px 10px" }}>
               <EuiFlexItem grow={false}>
-                <EuiButton onClick={this.showModal}>Add fields</EuiButton>
+                <EuiButton onClick={this.showModal} data-test-subj="addFieldsAggregation">
+                  Add fields
+                </EuiButton>
               </EuiFlexItem>
               <EuiFlexItem> </EuiFlexItem>
             </EuiFlexGroup>
@@ -427,7 +429,9 @@ export default class AdvancedAggregation extends Component<AdvancedAggregationPr
                     <EuiSpacer />
                   </EuiFlexItem>
                   <EuiFlexItem grow={false}>
-                    <EuiButton onClick={this.showModal}>Add fields</EuiButton>
+                    <EuiButton onClick={this.showModal} data-test-subj="addFieldsAggregationEmpty">
+                      Add fields
+                    </EuiButton>
                   </EuiFlexItem>
                   <EuiFlexItem>
                     <EuiSpacer size="m" />
@@ -460,7 +464,9 @@ export default class AdvancedAggregation extends Component<AdvancedAggregationPr
                 </EuiModalBody>
 
                 <EuiModalFooter>
-                  <EuiButtonEmpty onClick={this.closeModal}>Cancel</EuiButtonEmpty>
+                  <EuiButtonEmpty onClick={this.closeModal} data-test-subj="addFieldsAggregationCancel">
+                    Cancel
+                  </EuiButtonEmpty>
                   <EuiButton
                     fill
                     onClick={() => {

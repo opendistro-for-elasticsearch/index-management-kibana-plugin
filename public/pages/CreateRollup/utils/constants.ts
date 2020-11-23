@@ -63,6 +63,10 @@ export const testRollup = {
     page_size: 1000,
     delay: 0,
     continuous: false,
+    metadata_id: null,
+    enabledTime: null,
+    lastUpdatedTime: null,
+    schemaVersion: 1,
     dimensions: [
       {
         date_histogram: {

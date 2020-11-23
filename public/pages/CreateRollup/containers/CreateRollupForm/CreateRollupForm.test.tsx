@@ -473,15 +473,19 @@ describe("<CreateRollupForm /> spec", () => {
       ok: true,
       response: sampleMapping,
     });
-    const { getByTestId, getByLabelText, queryByText, getAllByTestId } = renderCreateRollupFormWithRouter();
+    const {
+      debug,
+      getByTestId,
+      getByLabelText,
+      queryByText,
+      getAllByTestId,
+      getByDisplayValue,
+      getByText,
+    } = renderCreateRollupFormWithRouter();
 
     fireEvent.focus(getByLabelText("Name"));
     await userEvent.type(getByLabelText("Name"), "some_rollup_id");
     fireEvent.blur(getByLabelText("Name"));
-
-    fireEvent.focus(getByTestId("description"));
-    await userEvent.type(getByTestId("description"), "some description");
-    fireEvent.blur(getByTestId("description"));
 
     await userEvent.type(getAllByTestId("comboBoxSearchInput")[0], "index_1");
     fireEvent.keyDown(getAllByTestId("comboBoxSearchInput")[0], { key: "Enter", code: "Enter" });
@@ -500,13 +504,41 @@ describe("<CreateRollupForm /> spec", () => {
     //Check that it routes to step 2
     expect(queryByText("Timestamp field")).not.toBeNull();
 
+    //Select timestamp
     await userEvent.type(getByTestId("comboBoxSearchInput"), "order_date");
     await wait();
     fireEvent.keyDown(getByTestId("comboBoxSearchInput"), { key: "Enter", code: "Enter" });
 
+    //Test calendar interval
+    userEvent.click(getByLabelText("Calendar"));
+    expect(queryByText("Every 1")).not.toBeNull();
+
+    //Test change interval
+    userEvent.click(getByDisplayValue("Hour"));
+    await wait(() => getByText("Week"));
+    userEvent.click(getByText("Week"));
+
+    //Test change timezone
+    userEvent.click(getByLabelText("Timezone"));
+    await wait(() => getByText("America/Los_Angeles"));
+    userEvent.click(getByText("America/Los_Angeles"));
+
+    //Test add aggregation
+    // userEvent.click(getByTestId("addFieldsAggregation"));
+
+    //Make sure modal shows up, check if need to wait
+    // await wait(() => getByTestId("addFieldsAggregationCancel"));
+    // userEvent.click(getByText("Add"));
+    // debug();
+    // userEvent.click(getByTestId("checkboxSelectRow-day_of_week_i"));
+    // userEvent.click(getByTestId("addFieldsAggregationCancel"));
+    // expect(queryByText("keyword")).not.toBeNull();
+
     userEvent.click(getByTestId("createRollupNextButton"));
 
     expect(queryByText("Timestamp is required.")).toBeNull();
+
+    //Check that it routes to step 3
     expect(queryByText("Enable job by default")).not.toBeNull();
   });
 });

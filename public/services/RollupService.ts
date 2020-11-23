@@ -14,7 +14,7 @@
  */
 
 import { IHttpResponse, IHttpService } from "angular";
-import { GetIndicesResponse, PutRollupResponse, GetRollupsResponse, GetFieldsResponse } from "../../server/models/interfaces";
+import { PutRollupResponse, GetRollupsResponse, GetFieldsResponse } from "../../server/models/interfaces";
 import { ServerResponse } from "../../server/models/types";
 import { NODE_API } from "../../utils/constants";
 import queryString from "query-string";
@@ -34,15 +34,6 @@ export default class RollupService {
     return response.data;
   };
 
-  getIndices = async (): Promise<ServerResponse<GetIndicesResponse>> => {
-    let url = `..${NODE_API._INDICES}`;
-    const response = (await this.httpClient.get(url)) as IHttpResponse<ServerResponse<GetIndicesResponse>>;
-    return response.data;
-  };
-
-  /**
-   * Calls backend Put Rollup API
-   */
   putRollup = async (
     rollup: Rollup,
     rollupId: string,
