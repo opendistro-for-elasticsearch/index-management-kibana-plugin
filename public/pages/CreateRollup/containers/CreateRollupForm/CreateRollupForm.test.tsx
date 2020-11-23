@@ -25,6 +25,8 @@ import { BREADCRUMBS, ROUTES } from "../../../../utils/constants";
 import CreateRollupForm from "./CreateRollupForm";
 import chrome from "ui/chrome";
 import userEvent from "@testing-library/user-event";
+import { toastNotifications } from "ui/notify";
+import { testRollup } from "../../utils/constants";
 
 const indices = [
   {
@@ -202,7 +204,7 @@ describe("<CreateRollupForm /> spec", () => {
   });
 });
 
-describe("<CreateRollupForm /> spec", () => {
+describe("<CreateRollupForm /> creation", () => {
   browserServicesMock.indexService.getIndices = jest.fn().mockResolvedValue({
     ok: true,
     response: { indices, totalIndices: 1 },
@@ -243,6 +245,40 @@ describe("<CreateRollupForm /> spec", () => {
   });
 
   it("routes from step 1 to step 4", async () => {
+    const rollup = {
+      _id: "some_rollup_id",
+      _version: 3,
+      _seq_no: 7,
+      _primary_term: 1,
+      rollup: {
+        rollup_id: "some_rollup_id",
+        enabled: true,
+        schedule: {
+          interval: {
+            period: 1,
+            unit: "Minutes",
+            start_time: 1602100553,
+          },
+        },
+        last_updated_time: 1602100553,
+        description: "some description",
+        source_index: "index_1",
+        target_index: "some_target_index",
+        page_size: 1000,
+        delay: 0,
+        continuous: false,
+        metadata_id: null,
+        enabledTime: null,
+        lastUpdatedTime: null,
+        schemaVersion: 1,
+        dimensions: [],
+        metrics: [],
+      },
+    };
+    browserServicesMock.rollupService.putRollup = jest.fn().mockResolvedValue({
+      ok: true,
+      response: rollup,
+    });
     const { getByTestId, getByLabelText, queryByText, getAllByTestId } = renderCreateRollupFormWithRouter();
 
     fireEvent.focus(getByLabelText("Name"));
@@ -282,9 +318,12 @@ describe("<CreateRollupForm /> spec", () => {
     expect(queryByText("Job name and indices")).not.toBeNull();
 
     //Test create
-    userEvent.click(getByTestId("createRollupCreateButton"));
+    userEvent.click(getByTestId("createRollupSubmitButton"));
+    await wait();
 
-    expect;
+    expect(browserServicesMock.rollupService.putRollup).toHaveBeenCalledTimes(1);
+    expect(toastNotifications.addSuccess).toHaveBeenCalledTimes(1);
+    expect(toastNotifications.addSuccess).toHaveBeenCalledWith(`Created rollup: some_rollup_id`);
   });
 
   it("can set all values on step 2", async () => {

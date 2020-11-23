@@ -273,46 +273,4 @@ describe("<Rollups /> spec", () => {
     expect(toastNotifications.addSuccess).toHaveBeenCalledTimes(1);
     expect(toastNotifications.addSuccess).toHaveBeenCalledWith(`${testRollup._id} is disabled`);
   });
-
-  //Cannot disable a job
-
-  it("can delete a rollup job", async () => {
-    const rollups = [testRollup2];
-    browserServicesMock.rollupService.getRollups = jest
-      .fn()
-      .mockResolvedValueOnce({ ok: true, response: { rollups, totalRollups: 1 } })
-      .mockResolvedValueOnce({ ok: true, response: { rollups: [], totalRollups: 0 } });
-    browserServicesMock.rollupService.deleteRollup = jest.fn().mockResolvedValue({ ok: true, response: true });
-    const { getByText, getByTestId } = renderRollupsWithRouter();
-
-    await wait(() => getByText(testRollup2._id));
-
-    userEvent.click(getByTestId(`checkboxSelectRow-${testRollup2._id}`));
-
-    userEvent.click(getByTestId("actionButton"));
-
-    expect(getByTestId("actionPopover")).toBeTruthy();
-
-    expect(getByTestId("deleteButton")).toBeEnabled();
-
-    userEvent.click(getByTestId("deleteButton"));
-
-    await wait(() => getByTestId("deleteTextField"));
-
-    expect(getByTestId("confirmModalConfirmButton")).toBeDisabled();
-
-    await userEvent.type(getByTestId("deleteTextField"), "delete");
-
-    expect(getByTestId("confirmModalConfirmButton")).toBeEnabled();
-
-    userEvent.click(getByTestId("confirmModalConfirmButton"));
-
-    await wait();
-
-    expect(browserServicesMock.rollupService.deleteRollup).toHaveBeenCalledTimes(1);
-    expect(toastNotifications.addSuccess).toHaveBeenCalledTimes(1);
-    expect(toastNotifications.addSuccess).toHaveBeenCalledWith(`"${testRollup2._id}" successfully deleted!`);
-  });
-
-  // Cannot delete a job
 });
