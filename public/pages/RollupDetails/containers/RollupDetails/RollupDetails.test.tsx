@@ -165,7 +165,7 @@ describe("<RollupDetails /> spec", () => {
     expect(toastNotifications.addSuccess).toHaveBeenCalledTimes(1);
   });
 
-  it("shows toast when fail to disable rollup job", async () => {
+  it("shows toast when failed to disable rollup job", async () => {
     browserServicesMock.rollupService.getRollup = jest.fn().mockResolvedValue({
       ok: true,
       response: testRollup,
@@ -180,7 +180,7 @@ describe("<RollupDetails /> spec", () => {
       ok: false,
       response: "some error",
     });
-    const { getByTestId } = renderRollupDetailsWithRouter([`${ROUTES.ROLLUP_DETAILS}?id=${testRollup._id}`]);
+    const { getByTestId, debug } = renderRollupDetailsWithRouter([`${ROUTES.ROLLUP_DETAILS}?id=${testRollup._id}`]);
 
     await wait();
 
@@ -191,7 +191,7 @@ describe("<RollupDetails /> spec", () => {
     userEvent.click(getByTestId("disableButton"));
 
     await wait();
-
+    debug();
     expect(browserServicesMock.rollupService.stopRollup).toHaveBeenCalledTimes(1);
     expect(toastNotifications.addDanger).toHaveBeenCalledTimes(1);
   });
@@ -226,6 +226,77 @@ describe("<RollupDetails /> spec", () => {
 
     expect(browserServicesMock.rollupService.startRollup).toHaveBeenCalledTimes(1);
     expect(toastNotifications.addSuccess).toHaveBeenCalledTimes(1);
+  });
+
+  it("can delete a rollup job", async () => {
+    const rollups = [testRollup];
+    browserServicesMock.rollupService.getRollups = jest
+      .fn()
+      .mockResolvedValueOnce({ ok: true, response: { rollups, totalRollups: 1 } })
+      .mockResolvedValueOnce({ ok: true, response: { rollups: [], totalRollups: 0 } });
+    browserServicesMock.rollupService.deleteRollup = jest.fn().mockResolvedValue({ ok: true, response: true });
+    const { getByTestId } = renderRollupDetailsWithRouter([`${ROUTES.ROLLUP_DETAILS}?id=${testRollup._id}`]);
+
+    await wait();
+
+    userEvent.click(getByTestId("deleteButton"));
+
+    await wait(() => getByTestId("deleteTextField"));
+
+    expect(getByTestId("confirmModalConfirmButton")).toBeDisabled();
+
+    await userEvent.type(getByTestId("deleteTextField"), "delete");
+
+    expect(getByTestId("confirmModalConfirmButton")).toBeEnabled();
+
+    userEvent.click(getByTestId("confirmModalConfirmButton"));
+
+    await wait();
+
+    expect(browserServicesMock.rollupService.deleteRollup).toHaveBeenCalledTimes(1);
+    expect(toastNotifications.addSuccess).toHaveBeenCalledTimes(1);
+  });
+
+  it("can show a started rollup job", async () => {
+    let startedJobMetadata = test1Metadata;
+    startedJobMetadata.test1.rollup_metadata.status = "started";
+
+    browserServicesMock.rollupService.getRollup = jest.fn().mockResolvedValue({
+      ok: true,
+      response: testRollup,
+    });
+
+    browserServicesMock.rollupService.explainRollup = jest.fn().mockResolvedValue({
+      ok: true,
+      response: startedJobMetadata,
+    });
+
+    const { queryByText } = renderRollupDetailsWithRouter([`${ROUTES.ROLLUP_DETAILS}?id=${testRollup._id}`]);
+
+    await wait();
+
+    expect(queryByText("Started")).not.toBeNull();
+  });
+
+  it("can show a stopped rollup job", async () => {
+    let stoppedJobMetadata = test1Metadata;
+    stoppedJobMetadata.test1.rollup_metadata.status = "stopped";
+
+    browserServicesMock.rollupService.getRollup = jest.fn().mockResolvedValue({
+      ok: true,
+      response: testRollup,
+    });
+
+    browserServicesMock.rollupService.explainRollup = jest.fn().mockResolvedValue({
+      ok: true,
+      response: stoppedJobMetadata,
+    });
+
+    const { queryByText } = renderRollupDetailsWithRouter([`${ROUTES.ROLLUP_DETAILS}?id=${testRollup._id}`]);
+
+    await wait();
+
+    expect(queryByText("Stopped")).not.toBeNull();
   });
 
   //enable with response error

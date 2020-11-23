@@ -37,7 +37,6 @@ import queryString from "query-string";
 import { RollupService } from "../../../../services";
 import { BREADCRUMBS, ROUTES } from "../../../../utils/constants";
 import { getErrorMessage } from "../../../../utils/helpers";
-import { EMPTY_ROLLUP } from "../../../CreateRollup/utils/constants";
 import GeneralInformation from "../../components/GeneralInformation/GeneralInformation";
 import RollupStatus from "../../components/RollupStatus/RollupStatus";
 import AggregationAndMetricsSettings from "../../components/AggregationAndMetricsSettings/AggregationAndMetricsSettings";
@@ -364,7 +363,7 @@ export default class RollupDetails extends Component<RollupDetailsProps, RollupD
                 <EuiButton onClick={this.showModal}>View JSON</EuiButton>
               </EuiFlexItem>
               <EuiFlexItem grow={false}>
-                <EuiButton onClick={this.showDeleteModal} color="danger">
+                <EuiButton onClick={this.showDeleteModal} color="danger" data-test-subj="deleteButton">
                   Delete
                 </EuiButton>
               </EuiFlexItem>
