@@ -47,10 +47,10 @@ import {
   EuiFieldNumber,
   EuiTableSortingType,
 } from "@elastic/eui";
-import { DimensionItem, FieldItem } from "../../models/interfaces";
 import { AddFieldsColumns } from "../../utils/constants";
 import { DEFAULT_PAGE_SIZE_OPTIONS } from "../../../Rollups/utils/constants";
 import { isNumericMapping } from "../../utils/helpers";
+import { DimensionItem, FieldItem } from "../../../../../models/interfaces";
 
 interface AdvancedAggregationProps {
   fieldsOption: FieldItem[];

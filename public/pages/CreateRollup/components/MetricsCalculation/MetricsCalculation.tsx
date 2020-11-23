@@ -152,7 +152,10 @@ export default class MetricsCalculation extends Component<MetricsCalculationProp
     });
     const result = updatedMetrics.length ? updatedMetrics.concat(toAdd) : toAdd;
     onMetricSelectionChange(result);
-    this.setState({ allSelectedFields: allSelectedFields.concat(toAddFields), metricsShown: result.slice(from, from + size) });
+    this.setState({
+      allSelectedFields: allSelectedFields.concat(toAddFields),
+      metricsShown: result.slice(from, from + size),
+    });
     this.forceUpdate();
   }
 
@@ -278,7 +281,12 @@ export default class MetricsCalculation extends Component<MetricsCalculationProp
         render: (all: boolean, item: MetricItem) => (
           <EuiForm>
             <EuiFormRow compressed={true}>
-              <EuiCheckbox id="all" checked={all} onChange={(e) => this.setChecked(e, "all", item)} />
+              <EuiCheckbox
+                id={`all-${item.source_field.label}`}
+                checked={all}
+                onChange={(e) => this.setChecked(e, "all", item)}
+                data-test-subj={`all-${item.source_field.label}`}
+              />
             </EuiFormRow>
           </EuiForm>
         ),
@@ -290,7 +298,12 @@ export default class MetricsCalculation extends Component<MetricsCalculationProp
         render: (min: boolean, item: MetricItem) => (
           <EuiForm>
             <EuiFormRow compressed={true}>
-              <EuiCheckbox id="min" checked={min} onChange={(e) => this.setChecked(e, "min", item)} />
+              <EuiCheckbox
+                id={`min-${item.source_field.label}`}
+                checked={min}
+                onChange={(e) => this.setChecked(e, "min", item)}
+                data-test-subj={`min-${item.source_field.label}`}
+              />
             </EuiFormRow>
           </EuiForm>
         ),
@@ -302,7 +315,12 @@ export default class MetricsCalculation extends Component<MetricsCalculationProp
         render: (max: boolean, item: MetricItem) => (
           <EuiForm>
             <EuiFormRow compressed={true}>
-              <EuiCheckbox id="max" checked={max} onChange={(e) => this.setChecked(e, "max", item)} />
+              <EuiCheckbox
+                id={`max-${item.source_field.label}`}
+                checked={max}
+                onChange={(e) => this.setChecked(e, "max", item)}
+                data-test-subj={`max-${item.source_field.label}`}
+              />
             </EuiFormRow>
           </EuiForm>
         ),
@@ -314,7 +332,12 @@ export default class MetricsCalculation extends Component<MetricsCalculationProp
         render: (sum: boolean, item: MetricItem) => (
           <EuiForm>
             <EuiFormRow compressed={true}>
-              <EuiCheckbox id="sum" checked={sum} onChange={(e) => this.setChecked(e, "sum", item)} />
+              <EuiCheckbox
+                id={`sum-${item.source_field.label}`}
+                checked={sum}
+                onChange={(e) => this.setChecked(e, "sum", item)}
+                data-test-subj={`sum-${item.source_field.label}`}
+              />
             </EuiFormRow>
           </EuiForm>
         ),
@@ -326,7 +349,12 @@ export default class MetricsCalculation extends Component<MetricsCalculationProp
         render: (avg: boolean, item: MetricItem) => (
           <EuiForm>
             <EuiFormRow compressed={true}>
-              <EuiCheckbox id="avg" checked={avg} onChange={(e) => this.setChecked(e, "avg", item)} />
+              <EuiCheckbox
+                id={`avg-${item.source_field.label}`}
+                checked={avg}
+                onChange={(e) => this.setChecked(e, "avg", item)}
+                data-test-subj={`avg-${item.source_field.label}`}
+              />
             </EuiFormRow>
           </EuiForm>
         ),
@@ -338,7 +366,12 @@ export default class MetricsCalculation extends Component<MetricsCalculationProp
         render: (value_count: boolean, item: MetricItem) => (
           <EuiForm>
             <EuiFormRow compressed={true}>
-              <EuiCheckbox id="value_count" checked={value_count} onChange={(e) => this.setChecked(e, "value_count", item)} />
+              <EuiCheckbox
+                id={`value_count-${item.source_field.label}`}
+                checked={value_count}
+                onChange={(e) => this.setChecked(e, "value_count", item)}
+                data-test-subj={`valueCount-${item.source_field.label}`}
+              />
             </EuiFormRow>
           </EuiForm>
         ),
@@ -348,7 +381,13 @@ export default class MetricsCalculation extends Component<MetricsCalculationProp
         actions: [
           {
             render: (item: MetricItem) => {
-              return <EuiIcon type="crossInACircleFilled" onClick={() => this.deleteField(item)} />;
+              return (
+                <EuiIcon
+                  type="crossInACircleFilled"
+                  onClick={() => this.deleteField(item)}
+                  data-test-subj={`delete-${item.source_field.label}`}
+                />
+              );
             },
           },
         ],
@@ -357,57 +396,57 @@ export default class MetricsCalculation extends Component<MetricsCalculationProp
 
     const disableActions = [
       <EuiContextMenuItem
-        key="disable_min"
         icon="empty"
         disabled={selectedMetrics.length == 0}
         onClick={() => {
           this.closeDisable();
           this.onClickDisable("min");
         }}
+        data-test-subj="disable_min"
       >
         Min
       </EuiContextMenuItem>,
       <EuiContextMenuItem
-        key="disable_max"
         icon="empty"
         disabled={selectedMetrics.length == 0}
         onClick={() => {
           this.closeDisable();
           this.onClickDisable("max");
         }}
+        data-test-subj="disable_max"
       >
         Max
       </EuiContextMenuItem>,
       <EuiContextMenuItem
-        key="disable_sum"
         icon="empty"
         disabled={selectedMetrics.length == 0}
         onClick={() => {
           this.closeDisable();
           this.onClickDisable("sum");
         }}
+        data-test-subj="disable_sum"
       >
         Sum
       </EuiContextMenuItem>,
       <EuiContextMenuItem
-        key="disable_avg"
         icon="empty"
         disabled={selectedMetrics.length == 0}
         onClick={() => {
           this.closeDisable();
           this.onClickDisable("avg");
         }}
+        data-test-subj="disable_avg"
       >
         Avg
       </EuiContextMenuItem>,
       <EuiContextMenuItem
-        key="disable_value_count"
         icon="empty"
         disabled={selectedMetrics.length == 0}
         onClick={() => {
           this.closeDisable();
           this.onClickDisable("value_count");
         }}
+        data-test-subj="disable_value_count"
       >
         Value count
       </EuiContextMenuItem>,
@@ -415,57 +454,57 @@ export default class MetricsCalculation extends Component<MetricsCalculationProp
 
     const enableActions = [
       <EuiContextMenuItem
-        key="Min"
         icon="empty"
         disabled={selectedMetrics.length == 0}
         onClick={() => {
           this.closeEnable();
           this.onClickEnable("min");
         }}
+        data-test-subj="enable_min"
       >
         Min
       </EuiContextMenuItem>,
       <EuiContextMenuItem
-        key="enable_max"
         icon="empty"
         disabled={selectedMetrics.length == 0}
         onClick={() => {
           this.closeEnable();
           this.onClickEnable("max");
         }}
+        data-test-subj="enable_max"
       >
         Max
       </EuiContextMenuItem>,
       <EuiContextMenuItem
-        key="enable_sum"
         icon="empty"
         disabled={selectedMetrics.length == 0}
         onClick={() => {
           this.closeEnable();
           this.onClickEnable("sum");
         }}
+        data-test-subj="enable_sum"
       >
         Sum
       </EuiContextMenuItem>,
       <EuiContextMenuItem
-        key="enable_avg"
         icon="empty"
         disabled={selectedMetrics.length == 0}
         onClick={() => {
           this.closeEnable();
           this.onClickEnable("avg");
         }}
+        data-test-subj="enable_avg"
       >
         Avg
       </EuiContextMenuItem>,
       <EuiContextMenuItem
-        key="enable_value_count"
         icon="empty"
         disabled={selectedMetrics.length == 0}
         onClick={() => {
           this.closeEnable();
           this.onClickEnable("value_count");
         }}
+        data-test-subj="enable_value_count"
       >
         Value count
       </EuiContextMenuItem>,
@@ -527,7 +566,9 @@ export default class MetricsCalculation extends Component<MetricsCalculationProp
                 </EuiPopover>
               </EuiFlexItem>
               <EuiFlexItem grow={false}>
-                <EuiButton onClick={this.showModal}>Add fields</EuiButton>
+                <EuiButton onClick={this.showModal} data-test-subj="addFieldsMetric">
+                  Add fields
+                </EuiButton>
               </EuiFlexItem>
             </EuiFlexGroup>
           </EuiFlexItem>
@@ -569,7 +610,9 @@ export default class MetricsCalculation extends Component<MetricsCalculationProp
                     <EuiSpacer />
                   </EuiFlexItem>
                   <EuiFlexItem grow={false}>
-                    <EuiButton onClick={this.showModal}>Add fields</EuiButton>
+                    <EuiButton onClick={this.showModal} data-test-subj="addFieldsMetricEmpty">
+                      Add fields
+                    </EuiButton>
                   </EuiFlexItem>
                   <EuiFlexItem>
                     <EuiSpacer />
@@ -605,7 +648,9 @@ export default class MetricsCalculation extends Component<MetricsCalculationProp
                 </EuiModalBody>
 
                 <EuiModalFooter>
-                  <EuiButtonEmpty onClick={this.closeModal}>Cancel</EuiButtonEmpty>
+                  <EuiButtonEmpty onClick={this.closeModal} data-test-subj="addFieldsMetricCancel">
+                    Cancel
+                  </EuiButtonEmpty>
                   <EuiButton
                     fill
                     onClick={() => {

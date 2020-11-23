@@ -116,215 +116,6 @@ const sampleMapping = {
   },
 };
 
-const sampleMapping2 = {
-  kibana_sample_data_ecommerce: {
-    mappings: {
-      properties: {
-        category: {
-          type: "text",
-          fields: {
-            keyword: {
-              type: "keyword",
-            },
-          },
-        },
-        currency: {
-          type: "keyword",
-        },
-        customer_birth_date: {
-          type: "date",
-        },
-        customer_first_name: {
-          type: "text",
-          fields: {
-            keyword: {
-              type: "keyword",
-              ignore_above: 256,
-            },
-          },
-        },
-        customer_full_name: {
-          type: "text",
-          fields: {
-            keyword: {
-              type: "keyword",
-              ignore_above: 256,
-            },
-          },
-        },
-        customer_gender: {
-          type: "keyword",
-        },
-        customer_id: {
-          type: "keyword",
-        },
-        customer_last_name: {
-          type: "text",
-          fields: {
-            keyword: {
-              type: "keyword",
-              ignore_above: 256,
-            },
-          },
-        },
-        customer_phone: {
-          type: "keyword",
-        },
-        day_of_week: {
-          type: "keyword",
-        },
-        day_of_week_i: {
-          type: "integer",
-        },
-        email: {
-          type: "keyword",
-        },
-        event: {
-          properties: {
-            dataset: {
-              type: "keyword",
-            },
-          },
-        },
-        geoip: {
-          properties: {
-            city_name: {
-              type: "keyword",
-            },
-            continent_name: {
-              type: "keyword",
-            },
-            country_iso_code: {
-              type: "keyword",
-            },
-            location: {
-              type: "geo_point",
-            },
-            region_name: {
-              type: "keyword",
-            },
-          },
-        },
-        manufacturer: {
-          type: "text",
-          fields: {
-            keyword: {
-              type: "keyword",
-            },
-          },
-        },
-        order_date: {
-          type: "date",
-        },
-        order_id: {
-          type: "keyword",
-        },
-        products: {
-          properties: {
-            _id: {
-              type: "text",
-              fields: {
-                keyword: {
-                  type: "keyword",
-                  ignore_above: 256,
-                },
-              },
-            },
-            base_price: {
-              type: "half_float",
-            },
-            base_unit_price: {
-              type: "half_float",
-            },
-            category: {
-              type: "text",
-              fields: {
-                keyword: {
-                  type: "keyword",
-                },
-              },
-            },
-            created_on: {
-              type: "date",
-            },
-            discount_amount: {
-              type: "half_float",
-            },
-            discount_percentage: {
-              type: "half_float",
-            },
-            manufacturer: {
-              type: "text",
-              fields: {
-                keyword: {
-                  type: "keyword",
-                },
-              },
-            },
-            min_price: {
-              type: "half_float",
-            },
-            price: {
-              type: "half_float",
-            },
-            product_id: {
-              type: "long",
-            },
-            product_name: {
-              type: "text",
-              fields: {
-                keyword: {
-                  type: "keyword",
-                },
-              },
-              analyzer: "english",
-            },
-            quantity: {
-              type: "integer",
-            },
-            sku: {
-              type: "keyword",
-            },
-            tax_amount: {
-              type: "half_float",
-            },
-            taxful_price: {
-              type: "half_float",
-            },
-            taxless_price: {
-              type: "half_float",
-            },
-            unit_discount_amount: {
-              type: "half_float",
-            },
-          },
-        },
-        sku: {
-          type: "keyword",
-        },
-        taxful_total_price: {
-          type: "half_float",
-        },
-        taxless_total_price: {
-          type: "half_float",
-        },
-        total_quantity: {
-          type: "integer",
-        },
-        total_unique_products: {
-          type: "integer",
-        },
-        type: {
-          type: "keyword",
-        },
-        user: {
-          type: "keyword",
-        },
-      },
-    },
-  },
-};
-
 function renderCreateRollupFormWithRouter() {
   return {
     ...render(
@@ -473,6 +264,7 @@ describe("<CreateRollupForm /> spec", () => {
       ok: true,
       response: sampleMapping,
     });
+
     const {
       debug,
       getByTestId,
@@ -486,6 +278,10 @@ describe("<CreateRollupForm /> spec", () => {
     fireEvent.focus(getByLabelText("Name"));
     await userEvent.type(getByLabelText("Name"), "some_rollup_id");
     fireEvent.blur(getByLabelText("Name"));
+
+    fireEvent.focus(getByTestId("description"));
+    await userEvent.type(getByTestId("description"), "some description");
+    fireEvent.blur(getByTestId("description"));
 
     await userEvent.type(getAllByTestId("comboBoxSearchInput")[0], "index_1");
     fireEvent.keyDown(getAllByTestId("comboBoxSearchInput")[0], { key: "Enter", code: "Enter" });
@@ -508,6 +304,7 @@ describe("<CreateRollupForm /> spec", () => {
     await userEvent.type(getByTestId("comboBoxSearchInput"), "order_date");
     await wait();
     fireEvent.keyDown(getByTestId("comboBoxSearchInput"), { key: "Enter", code: "Enter" });
+    fireEvent.blur(getByTestId("comboBoxSearchInput"));
 
     //Test calendar interval
     userEvent.click(getByLabelText("Calendar"));
@@ -524,19 +321,32 @@ describe("<CreateRollupForm /> spec", () => {
     userEvent.click(getByText("America/Los_Angeles"));
 
     //Test add aggregation
-    // userEvent.click(getByTestId("addFieldsAggregation"));
+    userEvent.dblClick(getByTestId("addFieldsAggregation"));
+    userEvent.click(getByTestId("checkboxSelectRow-day_of_week_i"));
+    userEvent.click(getByTestId("checkboxSelectRow-day_of_week"));
+    userEvent.click(getByText("Add"));
 
-    //Make sure modal shows up, check if need to wait
-    // await wait(() => getByTestId("addFieldsAggregationCancel"));
-    // userEvent.click(getByText("Add"));
-    // debug();
-    // userEvent.click(getByTestId("checkboxSelectRow-day_of_week_i"));
-    // userEvent.click(getByTestId("addFieldsAggregationCancel"));
-    // expect(queryByText("keyword")).not.toBeNull();
+    userEvent.dblClick(getByTestId("addFieldsAggregation"));
+    userEvent.click(getByTestId("addFieldsAggregationCancel"));
+
+    //Test add metric
+    userEvent.dblClick(getByTestId("addFieldsMetric"));
+    userEvent.click(getByTestId("checkboxSelectAll"));
+    userEvent.click(getByText("Add"));
+    debug();
+
+    userEvent.click(getByText("Enable all"));
+    userEvent.click(getByTestId("enable_min"));
+
+    userEvent.click(getByTestId("all-day_of_week_i"));
+
+    userEvent.click(getByText("Disable all"));
+    userEvent.click(getByTestId("disable_max"));
 
     userEvent.click(getByTestId("createRollupNextButton"));
-
     expect(queryByText("Timestamp is required.")).toBeNull();
+
+    // expect(queryByText("Must specify at least one metric to aggregate on for:")).not.toBeNull();
 
     //Check that it routes to step 3
     expect(queryByText("Enable job by default")).not.toBeNull();
