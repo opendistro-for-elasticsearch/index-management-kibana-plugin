@@ -116,6 +116,215 @@ const sampleMapping = {
   },
 };
 
+const sampleMapping2 = {
+  kibana_sample_data_ecommerce: {
+    mappings: {
+      properties: {
+        category: {
+          type: "text",
+          fields: {
+            keyword: {
+              type: "keyword",
+            },
+          },
+        },
+        currency: {
+          type: "keyword",
+        },
+        customer_birth_date: {
+          type: "date",
+        },
+        customer_first_name: {
+          type: "text",
+          fields: {
+            keyword: {
+              type: "keyword",
+              ignore_above: 256,
+            },
+          },
+        },
+        customer_full_name: {
+          type: "text",
+          fields: {
+            keyword: {
+              type: "keyword",
+              ignore_above: 256,
+            },
+          },
+        },
+        customer_gender: {
+          type: "keyword",
+        },
+        customer_id: {
+          type: "keyword",
+        },
+        customer_last_name: {
+          type: "text",
+          fields: {
+            keyword: {
+              type: "keyword",
+              ignore_above: 256,
+            },
+          },
+        },
+        customer_phone: {
+          type: "keyword",
+        },
+        day_of_week: {
+          type: "keyword",
+        },
+        day_of_week_i: {
+          type: "integer",
+        },
+        email: {
+          type: "keyword",
+        },
+        event: {
+          properties: {
+            dataset: {
+              type: "keyword",
+            },
+          },
+        },
+        geoip: {
+          properties: {
+            city_name: {
+              type: "keyword",
+            },
+            continent_name: {
+              type: "keyword",
+            },
+            country_iso_code: {
+              type: "keyword",
+            },
+            location: {
+              type: "geo_point",
+            },
+            region_name: {
+              type: "keyword",
+            },
+          },
+        },
+        manufacturer: {
+          type: "text",
+          fields: {
+            keyword: {
+              type: "keyword",
+            },
+          },
+        },
+        order_date: {
+          type: "date",
+        },
+        order_id: {
+          type: "keyword",
+        },
+        products: {
+          properties: {
+            _id: {
+              type: "text",
+              fields: {
+                keyword: {
+                  type: "keyword",
+                  ignore_above: 256,
+                },
+              },
+            },
+            base_price: {
+              type: "half_float",
+            },
+            base_unit_price: {
+              type: "half_float",
+            },
+            category: {
+              type: "text",
+              fields: {
+                keyword: {
+                  type: "keyword",
+                },
+              },
+            },
+            created_on: {
+              type: "date",
+            },
+            discount_amount: {
+              type: "half_float",
+            },
+            discount_percentage: {
+              type: "half_float",
+            },
+            manufacturer: {
+              type: "text",
+              fields: {
+                keyword: {
+                  type: "keyword",
+                },
+              },
+            },
+            min_price: {
+              type: "half_float",
+            },
+            price: {
+              type: "half_float",
+            },
+            product_id: {
+              type: "long",
+            },
+            product_name: {
+              type: "text",
+              fields: {
+                keyword: {
+                  type: "keyword",
+                },
+              },
+              analyzer: "english",
+            },
+            quantity: {
+              type: "integer",
+            },
+            sku: {
+              type: "keyword",
+            },
+            tax_amount: {
+              type: "half_float",
+            },
+            taxful_price: {
+              type: "half_float",
+            },
+            taxless_price: {
+              type: "half_float",
+            },
+            unit_discount_amount: {
+              type: "half_float",
+            },
+          },
+        },
+        sku: {
+          type: "keyword",
+        },
+        taxful_total_price: {
+          type: "half_float",
+        },
+        taxless_total_price: {
+          type: "half_float",
+        },
+        total_quantity: {
+          type: "integer",
+        },
+        total_unique_products: {
+          type: "integer",
+        },
+        type: {
+          type: "keyword",
+        },
+        user: {
+          type: "keyword",
+        },
+      },
+    },
+  },
+};
+
 function renderCreateRollupFormWithRouter() {
   return {
     ...render(
@@ -237,5 +446,67 @@ describe("<CreateRollupForm /> spec", () => {
 
     //Check that it routes to step 2
     expect(queryByText("Timestamp field")).not.toBeNull();
+  });
+
+  it("routes from step 1 to step 3", async () => {
+    const indices = [
+      {
+        "docs.count": 5,
+        "docs.deleted": 2,
+        health: "green",
+        index: "index_1",
+        pri: "1",
+        "pri.store.size": "100KB",
+        rep: "0",
+        status: "open",
+        "store.size": "100KB",
+        uuid: "some_uuid",
+      },
+    ];
+
+    browserServicesMock.indexService.getIndices = jest.fn().mockResolvedValue({
+      ok: true,
+      response: { indices, totalIndices: 1 },
+    });
+
+    browserServicesMock.rollupService.getMappings = jest.fn().mockResolvedValue({
+      ok: true,
+      response: sampleMapping,
+    });
+    const { getByTestId, getByLabelText, queryByText, getAllByTestId } = renderCreateRollupFormWithRouter();
+
+    fireEvent.focus(getByLabelText("Name"));
+    await userEvent.type(getByLabelText("Name"), "some_rollup_id");
+    fireEvent.blur(getByLabelText("Name"));
+
+    fireEvent.focus(getByTestId("description"));
+    await userEvent.type(getByTestId("description"), "some description");
+    fireEvent.blur(getByTestId("description"));
+
+    await userEvent.type(getAllByTestId("comboBoxSearchInput")[0], "index_1");
+    fireEvent.keyDown(getAllByTestId("comboBoxSearchInput")[0], { key: "Enter", code: "Enter" });
+
+    await userEvent.type(getAllByTestId("comboBoxSearchInput")[1], "some_target_index");
+    fireEvent.keyDown(getAllByTestId("comboBoxSearchInput")[1], { key: "Enter", code: "Enter" });
+
+    userEvent.click(getByTestId("createRollupNextButton"));
+
+    expect(queryByText("Job name is required.")).toBeNull();
+
+    expect(queryByText("Source index is required.")).toBeNull();
+
+    expect(queryByText("Target index is required.")).toBeNull();
+
+    //Check that it routes to step 2
+    expect(queryByText("Timestamp field")).not.toBeNull();
+
+    await userEvent.type(getByTestId("comboBoxSearchInput"), "order_date");
+    await wait();
+    fireEvent.keyDown(getByTestId("comboBoxSearchInput"), { key: "Enter", code: "Enter" });
+
+    userEvent.click(getByTestId("createRollupNextButton"));
+
+    expect(queryByText("Timestamp is required.")).toBeNull();
+    expect(queryByText("Enable job by default")).not.toBeNull();
   });
 });
