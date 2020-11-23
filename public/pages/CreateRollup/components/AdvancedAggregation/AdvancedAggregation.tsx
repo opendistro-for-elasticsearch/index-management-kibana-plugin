@@ -292,6 +292,7 @@ export default class AdvancedAggregation extends Component<AdvancedAggregationPr
                   { value: "histogram", text: "Histogram" },
                 ]}
                 onChange={(e) => this.onChangeAggregationMethod(e, item)}
+                data-test-subj={`aggregationMethodSelect-${item.field.label}`}
               />
             </EuiFormRow>
           </EuiForm>
@@ -308,7 +309,12 @@ export default class AdvancedAggregation extends Component<AdvancedAggregationPr
           ) : (
             <EuiForm>
               <EuiFormRow>
-                <EuiFieldNumber min={1} value={interval} onChange={(e) => this.onChangeInterval(e, item)} />
+                <EuiFieldNumber
+                  min={1}
+                  value={interval}
+                  onChange={(e) => this.onChangeInterval(e, item)}
+                  data-test-subj={`interval-${item.field.label}`}
+                />
               </EuiFormRow>
             </EuiForm>
           ),
@@ -322,14 +328,14 @@ export default class AdvancedAggregation extends Component<AdvancedAggregationPr
             <EuiFlexGroup justifyContent="spaceBetween">
               <EuiFlexItem grow={false}>
                 {item.sequence != 1 && (
-                  <EuiLink color="primary" onClick={() => this.moveUp(item)}>
+                  <EuiLink color="primary" onClick={() => this.moveUp(item)} data-test-subj={`moveUp-${item.field.label}`}>
                     Move up
                   </EuiLink>
                 )}
               </EuiFlexItem>
               <EuiFlexItem grow={false}>
                 {item.sequence != selectedDimensionField.length && (
-                  <EuiLink color="primary" onClick={() => this.moveDown(item)}>
+                  <EuiLink color="primary" onClick={() => this.moveDown(item)} data-test-subj={`moveDown-${item.field.label}`}>
                     Move down
                   </EuiLink>
                 )}
@@ -344,7 +350,9 @@ export default class AdvancedAggregation extends Component<AdvancedAggregationPr
         name: "Actions",
         align: "center",
         render: (sequence, item: DimensionItem) => {
-          return <EuiIcon type="crossInACircleFilled" onClick={() => this.deleteField(item)} />;
+          return (
+            <EuiIcon type="crossInACircleFilled" onClick={() => this.deleteField(item)} data-test-subj={`delete-${item.field.label}`} />
+          );
         },
       },
     ];

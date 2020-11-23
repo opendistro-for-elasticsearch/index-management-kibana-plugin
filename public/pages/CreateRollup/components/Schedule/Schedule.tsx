@@ -148,6 +148,7 @@ export default class Schedule extends Component<ScheduleProps> {
               label="Enable job by default"
               checked={jobEnabledByDefault}
               onChange={onChangeJobEnabledByDefault}
+              data-test-subj="jobEnabledByDefault"
             />
           )}
           <EuiSpacer size="m" />

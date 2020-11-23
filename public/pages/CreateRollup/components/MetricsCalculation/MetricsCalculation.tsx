@@ -107,10 +107,6 @@ export default class MetricsCalculation extends Component<MetricsCalculationProp
 
   showEnable = () => this.setState({ isEnableOpen: true });
 
-  onChangeSearch = (e: ChangeEvent<HTMLInputElement>): void => {
-    this.setState({ searchText: e.target.value });
-  };
-
   onChangeFieldType = (options: EuiComboBoxOptionOption<String>[]): void => {
     this.setState({ selectedFieldType: options });
   };
@@ -128,12 +124,6 @@ export default class MetricsCalculation extends Component<MetricsCalculationProp
     // Loop through selectedFields to see if existing Metrics are removed
 
     selectedMetrics.map((metric) => {
-      //If does not exist in new selection, don't add this metric.
-      // if (!selectedFields.includes(metric.source_field)) {
-      //   updatedMetrics.splice(updatedMetrics.indexOf(metric), 1);
-      // }
-      //If exists, delete it from toAddFields so that it doesn't get added again.
-      // else {
       if (allSelectedFields.includes(metric.source_field)) {
         const index = toAddFields.indexOf(metric.source_field);
         toAddFields.splice(index, 1);

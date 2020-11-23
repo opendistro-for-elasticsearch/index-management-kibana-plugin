@@ -26,6 +26,21 @@ import CreateRollupForm from "./CreateRollupForm";
 import chrome from "ui/chrome";
 import userEvent from "@testing-library/user-event";
 
+const indices = [
+  {
+    "docs.count": 5,
+    "docs.deleted": 2,
+    health: "green",
+    index: "index_1",
+    pri: "1",
+    "pri.store.size": "100KB",
+    rep: "0",
+    status: "open",
+    "store.size": "100KB",
+    uuid: "some_uuid",
+  },
+];
+
 const sampleMapping = {
   index_1: {
     mappings: {
@@ -185,32 +200,20 @@ describe("<CreateRollupForm /> spec", () => {
 
     expect(queryByText("Target index is required.")).not.toBeNull();
   });
+});
 
-  it("routes from step 1 to step 2", async () => {
-    const indices = [
-      {
-        "docs.count": 5,
-        "docs.deleted": 2,
-        health: "green",
-        index: "index_1",
-        pri: "1",
-        "pri.store.size": "100KB",
-        rep: "0",
-        status: "open",
-        "store.size": "100KB",
-        uuid: "some_uuid",
-      },
-    ];
+describe("<CreateRollupForm /> spec", () => {
+  browserServicesMock.indexService.getIndices = jest.fn().mockResolvedValue({
+    ok: true,
+    response: { indices, totalIndices: 1 },
+  });
 
-    browserServicesMock.indexService.getIndices = jest.fn().mockResolvedValue({
-      ok: true,
-      response: { indices, totalIndices: 1 },
-    });
+  browserServicesMock.rollupService.getMappings = jest.fn().mockResolvedValue({
+    ok: true,
+    response: sampleMapping,
+  });
 
-    browserServicesMock.rollupService.getMappings = jest.fn().mockResolvedValue({
-      ok: true,
-      response: sampleMapping,
-    });
+  it("routes from step 1 to step 2 and back", async () => {
     const { getByTestId, getByLabelText, queryByText, getAllByTestId } = renderCreateRollupFormWithRouter();
 
     fireEvent.focus(getByLabelText("Name"));
@@ -239,41 +242,8 @@ describe("<CreateRollupForm /> spec", () => {
     expect(queryByText("Timestamp field")).not.toBeNull();
   });
 
-  it("routes from step 1 to step 3", async () => {
-    const indices = [
-      {
-        "docs.count": 5,
-        "docs.deleted": 2,
-        health: "green",
-        index: "index_1",
-        pri: "1",
-        "pri.store.size": "100KB",
-        rep: "0",
-        status: "open",
-        "store.size": "100KB",
-        uuid: "some_uuid",
-      },
-    ];
-
-    browserServicesMock.indexService.getIndices = jest.fn().mockResolvedValue({
-      ok: true,
-      response: { indices, totalIndices: 1 },
-    });
-
-    browserServicesMock.rollupService.getMappings = jest.fn().mockResolvedValue({
-      ok: true,
-      response: sampleMapping,
-    });
-
-    const {
-      debug,
-      getByTestId,
-      getByLabelText,
-      queryByText,
-      getAllByTestId,
-      getByDisplayValue,
-      getByText,
-    } = renderCreateRollupFormWithRouter();
+  it("routes from step 1 to step 4", async () => {
+    const { getByTestId, getByLabelText, queryByText, getAllByTestId } = renderCreateRollupFormWithRouter();
 
     fireEvent.focus(getByLabelText("Name"));
     await userEvent.type(getByLabelText("Name"), "some_rollup_id");
@@ -291,11 +261,50 @@ describe("<CreateRollupForm /> spec", () => {
 
     userEvent.click(getByTestId("createRollupNextButton"));
 
-    expect(queryByText("Job name is required.")).toBeNull();
+    //Check that it routes to step 2
+    expect(queryByText("Timestamp field")).not.toBeNull();
 
-    expect(queryByText("Source index is required.")).toBeNull();
+    //Select timestamp
+    await userEvent.type(getByTestId("comboBoxSearchInput"), "order_date");
+    await wait();
+    fireEvent.keyDown(getByTestId("comboBoxSearchInput"), { key: "Enter", code: "Enter" });
+    fireEvent.blur(getByTestId("comboBoxSearchInput"));
 
-    expect(queryByText("Target index is required.")).toBeNull();
+    userEvent.click(getByTestId("createRollupNextButton"));
+    expect(queryByText("Timestamp is required.")).toBeNull();
+
+    //Check that it routes to step 3
+    expect(queryByText("Enable job by default")).not.toBeNull();
+
+    userEvent.click(getByTestId("createRollupNextButton"));
+
+    //Check that it routes to step 4
+    expect(queryByText("Job name and indices")).not.toBeNull();
+
+    //Test create
+    userEvent.click(getByTestId("createRollupCreateButton"));
+
+    expect;
+  });
+
+  it("can set all values on step 2", async () => {
+    const { getByTestId, getByLabelText, queryByText, getAllByTestId, getByDisplayValue, getByText } = renderCreateRollupFormWithRouter();
+
+    fireEvent.focus(getByLabelText("Name"));
+    await userEvent.type(getByLabelText("Name"), "some_rollup_id");
+    fireEvent.blur(getByLabelText("Name"));
+
+    fireEvent.focus(getByTestId("description"));
+    await userEvent.type(getByTestId("description"), "some description");
+    fireEvent.blur(getByTestId("description"));
+
+    await userEvent.type(getAllByTestId("comboBoxSearchInput")[0], "index_1");
+    fireEvent.keyDown(getAllByTestId("comboBoxSearchInput")[0], { key: "Enter", code: "Enter" });
+
+    await userEvent.type(getAllByTestId("comboBoxSearchInput")[1], "some_target_index");
+    fireEvent.keyDown(getAllByTestId("comboBoxSearchInput")[1], { key: "Enter", code: "Enter" });
+
+    userEvent.click(getByTestId("createRollupNextButton"));
 
     //Check that it routes to step 2
     expect(queryByText("Timestamp field")).not.toBeNull();
@@ -326,29 +335,74 @@ describe("<CreateRollupForm /> spec", () => {
     userEvent.click(getByTestId("checkboxSelectRow-day_of_week"));
     userEvent.click(getByText("Add"));
 
+    //Go back to step 1 and check for callout
+    userEvent.click(getByTestId("createRollupPreviousButton"));
+    expect(queryByText("Note: changing source index will erase all existing definitions about aggregations and metrics.")).not.toBeNull();
+
+    //Go to step 2 and continue
+    userEvent.click(getByTestId("createRollupNextButton"));
+
+    //Test cancel add field to close modal
     userEvent.dblClick(getByTestId("addFieldsAggregation"));
     userEvent.click(getByTestId("addFieldsAggregationCancel"));
+
+    //Test add aggregation second time
+    userEvent.dblClick(getByTestId("addFieldsAggregation"));
+    userEvent.click(getByTestId("checkboxSelectRow-customer_gender"));
+    userEvent.click(getByText("Add"));
+
+    //TODO: Test change aggregation method, cannot proceed due to getElementError for Histogram option
+
+    // userEvent.click(getByTestId("aggregationMethodSelect-day_of_week_i"));
+    // await wait(() => getByText("Histogram"));
+    // userEvent.click(getByText("Histogram"));
+
+    //Test move up/down of aggregations
+    userEvent.click(getByTestId("moveDown-day_of_week_i"));
+    userEvent.click(getByTestId("moveUp-day_of_week_i"));
+
+    //TODO: Test delete aggregation, cannot proceed due to getElementError for delete button
+
+    // userEvent.click(getByTestId("delete-customer_gender"));
+    // expect(queryByText("customer_gender")).toBeNull();
 
     //Test add metric
     userEvent.dblClick(getByTestId("addFieldsMetric"));
     userEvent.click(getByTestId("checkboxSelectAll"));
     userEvent.click(getByText("Add"));
-    debug();
 
+    //TODO: Test error message of no method selected for metrics calculation.
+
+    // userEvent.click(getByTestId("createRollupNextButton"));
+    // expect(queryByText("Must specify at least one metric to aggregate on for:")).not.toBeNull();
+
+    //Test enable all min of metrics
     userEvent.click(getByText("Enable all"));
     userEvent.click(getByTestId("enable_min"));
 
+    //Test select and unselect all
+    userEvent.click(getByTestId("all-day_of_week_i"));
     userEvent.click(getByTestId("all-day_of_week_i"));
 
+    //Test disable all min of metrics
     userEvent.click(getByText("Disable all"));
+
+    //Test disable all max of metrics
     userEvent.click(getByTestId("disable_max"));
 
+    //Check that it routes to step 3
     userEvent.click(getByTestId("createRollupNextButton"));
     expect(queryByText("Timestamp is required.")).toBeNull();
-
-    // expect(queryByText("Must specify at least one metric to aggregate on for:")).not.toBeNull();
-
-    //Check that it routes to step 3
     expect(queryByText("Enable job by default")).not.toBeNull();
+
+    //Test not enabled by default
+    userEvent.click(getByTestId("jobEnabledByDefault"));
+
+    //Test continuous
+    userEvent.click(getByLabelText("Yes"));
+
+    //Check that it routes to step 4
+    userEvent.click(getByTestId("createRollupNextButton"));
+    expect(queryByText("Job name and indices")).not.toBeNull();
   });
 });
