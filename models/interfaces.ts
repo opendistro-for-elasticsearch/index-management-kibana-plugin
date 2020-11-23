@@ -14,6 +14,9 @@
  */
 
 // TODO: Backend has PR out to change this model, this needs to be updated once that goes through
+
+import { RollupDimensionItem, RollupMetricItem } from "../public/pages/CreateRollup/models/interfaces";
+
 export interface ManagedIndexMetaData {
   index: string;
   indexUuid: string;
@@ -43,6 +46,10 @@ export interface ManagedIndexItem {
   managedIndexMetaData: ManagedIndexMetaData | null;
 }
 
+export interface IndexItem {
+  index: string;
+}
+
 /**
  * Interface what the Policy Elasticsearch Document
  */
@@ -51,6 +58,40 @@ export interface DocumentPolicy {
   primaryTerm: number;
   seqNo: number;
   policy: Policy;
+}
+
+export interface DocumentRollup {
+  id: string;
+  seqNo: number;
+  primaryTerm: number;
+  rollup: {
+    rollup_id: string;
+    enabled: boolean;
+    schedule: {
+      interval?: {
+        start_time?: number;
+        period: number;
+        unit: string;
+      };
+      cron?: {
+        expression: string;
+        timezone: string;
+      };
+    };
+    last_updated_time: number;
+    enabled_time: number | null;
+    description: string;
+    schema_version: number;
+    source_index: string;
+    target_index: string;
+    metadata_id: number | null;
+    roles: string[];
+    page_size: number;
+    delay: number | null;
+    continuous: boolean;
+    dimensions: RollupDimensionItem[];
+    metrics: RollupMetricItem[];
+  };
 }
 
 // TODO: Fill out when needed
@@ -65,4 +106,120 @@ export interface State {
   name: string;
   actions: object[];
   transitions: object[];
+}
+
+export interface Rollup {
+  continuous: boolean;
+  delay: number | null;
+  description: string;
+  dimensions: (DateHistogramItem | TermsItem | HistogramItem)[];
+  enabled: boolean;
+  enabledTime: number | null;
+  lastUpdatedTime: number;
+  metadata_id: number | null;
+  metrics: MetricItem[];
+  page_size: number;
+  schedule: IntervalSchedule | CronSchedule;
+  schemaVersion: number;
+  source_index: string;
+  target_index: string;
+}
+
+export interface RollupMetadata {
+  metadata_id: string;
+  rollup_metadata: {
+    id: string;
+    seq_no: number;
+    primary_term: number;
+    rollup_id: string;
+    after_key: Map<String, any> | null;
+    last_updated_time: number;
+    continuous: {
+      next_window_start_time: number;
+      next_window_end_time: number;
+    } | null;
+    status: string;
+    failure_reason: string | null;
+    stats: {
+      pages_processed: number | null;
+      documents_processed: number | null;
+      rollups_indexed: number | null;
+      index_time_in_millis: number | null;
+      search_time_in_millis: number | null;
+    };
+  };
+}
+
+export interface IntervalSchedule {
+  startTime: number | null;
+  period: number;
+  unit: string;
+}
+
+export interface CronSchedule {
+  expression: string;
+  timezone: string;
+}
+
+//Frontend dimension data model
+export interface DimensionItem {
+  sequence: number;
+  field: FieldItem;
+  aggregationMethod: string;
+  interval?: number;
+}
+
+//Frontend metric data model
+export interface MetricItem {
+  source_field: FieldItem;
+  all: boolean;
+  min: boolean;
+  max: boolean;
+  sum: boolean;
+  avg: boolean;
+  value_count: boolean;
+}
+
+export interface FieldItem {
+  label: string;
+  type?: string;
+}
+
+interface DateHistogramItem {
+  sourceField: string;
+  fixed_interval: string | null;
+  calendar_interval: string | null;
+  timezone: string;
+}
+
+interface TermsItem {
+  terms: {
+    source_field: string;
+    target_field: string;
+  };
+}
+
+interface HistogramItem {
+  histogram: {
+    source_field: string;
+    target_field: string;
+    interval: number;
+  };
+}
+
+//Backend dimension data model
+export type RollupDimensionItem = DateHistogramItem | TermsItem | HistogramItem;
+
+//Backend metric data model
+export interface RollupMetricItem {
+  source_field: string;
+  metrics: [
+    {
+      min?: Object;
+      max?: Object;
+      sum?: Object;
+      avg?: Object;
+      value_count?: Object;
+    }
+  ];
 }

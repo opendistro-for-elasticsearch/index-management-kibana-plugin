@@ -16,6 +16,7 @@
 import { DefaultHeaders, IndexManagementApi } from "../models/interfaces";
 
 export const API_ROUTE_PREFIX = "/_opendistro/_ism";
+export const API_ROUTE_PREFIX_ROLLUP = "/_opendistro/_rollup";
 
 export const API: IndexManagementApi = {
   POLICY_BASE: `${API_ROUTE_PREFIX}/policies`,
@@ -24,6 +25,7 @@ export const API: IndexManagementApi = {
   ADD_POLICY_BASE: `${API_ROUTE_PREFIX}/add`,
   REMOVE_POLICY_BASE: `${API_ROUTE_PREFIX}/remove`,
   CHANGE_POLICY_BASE: `${API_ROUTE_PREFIX}/change_policy`,
+  ROLLUP_JOBS_BASE: `${API_ROUTE_PREFIX_ROLLUP}/jobs`,
 };
 
 export const DEFAULT_HEADERS: DefaultHeaders = {

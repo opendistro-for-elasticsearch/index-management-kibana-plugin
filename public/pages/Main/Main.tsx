@@ -1,5 +1,5 @@
 /*
- * Copyright 2019 Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ * Copyright 2020 Amazon.com, Inc. or its affiliates. All Rights Reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License").
  * You may not use this file except in compliance with the License.
@@ -22,22 +22,28 @@ import ManagedIndices from "../ManagedIndices";
 import Indices from "../Indices";
 import CreatePolicy from "../CreatePolicy";
 import ChangePolicy from "../ChangePolicy";
+import Rollups from "../Rollups";
 import { ModalProvider, ModalRoot } from "../../components/Modal";
 import { ServicesConsumer } from "../../services";
 import { BrowserServices } from "../../models/interfaces";
 import { ROUTES } from "../../utils/constants";
+import CreateRollupForm from "../CreateRollup/containers/CreateRollupForm";
+import EditRollup from "../EditRollup/containers";
+import RollupDetails from "../RollupDetails/containers/RollupDetails";
 
 enum Navigation {
   IndexManagement = "Index Management",
   IndexPolicies = "Index Policies",
   ManagedIndices = "Managed Indices",
   Indices = "Indices",
+  Rollups = "Rollup Jobs",
 }
 
 enum Pathname {
   IndexPolicies = "/index-policies",
   ManagedIndices = "/managed-indices",
   Indices = "/indices",
+  Rollups = "/rollups",
 }
 
 interface MainProps extends RouteComponentProps {}
@@ -71,6 +77,12 @@ export default class Main extends Component<MainProps, object> {
             href: `#${Pathname.Indices}`,
             isSelected: pathname === Pathname.Indices,
           },
+          {
+            name: Navigation.Rollups,
+            id: 4,
+            href: `#${Pathname.Rollups}`,
+            isSelected: pathname === Pathname.Rollups,
+          },
         ],
       },
     ];
@@ -80,10 +92,13 @@ export default class Main extends Component<MainProps, object> {
           services && (
             <ModalProvider>
               <ModalRoot services={services} />
-              <EuiPage>
-                <EuiPageSideBar style={{ minWidth: 150 }}>
-                  <EuiSideNav style={{ width: 150 }} items={sideNav} />
-                </EuiPageSideBar>
+              <EuiPage style={{ maxWidth: "1960px" }}>
+                {/*Hide side navigation bar when creating or editing rollup job*/}
+                {pathname != ROUTES.CREATE_ROLLUP && pathname != ROUTES.EDIT_ROLLUP && pathname != ROUTES.ROLLUP_DETAILS && (
+                  <EuiPageSideBar style={{ minWidth: 150 }}>
+                    <EuiSideNav style={{ width: 150 }} items={sideNav} />
+                  </EuiPageSideBar>
+                )}
                 <EuiPageBody>
                   <Switch>
                     <Route
@@ -125,6 +140,38 @@ export default class Main extends Component<MainProps, object> {
                       render={(props: RouteComponentProps) => (
                         <div style={{ padding: "25px 25px" }}>
                           <Indices {...props} indexService={services.indexService} />
+                        </div>
+                      )}
+                    />
+                    <Route
+                      path={ROUTES.ROLLUPS}
+                      render={(props: RouteComponentProps) => (
+                        <div style={{ padding: "25px 25px" }}>
+                          <Rollups {...props} rollupService={services.rollupService} />
+                        </div>
+                      )}
+                    />
+                    <Route
+                      path={ROUTES.CREATE_ROLLUP}
+                      render={(props: RouteComponentProps) => (
+                        <div style={{ padding: "25px 25px" }}>
+                          <CreateRollupForm {...props} rollupService={services.rollupService} indexService={services.indexService} />
+                        </div>
+                      )}
+                    />
+                    <Route
+                      path={ROUTES.EDIT_ROLLUP}
+                      render={(props: RouteComponentProps) => (
+                        <div style={{ padding: "25px 25px" }}>
+                          <EditRollup {...props} rollupService={services.rollupService} />
+                        </div>
+                      )}
+                    />
+                    <Route
+                      path={ROUTES.ROLLUP_DETAILS}
+                      render={(props: RouteComponentProps) => (
+                        <div style={{ padding: "25px 25px" }}>
+                          <RollupDetails {...props} rollupService={services.rollupService} />
                         </div>
                       )}
                     />

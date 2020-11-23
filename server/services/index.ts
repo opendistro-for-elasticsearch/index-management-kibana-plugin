@@ -16,5 +16,6 @@
 import IndexService from "./IndexService";
 import PolicyService from "./PolicyService";
 import ManagedIndexService from "./ManagedIndexService";
+import RollupService from "./RollupService";
 
-export { IndexService, PolicyService, ManagedIndexService };
+export { IndexService, PolicyService, ManagedIndexService, RollupService };

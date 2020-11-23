@@ -17,9 +17,11 @@ export const BASE_API_PATH = "/api/ism";
 export const NODE_API = Object.freeze({
   _SEARCH: `${BASE_API_PATH}/_search`,
   _INDICES: `${BASE_API_PATH}/_indices`,
+  _MAPPINGS: `${BASE_API_PATH}/_mappings`,
   APPLY_POLICY: `${BASE_API_PATH}/applyPolicy`,
   EDIT_ROLLOVER_ALIAS: `${BASE_API_PATH}/editRolloverAlias`,
   POLICIES: `${BASE_API_PATH}/policies`,
+  ROLLUPS: `${BASE_API_PATH}/rollups`,
   MANAGED_INDICES: `${BASE_API_PATH}/managedIndices`,
   RETRY: `${BASE_API_PATH}/retry`,
   CHANGE_POLICY: `${BASE_API_PATH}/changePolicy`,
