@@ -4,6 +4,7 @@ on:
   push:
     branches:
       - master
+      - set-env
 
 jobs:
   update_release_draft:
