@@ -19,7 +19,6 @@ import { CLUSTER, INDEX } from "../utils/constants";
 import {
   DeleteRollupParams,
   DeleteRollupResponse,
-  GetFieldsResponse,
   GetRollupsResponse,
   PutRollupParams,
   PutRollupResponse,
@@ -126,11 +125,25 @@ export default class RollupService {
       const params = { rollupId: id };
       const { callWithRequest } = await this.esDriver.getCluster(CLUSTER.ISM);
       const getResponse = await callWithRequest(req, "ism.getRollup", params);
+      const metadata = await callWithRequest(req, "ism.explainRollup", params);
       const rollup = _.get(getResponse, "rollup", null);
       const seqNo = _.get(getResponse, "_seq_no");
       const primaryTerm = _.get(getResponse, "_primary_term");
+
+      //Form response
       if (rollup) {
-        return { ok: true, response: { id, seqNo: seqNo as number, primaryTerm: primaryTerm as number, rollup: rollup as Rollup } };
+        if (metadata)
+          return {
+            ok: true,
+            response: {
+              id,
+              seqNo: seqNo as number,
+              primaryTerm: primaryTerm as number,
+              rollup: rollup as Rollup,
+              metadata: metadata as RollupMetadata,
+            },
+          };
+        else return { ok: false, error: "Failed to load metadata" };
       } else {
         return { ok: false, error: "Failed to load rollup" };
       }

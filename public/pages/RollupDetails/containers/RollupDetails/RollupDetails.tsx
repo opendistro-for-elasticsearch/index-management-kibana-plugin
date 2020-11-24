@@ -132,7 +132,6 @@ export default class RollupDetails extends Component<RollupDetailsProps, RollupD
     try {
       const { rollupService } = this.props;
       const response = await rollupService.getRollup(rollupId);
-      const explainResponse = await rollupService.explainRollup(rollupId);
 
       if (response.ok) {
         const newJSON = response.response;
@@ -157,6 +156,7 @@ export default class RollupDetails extends Component<RollupDetailsProps, RollupD
           metricsShown: selectedMetrics.slice(0, 10),
           dimensionsShown: selectedDimensionField.slice(0, 10),
           enabled: response.response.rollup.enabled,
+          metadata: response.response.metadata,
         });
         //TODO: fix this to match new data model
         if (response.response.rollup.schedule.cron == undefined) {
@@ -170,12 +170,6 @@ export default class RollupDetails extends Component<RollupDetailsProps, RollupD
       } else {
         toastNotifications.addDanger(`Could not load the rollup job: ${response.error}`);
         this.props.history.push(ROUTES.ROLLUPS);
-      }
-      if (explainResponse.ok) {
-        let metadata = explainResponse.response[rollupId];
-        this.setState({ metadata: metadata });
-      } else {
-        toastNotifications.addDanger(`Could not load the explain API of rollup job: ${explainResponse.error}`);
       }
     } catch (err) {
       toastNotifications.addDanger(getErrorMessage(err, "Could not load the rollup job"));

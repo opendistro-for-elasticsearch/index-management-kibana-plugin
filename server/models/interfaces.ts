@@ -14,7 +14,7 @@
  */
 
 import { IndexService, ManagedIndexService, PolicyService, RollupService } from "../services";
-import { DocumentPolicy, ManagedIndexItem, Rollup } from "../../models/interfaces";
+import { DocumentPolicy, ManagedIndexItem, Rollup, RollupMetadata } from "../../models/interfaces";
 import { RollupItem } from "../../public/pages/Rollups/models/interfaces";
 
 export interface NodeServices {
@@ -73,6 +73,7 @@ export interface GetFieldsResponse {
 
 export interface GetRollupsResponse {
   rollups: RollupItem[];
+  metadata: RollupMetadata[];
   totalRollups: number;
 }
 

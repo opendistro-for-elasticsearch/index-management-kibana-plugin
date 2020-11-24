@@ -18,7 +18,7 @@ import { PutRollupResponse, GetRollupsResponse, GetFieldsResponse } from "../../
 import { ServerResponse } from "../../server/models/types";
 import { NODE_API } from "../../utils/constants";
 import queryString from "query-string";
-import { DocumentRollup, Rollup } from "../../models/interfaces";
+import { DocumentRollup, GetRollupResponse, Rollup, RollupMetadata } from "../../models/interfaces";
 
 export default class RollupService {
   httpClient: IHttpService;
@@ -31,6 +31,10 @@ export default class RollupService {
     let url = `..${NODE_API.ROLLUPS}`;
     if (queryParamsString) url += `?${queryParamsString}`;
     const response = (await this.httpClient.get(url)) as IHttpResponse<ServerResponse<GetRollupsResponse>>;
+
+    //Fetch metadata for rollup jobs here
+
+    const explainResponse;
     return response.data;
   };
 
