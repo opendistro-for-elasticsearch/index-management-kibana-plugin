@@ -3,7 +3,7 @@ on:
   push:
     branches:
       - master
-
+      - set-env
 jobs:
   tests:
     name: Run Cypress E2E tests
