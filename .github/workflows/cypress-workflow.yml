@@ -9,6 +9,8 @@ jobs:
     name: Run Cypress E2E tests
     runs-on: ubuntu-latest
     env:
+      # in order to run set-env
+      ACTIONS_ALLOW_UNSECURE_COMMANDS: true
       # prevents extra Cypress installation progress messages
       CI: 1
       # avoid warnings like "tput: No value for $TERM and no -T specified"
