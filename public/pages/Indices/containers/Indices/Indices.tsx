@@ -162,6 +162,7 @@ export default class Indices extends Component<IndicesProps, IndicesState> {
     const selection: EuiTableSelectionType<ManagedCatIndex> = {
       onSelectionChange: this.onSelectionChange,
     };
+
     return (
       <ContentPanel
         actions={

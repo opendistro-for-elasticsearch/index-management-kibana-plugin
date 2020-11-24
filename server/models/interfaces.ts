@@ -13,15 +13,13 @@
  * permissions and limitations under the License.
  */
 
-import { IndexService, ManagedIndexService, PolicyService, RollupService } from "../services";
-import { DocumentPolicy, ManagedIndexItem, Rollup } from "../../models/interfaces";
-import { RollupItem } from "../../public/pages/Rollups/models/interfaces";
+import { IndexService, ManagedIndexService, PolicyService } from "../services";
+import { DocumentPolicy, ManagedIndexItem } from "../../models/interfaces";
 
 export interface NodeServices {
   indexService: IndexService;
   managedIndexService: ManagedIndexService;
   policyService: PolicyService;
-  rollupService: RollupService;
 }
 
 export interface SearchResponse<T> {
@@ -58,29 +56,9 @@ export interface PutPolicyResponse {
   policy: { policy: object };
 }
 
-export interface DeleteRollupResponse {
-  result: string;
-}
-
 export interface GetIndicesResponse {
   indices: ManagedCatIndex[];
   totalIndices: number;
-}
-
-export interface GetFieldsResponse {
-  result: string;
-}
-
-export interface GetRollupsResponse {
-  rollups: RollupItem[];
-  totalRollups: number;
-}
-
-export interface PutRollupResponse {
-  _id: string;
-  _primary_term: number;
-  _seq_no: number;
-  rollup: { rollup: Rollup };
 }
 
 export interface IndexUpdateResponse {
@@ -110,16 +88,6 @@ export interface PutPolicyParams {
   policyId: string;
   ifSeqNo?: string;
   ifPrimaryTerm?: string;
-  body: string;
-}
-export interface DeleteRollupParams {
-  rollupId: string;
-}
-
-export interface PutRollupParams {
-  rollupId: string;
-  if_seq_no?: string;
-  if_primary_term?: string;
   body: string;
 }
 
@@ -181,7 +149,6 @@ export interface IndexManagementApi {
   readonly ADD_POLICY_BASE: string;
   readonly REMOVE_POLICY_BASE: string;
   readonly CHANGE_POLICY_BASE: string;
-  readonly ROLLUP_JOBS_BASE: string;
 }
 
 export interface DefaultHeaders {

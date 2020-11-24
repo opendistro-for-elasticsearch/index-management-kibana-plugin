@@ -13,11 +13,10 @@
  * permissions and limitations under the License.
  */
 
-import { IndexService, ManagedIndexService, PolicyService, RollupService } from "../services";
+import { IndexService, ManagedIndexService, PolicyService } from "../services";
 
 export interface BrowserServices {
   indexService: IndexService;
   managedIndexService: ManagedIndexService;
   policyService: PolicyService;
-  rollupService: RollupService;
 }

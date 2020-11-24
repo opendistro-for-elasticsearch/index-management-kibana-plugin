@@ -20,7 +20,7 @@ import { render, unmountComponentAtNode } from "react-dom";
 import { HashRouter as Router, Route } from "react-router-dom";
 
 import Main from "./pages/Main";
-import { ServicesContext, IndexService, ManagedIndexService, RollupService } from "./services";
+import { ServicesContext, IndexService, ManagedIndexService } from "./services";
 import PolicyService from "./services/PolicyService";
 import { DarkModeContext } from "./components/DarkMode";
 
@@ -42,8 +42,7 @@ function RootController($scope, $element, $http) {
   const indexService = new IndexService($http);
   const managedIndexService = new ManagedIndexService($http);
   const policyService = new PolicyService($http);
-  const rollupService = new RollupService($http);
-  const services = { indexService, managedIndexService, policyService, rollupService };
+  const services = { indexService, managedIndexService, policyService };
   const isDarkMode = chrome.getUiSettingsClient().get("theme:darkMode") || false;
 
   // render react to DOM
