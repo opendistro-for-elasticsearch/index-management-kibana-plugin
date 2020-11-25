@@ -11,6 +11,13 @@ export class IndexManagementPlugin implements Plugin<IndexManagementPluginSetup,
     core.application.register({
       id: "indexManagement",
       title: "Index Management",
+      order: 7000,
+      category: {
+        id: 'odfe',
+        label: 'Open Distro for Elasticsearch',
+        euiIconType: 'logoKibana',
+        order: 2000,
+      },
       mount: async (params: AppMountParameters) => {
         const { renderApp } = await import("./index_management_app");
         const [coreStart, depsStart] = await core.getStartServices();
