@@ -64,7 +64,7 @@ interface RollupDetailsState {
   delayTime: number | undefined;
   delayTimeunit: string;
   lastUpdated: string;
-  metadata: RollupMetadata | null;
+  metadata: RollupMetadata | undefined;
 
   timestamp: string;
   histogramInterval: string;
@@ -99,7 +99,7 @@ export default class RollupDetails extends Component<RollupDetailsProps, RollupD
       delayTimeunit: "MINUTES",
       rollupJSON: "",
       lastUpdated: "-",
-      metadata: null,
+      metadata: undefined,
 
       timestamp: "",
       histogramInterval: "",
@@ -137,8 +137,9 @@ export default class RollupDetails extends Component<RollupDetailsProps, RollupD
         const newJSON = response.response;
         const selectedMetrics = this.parseMetric(response.response.rollup.metrics);
         const selectedDimensionField = this.parseDimension(response.response.rollup.dimensions);
+        // console.log(Map.prototype.get(response.response.metadata.get(response.response._id));
         this.setState({
-          rollupId: response.response.id,
+          rollupId: response.response._id,
           description: response.response.rollup.description,
           sourceIndex: response.response.rollup.source_index,
           targetIndex: response.response.rollup.target_index,
@@ -156,8 +157,11 @@ export default class RollupDetails extends Component<RollupDetailsProps, RollupD
           metricsShown: selectedMetrics.slice(0, 10),
           dimensionsShown: selectedDimensionField.slice(0, 10),
           enabled: response.response.rollup.enabled,
-          metadata: response.response.metadata,
         });
+        if (response.response.metadata != null) {
+          this.setState({ metadata: response.response.metadata[`${response.response._id}`] });
+        }
+        // this.setState({metadata: response.response.metadata.get(response.response._id)});
         //TODO: fix this to match new data model
         if (response.response.rollup.schedule.cron == undefined) {
           this.setState({

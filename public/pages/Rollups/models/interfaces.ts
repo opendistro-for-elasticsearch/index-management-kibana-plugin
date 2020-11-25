@@ -14,13 +14,12 @@
  */
 
 import { Direction } from "@elastic/eui";
-import { Rollup } from "../../../../models/interfaces";
+import { DocumentRollup, RollupMetadata } from "../../../../models/interfaces";
 
+//Data model for Rollup page that contains matching metadata
 export interface RollupItem {
-  _id: string;
-  _seqNo: number;
-  _primaryTerm: number;
-  rollup: Rollup;
+  rollupItem: DocumentRollup;
+  metadata: RollupMetadata | undefined;
 }
 
 export interface RollupQueryParams {

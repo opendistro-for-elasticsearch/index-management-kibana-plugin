@@ -58,12 +58,13 @@ export interface DocumentPolicy {
   policy: Policy;
 }
 
+//Data model that contains both rollup item and metadata of rollup job
 export interface DocumentRollup {
-  id: string;
-  seqNo: number;
-  primaryTerm: number;
+  _id: string;
+  _seqNo: number;
+  _primaryTerm: number;
   rollup: Rollup;
-  metadata: RollupMetadata;
+  metadata: any;
   //   {
   //   rollup_id: string;
   //   enabled: boolean;
@@ -116,7 +117,7 @@ export interface Rollup {
   enabled: boolean;
   enabledTime: number | null;
   lastUpdatedTime: number;
-  metadata_id: number | null;
+  metadata_id: string | null;
   metrics: MetricItem[];
   page_size: number;
   schedule: IntervalSchedule | CronSchedule;

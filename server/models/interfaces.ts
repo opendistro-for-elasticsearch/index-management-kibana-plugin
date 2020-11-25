@@ -14,7 +14,7 @@
  */
 
 import { IndexService, ManagedIndexService, PolicyService, RollupService } from "../services";
-import { DocumentPolicy, ManagedIndexItem, Rollup, RollupMetadata } from "../../models/interfaces";
+import { DocumentPolicy, DocumentRollup, ManagedIndexItem, Rollup, RollupMetadata } from "../../models/interfaces";
 import { RollupItem } from "../../public/pages/Rollups/models/interfaces";
 
 export interface NodeServices {
@@ -72,9 +72,9 @@ export interface GetFieldsResponse {
 }
 
 export interface GetRollupsResponse {
-  rollups: RollupItem[];
-  metadata: RollupMetadata[];
+  rollups: DocumentRollup[];
   totalRollups: number;
+  metadata: Map<string, RollupMetadata> | null;
 }
 
 export interface PutRollupResponse {
@@ -113,6 +113,7 @@ export interface PutPolicyParams {
   ifPrimaryTerm?: string;
   body: string;
 }
+
 export interface DeleteRollupParams {
   rollupId: string;
 }
@@ -152,6 +153,7 @@ export interface BackendFailedIndex {
   index_uuid: string;
   reason: string;
 }
+
 export interface FailedIndex {
   indexName: string;
   indexUuid: string;
@@ -176,6 +178,7 @@ export interface ExplainAPIManagedIndexMetaData {
 
 export interface IndexManagementApi {
   [API_ROUTE: string]: string;
+
   readonly POLICY_BASE: string;
   readonly EXPLAIN_BASE: string;
   readonly RETRY_BASE: string;
