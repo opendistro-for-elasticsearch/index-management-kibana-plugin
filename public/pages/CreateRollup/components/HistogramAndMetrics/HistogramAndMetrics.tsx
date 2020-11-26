@@ -35,7 +35,7 @@ import { ContentPanel, ContentPanelActions } from "../../../../components/Conten
 import { ModalConsumer } from "../../../../components/Modal";
 import { DEFAULT_PAGE_SIZE_OPTIONS } from "../../../Rollups/utils/constants";
 import { parseTimeunit } from "../../utils/helpers";
-import { DimensionItem, DocumentRollup, MetricItem } from "../../../../../models/interfaces";
+import { DimensionItem, MetricItem } from "../../../../../models/interfaces";
 
 interface HistogramAndMetricsProps {
   rollupId: string;
