@@ -24,10 +24,6 @@ describe("Policies", () => {
     // Set welcome screen tracking to false
     localStorage.setItem("home:welcome:show", "false");
 
-    //Wait for the server to be up
-    const  opts = { resources: [Cypress.env("kibana")]};
-    waitOn(opts);
-
     // Visit ISM Kibana
     cy.visit(`${Cypress.env("kibana")}/app/${PLUGIN_NAME}`);
 
