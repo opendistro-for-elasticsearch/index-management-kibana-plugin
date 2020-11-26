@@ -29,8 +29,8 @@ interface CreateRollupProps extends RouteComponentProps {
   rollupService: RollupService;
   currentStep: number;
   jobEnabledByDefault: boolean;
-  recurringJob: string;
-  recurringDefinition: string;
+  continuousJob: string;
+  continuousDefinition: string;
   interval: number;
   intervalTimeunit: string;
   intervalError: string;
@@ -45,8 +45,8 @@ interface CreateRollupProps extends RouteComponentProps {
   onChangeDelayTime: (e: ChangeEvent<HTMLInputElement>) => void;
   onChangeIntervalTime: (e: ChangeEvent<HTMLInputElement>) => void;
   onChangePage: (e: ChangeEvent<HTMLInputElement>) => void;
-  onChangeRecurringDefinition: (e: ChangeEvent<HTMLSelectElement>) => void;
-  onChangeRecurringJob: (optionId: string) => void;
+  onChangeContinuousDefinition: (e: ChangeEvent<HTMLSelectElement>) => void;
+  onChangeContinuousJob: (optionId: string) => void;
   onChangeDelayTimeunit: (e: ChangeEvent<HTMLSelectElement>) => void;
   onChangeIntervalTimeunit: (e: ChangeEvent<HTMLSelectElement>) => void;
 }
@@ -130,8 +130,8 @@ export default class CreateRollupStep3 extends Component<CreateRollupProps, Crea
     if (this.props.currentStep != 3) return null;
     const {
       jobEnabledByDefault,
-      recurringJob,
-      recurringDefinition,
+      continuousJob,
+      continuousDefinition,
       interval,
       intervalTimeunit,
       cronExpression,
@@ -143,8 +143,8 @@ export default class CreateRollupStep3 extends Component<CreateRollupProps, Crea
       onChangeDelayTime,
       onChangeIntervalTime,
       onChangePage,
-      onChangeRecurringDefinition,
-      onChangeRecurringJob,
+      onChangeContinuousDefinition,
+      onChangeContinuousJob,
       onChangeDelayTimeunit,
       onChangeIntervalTimeunit,
     } = this.props;
@@ -166,8 +166,8 @@ export default class CreateRollupStep3 extends Component<CreateRollupProps, Crea
               rollupId={rollupId}
               rollupIdError={rollupIdError}
               jobEnabledByDefault={jobEnabledByDefault}
-              recurringJob={recurringJob}
-              recurringDefinition={recurringDefinition}
+              continuousJob={continuousJob}
+              continuousDefinition={continuousDefinition}
               interval={interval}
               intervalTimeunit={intervalTimeunit}
               cronExpression={cronExpression}
@@ -179,8 +179,8 @@ export default class CreateRollupStep3 extends Component<CreateRollupProps, Crea
               onChangeDelayTime={onChangeDelayTime}
               onChangeIntervalTime={onChangeIntervalTime}
               onChangePage={onChangePage}
-              onChangeRecurringDefinition={onChangeRecurringDefinition}
-              onChangeRecurringJob={onChangeRecurringJob}
+              onChangeContinuousDefinition={onChangeContinuousDefinition}
+              onChangeContinuousJob={onChangeContinuousJob}
               onChangeDelayTimeunit={onChangeDelayTimeunit}
               onChangeIntervalTimeunit={onChangeIntervalTimeunit}
             />

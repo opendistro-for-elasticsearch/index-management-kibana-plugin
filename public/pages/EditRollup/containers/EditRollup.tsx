@@ -42,8 +42,8 @@ interface EditRollupState {
   hasSubmitted: boolean;
   description: string;
   jobEnabledByDefault: boolean;
-  recurringJob: string;
-  recurringDefinition: string;
+  continuousJob: string;
+  continuousDefinition: string;
   interval: number;
   intervalError: string;
   intervalTimeunit: string;
@@ -68,8 +68,8 @@ export default class EditRollup extends Component<EditRollupProps, EditRollupSta
       hasSubmitted: false,
       description: "",
       jobEnabledByDefault: false,
-      recurringJob: "no",
-      recurringDefinition: "fixed",
+      continuousJob: "no",
+      continuousDefinition: "fixed",
       interval: 2,
       intervalError: "",
       intervalTimeunit: "MINUTES",
@@ -119,10 +119,10 @@ export default class EditRollup extends Component<EditRollupProps, EditRollupSta
           this.setState({
             interval: response.response.rollup.schedule.interval.period,
             intervalTimeunit: response.response.rollup.schedule.interval.unit,
-            recurringDefinition: "fixed",
+            continuousDefinition: "fixed",
           });
         } else {
-          this.setState({ cronExpression: response.response.rollup.schedule.cron.expression, recurringDefinition: "cron" });
+          this.setState({ cronExpression: response.response.rollup.schedule.cron.expression, continuousDefinition: "cron" });
         }
       } else {
         toastNotifications.addDanger(`Could not load the rollup job: ${response.error}`);
@@ -191,14 +191,14 @@ export default class EditRollup extends Component<EditRollupProps, EditRollupSta
     this.setState({ pageSize: e.target.valueAsNumber, rollupJSON: newJSON });
   };
 
-  onChangeRecurringDefinition = (e: ChangeEvent<HTMLSelectElement>): void => {
-    this.setState({ recurringDefinition: e.target.value });
+  onChangeContinuousDefinition = (e: ChangeEvent<HTMLSelectElement>): void => {
+    this.setState({ continuousDefinition: e.target.value });
   };
 
-  onChangeRecurringJob = (optionId: string): void => {
+  onChangeContinuousJob = (optionId: string): void => {
     let newJSON = this.state.rollupJSON;
     newJSON.rollup.continuous = optionId == "yes";
-    this.setState({ recurringJob: optionId, rollupJSON: newJSON });
+    this.setState({ continuousJob: optionId, rollupJSON: newJSON });
   };
 
   //Update delay field in JSON if delay value is defined.
@@ -211,10 +211,10 @@ export default class EditRollup extends Component<EditRollupProps, EditRollupSta
   };
 
   updateSchedule = (): void => {
-    const { recurringDefinition, cronExpression, interval, intervalTimeunit, cronTimezone } = this.state;
+    const { continuousDefinition, cronExpression, interval, intervalTimeunit, cronTimezone } = this.state;
     let newJSON = this.state.rollupJSON;
 
-    if (recurringDefinition == "cron") {
+    if (continuousDefinition == "cron") {
       newJSON.rollup.schedule.cron = { expression: `${cronExpression}`, timezone: `${cronTimezone}` };
       delete newJSON.rollup.schedule["interval"];
     } else {
@@ -274,8 +274,8 @@ export default class EditRollup extends Component<EditRollupProps, EditRollupSta
       isSubmitting,
       description,
       jobEnabledByDefault,
-      recurringJob,
-      recurringDefinition,
+      continuousJob,
+      continuousDefinition,
       interval,
       intervalError,
       intervalTimeunit,
@@ -305,8 +305,8 @@ export default class EditRollup extends Component<EditRollupProps, EditRollupSta
           rollupId={rollupId}
           rollupIdError={rollupIdError}
           jobEnabledByDefault={jobEnabledByDefault}
-          recurringJob={recurringJob}
-          recurringDefinition={recurringDefinition}
+          continuousJob={continuousJob}
+          continuousDefinition={continuousDefinition}
           interval={interval}
           intervalTimeunit={intervalTimeunit}
           cronExpression={cronExpression}
@@ -321,8 +321,8 @@ export default class EditRollup extends Component<EditRollupProps, EditRollupSta
           onChangeDelayTime={this.onChangeDelayTime}
           onChangeIntervalTime={this.onChangeIntervalTime}
           onChangePage={this.onChangePage}
-          onChangeRecurringDefinition={this.onChangeRecurringDefinition}
-          onChangeRecurringJob={this.onChangeRecurringJob}
+          onChangeContinuousDefinition={this.onChangeContinuousDefinition}
+          onChangeContinuousJob={this.onChangeContinuousJob}
           onChangeDelayTimeunit={this.onChangeDelayTimeunit}
           onChangeIntervalTimeunit={this.onChangeIntervalTimeunit}
         />

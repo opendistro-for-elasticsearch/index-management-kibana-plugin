@@ -55,8 +55,8 @@ interface RollupDetailsState {
   sourceIndex: string;
   targetIndex: string;
   rollupJSON: string;
-  recurringJob: string;
-  recurringDefinition: string;
+  continuousJob: string;
+  continuousDefinition: string;
   interval: number;
   intervalTimeunit: string;
   cronExpression: string;
@@ -89,8 +89,8 @@ export default class RollupDetails extends Component<RollupDetailsProps, RollupD
       sourceIndex: "",
       targetIndex: "",
 
-      recurringJob: "no",
-      recurringDefinition: "fixed",
+      continuousJob: "no",
+      continuousDefinition: "fixed",
       interval: 2,
       intervalTimeunit: "MINUTES",
       cronExpression: "",
@@ -299,8 +299,8 @@ export default class RollupDetails extends Component<RollupDetailsProps, RollupD
       description,
       sourceIndex,
       targetIndex,
-      recurringJob,
-      recurringDefinition,
+      continuousJob,
+      continuousDefinition,
       interval,
       intervalTimeunit,
       cronExpression,
@@ -321,8 +321,8 @@ export default class RollupDetails extends Component<RollupDetailsProps, RollupD
       isDeleteModalVisible,
     } = this.state;
 
-    let scheduleText = recurringJob ? "Continuous, " : "Not continuous, ";
-    if (recurringDefinition == "fixed") {
+    let scheduleText = continuousJob ? "Continuous, " : "Not continuous, ";
+    if (continuousDefinition == "fixed") {
       scheduleText += "every " + interval + " " + parseTimeunit(intervalTimeunit);
     } else {
       scheduleText += "defined by cron expression: " + cronExpression;
