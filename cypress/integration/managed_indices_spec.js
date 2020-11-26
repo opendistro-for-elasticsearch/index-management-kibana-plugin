@@ -27,7 +27,9 @@ describe("Managed indices", () => {
     localStorage.setItem("home:welcome:show", "false");
 
     //Wait for the server to be up
-    waitOn(`${Cypress.env("kibana")}/app/${PLUGIN_NAME}#/managed-indices`);
+    const  opts = { resources: [Cypress.env("kibana")]};
+    waitOn(opts);
+
     // Visit ISM Kibana
     cy.visit(`${Cypress.env("kibana")}/app/${PLUGIN_NAME}#/managed-indices`);
 
