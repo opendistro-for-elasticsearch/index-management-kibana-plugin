@@ -26,7 +26,7 @@ import {
 } from "../models/interfaces";
 import { getMustQuery } from "../utils/helpers";
 import { RollupsSort, ServerResponse } from "../models/types";
-import { DocumentRollup, Rollup, RollupMetadata } from "../../models/interfaces";
+import { DocumentRollup, Rollup } from "../../models/interfaces";
 
 type Request = Legacy.Request;
 type ElasticsearchPlugin = Legacy.Plugins.elasticsearch.Plugin;
