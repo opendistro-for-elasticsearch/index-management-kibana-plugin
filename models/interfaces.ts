@@ -65,34 +65,6 @@ export interface DocumentRollup {
   _primaryTerm: number;
   rollup: Rollup;
   metadata: any;
-  //   {
-  //   rollup_id: string;
-  //   enabled: boolean;
-  //   schedule: {
-  //     interval?: {
-  //       start_time?: number;
-  //       period: number;
-  //       unit: string;
-  //     };
-  //     cron?: {
-  //       expression: string;
-  //       timezone: string;
-  //     };
-  //   };
-  //   last_updated_time: number;
-  //   enabled_time: number | null;
-  //   description: string;
-  //   schema_version: number;
-  //   source_index: string;
-  //   target_index: string;
-  //   metadata_id: number | null;
-  //   roles: string[];
-  //   page_size: number;
-  //   delay: number | null;
-  //   continuous: boolean;
-  //   dimensions: RollupDimensionItem[];
-  //   metrics: RollupMetricItem[];
-  // };
 }
 
 // TODO: Fill out when needed

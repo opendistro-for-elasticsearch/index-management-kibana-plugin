@@ -137,7 +137,6 @@ export default class RollupDetails extends Component<RollupDetailsProps, RollupD
         const newJSON = response.response;
         const selectedMetrics = this.parseMetric(response.response.rollup.metrics);
         const selectedDimensionField = this.parseDimension(response.response.rollup.dimensions);
-        // console.log(Map.prototype.get(response.response.metadata.get(response.response._id));
         this.setState({
           rollupId: response.response._id,
           description: response.response.rollup.description,
@@ -159,7 +158,7 @@ export default class RollupDetails extends Component<RollupDetailsProps, RollupD
           enabled: response.response.rollup.enabled,
         });
         if (response.response.metadata != null) {
-          this.setState({ metadata: response.response.metadata[`${response.response._id}`] });
+          this.setState({ metadata: response.response.metadata[response.response._id] });
         }
         // this.setState({metadata: response.response.metadata.get(response.response._id)});
         //TODO: fix this to match new data model
