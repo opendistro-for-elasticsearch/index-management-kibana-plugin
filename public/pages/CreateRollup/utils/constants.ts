@@ -212,7 +212,6 @@ export const testRollup2 = {
     },
   },
 };
-
 export const FixedTimeunitOptions = [
   { value: "ms", text: "Millisecond(s)" },
   { value: "s", text: "Second(s)" },

@@ -135,38 +135,6 @@ export default class Rollups extends Component<RollupsProps, RollupsState> {
     this.setState({ loadingRollups: false });
   };
 
-  // getExplains = async (): Promise<void> => {
-  //   this.setState({ loadingRollups: true });
-  //   try {
-  //     const { rollupService } = this.props;
-  //     const { rollups } = this.state;
-  //     //Concat the rollup job ids to form params for explain api:
-  //     let paramString = "";
-  //     rollups.map((rollup) => {
-  //       if (rollups.indexOf(rollup) == 0) {
-  //         paramString = paramString + rollup._id;
-  //       } else {
-  //         paramString = paramString + "," + rollup._id;
-  //       }
-  //     });
-  //     const rollupJobsResponse = await rollupService.explainRollup(paramString);
-  //     if (rollupJobsResponse.ok) {
-  //       const rollupExplain = rollupJobsResponse.response;
-  //       this.setState({ rollupExplain });
-  //       // Assuming the order of rollup jobs is identical to metadata.
-  //       rollups.map((rollup: RollupItem) => {
-  //         rollup.metadata = rollupExplain[rollup._id];
-  //       });
-  //       this.setState({ rollups });
-  //     } else {
-  //       toastNotifications.addDanger(rollupJobsResponse.error);
-  //     }
-  //   } catch (err) {
-  //     toastNotifications.addDanger(getErrorMessage(err, "There was a problem loading the metadata of rollups"));
-  //   }
-  //   this.setState({ loadingRollups: false });
-  // };
-
   onClickCreate = (): void => {
     this.props.history.push(ROUTES.CREATE_ROLLUP);
   };
@@ -198,7 +166,6 @@ export default class Rollups extends Component<RollupsProps, RollupsState> {
       }
     }
     await this.getRollups();
-    // await this.getExplains();
   };
 
   onDisable = async (): Promise<void> => {
@@ -220,7 +187,6 @@ export default class Rollups extends Component<RollupsProps, RollupsState> {
       }
     }
     await this.getRollups();
-    // await this.getExplains();
   };
 
   onEnable = async (): Promise<void> => {
@@ -242,7 +208,6 @@ export default class Rollups extends Component<RollupsProps, RollupsState> {
       }
     }
     await this.getRollups();
-    // await this.getExplains();
   };
 
   onTableChange = ({ page: tablePage, sort }: Criteria<ManagedCatIndex>): void => {

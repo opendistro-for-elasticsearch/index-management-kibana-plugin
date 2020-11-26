@@ -112,6 +112,16 @@ export interface PutPolicyParams {
   ifPrimaryTerm?: string;
   body: string;
 }
+export interface DeleteRollupParams {
+  rollupId: string;
+}
+
+export interface PutRollupParams {
+  rollupId: string;
+  if_seq_no?: string;
+  if_primary_term?: string;
+  body: string;
+}
 
 export interface DeleteRollupParams {
   rollupId: string;

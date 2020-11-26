@@ -64,6 +64,7 @@ interface RollupDetailsState {
   rollupJSON: any;
   continuousJob: string;
   continuousDefinition: string;
+
   interval: number;
   intervalTimeunit: string;
   cronExpression: string;

@@ -81,7 +81,6 @@ export interface State {
   transitions: object[];
 }
 
-//Data model for creating new rollup job or editing a rollup job
 export interface Rollup {
   continuous: boolean;
   delay: number | null;
