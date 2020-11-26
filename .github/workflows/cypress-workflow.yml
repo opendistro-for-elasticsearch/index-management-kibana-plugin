@@ -62,6 +62,7 @@ jobs:
           npm uninstall -g yarn
           echo "Installing yarn ${{ steps.versions_step.outputs.yarn_version }}"
           npm i -g yarn@${{ steps.versions.outputs.yarn_version }}
+          npm install -g wait-on
       - name: Bootstrap plugin/kibana
         run: |
           mkdir -p kibana/plugins
