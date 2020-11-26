@@ -150,14 +150,8 @@ export default class RollupService {
           };
         else
           return {
-            ok: true,
-            response: {
-              _id: id,
-              _seqNo: seqNo as number,
-              _primaryTerm: primaryTerm as number,
-              rollup: rollup as Rollup,
-              metadata: null,
-            },
+            ok: false,
+            error: "Failed to load metadata",
           };
       } else {
         return { ok: false, error: "Failed to load rollup" };
@@ -259,7 +253,7 @@ export default class RollupService {
           response: { rollups: rollups, totalRollups: totalRollups, metadata: explainResponse.response },
         };
       } else {
-        return { ok: true, response: { rollups: rollups, totalRollups: totalRollups, metadata: null } };
+        return { ok: false, error: explainResponse.error };
       }
     } catch (err) {
       if (err.statusCode === 404 && err.body.error.type === "index_not_found_exception") {
