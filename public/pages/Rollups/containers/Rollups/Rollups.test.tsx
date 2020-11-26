@@ -27,7 +27,7 @@ import { Redirect, Route, RouteComponentProps, Switch } from "react-router-dom";
 import { BREADCRUMBS, ROUTES } from "../../../../utils/constants";
 import Rollups from "./Rollups";
 import { TEXT } from "../../components/RollupEmptyPrompt/RollupEmptyPrompt";
-import { testRollup, testRollup2 } from "../../../CreateRollup/utils/constants";
+import { testRollup } from "../../../CreateRollup/utils/constants";
 
 function renderRollupsWithRouter() {
   return {
@@ -125,39 +125,6 @@ describe("<Rollups /> spec", () => {
 
     expect(toastNotifications.addDanger).toHaveBeenCalledTimes(1);
     expect(toastNotifications.addDanger).toHaveBeenCalledWith("rejected error");
-  });
-
-  it("adds error toaster when explain API has error", async () => {
-    const rollups = [testRollup];
-    browserServicesMock.rollupService.getRollups = jest.fn().mockResolvedValue({
-      ok: true,
-      response: { rollups, totalRollups: 1 },
-    });
-    browserServicesMock.rollupService.explainRollup = jest.fn().mockResolvedValue({
-      ok: false,
-      error: "some explain API error",
-    });
-    renderRollupsWithRouter();
-
-    await wait();
-
-    expect(toastNotifications.addDanger).toHaveBeenCalledTimes(1);
-    expect(toastNotifications.addDanger).toHaveBeenCalledWith("some explain API error");
-  });
-
-  it("adds error toaster when explain throws error", async () => {
-    const rollups = [testRollup];
-    browserServicesMock.rollupService.getRollups = jest.fn().mockResolvedValue({
-      ok: true,
-      response: { rollups, totalRollups: 1 },
-    });
-    browserServicesMock.rollupService.explainRollup = jest.fn().mockRejectedValue(new Error("explain API rejected error"));
-    renderRollupsWithRouter();
-
-    await wait();
-
-    expect(toastNotifications.addDanger).toHaveBeenCalledTimes(1);
-    expect(toastNotifications.addDanger).toHaveBeenCalledWith("explain API rejected error");
   });
 
   it("can route to create rollup", async () => {

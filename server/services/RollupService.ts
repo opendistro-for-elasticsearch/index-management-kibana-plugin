@@ -181,7 +181,7 @@ export default class RollupService {
     }
   };
 
-  explainRollup = async (req: Request, h: ResponseToolkit, idParams: string): Promise<ServerResponse<Map<string, RollupMetadata>>> => {
+  explainRollup = async (req: Request, h: ResponseToolkit, idParams: string): Promise<ServerResponse<any>> => {
     try {
       const { callWithRequest } = await this.esDriver.getCluster(CLUSTER.ISM);
       const params = { rollupId: idParams };
@@ -233,15 +233,15 @@ export default class RollupService {
 
       const { callWithRequest } = await this.esDriver.getCluster(CLUSTER.DATA);
       const searchResponse: SearchResponse<any> = await callWithRequest(req, "search", params);
-
       const totalRollups = searchResponse.hits.total.value;
+
       const rollups = searchResponse.hits.hits.map((hit) => ({
         _seqNo: hit._seq_no as number,
         _primaryTerm: hit._primary_term as number,
         _id: hit._id,
         rollup: hit._source,
+        metadata: null,
       }));
-
       let ids = rollups
         .map((rollup) => {
           return rollup._id;
@@ -251,6 +251,9 @@ export default class RollupService {
       const explainResponse = await this.explainRollup(req, h, ids);
 
       if (explainResponse.ok) {
+        rollups.map((item) => {
+          item.metadata = explainResponse.response[item._id];
+        });
         return {
           ok: true,
           response: { rollups: rollups, totalRollups: totalRollups, metadata: explainResponse.response },

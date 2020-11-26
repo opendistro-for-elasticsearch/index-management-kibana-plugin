@@ -49,10 +49,11 @@ import {
 } from "@elastic/eui";
 import { RollupService } from "../../../../services";
 import RollupEmptyPrompt from "../../components/RollupEmptyPrompt";
-import { RollupItem, RollupQueryParams } from "../../models/interfaces";
+import { RollupQueryParams } from "../../models/interfaces";
 import { getURLQueryParams, renderContinuous, renderEnabled, renderTime } from "../../utils/helpers";
 import DeleteModal from "../../components/DeleteModal";
 import { renderStatus } from "../../../RollupDetails/utils/helpers";
+import { DocumentRollup } from "../../../../../models/interfaces";
 
 interface RollupsProps extends RouteComponentProps {
   rollupService: RollupService;
@@ -63,10 +64,10 @@ interface RollupsState {
   from: number;
   size: number;
   search: string;
-  sortField: keyof RollupItem;
+  sortField: keyof DocumentRollup;
   sortDirection: Direction;
-  selectedItems: RollupItem[];
-  rollups: RollupItem[];
+  selectedItems: DocumentRollup[];
+  rollups: DocumentRollup[];
   rollupExplain: any;
   loadingRollups: boolean;
   isPopoverOpen: boolean;
@@ -100,8 +101,6 @@ export default class Rollups extends Component<RollupsProps, RollupsState> {
   async componentDidMount() {
     chrome.breadcrumbs.set([BREADCRUMBS.INDEX_MANAGEMENT, BREADCRUMBS.ROLLUPS]);
     await this.getRollups();
-    const { rollups } = this.state;
-    if (rollups.length != 0) await this.getExplains();
   }
 
   async componentDidUpdate(prevProps: RollupsProps, prevState: RollupsState) {
@@ -109,8 +108,6 @@ export default class Rollups extends Component<RollupsProps, RollupsState> {
     const currQuery = Rollups.getQueryObjectFromState(this.state);
     if (!_.isEqual(prevQuery, currQuery)) {
       await this.getRollups();
-      const { rollups } = this.state;
-      if (rollups.length != 0) await this.getExplains();
     }
   }
 
@@ -126,8 +123,9 @@ export default class Rollups extends Component<RollupsProps, RollupsState> {
       history.replace({ ...this.props.location, search: queryParamsString });
       const rollupJobsResponse = await rollupService.getRollups(queryParamsString);
       if (rollupJobsResponse.ok) {
-        const { rollups, totalRollups } = rollupJobsResponse.response;
-        this.setState({ rollups, totalRollups });
+        const { rollups, totalRollups, metadata } = rollupJobsResponse.response;
+        // const rollupItems = this.matchMetadata(rollups, metadata);
+        this.setState({ rollups, totalRollups, rollupExplain: metadata });
       } else {
         toastNotifications.addDanger(rollupJobsResponse.error);
       }
@@ -137,37 +135,37 @@ export default class Rollups extends Component<RollupsProps, RollupsState> {
     this.setState({ loadingRollups: false });
   };
 
-  getExplains = async (): Promise<void> => {
-    this.setState({ loadingRollups: true });
-    try {
-      const { rollupService } = this.props;
-      const { rollups } = this.state;
-      //Concat the rollup job ids to form params for explain api:
-      let paramString = "";
-      rollups.map((rollup) => {
-        if (rollups.indexOf(rollup) == 0) {
-          paramString = paramString + rollup._id;
-        } else {
-          paramString = paramString + "," + rollup._id;
-        }
-      });
-      const rollupJobsResponse = await rollupService.explainRollup(paramString);
-      if (rollupJobsResponse.ok) {
-        const rollupExplain = rollupJobsResponse.response;
-        this.setState({ rollupExplain });
-        // Assuming the order of rollup jobs is identical to metadata.
-        rollups.map((rollup: RollupItem) => {
-          rollup.rollup.metadata = rollupExplain[rollup._id];
-        });
-        this.setState({ rollups });
-      } else {
-        toastNotifications.addDanger(rollupJobsResponse.error);
-      }
-    } catch (err) {
-      toastNotifications.addDanger(getErrorMessage(err, "There was a problem loading the metadata of rollups"));
-    }
-    this.setState({ loadingRollups: false });
-  };
+  // getExplains = async (): Promise<void> => {
+  //   this.setState({ loadingRollups: true });
+  //   try {
+  //     const { rollupService } = this.props;
+  //     const { rollups } = this.state;
+  //     //Concat the rollup job ids to form params for explain api:
+  //     let paramString = "";
+  //     rollups.map((rollup) => {
+  //       if (rollups.indexOf(rollup) == 0) {
+  //         paramString = paramString + rollup._id;
+  //       } else {
+  //         paramString = paramString + "," + rollup._id;
+  //       }
+  //     });
+  //     const rollupJobsResponse = await rollupService.explainRollup(paramString);
+  //     if (rollupJobsResponse.ok) {
+  //       const rollupExplain = rollupJobsResponse.response;
+  //       this.setState({ rollupExplain });
+  //       // Assuming the order of rollup jobs is identical to metadata.
+  //       rollups.map((rollup: RollupItem) => {
+  //         rollup.metadata = rollupExplain[rollup._id];
+  //       });
+  //       this.setState({ rollups });
+  //     } else {
+  //       toastNotifications.addDanger(rollupJobsResponse.error);
+  //     }
+  //   } catch (err) {
+  //     toastNotifications.addDanger(getErrorMessage(err, "There was a problem loading the metadata of rollups"));
+  //   }
+  //   this.setState({ loadingRollups: false });
+  // };
 
   onClickCreate = (): void => {
     this.props.history.push(ROUTES.CREATE_ROLLUP);
@@ -200,7 +198,7 @@ export default class Rollups extends Component<RollupsProps, RollupsState> {
       }
     }
     await this.getRollups();
-    await this.getExplains();
+    // await this.getExplains();
   };
 
   onDisable = async (): Promise<void> => {
@@ -222,7 +220,7 @@ export default class Rollups extends Component<RollupsProps, RollupsState> {
       }
     }
     await this.getRollups();
-    await this.getExplains();
+    // await this.getExplains();
   };
 
   onEnable = async (): Promise<void> => {
@@ -244,7 +242,7 @@ export default class Rollups extends Component<RollupsProps, RollupsState> {
       }
     }
     await this.getRollups();
-    await this.getExplains();
+    // await this.getExplains();
   };
 
   onTableChange = ({ page: tablePage, sort }: Criteria<ManagedCatIndex>): void => {
@@ -253,7 +251,7 @@ export default class Rollups extends Component<RollupsProps, RollupsState> {
     this.setState({ from: page * size, size, sortField, sortDirection });
   };
 
-  onSelectionChange = (selectedItems: RollupItem[]): void => {
+  onSelectionChange = (selectedItems: DocumentRollup[]): void => {
     this.setState({ selectedItems });
   };
 
@@ -322,7 +320,7 @@ export default class Rollups extends Component<RollupsProps, RollupsState> {
       totalItemCount: totalRollups,
     };
 
-    const sorting: EuiTableSortingType<RollupItem> = {
+    const sorting: EuiTableSortingType<DocumentRollup> = {
       sort: {
         direction: sortDirection,
         field: sortField,
@@ -341,7 +339,7 @@ export default class Rollups extends Component<RollupsProps, RollupsState> {
       </EuiButton>
     );
 
-    const selection: EuiTableSelectionType<RollupItem> = {
+    const selection: EuiTableSelectionType<DocumentRollup> = {
       onSelectionChange: this.onSelectionChange,
     };
 
@@ -372,21 +370,14 @@ export default class Rollups extends Component<RollupsProps, RollupsState> {
       </EuiContextMenuItem>,
     ];
 
-    const rollupsColumns: EuiTableFieldDataColumnType<RollupItem>[] = [
+    const rollupsColumns: EuiTableFieldDataColumnType<DocumentRollup>[] = [
       {
         field: "_id",
         name: "Name",
         sortable: true,
         textOnly: true,
         truncateText: true,
-        render: (_id) => (
-          <EuiLink
-            // href={`opendistro_index_management_kibana#/rollup-details?id=${_id}`}
-            onClick={() => this.props.history.push(`${ROUTES.ROLLUP_DETAILS}?id=${_id}`)}
-          >
-            {_id}
-          </EuiLink>
-        ),
+        render: (_id) => <EuiLink onClick={() => this.props.history.push(`${ROUTES.ROLLUP_DETAILS}?id=${_id}`)}>{_id}</EuiLink>,
       },
       {
         field: "rollup.rollup.source_index",
@@ -419,7 +410,7 @@ export default class Rollups extends Component<RollupsProps, RollupsState> {
         render: renderContinuous,
       },
       {
-        field: "rollup.metadata.rollup_metadata.continuous",
+        field: "metadata.rollup_metadata.continuous",
         name: "Next rollup window",
         sortable: true,
         textOnly: true,
@@ -427,7 +418,7 @@ export default class Rollups extends Component<RollupsProps, RollupsState> {
           metadata == null ? "-" : renderTime(metadata.next_window_start_time) + " - " + renderTime(metadata.next_window_end_time),
       },
       {
-        field: "rollup.metadata",
+        field: "metadata",
         name: "Rollup job status",
         sortable: true,
         textOnly: true,
