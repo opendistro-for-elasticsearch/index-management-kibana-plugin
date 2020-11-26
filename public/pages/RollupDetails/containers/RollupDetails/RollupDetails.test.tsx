@@ -82,27 +82,6 @@ describe("<RollupDetails /> spec", () => {
     expect(chrome.breadcrumbs.push).toHaveBeenCalledWith({ text: testRollup._id });
   });
 
-  // it("adds error toaster when get rollup has error", async () => {
-  //   browserServicesMock.rollupService.getRollup = jest.fn().mockResolvedValue({ ok: false, error: "some error" });
-  //   const { getByText, debug } = renderRollupDetailsWithRouter([`${ROUTES.ROLLUP_DETAILS}?id=${testRollup._id}`]);
-  //
-  //   await wait();
-  //   expect(toastNotifications.addDanger).toHaveBeenCalledTimes(1);
-  //   expect(toastNotifications.addDanger).toHaveBeenCalledWith("Could not load the rollup job: some error");
-  //   debug();
-  //
-  //   await wait(() => getByText("Testing rollup landing page"));
-  // });
-  //
-  // it("adds error toaster when get rollup throws error", async () => {
-  //   browserServicesMock.rollupService.getRollup = jest.fn().mockRejectedValue(new Error("rejected error"));
-  //   const { getByText } = renderRollupDetailsWithRouter([`${ROUTES.ROLLUP_DETAILS}?id=${testRollup._id}`]);
-  //
-  //   expect(toastNotifications.addDanger).toHaveBeenCalledTimes(1);
-  //   expect(toastNotifications.addDanger).toHaveBeenCalledWith("rejected error");
-  //   await wait(() => getByText("Testing rollup landing page"));
-  // });
-
   it("can disable rollup job", async () => {
     browserServicesMock.rollupService.getRollup = jest.fn().mockResolvedValue({
       ok: true,
@@ -242,7 +221,4 @@ describe("<RollupDetails /> spec", () => {
 
     expect(queryByText("Stopped")).not.toBeNull();
   });
-
-  //enable with response error
-  //enable throws error
 });

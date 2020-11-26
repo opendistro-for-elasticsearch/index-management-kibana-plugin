@@ -48,8 +48,6 @@ import {
   RollupMetadata,
   RollupMetricItem,
   DateHistogramItem,
-  CronSchedule,
-  IntervalSchedule,
 } from "../../../../../models/interfaces";
 import { renderTime } from "../../../Rollups/utils/helpers";
 import DeleteModal from "../../../Rollups/components/DeleteModal";

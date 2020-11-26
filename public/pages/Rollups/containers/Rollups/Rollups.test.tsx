@@ -162,8 +162,6 @@ describe("<Rollups /> spec", () => {
     await wait(() => getByText(`Testing edit rollup: ?id=${testRollup._id}`));
   });
 
-  //Cannot edit multiple jobs (P1)
-
   it("can view details of a rollup job", async () => {
     const rollups = [testRollup];
     browserServicesMock.rollupService.getRollups = jest.fn().mockResolvedValue({
@@ -208,8 +206,6 @@ describe("<Rollups /> spec", () => {
     expect(toastNotifications.addSuccess).toHaveBeenCalledTimes(1);
     expect(toastNotifications.addSuccess).toHaveBeenCalledWith(`${testRollup._id} is enabled`);
   });
-
-  //Cannot enable a job
 
   it("can disable a rollup job", async () => {
     const rollups = [testRollup];
