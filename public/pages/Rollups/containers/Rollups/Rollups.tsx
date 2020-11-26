@@ -284,15 +284,12 @@ export default class Rollups extends Component<RollupsProps, RollupsState> {
     this.setState({ isDeleteModalVisible: true });
   };
 
-  concatName = (): string => {
-    const { selectedItems } = this.state;
-    let result = "";
-    for (let item of selectedItems) {
-      if (selectedItems.indexOf(item) == 0) result = result + item._id;
-      else result = result + ", " + item._id;
-    }
-    return result;
-  };
+  getSelectedRollupIds = (): string =>
+    this.state.selectedItems
+      .map((item) => {
+        return item._id;
+      })
+      .join(", ");
 
   render() {
     const {
@@ -507,7 +504,11 @@ export default class Rollups extends Component<RollupsProps, RollupsState> {
             tableLayout="auto"
           />
           {isDeleteModalVisible && (
-            <DeleteModal rollupId={this.concatName()} closeDeleteModal={this.closeDeleteModal} onClickDelete={this.onClickDelete} />
+            <DeleteModal
+              rollupId={this.getSelectedRollupIds()}
+              closeDeleteModal={this.closeDeleteModal}
+              onClickDelete={this.onClickDelete}
+            />
           )}
         </div>
       </EuiPanel>
