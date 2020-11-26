@@ -107,6 +107,24 @@ export const testRollup = {
       },
     ],
   },
+  metadata: {
+    test1: {
+      metadata_id: "GSCm3HUBeGRB78cDQju6",
+      rollup_metadata: {
+        rollup_id: "test1",
+        last_updated_time: 1605724690355,
+        status: "finished",
+        failure_reason: null,
+        stats: {
+          pages_processed: 5,
+          documents_processed: 4675,
+          rollups_indexed: 3627,
+          index_time_in_millis: 1522,
+          search_time_in_millis: 1168,
+        },
+      },
+    },
+  },
 };
 export const testRollup2 = {
   _id: "test2",
@@ -175,44 +193,26 @@ export const testRollup2 = {
       },
     ],
   },
+  metadata: {
+    test2: {
+      metadata_id: "GSCm3HUBeGRB78cDQju6",
+      rollup_metadata: {
+        rollup_id: "test2",
+        last_updated_time: 1605724690355,
+        status: "failed",
+        failure_reason: "Cannot create target index.",
+        stats: {
+          pages_processed: 0,
+          documents_processed: 0,
+          rollups_indexed: 0,
+          index_time_in_millis: 0,
+          search_time_in_millis: 0,
+        },
+      },
+    },
+  },
 };
 
-export const test1Metadata = {
-  test1: {
-    metadata_id: "GSCm3HUBeGRB78cDQju6",
-    rollup_metadata: {
-      rollup_id: "test1",
-      last_updated_time: 1605724690355,
-      status: "finished",
-      failure_reason: null,
-      stats: {
-        pages_processed: 5,
-        documents_processed: 4675,
-        rollups_indexed: 3627,
-        index_time_in_millis: 1522,
-        search_time_in_millis: 1168,
-      },
-    },
-  },
-};
-export const test2Metadata = {
-  test2: {
-    metadata_id: "GSCm3HUBeGRB78cDQju6",
-    rollup_metadata: {
-      rollup_id: "test2",
-      last_updated_time: 1605724690355,
-      status: "failed",
-      failure_reason: "Cannot create target index.",
-      stats: {
-        pages_processed: 0,
-        documents_processed: 0,
-        rollups_indexed: 0,
-        index_time_in_millis: 0,
-        search_time_in_millis: 0,
-      },
-    },
-  },
-};
 export const FixedTimeunitOptions = [
   { value: "ms", text: "Millisecond(s)" },
   { value: "s", text: "Second(s)" },
