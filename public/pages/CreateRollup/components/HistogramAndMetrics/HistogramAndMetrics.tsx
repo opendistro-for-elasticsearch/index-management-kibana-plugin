@@ -79,7 +79,7 @@ const aggregationColumns: EuiTableFieldDataColumnType<DimensionItem>[] = [
     field: "field.type",
     name: "Field type",
     align: "left",
-    render: (type) => (type == null ? "-" : type),
+    render: (type) => (type == undefined ? "-" : type),
   },
   {
     field: "aggregationMethod",

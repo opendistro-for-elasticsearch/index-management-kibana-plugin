@@ -41,7 +41,16 @@ import GeneralInformation from "../../components/GeneralInformation/GeneralInfor
 import RollupStatus from "../../components/RollupStatus/RollupStatus";
 import AggregationAndMetricsSettings from "../../components/AggregationAndMetricsSettings/AggregationAndMetricsSettings";
 import { parseTimeunit } from "../../../CreateRollup/utils/helpers";
-import { DimensionItem, MetricItem, RollupDimensionItem, RollupMetadata, RollupMetricItem } from "../../../../../models/interfaces";
+import {
+  DimensionItem,
+  MetricItem,
+  RollupDimensionItem,
+  RollupMetadata,
+  RollupMetricItem,
+  DateHistogramItem,
+  CronSchedule,
+  IntervalSchedule,
+} from "../../../../../models/interfaces";
 import { renderTime } from "../../../Rollups/utils/helpers";
 import DeleteModal from "../../../Rollups/components/DeleteModal";
 
@@ -54,7 +63,7 @@ interface RollupDetailsState {
   description: string;
   sourceIndex: string;
   targetIndex: string;
-  rollupJSON: string;
+  rollupJSON: any;
   continuousJob: string;
   continuousDefinition: string;
   interval: number;
@@ -142,7 +151,7 @@ export default class RollupDetails extends Component<RollupDetailsProps, RollupD
           description: response.response.rollup.description,
           sourceIndex: response.response.rollup.source_index,
           targetIndex: response.response.rollup.target_index,
-          delayTime: response.response.rollup.delay,
+          delayTime: response.response.rollup.delay as number,
           pageSize: response.response.rollup.page_size,
           rollupJSON: newJSON,
           lastUpdated: renderTime(response.response.rollup.last_updated_time),
@@ -160,9 +169,7 @@ export default class RollupDetails extends Component<RollupDetailsProps, RollupD
         if (response.response.metadata != null) {
           this.setState({ metadata: response.response.metadata[response.response._id] });
         }
-        // this.setState({metadata: response.response.metadata.get(response.response._id)});
-        //TODO: fix this to match new data model
-        if (response.response.rollup.schedule.cron == undefined) {
+        if ("interval" in response.response.rollup.schedule) {
           this.setState({
             interval: response.response.rollup.schedule.interval.period,
             intervalTimeunit: response.response.rollup.schedule.interval.unit,

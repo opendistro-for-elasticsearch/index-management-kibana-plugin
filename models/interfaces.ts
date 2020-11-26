@@ -81,21 +81,23 @@ export interface State {
   transitions: object[];
 }
 
+//Data model for creating new rollup job or editing a rollup job
 export interface Rollup {
   continuous: boolean;
   delay: number | null;
   description: string;
-  dimensions: (DateHistogramItem | TermsItem | HistogramItem)[];
+  dimensions: RollupDimensionItem[];
   enabled: boolean;
   enabledTime: number | null;
-  lastUpdatedTime: number;
+  last_updated_time: number;
   metadata_id: string | null;
   metrics: MetricItem[];
   page_size: number;
   schedule: IntervalSchedule | CronSchedule;
-  schemaVersion: number;
+  schema_version: number;
   source_index: string;
   target_index: string;
+  roles: string[];
 }
 
 export interface RollupMetadata {
@@ -105,11 +107,11 @@ export interface RollupMetadata {
     seq_no: number;
     primary_term: number;
     rollup_id: string;
-    after_key: Map<String, any> | null;
+    after_key: Map<string, any> | null;
     last_updated_time: number;
     continuous: {
-      next_window_start_time: number;
-      next_window_end_time: number;
+      next_window_start_time: number | null;
+      next_window_end_time: number | null;
     } | null;
     status: string;
     failure_reason: string | null;
@@ -124,14 +126,18 @@ export interface RollupMetadata {
 }
 
 export interface IntervalSchedule {
-  startTime: number | null;
-  period: number;
-  unit: string;
+  interval: {
+    startTime: number | null;
+    period: number;
+    unit: string;
+  };
 }
 
 export interface CronSchedule {
-  expression: string;
-  timezone: string;
+  cron: {
+    expression: string;
+    timezone: string;
+  };
 }
 
 //Frontend dimension data model
@@ -155,14 +161,16 @@ export interface MetricItem {
 
 export interface FieldItem {
   label: string;
-  type?: string;
+  type: string | undefined;
 }
 
 interface DateHistogramItem {
-  sourceField: string;
-  fixed_interval: string | null;
-  calendar_interval: string | null;
-  timezone: string;
+  date_histogram: {
+    sourceField: string;
+    fixed_interval: string | null;
+    calendar_interval: string | null;
+    timezone: string;
+  };
 }
 
 interface TermsItem {
