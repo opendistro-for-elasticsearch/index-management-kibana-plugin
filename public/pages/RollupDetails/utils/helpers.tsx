@@ -17,8 +17,8 @@ import { RollupMetadata } from "../../../../models/interfaces";
 import React from "react";
 import { EuiFlexGroup, EuiFlexItem, EuiIcon, EuiText } from "@elastic/eui";
 
-export const renderStatus = (metadata: RollupMetadata | null): JSX.Element => {
-  if (metadata == null || metadata.rollup_metadata == null) return <dd>-</dd>;
+export const renderStatus = (metadata: RollupMetadata | undefined): JSX.Element => {
+  if (metadata == null || metadata == undefined || metadata.rollup_metadata == null) return <dd>-</dd>;
   let icon;
   let iconColor;
   let textColor: "default" | "subdued" | "secondary" | "ghost" | "accent" | "warning" | "danger" | undefined;

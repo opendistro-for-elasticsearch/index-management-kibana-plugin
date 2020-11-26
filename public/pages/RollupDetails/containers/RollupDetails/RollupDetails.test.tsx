@@ -25,7 +25,7 @@ import { ModalProvider, ModalRoot } from "../../../../components/Modal";
 import { Redirect, Route, RouteComponentProps, Switch } from "react-router-dom";
 import { BREADCRUMBS, ROUTES } from "../../../../utils/constants";
 import RollupDetails from "./RollupDetails";
-import { test1Metadata, test2Metadata, testRollup, testRollup2 } from "../../../CreateRollup/utils/constants";
+import { testRollup, testRollup2 } from "../../../CreateRollup/utils/constants";
 import { ServicesConsumer, ServicesContext } from "../../../../services";
 
 function renderRollupDetailsWithRouter(initialEntries = ["/"]) {
@@ -103,46 +103,10 @@ describe("<RollupDetails /> spec", () => {
   //   await wait(() => getByText("Testing rollup landing page"));
   // });
 
-  it("adds error toaster when explain API has error", async () => {
-    browserServicesMock.rollupService.getRollup = jest.fn().mockResolvedValue({
-      ok: true,
-      response: testRollup,
-    });
-    browserServicesMock.rollupService.explainRollup = jest.fn().mockResolvedValue({
-      ok: false,
-      error: "some explain API error",
-    });
-    renderRollupDetailsWithRouter([`${ROUTES.ROLLUP_DETAILS}?id=${testRollup._id}`]);
-
-    await wait();
-
-    expect(toastNotifications.addDanger).toHaveBeenCalledTimes(1);
-    expect(toastNotifications.addDanger).toHaveBeenCalledWith("Could not load the explain API of rollup job: some explain API error");
-  });
-
-  it("adds error toaster when explain throws error", async () => {
-    browserServicesMock.rollupService.getRollup = jest.fn().mockResolvedValue({
-      ok: true,
-      response: testRollup,
-    });
-    browserServicesMock.rollupService.explainRollup = jest.fn().mockRejectedValue(new Error("explain API rejected error"));
-    renderRollupDetailsWithRouter([`${ROUTES.ROLLUP_DETAILS}?id=${testRollup._id}`]);
-
-    await wait();
-
-    expect(toastNotifications.addDanger).toHaveBeenCalledTimes(1);
-    expect(toastNotifications.addDanger).toHaveBeenCalledWith("explain API rejected error");
-  });
-
   it("can disable rollup job", async () => {
     browserServicesMock.rollupService.getRollup = jest.fn().mockResolvedValue({
       ok: true,
       response: testRollup,
-    });
-
-    browserServicesMock.rollupService.explainRollup = jest.fn().mockResolvedValue({
-      ok: true,
-      response: test1Metadata,
     });
 
     browserServicesMock.rollupService.stopRollup = jest.fn().mockResolvedValue({
@@ -171,11 +135,6 @@ describe("<RollupDetails /> spec", () => {
       response: testRollup,
     });
 
-    browserServicesMock.rollupService.explainRollup = jest.fn().mockResolvedValue({
-      ok: true,
-      response: test1Metadata,
-    });
-
     browserServicesMock.rollupService.stopRollup = jest.fn().mockResolvedValue({
       ok: false,
       response: "some error",
@@ -200,11 +159,6 @@ describe("<RollupDetails /> spec", () => {
     browserServicesMock.rollupService.getRollup = jest.fn().mockResolvedValue({
       ok: true,
       response: testRollup2,
-    });
-
-    browserServicesMock.rollupService.explainRollup = jest.fn().mockResolvedValue({
-      ok: true,
-      response: test2Metadata,
     });
 
     browserServicesMock.rollupService.startRollup = jest.fn().mockResolvedValue({
@@ -258,17 +212,12 @@ describe("<RollupDetails /> spec", () => {
   });
 
   it("can show a started rollup job", async () => {
-    let startedJobMetadata = test1Metadata;
-    startedJobMetadata.test1.rollup_metadata.status = "started";
+    let startedJob = testRollup;
+    startedJob.metadata.test1.rollup_metadata.status = "started";
 
     browserServicesMock.rollupService.getRollup = jest.fn().mockResolvedValue({
       ok: true,
       response: testRollup,
-    });
-
-    browserServicesMock.rollupService.explainRollup = jest.fn().mockResolvedValue({
-      ok: true,
-      response: startedJobMetadata,
     });
 
     const { queryByText } = renderRollupDetailsWithRouter([`${ROUTES.ROLLUP_DETAILS}?id=${testRollup._id}`]);
@@ -279,17 +228,12 @@ describe("<RollupDetails /> spec", () => {
   });
 
   it("can show a stopped rollup job", async () => {
-    let stoppedJobMetadata = test1Metadata;
-    stoppedJobMetadata.test1.rollup_metadata.status = "stopped";
+    let stoppedJob = testRollup;
+    stoppedJob.metadata.test1.rollup_metadata.status = "stopped";
 
     browserServicesMock.rollupService.getRollup = jest.fn().mockResolvedValue({
       ok: true,
       response: testRollup,
-    });
-
-    browserServicesMock.rollupService.explainRollup = jest.fn().mockResolvedValue({
-      ok: true,
-      response: stoppedJobMetadata,
     });
 
     const { queryByText } = renderRollupDetailsWithRouter([`${ROUTES.ROLLUP_DETAILS}?id=${testRollup._id}`]);
