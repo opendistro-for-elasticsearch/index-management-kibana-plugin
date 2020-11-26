@@ -13,6 +13,7 @@
  * permissions and limitations under the License.
  */
 
+import waitOn from "wait-on";
 import { PLUGIN_NAME } from "../support/constants";
 import samplePolicy from "../fixtures/sample_policy";
 
@@ -22,6 +23,9 @@ describe("Policies", () => {
   beforeEach(() => {
     // Set welcome screen tracking to false
     localStorage.setItem("home:welcome:show", "false");
+
+    //Wait for the server to be up
+    waitOn(`${Cypress.env("kibana")}/app/${PLUGIN_NAME}#/indices`);
 
     // Visit ISM Kibana
     cy.visit(`${Cypress.env("kibana")}/app/${PLUGIN_NAME}`);
