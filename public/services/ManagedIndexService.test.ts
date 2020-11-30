@@ -31,11 +31,11 @@ describe("ManagedIndexService spec", () => {
 
   it("calls get managed indices nodejs route when calling getManagedIndices", async () => {
     httpClientMock.get = jest.fn().mockResolvedValue({ data: {} });
-    const queryParamsString = "test";
-    await managedIndexService.getManagedIndices(queryParamsString);
+    const queryObject = {};
+    await managedIndexService.getManagedIndices(queryObject);
 
     expect(httpClientMock.get).toHaveBeenCalledTimes(1);
-    expect(httpClientMock.get).toHaveBeenCalledWith(`..${NODE_API.MANAGED_INDICES}?${queryParamsString}`);
+    expect(httpClientMock.get).toHaveBeenCalledWith(`..${NODE_API.MANAGED_INDICES}`, { query: queryObject });
   });
 
   it("calls retry policy nodejs route when calling retryManagedIndexPolicy", async () => {
@@ -45,7 +45,7 @@ describe("ManagedIndexService spec", () => {
     await managedIndexService.retryManagedIndexPolicy(index, state);
 
     expect(httpClientMock.post).toHaveBeenCalledTimes(1);
-    expect(httpClientMock.post).toHaveBeenCalledWith(`..${NODE_API.RETRY}`, { index, state });
+    expect(httpClientMock.post).toHaveBeenCalledWith(`..${NODE_API.RETRY}`, { body: JSON.stringify({ index, state }) });
   });
 
   it("calls remove policy nodejs route when calling removePolicy", async () => {
@@ -54,7 +54,7 @@ describe("ManagedIndexService spec", () => {
     await managedIndexService.removePolicy(indices);
 
     expect(httpClientMock.post).toHaveBeenCalledTimes(1);
-    expect(httpClientMock.post).toHaveBeenCalledWith(`..${NODE_API.REMOVE_POLICY}`, { indices });
+    expect(httpClientMock.post).toHaveBeenCalledWith(`..${NODE_API.REMOVE_POLICY}`, { body: JSON.stringify({ indices }) });
   });
 
   it("calls change policy nodejs route when calling changePolicy", async () => {
@@ -64,8 +64,9 @@ describe("ManagedIndexService spec", () => {
     const state = "state_test";
     const include: object[] = [];
     await managedIndexService.changePolicy(indices, policyId, state, include);
+    const requestBody = { indices, policyId, state, include };
 
     expect(httpClientMock.post).toHaveBeenCalledTimes(1);
-    expect(httpClientMock.post).toHaveBeenCalledWith(`..${NODE_API.CHANGE_POLICY}`, { indices, policyId, state, include });
+    expect(httpClientMock.post).toHaveBeenCalledWith(`..${NODE_API.CHANGE_POLICY}`, { body: JSON.stringify(requestBody) });
   });
 });

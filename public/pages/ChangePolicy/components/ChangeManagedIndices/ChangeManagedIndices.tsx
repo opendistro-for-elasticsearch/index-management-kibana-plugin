@@ -53,7 +53,8 @@ export default class ChangeManagedIndices extends Component<ChangeManagedIndices
     try {
       // only bring back the first 10 results descending by name
       const queryParamsString = `from=0&size=10&search=${searchValue}&sortDirection=desc&sortField=name`;
-      const managedIndicesResponse = await managedIndexService.getManagedIndices(queryParamsString);
+      const queryObject = { from: 0, size: 10, search: searchValue, sortDirection: "desc", sortField: "name" };
+      const managedIndicesResponse = await managedIndexService.getManagedIndices(queryObject);
       if (managedIndicesResponse.ok) {
         const options = searchValue.trim() ? [{ label: `${searchValue}*` }] : [];
         const managedIndices = managedIndicesResponse.response.managedIndices.map((managedIndex: ManagedIndexItem) => ({

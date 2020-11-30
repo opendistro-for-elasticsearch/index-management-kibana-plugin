@@ -13,10 +13,10 @@
  * permissions and limitations under the License.
  */
 
-import { Legacy } from "kibana";
 import { NodeServices } from "../models/interfaces";
 import { NODE_API, REQUEST } from "../../utils/constants";
 import { IRouter } from "../../../../src/core/server";
+import { schema } from "@kbn/config-schema";
 
 // type Server = Legacy.Server;
 
@@ -31,7 +31,9 @@ export default function (services: NodeServices, router: IRouter) {
   router.post(
     {
       path: NODE_API._SEARCH,
-      validate: false,
+      validate: {
+        body: schema.any(),
+      },
     },
     indexService.search
   );
@@ -44,7 +46,15 @@ export default function (services: NodeServices, router: IRouter) {
   router.get(
     {
       path: NODE_API._INDICES,
-      validate: false,
+      validate: {
+        query: schema.object({
+          from: schema.number(),
+          size: schema.number(),
+          search: schema.string(),
+          sortField: schema.string(),
+          sortDirection: schema.string(),
+        }),
+      },
     },
     indexService.getIndices
   );
@@ -57,7 +67,9 @@ export default function (services: NodeServices, router: IRouter) {
   router.post(
     {
       path: NODE_API.APPLY_POLICY,
-      validate: false,
+      validate: {
+        body: schema.any(),
+      },
     },
     indexService.applyPolicy
   );
@@ -70,7 +82,9 @@ export default function (services: NodeServices, router: IRouter) {
   router.post(
     {
       path: NODE_API.EDIT_ROLLOVER_ALIAS,
-      validate: false,
+      validate: {
+        body: schema.any(),
+      },
     },
     indexService.editRolloverAlias
   );

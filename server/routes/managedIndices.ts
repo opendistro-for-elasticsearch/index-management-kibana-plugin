@@ -32,7 +32,15 @@ export default function (services: NodeServices, router: IRouter) {
   router.get(
     {
       path: NODE_API.MANAGED_INDICES,
-      validate: false,
+      validate: {
+        query: schema.object({
+          from: schema.number(),
+          size: schema.number(),
+          search: schema.string(),
+          sortField: schema.string(),
+          sortDirection: schema.string(),
+        }),
+      },
     },
     managedIndexService.getManagedIndices
   );

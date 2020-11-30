@@ -147,9 +147,10 @@ export default class Policies extends Component<PoliciesProps, PoliciesState> {
     this.setState({ loadingPolicies: true });
     try {
       const { policyService, history } = this.props;
-      const queryParamsString = queryString.stringify(Policies.getQueryObjectFromState(this.state));
+      const queryObject = Policies.getQueryObjectFromState(this.state);
+      const queryParamsString = queryString.stringify(queryObject);
       history.replace({ ...this.props.location, search: queryParamsString });
-      const getPoliciesResponse = await policyService.getPolicies(queryParamsString);
+      const getPoliciesResponse = await policyService.getPolicies(queryObject);
       if (getPoliciesResponse.ok) {
         const {
           response: { policies, totalPolicies },

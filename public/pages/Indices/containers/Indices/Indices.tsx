@@ -104,9 +104,10 @@ export default class Indices extends Component<IndicesProps, IndicesState> {
     this.setState({ loadingIndices: true });
     try {
       const { indexService, history } = this.props;
-      const queryParamsString = queryString.stringify(Indices.getQueryObjectFromState(this.state));
+      const queryObject = Indices.getQueryObjectFromState(this.state);
+      const queryParamsString = queryString.stringify(queryObject);
       history.replace({ ...this.props.location, search: queryParamsString });
-      const getIndicesResponse = await indexService.getIndices(queryParamsString);
+      const getIndicesResponse = await indexService.getIndices(queryObject);
       if (getIndicesResponse.ok) {
         const { indices, totalIndices } = getIndicesResponse.response;
         this.setState({ indices, totalIndices });

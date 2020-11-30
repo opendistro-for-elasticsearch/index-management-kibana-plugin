@@ -211,9 +211,10 @@ export default class ManagedIndices extends Component<ManagedIndicesProps, Manag
     this.setState({ loadingManagedIndices: true });
     try {
       const { managedIndexService, history } = this.props;
-      const queryParamsString = queryString.stringify(ManagedIndices.getQueryObjectFromState(this.state));
+      const queryObject = ManagedIndices.getQueryObjectFromState(this.state);
+      const queryParamsString = queryString.stringify(queryObject);
       history.replace({ ...this.props.location, search: queryParamsString });
-      const getManagedIndicesResponse = await managedIndexService.getManagedIndices(queryParamsString);
+      const getManagedIndicesResponse = await managedIndexService.getManagedIndices(queryObject);
       if (getManagedIndicesResponse.ok) {
         const {
           response: { managedIndices, totalManagedIndices },
