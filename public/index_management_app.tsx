@@ -6,7 +6,7 @@ import { HashRouter as Router, Route } from "react-router-dom";
 import { IndexService, ManagedIndexService, PolicyService, ServicesContext } from "./services";
 import { DarkModeContext } from "./components/DarkMode";
 import Main from "./pages/Main";
-import { CoreServiesContext } from "./components/core_services";
+import { CoreServicesContext } from "./components/core_services";
 
 export function renderApp(coreStart: CoreStart, params: AppMountParameters) {
   const http = coreStart.http;
@@ -25,9 +25,9 @@ export function renderApp(coreStart: CoreStart, params: AppMountParameters) {
         render={(props) => (
           <DarkModeContext.Provider value={isDarkMode}>
             <ServicesContext.Provider value={services}>
-              <CoreServiesContext.Provider value={coreStart}>
+              <CoreServicesContext.Provider value={coreStart}>
                 <Main {...props} />
-              </CoreServiesContext.Provider>
+              </CoreServicesContext.Provider>
             </ServicesContext.Provider>
           </DarkModeContext.Provider>
         )}

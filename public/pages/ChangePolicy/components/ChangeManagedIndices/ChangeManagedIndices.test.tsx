@@ -16,9 +16,9 @@
 import React from "react";
 import "@testing-library/jest-dom/extend-expect";
 import { render, wait } from "@testing-library/react";
-import { toastNotifications } from "ui/notify";
 import ChangeManagedIndices from "./ChangeManagedIndices";
 import { browserServicesMock } from "../../../../../test/mocks";
+import coreServicesMock from "../../../../../test/mocks/coreServicesMock";
 
 describe("<ChangeManagedIndices /> spec", () => {
   it("renders the component", async () => {
@@ -31,6 +31,7 @@ describe("<ChangeManagedIndices /> spec", () => {
         onChangeManagedIndices={() => {}}
         onChangeStateFilters={() => {}}
         managedIndicesError=""
+        core={coreServicesMock}
       />
     );
 
@@ -49,13 +50,14 @@ describe("<ChangeManagedIndices /> spec", () => {
         onChangeManagedIndices={() => {}}
         onChangeStateFilters={() => {}}
         managedIndicesError=""
+        core={coreServicesMock}
       />
     );
 
     await wait();
 
-    expect(toastNotifications.addDanger).toHaveBeenCalledTimes(1);
-    expect(toastNotifications.addDanger).toHaveBeenCalledWith("this is an error");
+    expect(coreServicesMock.notifications.toasts.addDanger).toHaveBeenCalledTimes(1);
+    expect(coreServicesMock.notifications.toasts.addDanger).toHaveBeenCalledWith("this is an error");
   });
 
   it("shows danger toaster when search gracefully fails", async () => {
@@ -68,13 +70,14 @@ describe("<ChangeManagedIndices /> spec", () => {
         onChangeManagedIndices={() => {}}
         onChangeStateFilters={() => {}}
         managedIndicesError=""
+        core={coreServicesMock}
       />
     );
 
     await wait();
 
-    expect(toastNotifications.addDanger).toHaveBeenCalledTimes(1);
-    expect(toastNotifications.addDanger).toHaveBeenCalledWith("some error");
+    expect(coreServicesMock.notifications.toasts.addDanger).toHaveBeenCalledTimes(1);
+    expect(coreServicesMock.notifications.toasts.addDanger).toHaveBeenCalledWith("some error");
   });
 
   it("shows danger toaster when search fails because of no config index", async () => {
@@ -89,12 +92,13 @@ describe("<ChangeManagedIndices /> spec", () => {
         onChangeManagedIndices={() => {}}
         onChangeStateFilters={() => {}}
         managedIndicesError=""
+        core={coreServicesMock}
       />
     );
 
     await wait();
 
-    expect(toastNotifications.addDanger).toHaveBeenCalledTimes(1);
-    expect(toastNotifications.addDanger).toHaveBeenCalledWith("You have not created a managed index yet");
+    expect(coreServicesMock.notifications.toasts.addDanger).toHaveBeenCalledTimes(1);
+    expect(coreServicesMock.notifications.toasts.addDanger).toHaveBeenCalledWith("You have not created a managed index yet");
   });
 });
