@@ -14,8 +14,6 @@
  */
 
 import React, { Component } from "react";
-// import chrome from "ui/chrome";
-// import { toastNotifications } from "ui/notify";
 import _ from "lodash";
 import { RouteComponentProps } from "react-router-dom";
 import queryString from "querystring";
@@ -30,6 +28,7 @@ import {
   Pagination,
   EuiTableSelectionType,
 } from "@elastic/eui";
+import { CoreStart } from "kibana/public";
 import { ContentPanel, ContentPanelActions } from "../../../../components/ContentPanel";
 import IndexControls from "../../components/IndexControls";
 import ApplyPolicyModal from "../../components/ApplyPolicyModal";
@@ -42,7 +41,6 @@ import { getURLQueryParams } from "../../utils/helpers";
 import { IndicesQueryParams } from "../../models/interfaces";
 import { BREADCRUMBS } from "../../../../utils/constants";
 import { getErrorMessage } from "../../../../utils/helpers";
-import { CoreStart } from "kibana/public";
 
 interface IndicesProps extends RouteComponentProps {
   indexService: IndexService;

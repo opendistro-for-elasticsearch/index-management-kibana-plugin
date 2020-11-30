@@ -1,5 +1,5 @@
 /*
- * Copyright 2019 Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ * Copyright 2020 Amazon.com, Inc. or its affiliates. All Rights Reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License").
  * You may not use this file except in compliance with the License.
@@ -14,9 +14,9 @@
  */
 
 import _ from "lodash";
-import { Legacy } from "kibana";
 import { RequestParams } from "@elastic/elasticsearch";
-import { CLUSTER, INDEX } from "../utils/constants";
+import { INDEX } from "../utils/constants";
+import { RequestHandlerContext, KibanaRequest, KibanaResponseFactory, IKibanaResponse, IClusterClient } from "kibana/server";
 import { getMustQuery, transformManagedIndexMetaData } from "../utils/helpers";
 import {
   ChangePolicyResponse,
@@ -30,11 +30,6 @@ import {
   SearchResponse,
 } from "../models/interfaces";
 import { ManagedIndicesSort, ServerResponse } from "../models/types";
-import { RequestHandlerContext, KibanaRequest, KibanaResponseFactory, IKibanaResponse, IClusterClient } from "kibana/server";
-
-// type Request = Legacy.Request;
-// type ElasticsearchPlugin = Legacy.Plugins.elasticsearch.Plugin;
-// type ResponseToolkit = Legacy.ResponseToolkit;
 
 export default class ManagedIndexService {
   esDriver: IClusterClient;
@@ -52,10 +47,8 @@ export default class ManagedIndexService {
     try {
       const { id } = request.params as { id: string };
       const params: RequestParams.Get = { id, index: INDEX.OPENDISTRO_ISM_CONFIG };
-      // const { callWithRequest } = this.esDriver.getCluster(CLUSTER.DATA);
       const { callAsCurrentUser: callWithRequest } = this.esDriver.asScoped(request);
       const results: SearchResponse<any> = await callWithRequest("search", params);
-      // return { ok: true, response: results };
       return response.custom({
         statusCode: 200,
         body: {
@@ -65,7 +58,6 @@ export default class ManagedIndexService {
       });
     } catch (err) {
       console.error("Index Management - ManagedIndexService - getManagedIndex:", err);
-      // return { ok: false, error: err.message };
       return response.custom({
         statusCode: 200,
         body: {
@@ -107,7 +99,6 @@ export default class ManagedIndexService {
         },
       };
 
-      // const { callWithRequest } = await this.esDriver.getCluster(CLUSTER.DATA);
       const { callAsCurrentUser: callWithRequest } = this.esDriver.asScoped(request);
       const searchResponse: SearchResponse<any> = await callWithRequest("search", searchParams);
 
@@ -115,7 +106,6 @@ export default class ManagedIndexService {
       const totalManagedIndices = _.get(searchResponse, "hits.total.value", 0);
 
       if (!indices.length) {
-        // return { ok: true, response: { managedIndices: [], totalManagedIndices: 0 } };
         return response.custom({
           statusCode: 200,
           body: {
@@ -126,7 +116,6 @@ export default class ManagedIndexService {
       }
 
       const explainParams = { index: indices.join(",") };
-      // const { callWithRequest: ismCallWithRequest } = await this.esDriver.getCluster(CLUSTER.ISM);
       const explainResponse: ExplainResponse = await callWithRequest("ism.explain", explainParams);
       const managedIndices = searchResponse.hits.hits.map((hit) => {
         const index = hit._source.managed_index.index;
@@ -142,7 +131,6 @@ export default class ManagedIndexService {
         };
       });
 
-      // return { ok: true, response: { managedIndices, totalManagedIndices } };
       return response.custom({
         statusCode: 200,
         body: {
@@ -152,7 +140,6 @@ export default class ManagedIndexService {
       });
     } catch (err) {
       if (err.statusCode === 404 && err.body.error.type === "index_not_found_exception") {
-        // return { ok: true, response: { managedIndices: [], totalManagedIndices: 0 } };
         return response.custom({
           statusCode: 200,
           body: {
@@ -162,7 +149,6 @@ export default class ManagedIndexService {
         });
       }
       console.error("Index Management - ManagedIndexService - getManagedIndices", err);
-      // return { ok: false, error: err.message };
       return response.custom({
         statusCode: 200,
         body: {
@@ -180,7 +166,6 @@ export default class ManagedIndexService {
   ): Promise<IKibanaResponse<ServerResponse<RetryManagedIndexResponse>>> => {
     try {
       const { index, state = null } = request.body as { index: string[]; state?: string };
-      // const { callWithRequest } = await this.esDriver.getCluster(CLUSTER.ISM);
       const { callAsCurrentUser: callWithRequest } = this.esDriver.asScoped(request);
       const params: RetryParams = { index: index.join(",") };
       if (state) params.body = { state };
@@ -205,7 +190,6 @@ export default class ManagedIndexService {
       });
     } catch (err) {
       console.error("Index Management - ManagedIndexService - retryManagedIndexPolicy:", err);
-      // return { ok: false, error: err.message };
       return response.custom({
         statusCode: 200,
         body: {
@@ -228,7 +212,6 @@ export default class ManagedIndexService {
         state: string | null;
         include: { state: string }[];
       };
-      // const { callWithRequest } = await this.esDriver.getCluster(CLUSTER.ISM);
       const { callAsCurrentUser: callWithRequest } = this.esDriver.asScoped(request);
       const params = { index: indices.join(","), body: { policy_id: policyId, include, state } };
       const changeResponse: RemoveResponse = await callWithRequest("ism.change", params);
@@ -249,7 +232,6 @@ export default class ManagedIndexService {
       });
     } catch (err) {
       console.error("Index Management - ManagedIndexService - changePolicy:", err);
-      // return { ok: false, error: err.message };
       return response.custom({
         statusCode: 200,
         body: {
@@ -267,7 +249,6 @@ export default class ManagedIndexService {
   ): Promise<IKibanaResponse<ServerResponse<RemovePolicyResponse>>> => {
     try {
       const { indices } = request.body as { indices: string[] };
-      // const { callWithRequest } = await this.esDriver.getCluster(CLUSTER.ISM);
       const { callAsCurrentUser: callWithRequest } = this.esDriver.asScoped(request);
       const params = { index: indices.join(",") };
       const addResponse: RemoveResponse = await callWithRequest("ism.remove", params);
@@ -288,7 +269,6 @@ export default class ManagedIndexService {
       });
     } catch (err) {
       console.error("Index Management - ManagedIndexService - removePolicy:", err);
-      // return { ok: false, error: err.message };
       return response.custom({
         statusCode: 200,
         body: {

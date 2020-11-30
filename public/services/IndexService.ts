@@ -1,5 +1,5 @@
 /*
- * Copyright 2019 Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ * Copyright 2020 Amazon.com, Inc. or its affiliates. All Rights Reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License").
  * You may not use this file except in compliance with the License.
@@ -13,12 +13,11 @@
  * permissions and limitations under the License.
  */
 
-// import { IHttpResponse, IHttpService } from "angular";
+import { HttpSetup } from "kibana/public";
 import { INDEX } from "../../server/utils/constants";
 import { AcknowledgedResponse, ApplyPolicyResponse, GetIndicesResponse, SearchResponse } from "../../server/models/interfaces";
 import { ServerResponse } from "../../server/models/types";
 import { NODE_API } from "../../utils/constants";
-import { HttpSetup } from "kibana/public";
 
 export default class IndexService {
   httpClient: HttpSetup;
