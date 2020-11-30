@@ -79,14 +79,13 @@ export default class IndexService {
   ): Promise<IKibanaResponse<ServerResponse<GetIndicesResponse>>> => {
     try {
       // @ts-ignore
-      const { from, size, search, sortField, sortDirection } = req.query as {
+      const { from, size, search, sortField, sortDirection } = request.query as {
         from: string;
         size: string;
         search: string;
         sortField: string;
         sortDirection: string;
       };
-      const str = search.trim();
       const params = {
         index: `*${search.trim().split(" ").join("* *")}*`,
         format: "json",
