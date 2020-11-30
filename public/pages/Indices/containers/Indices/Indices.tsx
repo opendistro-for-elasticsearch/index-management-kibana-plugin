@@ -1,5 +1,5 @@
 /*
- * Copyright 2019 Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ * Copyright 2020 Amazon.com, Inc. or its affiliates. All Rights Reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License").
  * You may not use this file except in compliance with the License.
@@ -110,11 +110,9 @@ export default class Indices extends Component<IndicesProps, IndicesState> {
         const { indices, totalIndices } = getIndicesResponse.response;
         this.setState({ indices, totalIndices });
       } else {
-        // toastNotifications.addDanger(getIndicesResponse.error);
         this.props.core.notifications.toasts.addDanger(getIndicesResponse.error);
       }
     } catch (err) {
-      // toastNotifications.addDanger(getErrorMessage(err, "There was a problem loading the indices"));
       this.props.core.notifications.toasts.addDanger(getErrorMessage(err, "There was a problem loading the indices"));
     }
     this.setState({ loadingIndices: false });

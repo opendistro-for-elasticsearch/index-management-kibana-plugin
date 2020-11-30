@@ -35,6 +35,7 @@ import {
 } from "@elastic/eui";
 import queryString from "querystring";
 import _ from "lodash";
+import { CoreStart } from "kibana/public";
 import { ContentPanel, ContentPanelActions } from "../../../../components/ContentPanel";
 import ManagedIndexControls from "../../components/ManagedIndexControls";
 import ManagedIndexEmptyPrompt from "../../components/ManagedIndexEmptyPrompt";
@@ -50,7 +51,6 @@ import { getErrorMessage } from "../../../../utils/helpers";
 import ConfirmationModal from "../../../../components/ConfirmationModal";
 import RetryModal from "../../components/RetryModal";
 import RolloverAliasModal from "../../components/RolloverAliasModal";
-import { CoreStart } from "kibana/public";
 
 interface ManagedIndicesProps extends RouteComponentProps {
   managedIndexService: ManagedIndexService;

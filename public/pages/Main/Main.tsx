@@ -17,6 +17,7 @@ import React, { Component } from "react";
 import { Switch, Route, Redirect, RouteComponentProps } from "react-router-dom";
 // @ts-ignore
 import { EuiSideNav, EuiPage, EuiPageBody, EuiPageSideBar } from "@elastic/eui";
+import { CoreStart } from "kibana/public";
 import Policies from "../Policies";
 import ManagedIndices from "../ManagedIndices";
 import Indices from "../Indices";
@@ -27,7 +28,6 @@ import { ServicesConsumer } from "../../services";
 import { BrowserServices } from "../../models/interfaces";
 import { ROUTES } from "../../utils/constants";
 import { CoreServicesConsumer } from "../../components/core_services";
-import { CoreStart } from "kibana/public";
 
 enum Navigation {
   IndexManagement = "Index Management",

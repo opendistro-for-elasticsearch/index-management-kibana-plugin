@@ -1,5 +1,5 @@
 /*
- * Copyright 2019 Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ * Copyright 2020 Amazon.com, Inc. or its affiliates. All Rights Reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License").
  * You may not use this file except in compliance with the License.
@@ -17,6 +17,7 @@ import React, { ChangeEvent, Component, Fragment } from "react";
 import { EuiSpacer, EuiTitle, EuiFlexGroup, EuiFlexItem, EuiButton, EuiButtonEmpty, EuiCallOut, EuiLink, EuiIcon } from "@elastic/eui";
 import queryString from "querystring";
 import { RouteComponentProps } from "react-router-dom";
+import { CoreStart } from "kibana/public";
 import { DEFAULT_POLICY } from "../../utils/constants";
 import DefinePolicy from "../../components/DefinePolicy";
 import ConfigurePolicy from "../../components/ConfigurePolicy";
@@ -24,7 +25,6 @@ import { Policy } from "../../../../../models/interfaces";
 import { PolicyService } from "../../../../services";
 import { BREADCRUMBS, DOCUMENTATION_URL, ROUTES } from "../../../../utils/constants";
 import { getErrorMessage } from "../../../../utils/helpers";
-import { CoreStart } from "kibana/public";
 
 interface CreatePolicyProps extends RouteComponentProps {
   isEdit: boolean;

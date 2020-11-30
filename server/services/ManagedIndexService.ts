@@ -15,8 +15,8 @@
 
 import _ from "lodash";
 import { RequestParams } from "@elastic/elasticsearch";
-import { INDEX } from "../utils/constants";
 import { RequestHandlerContext, KibanaRequest, KibanaResponseFactory, IKibanaResponse, IClusterClient } from "kibana/server";
+import { INDEX } from "../utils/constants";
 import { getMustQuery, transformManagedIndexMetaData } from "../utils/helpers";
 import {
   ChangePolicyResponse,

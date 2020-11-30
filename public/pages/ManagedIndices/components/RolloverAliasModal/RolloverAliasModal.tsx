@@ -26,9 +26,9 @@ import {
   EuiFormRow,
   EuiFieldText,
 } from "@elastic/eui";
+import { CoreStart } from "kibana/public";
 import { BrowserServices } from "../../../../models/interfaces";
 import { getErrorMessage } from "../../../../utils/helpers";
-import { CoreStart } from "kibana/public";
 
 interface RolloverAliasModalProps {
   onClose: () => void;

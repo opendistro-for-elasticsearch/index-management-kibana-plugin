@@ -1,5 +1,5 @@
 /*
- * Copyright 2019 Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ * Copyright 2020 Amazon.com, Inc. or its affiliates. All Rights Reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License").
  * You may not use this file except in compliance with the License.
@@ -16,6 +16,7 @@
 import React, { Component } from "react";
 import { RouteComponentProps } from "react-router-dom";
 import { EuiSpacer, EuiTitle, EuiButton, EuiFlexGroup, EuiFlexItem } from "@elastic/eui";
+import { CoreStart } from "kibana/public";
 import { IndexService, ManagedIndexService } from "../../../../services";
 import ChangeManagedIndices from "../../components/ChangeManagedIndices";
 import NewPolicy from "../../components/NewPolicy";
@@ -23,7 +24,6 @@ import { BREADCRUMBS } from "../../../../utils/constants";
 import { ManagedIndexItem } from "../../../../../models/interfaces";
 import { getErrorMessage } from "../../../../utils/helpers";
 import { PolicyOption } from "../../models/interfaces";
-import { CoreStart } from "kibana/public";
 
 interface ChangePolicyProps extends RouteComponentProps {
   managedIndexService: ManagedIndexService;

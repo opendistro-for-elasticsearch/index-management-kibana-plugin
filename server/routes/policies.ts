@@ -13,21 +13,15 @@
  * permissions and limitations under the License.
  */
 
-import { NodeServices } from "../models/interfaces";
-import { NODE_API, REQUEST } from "../../utils/constants";
 import { IRouter } from "kibana/server";
 import { schema } from "@kbn/config-schema";
+import { NodeServices } from "../models/interfaces";
+import { NODE_API } from "../../utils/constants";
 
 // type Server = Legacy.Server;
 
 export default function (services: NodeServices, router: IRouter) {
   const { policyService } = services;
-
-  // server.route({
-  //   path: NODE_API.POLICIES,
-  //   method: REQUEST.GET,
-  //   handler: policyService.getPolicies,
-  // });
 
   router.get(
     {
@@ -44,12 +38,6 @@ export default function (services: NodeServices, router: IRouter) {
     },
     policyService.getPolicies
   );
-
-  // server.route({
-  //   path: `${NODE_API.POLICIES}/{id}`,
-  //   method: REQUEST.PUT,
-  //   handler: policyService.putPolicy,
-  // });
 
   router.put(
     {
@@ -68,12 +56,6 @@ export default function (services: NodeServices, router: IRouter) {
     policyService.putPolicy
   );
 
-  // server.route({
-  //   path: `${NODE_API.POLICIES}/{id}`,
-  //   method: REQUEST.GET,
-  //   handler: policyService.getPolicy,
-  // });
-
   router.get(
     {
       path: `${NODE_API.POLICIES}/{id}`,
@@ -85,12 +67,6 @@ export default function (services: NodeServices, router: IRouter) {
     },
     policyService.getPolicy
   );
-
-  // server.route({
-  //   path: `${NODE_API.POLICIES}/{id}`,
-  //   method: REQUEST.DELETE,
-  //   handler: policyService.deletePolicy,
-  // });
 
   router.delete(
     {

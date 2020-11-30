@@ -15,10 +15,10 @@
 
 import React, { Component } from "react";
 import { EuiSpacer, EuiComboBox, EuiFormRow } from "@elastic/eui";
+import { CoreStart } from "kibana/public";
 import { ContentPanel } from "../../../../components/ContentPanel";
 import { ManagedIndexService } from "../../../../services";
 import { ManagedIndexItem, State } from "../../../../../models/interfaces";
-import { CoreStart } from "kibana/public";
 
 interface ChangeManagedIndicesProps {
   managedIndexService: ManagedIndexService;
