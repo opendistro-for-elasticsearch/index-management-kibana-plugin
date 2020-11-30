@@ -13,7 +13,6 @@
  * permissions and limitations under the License.
  */
 
-import { Legacy } from "kibana";
 import { NodeServices } from "../models/interfaces";
 import { NODE_API, REQUEST } from "../../utils/constants";
 import { IRouter } from "kibana/server";
@@ -33,7 +32,15 @@ export default function (services: NodeServices, router: IRouter) {
   router.get(
     {
       path: NODE_API.POLICIES,
-      validate: false,
+      validate: {
+        query: schema.object({
+          from: schema.number(),
+          size: schema.number(),
+          search: schema.string(),
+          sortField: schema.string(),
+          sortDirection: schema.string(),
+        }),
+      },
     },
     policyService.getPolicies
   );
@@ -50,6 +57,10 @@ export default function (services: NodeServices, router: IRouter) {
       validate: {
         params: schema.object({
           id: schema.string(),
+        }),
+        query: schema.object({
+          seqNo: schema.number(),
+          primaryTerm: schema.number(),
         }),
         body: schema.any(),
       },
