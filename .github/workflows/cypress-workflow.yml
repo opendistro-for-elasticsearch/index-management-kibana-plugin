@@ -77,7 +77,7 @@ jobs:
         # timeout 300 bash -c 'while [[ "$(curl -s localhost:5601/api/status | jq -r '.status.overall.state')" != "green" ]]; do sleep 5; done'
       # for now just chrome, use matrix to do all browsers later
       - name: Cypress tests
-        uses: cypress-io/github-action@v2.5.0
+        uses: cypress-io/github-action@v2
         with:
           working-directory: kibana/plugins/index-management-kibana-plugin
           command: yarn run cypress run
