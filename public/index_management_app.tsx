@@ -17,7 +17,6 @@ export function renderApp(coreStart: CoreStart, params: AppMountParameters) {
   const rollupService = new RollupService(http);
   const services = { indexService, managedIndexService, policyService, rollupService };
 
-  // const isDarkMode = chrome.getUiSettingsClient().get("theme:darkMode") || false;
   const isDarkMode = coreStart.uiSettings.get("theme:darkMode") || false;
 
   ReactDOM.render(
