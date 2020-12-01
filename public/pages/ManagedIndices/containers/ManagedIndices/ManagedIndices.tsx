@@ -35,6 +35,7 @@ import {
 } from "@elastic/eui";
 import queryString from "querystring";
 import _ from "lodash";
+import { CoreStart } from "kibana/public";
 import { ContentPanel, ContentPanelActions } from "../../../../components/ContentPanel";
 import ManagedIndexControls from "../../components/ManagedIndexControls";
 import ManagedIndexEmptyPrompt from "../../components/ManagedIndexEmptyPrompt";
@@ -50,7 +51,6 @@ import { getErrorMessage } from "../../../../utils/helpers";
 import ConfirmationModal from "../../../../components/ConfirmationModal";
 import RetryModal from "../../components/RetryModal";
 import RolloverAliasModal from "../../components/RolloverAliasModal";
-import { CoreStart } from "kibana/public";
 
 interface ManagedIndicesProps extends RouteComponentProps {
   managedIndexService: ManagedIndexService;
@@ -211,9 +211,10 @@ export default class ManagedIndices extends Component<ManagedIndicesProps, Manag
     this.setState({ loadingManagedIndices: true });
     try {
       const { managedIndexService, history } = this.props;
-      const queryParamsString = queryString.stringify(ManagedIndices.getQueryObjectFromState(this.state));
+      const queryObject = ManagedIndices.getQueryObjectFromState(this.state);
+      const queryParamsString = queryString.stringify(queryObject);
       history.replace({ ...this.props.location, search: queryParamsString });
-      const getManagedIndicesResponse = await managedIndexService.getManagedIndices(queryParamsString);
+      const getManagedIndicesResponse = await managedIndexService.getManagedIndices(queryObject);
       if (getManagedIndicesResponse.ok) {
         const {
           response: { managedIndices, totalManagedIndices },

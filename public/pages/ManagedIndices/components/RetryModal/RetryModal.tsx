@@ -28,10 +28,10 @@ import {
   EuiSpacer,
   EuiFormRow,
 } from "@elastic/eui";
+import { CoreStart } from "kibana/public";
 import { ManagedIndexItem, State } from "../../../../../models/interfaces";
 import { BrowserServices } from "../../../../models/interfaces";
 import { getErrorMessage } from "../../../../utils/helpers";
-import { CoreStart } from "kibana/public";
 
 interface RetryModalProps {
   services: BrowserServices;

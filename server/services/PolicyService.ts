@@ -1,5 +1,5 @@
 /*
- * Copyright 2019 Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ * Copyright 2020 Amazon.com, Inc. or its affiliates. All Rights Reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License").
  * You may not use this file except in compliance with the License.
@@ -14,8 +14,8 @@
  */
 
 import _ from "lodash";
-import { Legacy } from "kibana";
-import { CLUSTER, INDEX } from "../utils/constants";
+import { IClusterClient, KibanaRequest, KibanaResponseFactory, IKibanaResponse, ResponseError, RequestHandlerContext } from "kibana/server";
+import { INDEX } from "../utils/constants";
 import {
   DeletePolicyParams,
   DeletePolicyResponse,
@@ -27,11 +27,6 @@ import {
 import { getMustQuery } from "../utils/helpers";
 import { PoliciesSort, ServerResponse } from "../models/types";
 import { DocumentPolicy, Policy } from "../../models/interfaces";
-import { IClusterClient, KibanaRequest, KibanaResponseFactory, IKibanaResponse, ResponseError, RequestHandlerContext } from "kibana/server";
-
-// type Request = Legacy.Request;
-// type ElasticsearchPlugin = Legacy.Plugins.elasticsearch.Plugin;
-// type ResponseToolkit = Legacy.ResponseToolkit;
 
 export default class PolicyService {
   esDriver: IClusterClient;
@@ -49,20 +44,16 @@ export default class PolicyService {
     response: KibanaResponseFactory
   ): Promise<IKibanaResponse<ServerResponse<PutPolicyResponse> | ResponseError>> => {
     try {
-      // const { id } = req.params;
       const { id } = request.params as { id: string };
       const { seqNo, primaryTerm } = request.query as { seqNo?: string; primaryTerm?: string };
       let method = "ism.putPolicy";
       let params: PutPolicyParams = { policyId: id, ifSeqNo: seqNo, ifPrimaryTerm: primaryTerm, body: JSON.stringify(request.body) };
       if (seqNo === undefined || primaryTerm === undefined) {
         method = "ism.createPolicy";
-        // params = { policyId: id, body: JSON.stringify(req.payload) };
         params = { policyId: id, body: JSON.stringify(request.body) };
       }
-      // const { callWithRequest } = await this.esDriver.getCluster(CLUSTER.ISM);
       const { callAsCurrentUser: callWithRequest } = this.esDriver.asScoped(request);
       const putPolicyResponse: PutPolicyResponse = await callWithRequest(method, params);
-      // return { ok: true, response: response };
       return response.custom({
         statusCode: 200,
         body: {
@@ -72,7 +63,6 @@ export default class PolicyService {
       });
     } catch (err) {
       console.error("Index Management - PolicyService - putPolicy:", err);
-      // return { ok: false, error: err.message };
       return response.custom({
         statusCode: 200,
         body: {
@@ -92,14 +82,11 @@ export default class PolicyService {
     response: KibanaResponseFactory
   ): Promise<IKibanaResponse<ServerResponse<boolean> | ResponseError>> => {
     try {
-      // const { id } = req.params;
       const { id } = request.params as { id: string };
       const params: DeletePolicyParams = { policyId: id };
-      // const { callWithRequest } = await this.esDriver.getCluster(CLUSTER.ISM);
       const { callAsCurrentUser: callWithRequest } = this.esDriver.asScoped(request);
       const deletePolicyResponse: DeletePolicyResponse = await callWithRequest("ism.deletePolicy", params);
       if (deletePolicyResponse.result !== "deleted") {
-        // return { ok: false, error: response.result };
         return response.custom({
           statusCode: 200,
           body: {
@@ -108,7 +95,6 @@ export default class PolicyService {
           },
         });
       }
-      // return { ok: true, response: true };
       return response.custom({
         statusCode: 200,
         body: {
@@ -118,7 +104,6 @@ export default class PolicyService {
       });
     } catch (err) {
       console.error("Index Management - PolicyService - deletePolicy:", err);
-      // return { ok: false, error: err.message };
       return response.custom({
         statusCode: 200,
         body: {
@@ -138,17 +123,14 @@ export default class PolicyService {
     response: KibanaResponseFactory
   ): Promise<IKibanaResponse<ServerResponse<DocumentPolicy>>> => {
     try {
-      // const { id } = req.params;
       const { id } = request.params as { id: string };
       const params = { policyId: id };
-      // const { callWithRequest } = await this.esDriver.getCluster(CLUSTER.ISM);
       const { callAsCurrentUser: callWithRequest } = this.esDriver.asScoped(request);
       const getResponse = await callWithRequest("ism.getPolicy", params);
       const policy = _.get(getResponse, "policy", null);
       const seqNo = _.get(getResponse, "_seq_no");
       const primaryTerm = _.get(getResponse, "_primary_term");
       if (policy) {
-        // return { ok: true, response: { id, seqNo: seqNo as number, primaryTerm: primaryTerm as number, policy: policy as Policy } };
         return response.custom({
           statusCode: 200,
           body: {
@@ -157,7 +139,6 @@ export default class PolicyService {
           },
         });
       } else {
-        // return { ok: false, error: "Failed to load policy" };
         return response.custom({
           statusCode: 200,
           body: {
@@ -168,7 +149,6 @@ export default class PolicyService {
       }
     } catch (err) {
       console.error("Index Management - PolicyService - getPolicy:", err);
-      // return { ok: false, error: err.message };
       return response.custom({
         statusCode: 200,
         body: {
@@ -217,7 +197,6 @@ export default class PolicyService {
         },
       };
 
-      // const { callWithRequest } = await this.esDriver.getCluster(CLUSTER.DATA);
       const { callAsCurrentUser: callWithRequest } = this.esDriver.asScoped(request);
       const searchResponse: SearchResponse<any> = await callWithRequest("search", params);
 
@@ -229,7 +208,6 @@ export default class PolicyService {
         policy: hit._source,
       }));
 
-      // return { ok: true, response: { policies: policies, totalPolicies } };
       return response.custom({
         statusCode: 200,
         body: {
@@ -239,7 +217,6 @@ export default class PolicyService {
       });
     } catch (err) {
       if (err.statusCode === 404 && err.body.error.type === "index_not_found_exception") {
-        // return { ok: true, response: { policies: [], totalPolicies: 0 } };
         return response.custom({
           statusCode: 200,
           body: {
@@ -249,7 +226,6 @@ export default class PolicyService {
         });
       }
       console.error("Index Management - PolicyService - getPolicies", err);
-      // return { ok: false, error: err.message };
       return response.custom({
         statusCode: 200,
         body: {

@@ -13,64 +13,56 @@
  * permissions and limitations under the License.
  */
 
-import { Legacy } from "kibana";
+import { schema } from "@kbn/config-schema";
 import { NodeServices } from "../models/interfaces";
-import { NODE_API, REQUEST } from "../../utils/constants";
+import { NODE_API } from "../../utils/constants";
 import { IRouter } from "../../../../src/core/server";
-
-// type Server = Legacy.Server;
 
 export default function (services: NodeServices, router: IRouter) {
   const { indexService } = services;
 
-  // server.route({
-  //   path: NODE_API._SEARCH,
-  //   method: REQUEST.POST,
-  //   handler: indexService.search,
-  // });
   router.post(
     {
       path: NODE_API._SEARCH,
-      validate: false,
+      validate: {
+        body: schema.any(),
+      },
     },
     indexService.search
   );
 
-  // server.route({
-  //   path: NODE_API._INDICES,
-  //   method: REQUEST.GET,
-  //   handler: indexService.getIndices,
-  // });
   router.get(
     {
       path: NODE_API._INDICES,
-      validate: false,
+      validate: {
+        query: schema.object({
+          from: schema.number(),
+          size: schema.number(),
+          search: schema.string(),
+          sortField: schema.string(),
+          sortDirection: schema.string(),
+        }),
+      },
     },
     indexService.getIndices
   );
 
-  // server.route({
-  //   path: NODE_API.APPLY_POLICY,
-  //   method: REQUEST.POST,
-  //   handler: indexService.applyPolicy,
-  // });
   router.post(
     {
       path: NODE_API.APPLY_POLICY,
-      validate: false,
+      validate: {
+        body: schema.any(),
+      },
     },
     indexService.applyPolicy
   );
 
-  // server.route({
-  //   path: NODE_API.EDIT_ROLLOVER_ALIAS,
-  //   method: REQUEST.POST,
-  //   handler: indexService.editRolloverAlias,
-  // });
   router.post(
     {
       path: NODE_API.EDIT_ROLLOVER_ALIAS,
-      validate: false,
+      validate: {
+        body: schema.any(),
+      },
     },
     indexService.editRolloverAlias
   );

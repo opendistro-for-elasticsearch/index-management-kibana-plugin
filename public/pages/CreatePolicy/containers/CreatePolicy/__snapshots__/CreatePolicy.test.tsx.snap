@@ -149,6 +149,7 @@ exports[`<CreatePolicy /> spec renders the create component 1`] = `
           >
             <button
               class="euiButton euiButton--primary"
+              disabled=""
               type="button"
             >
               <span
@@ -190,45 +191,7 @@ exports[`<CreatePolicy /> spec renders the create component 1`] = `
         aria-label="Code Editor"
         class="euiTextArea euiTextArea--resizeVertical"
         rows="6"
-      >
-        {
-    "policy": {
-        "description": "A simple default policy that changes the replica count between hot and cold states.",
-        "default_state": "hot",
-        "states": [
-            {
-                "name": "hot",
-                "actions": [
-                    {
-                        "replica_count": {
-                            "number_of_replicas": 5
-                        }
-                    }
-                ],
-                "transitions": [
-                    {
-                        "state_name": "cold",
-                        "conditions": {
-                            "min_index_age": "30d"
-                        }
-                    }
-                ]
-            },
-            {
-                "name": "cold",
-                "actions": [
-                    {
-                        "replica_count": {
-                            "number_of_replicas": 2
-                        }
-                    }
-                ],
-                "transitions": []
-            }
-        ]
-    }
-}
-      </textarea>
+      />
     </div>
   </div>
   <div

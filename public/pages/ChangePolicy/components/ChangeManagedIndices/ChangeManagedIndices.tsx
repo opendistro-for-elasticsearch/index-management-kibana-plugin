@@ -15,10 +15,10 @@
 
 import React, { Component } from "react";
 import { EuiSpacer, EuiComboBox, EuiFormRow } from "@elastic/eui";
+import { CoreStart } from "kibana/public";
 import { ContentPanel } from "../../../../components/ContentPanel";
 import { ManagedIndexService } from "../../../../services";
 import { ManagedIndexItem, State } from "../../../../../models/interfaces";
-import { CoreStart } from "kibana/public";
 
 interface ChangeManagedIndicesProps {
   managedIndexService: ManagedIndexService;
@@ -52,8 +52,8 @@ export default class ChangeManagedIndices extends Component<ChangeManagedIndices
     this.setState({ managedIndicesIsLoading: true, managedIndices: [] });
     try {
       // only bring back the first 10 results descending by name
-      const queryParamsString = `from=0&size=10&search=${searchValue}&sortDirection=desc&sortField=name`;
-      const managedIndicesResponse = await managedIndexService.getManagedIndices(queryParamsString);
+      const queryObject = { from: 0, size: 10, search: searchValue, sortDirection: "desc", sortField: "name" };
+      const managedIndicesResponse = await managedIndexService.getManagedIndices(queryObject);
       if (managedIndicesResponse.ok) {
         const options = searchValue.trim() ? [{ label: `${searchValue}*` }] : [];
         const managedIndices = managedIndicesResponse.response.managedIndices.map((managedIndex: ManagedIndexItem) => ({

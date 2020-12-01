@@ -13,35 +13,29 @@
  * permissions and limitations under the License.
  */
 
-import { Legacy } from "kibana";
-import { NodeServices } from "../models/interfaces";
-import { NODE_API, REQUEST } from "../../utils/constants";
 import { IRouter } from "kibana/server";
 import { schema } from "@kbn/config-schema";
-
-// type Server = Legacy.Server;
+import { NodeServices } from "../models/interfaces";
+import { NODE_API } from "../../utils/constants";
 
 export default function (services: NodeServices, router: IRouter) {
   const { managedIndexService } = services;
 
-  // server.route({
-  //   path: NODE_API.MANAGED_INDICES,
-  //   method: REQUEST.GET,
-  //   handler: managedIndexService.getManagedIndices,
-  // });
   router.get(
     {
       path: NODE_API.MANAGED_INDICES,
-      validate: false,
+      validate: {
+        query: schema.object({
+          from: schema.number(),
+          size: schema.number(),
+          search: schema.string(),
+          sortField: schema.string(),
+          sortDirection: schema.string(),
+        }),
+      },
     },
     managedIndexService.getManagedIndices
   );
-
-  // server.route({
-  //   path: `${NODE_API.MANAGED_INDICES}/{id}`,
-  //   method: REQUEST.GET,
-  //   handler: managedIndexService.getManagedIndex,
-  // });
 
   router.get(
     {
@@ -55,12 +49,6 @@ export default function (services: NodeServices, router: IRouter) {
     managedIndexService.getManagedIndex
   );
 
-  // server.route({
-  //   path: NODE_API.RETRY,
-  //   method: REQUEST.POST,
-  //   handler: managedIndexService.retryManagedIndexPolicy,
-  // });
-
   router.post(
     {
       path: NODE_API.RETRY,
@@ -71,12 +59,6 @@ export default function (services: NodeServices, router: IRouter) {
     managedIndexService.retryManagedIndexPolicy
   );
 
-  // server.route({
-  //   path: NODE_API.CHANGE_POLICY,
-  //   method: REQUEST.POST,
-  //   handler: managedIndexService.changePolicy,
-  // });
-
   router.post(
     {
       path: NODE_API.CHANGE_POLICY,
@@ -86,12 +68,6 @@ export default function (services: NodeServices, router: IRouter) {
     },
     managedIndexService.changePolicy
   );
-
-  // server.route({
-  //   path: NODE_API.REMOVE_POLICY,
-  //   method: REQUEST.POST,
-  //   handler: managedIndexService.removePolicy,
-  // });
 
   router.post(
     {

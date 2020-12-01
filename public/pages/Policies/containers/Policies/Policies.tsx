@@ -30,6 +30,7 @@ import {
   EuiTableSelectionType,
 } from "@elastic/eui";
 import _ from "lodash";
+import { CoreStart } from "kibana/public";
 import { ContentPanel, ContentPanelActions } from "../../../../components/ContentPanel";
 import PolicyControls from "../../components/PolicyControls";
 import PolicyEmptyPrompt from "../../components/PolicyEmptyPrompt";
@@ -42,7 +43,6 @@ import { BREADCRUMBS, ROUTES } from "../../../../utils/constants";
 import { PolicyService } from "../../../../services";
 import { getErrorMessage } from "../../../../utils/helpers";
 import ConfirmationModal from "../../../../components/ConfirmationModal";
-import { CoreStart } from "kibana/public";
 
 interface PoliciesProps extends RouteComponentProps {
   policyService: PolicyService;
@@ -147,9 +147,10 @@ export default class Policies extends Component<PoliciesProps, PoliciesState> {
     this.setState({ loadingPolicies: true });
     try {
       const { policyService, history } = this.props;
-      const queryParamsString = queryString.stringify(Policies.getQueryObjectFromState(this.state));
+      const queryObject = Policies.getQueryObjectFromState(this.state);
+      const queryParamsString = queryString.stringify(queryObject);
       history.replace({ ...this.props.location, search: queryParamsString });
-      const getPoliciesResponse = await policyService.getPolicies(queryParamsString);
+      const getPoliciesResponse = await policyService.getPolicies(queryObject);
       if (getPoliciesResponse.ok) {
         const {
           response: { policies, totalPolicies },

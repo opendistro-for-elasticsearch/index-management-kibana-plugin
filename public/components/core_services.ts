@@ -1,8 +1,8 @@
 import { createContext } from "react";
 import { CoreStart } from "kibana/public";
 
-const CoreServiesContext = createContext<CoreStart | null>(null);
+const CoreServicesContext = createContext<CoreStart | null>(null);
 
-const CoreServicesConsumer = CoreServiesContext.Consumer;
+const CoreServicesConsumer = CoreServicesContext.Consumer;
 
-export { CoreServiesContext, CoreServicesConsumer };
+export { CoreServicesContext, CoreServicesConsumer };

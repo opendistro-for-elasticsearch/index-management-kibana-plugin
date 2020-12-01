@@ -1,5 +1,5 @@
 /*
- * Copyright 2019 Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ * Copyright 2020 Amazon.com, Inc. or its affiliates. All Rights Reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License").
  * You may not use this file except in compliance with the License.
@@ -14,8 +14,6 @@
  */
 
 import React, { Component } from "react";
-// import chrome from "ui/chrome";
-// import { toastNotifications } from "ui/notify";
 import _ from "lodash";
 import { RouteComponentProps } from "react-router-dom";
 import queryString from "querystring";
@@ -30,6 +28,7 @@ import {
   Pagination,
   EuiTableSelectionType,
 } from "@elastic/eui";
+import { CoreStart } from "kibana/public";
 import { ContentPanel, ContentPanelActions } from "../../../../components/ContentPanel";
 import IndexControls from "../../components/IndexControls";
 import ApplyPolicyModal from "../../components/ApplyPolicyModal";
@@ -42,7 +41,6 @@ import { getURLQueryParams } from "../../utils/helpers";
 import { IndicesQueryParams } from "../../models/interfaces";
 import { BREADCRUMBS } from "../../../../utils/constants";
 import { getErrorMessage } from "../../../../utils/helpers";
-import { CoreStart } from "kibana/public";
 
 interface IndicesProps extends RouteComponentProps {
   indexService: IndexService;
@@ -104,18 +102,17 @@ export default class Indices extends Component<IndicesProps, IndicesState> {
     this.setState({ loadingIndices: true });
     try {
       const { indexService, history } = this.props;
-      const queryParamsString = queryString.stringify(Indices.getQueryObjectFromState(this.state));
+      const queryObject = Indices.getQueryObjectFromState(this.state);
+      const queryParamsString = queryString.stringify(queryObject);
       history.replace({ ...this.props.location, search: queryParamsString });
-      const getIndicesResponse = await indexService.getIndices(queryParamsString);
+      const getIndicesResponse = await indexService.getIndices(queryObject);
       if (getIndicesResponse.ok) {
         const { indices, totalIndices } = getIndicesResponse.response;
         this.setState({ indices, totalIndices });
       } else {
-        // toastNotifications.addDanger(getIndicesResponse.error);
         this.props.core.notifications.toasts.addDanger(getIndicesResponse.error);
       }
     } catch (err) {
-      // toastNotifications.addDanger(getErrorMessage(err, "There was a problem loading the indices"));
       this.props.core.notifications.toasts.addDanger(getErrorMessage(err, "There was a problem loading the indices"));
     }
     this.setState({ loadingIndices: false });
