@@ -24,9 +24,9 @@ import EditRollup from "./EditRollup";
 import { browserServicesMock } from "../../../../test/mocks";
 import { ServicesConsumer, ServicesContext } from "../../../services";
 import { ModalProvider, ModalRoot } from "../../../components/Modal";
-import { testRollup } from "../../CreateRollup/utils/constants";
 import { BrowserServices } from "../../../models/interfaces";
 import { BREADCRUMBS, ROUTES } from "../../../utils/constants";
+import { testRollup } from "../../../utils/constants.test";
 
 function renderEditRollupWithRouter(initialEntries = ["/"]) {
   return {

@@ -17,16 +17,15 @@ import React from "react";
 import { fireEvent, render, wait } from "@testing-library/react";
 import { Redirect, Route, RouteComponentProps, Switch } from "react-router-dom";
 import { MemoryRouter as Router } from "react-router";
+import { toastNotifications } from "ui/notify";
+import chrome from "ui/chrome";
+import userEvent from "@testing-library/user-event";
 import { ServicesConsumer, ServicesContext } from "../../../../services";
 import { browserServicesMock } from "../../../../../test/mocks";
 import { BrowserServices } from "../../../../models/interfaces";
 import { ModalProvider, ModalRoot } from "../../../../components/Modal";
 import { BREADCRUMBS, ROUTES } from "../../../../utils/constants";
 import CreateRollupForm from "./CreateRollupForm";
-import chrome from "ui/chrome";
-import userEvent from "@testing-library/user-event";
-import { toastNotifications } from "ui/notify";
-import { testRollup } from "../../utils/constants";
 
 const indices = [
   {

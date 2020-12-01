@@ -19,15 +19,15 @@ import { toastNotifications } from "ui/notify";
 import { render, wait } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { MemoryRouter as Router } from "react-router";
+import { Redirect, Route, RouteComponentProps, Switch } from "react-router-dom";
 import { browserServicesMock } from "../../../../../test/mocks";
 import { ServicesConsumer, ServicesContext } from "../../../../services";
 import { BrowserServices } from "../../../../models/interfaces";
 import { ModalProvider, ModalRoot } from "../../../../components/Modal";
-import { Redirect, Route, RouteComponentProps, Switch } from "react-router-dom";
 import { BREADCRUMBS, ROUTES } from "../../../../utils/constants";
 import Rollups from "./Rollups";
 import { TEXT } from "../../components/RollupEmptyPrompt/RollupEmptyPrompt";
-import { testRollup } from "../../../CreateRollup/utils/constants";
+import { testRollup } from "../../../../utils/constants.test";
 
 function renderRollupsWithRouter() {
   return {
