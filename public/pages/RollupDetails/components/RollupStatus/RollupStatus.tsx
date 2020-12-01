@@ -21,7 +21,7 @@ import { renderTime } from "../../../Rollups/utils/helpers";
 import { renderStatus } from "../../utils/helpers";
 
 interface RollupStatusProps {
-  metadata: RollupMetadata | null;
+  metadata: RollupMetadata | undefined;
 }
 
 const RollupStatus = ({ metadata }: RollupStatusProps) => (

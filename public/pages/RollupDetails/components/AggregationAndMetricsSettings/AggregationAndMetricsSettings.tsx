@@ -31,10 +31,9 @@ import {
   EuiTableSortingType,
 } from "@elastic/eui";
 import { ContentPanel } from "../../../../components/ContentPanel";
-import { DimensionItem } from "../../../CreateRollup/models/interfaces";
 import { DEFAULT_PAGE_SIZE_OPTIONS } from "../../../Rollups/utils/constants";
 import { parseTimeunit } from "../../../CreateRollup/utils/helpers";
-import { FieldItem, MetricItem } from "../../../../../models/interfaces";
+import { DimensionItem, FieldItem, MetricItem } from "../../../../../models/interfaces";
 
 interface AggregationAndMetricsSettingsProps {
   timestamp: string;

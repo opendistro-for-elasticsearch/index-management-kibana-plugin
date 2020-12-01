@@ -16,7 +16,7 @@
 import { httpClientMock } from "../../test/mocks";
 import { NODE_API } from "../../utils/constants";
 import RollupService from "./RollupService";
-import { testRollup } from "../pages/CreateRollup/utils/constants";
+import { testRollup } from "../../test/constants";
 
 const rollupService = new RollupService(httpClientMock);
 
@@ -82,14 +82,5 @@ describe("rollupService spec", () => {
 
     expect(httpClientMock.post).toHaveBeenCalledTimes(1);
     expect(httpClientMock.post).toHaveBeenCalledWith(`..${NODE_API._MAPPINGS}`, { index: indexName });
-  });
-
-  it("calls explain rollup nodejs route when calling explainRollup", async () => {
-    httpClientMock.get = jest.fn().mockResolvedValue({ data: {} });
-    const rollupId = "rollup_id";
-    await rollupService.explainRollup(rollupId);
-
-    expect(httpClientMock.get).toHaveBeenCalledTimes(1);
-    expect(httpClientMock.get).toHaveBeenCalledWith(`..${NODE_API.ROLLUPS}/${rollupId}/_explain`);
   });
 });

@@ -19,7 +19,6 @@ import { CLUSTER, INDEX } from "../utils/constants";
 import {
   DeleteRollupParams,
   DeleteRollupResponse,
-  GetFieldsResponse,
   GetRollupsResponse,
   PutRollupParams,
   PutRollupResponse,
@@ -27,7 +26,7 @@ import {
 } from "../models/interfaces";
 import { getMustQuery } from "../utils/helpers";
 import { RollupsSort, ServerResponse } from "../models/types";
-import { DocumentRollup, Rollup, RollupMetadata } from "../../models/interfaces";
+import { DocumentRollup, Rollup } from "../../models/interfaces";
 
 type Request = Legacy.Request;
 type ElasticsearchPlugin = Legacy.Plugins.elasticsearch.Plugin;
@@ -48,7 +47,12 @@ export default class RollupService {
       const { id } = req.params;
       const { seqNo, primaryTerm } = req.query as { seqNo?: string; primaryTerm?: string };
       let method = "ism.putRollup";
-      let params: PutRollupParams = { rollupId: id, if_seq_no: seqNo, if_primary_term: primaryTerm, body: JSON.stringify(req.payload) };
+      let params: PutRollupParams = {
+        rollupId: id,
+        if_seq_no: seqNo,
+        if_primary_term: primaryTerm,
+        body: JSON.stringify(req.payload),
+      };
       if (seqNo === undefined || primaryTerm === undefined) {
         method = "ism.createRollup";
         params = { rollupId: id, body: JSON.stringify(req.payload) };
@@ -126,11 +130,29 @@ export default class RollupService {
       const params = { rollupId: id };
       const { callWithRequest } = await this.esDriver.getCluster(CLUSTER.ISM);
       const getResponse = await callWithRequest(req, "ism.getRollup", params);
+      const metadata = await callWithRequest(req, "ism.explainRollup", params);
       const rollup = _.get(getResponse, "rollup", null);
       const seqNo = _.get(getResponse, "_seq_no");
       const primaryTerm = _.get(getResponse, "_primary_term");
+
+      //Form response
       if (rollup) {
-        return { ok: true, response: { id, seqNo: seqNo as number, primaryTerm: primaryTerm as number, rollup: rollup as Rollup } };
+        if (metadata)
+          return {
+            ok: true,
+            response: {
+              _id: id,
+              _seqNo: seqNo as number,
+              _primaryTerm: primaryTerm as number,
+              rollup: rollup as Rollup,
+              metadata: metadata,
+            },
+          };
+        else
+          return {
+            ok: false,
+            error: "Failed to load metadata",
+          };
       } else {
         return { ok: false, error: "Failed to load rollup" };
       }
@@ -153,20 +175,19 @@ export default class RollupService {
     }
   };
 
-  explainRollup = async (req: Request, h: ResponseToolkit): Promise<ServerResponse<RollupMetadata[]>> => {
+  explainRollup = async (req: Request, h: ResponseToolkit, idParams: string): Promise<ServerResponse<any>> => {
     try {
-      const { id } = req.params;
-      const params = { rollupId: id };
       const { callWithRequest } = await this.esDriver.getCluster(CLUSTER.ISM);
+      const params = { rollupId: idParams };
       const rollupMetadata = await callWithRequest(req, "ism.explainRollup", params);
       if (rollupMetadata) {
         return { ok: true, response: rollupMetadata };
       } else {
-        return { ok: false, error: "Failed to load rollup" };
+        return { ok: false, error: "Failed to load rollup metadata" };
       }
     } catch (err) {
       console.error("Index Management - RollupService - explainRollup:", err);
-      return { ok: false, error: err.message };
+      return { ok: false, error: "Cannot get metadata" };
     }
   };
 
@@ -206,27 +227,37 @@ export default class RollupService {
 
       const { callWithRequest } = await this.esDriver.getCluster(CLUSTER.DATA);
       const searchResponse: SearchResponse<any> = await callWithRequest(req, "search", params);
-
       const totalRollups = searchResponse.hits.total.value;
+
       const rollups = searchResponse.hits.hits.map((hit) => ({
         _seqNo: hit._seq_no as number,
         _primaryTerm: hit._primary_term as number,
         _id: hit._id,
         rollup: hit._source,
+        metadata: null,
       }));
+      let ids = rollups
+        .map((rollup) => {
+          return rollup._id;
+        })
+        .join(",");
 
-      let ids = "";
-      rollups.map((rollup) => {
-        if (rollups.indexOf(rollup) == 0) {
-          ids = ids + rollup._id;
-        } else {
-          ids = ids + "," + rollup._id;
-        }
-      });
-      return { ok: true, response: { rollups: rollups, totalRollups: totalRollups } };
+      const explainResponse = await this.explainRollup(req, h, ids);
+
+      if (explainResponse.ok) {
+        rollups.map((item) => {
+          item.metadata = explainResponse.response[item._id];
+        });
+        return {
+          ok: true,
+          response: { rollups: rollups, totalRollups: totalRollups, metadata: explainResponse.response },
+        };
+      } else {
+        return { ok: false, error: explainResponse.error };
+      }
     } catch (err) {
       if (err.statusCode === 404 && err.body.error.type === "index_not_found_exception") {
-        return { ok: true, response: { rollups: [], totalRollups: 0 } };
+        return { ok: true, response: { rollups: [], totalRollups: 0, metadata: null } };
       }
       console.error("Index Management - RollupService - getRollups", err);
       return { ok: false, error: err.message };
