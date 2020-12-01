@@ -36,10 +36,10 @@ function renderWithRouter(Component: React.ComponentType<any>) {
         <Switch>
           <Route
             path={ROUTES.INDICES}
-            render={props => (
+            render={(props) => (
               <ServicesContext.Provider value={browserServicesMock}>
                 <ModalProvider>
-                  <ServicesConsumer>{services => services && <ModalRoot services={services} />}</ServicesConsumer>
+                  <ServicesConsumer>{(services) => services && <ModalRoot services={services} />}</ServicesConsumer>
                   <ServicesConsumer>{({ indexService }: any) => <Component indexService={indexService} {...props} />}</ServicesConsumer>
                 </ModalProvider>
               </ServicesContext.Provider>

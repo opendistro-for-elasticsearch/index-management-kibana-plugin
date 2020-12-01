@@ -1,0 +1,7 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`<RollupDetails /> spec renders the component 1`] = `
+<div>
+  Testing rollup landing page
+</div>
+`;

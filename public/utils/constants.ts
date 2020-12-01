@@ -26,16 +26,24 @@ export const ROUTES = Object.freeze({
   MANAGED_INDICES: "/managed-indices",
   INDEX_POLICIES: "/index-policies",
   INDICES: "/indices",
+  ROLLUPS: "/rollups",
+  CREATE_ROLLUP: "/create-rollup",
+  EDIT_ROLLUP: "/edit-rollup",
+  ROLLUP_DETAILS: "/rollup-details",
 });
 
 export const BREADCRUMBS = Object.freeze({
   INDEX_MANAGEMENT: { text: "Index Management", href: "#/" },
   INDICES: { text: "Indices", href: `#${ROUTES.INDICES}` },
   INDEX_POLICIES: { text: "Index policies", href: `#${ROUTES.INDEX_POLICIES}` },
-  MANAGED_INDICES: { text: "Managed Indices", href: `#${ROUTES.MANAGED_INDICES}` },
+  MANAGED_INDICES: { text: "Managed indices", href: `#${ROUTES.MANAGED_INDICES}` },
   EDIT_POLICY: { text: "Edit policy" },
   CREATE_POLICY: { text: "Create policy" },
   CHANGE_POLICY: { text: "Change policy" },
+  ROLLUPS: { text: "Rollup jobs", href: `#${ROUTES.ROLLUPS}` },
+  CREATE_ROLLUP: { text: "Create rollup job" },
+  EDIT_ROLLUP: { text: "Edit rollup job" },
+  ROLLUP_DETAILS: { text: "Rollup details" },
 });
 
 // TODO: Kibana EUI has a SortDirection already
