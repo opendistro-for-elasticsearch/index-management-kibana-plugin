@@ -16,20 +16,21 @@
 import React, { ChangeEvent, Component } from "react";
 import chrome from "ui/chrome";
 import { RouteComponentProps } from "react-router-dom";
+import moment from "moment";
+import queryString from "query-string";
 import { EuiFlexItem, EuiFlexGroup, EuiButton, EuiTitle, EuiSpacer, EuiButtonEmpty } from "@elastic/eui";
+import { CoreStart } from "kibana/public";
 import ConfigureRollup from "../../CreateRollup/components/ConfigureRollup";
 import Schedule from "../../CreateRollup/components/Schedule";
-import { toastNotifications } from "ui/notify";
-import queryString from "query-string";
 import { getErrorMessage } from "../../../utils/helpers";
 import { BREADCRUMBS, ROUTES } from "../../../utils/constants";
 import { Rollup } from "../../../../models/interfaces";
 import { RollupService } from "../../../services";
-import moment from "moment";
 import { EMPTY_ROLLUP } from "../../CreateRollup/utils/constants";
 
 interface EditRollupProps extends RouteComponentProps {
   rollupService: RollupService;
+  core: CoreStart;
 }
 
 interface EditRollupState {
@@ -83,7 +84,7 @@ export default class EditRollup extends Component<EditRollupProps, EditRollupSta
   }
 
   componentDidMount = async (): Promise<void> => {
-    chrome.breadcrumbs.set([BREADCRUMBS.INDEX_MANAGEMENT, BREADCRUMBS.ROLLUPS]);
+    this.props.core.chrome.setBreadcrumbs([BREADCRUMBS.INDEX_MANAGEMENT, BREADCRUMBS.ROLLUPS]);
     const { id } = queryString.parse(this.props.location.search);
     if (typeof id === "string" && !!id) {
       chrome.breadcrumbs.push(BREADCRUMBS.EDIT_ROLLUP);
@@ -91,7 +92,7 @@ export default class EditRollup extends Component<EditRollupProps, EditRollupSta
 
       await this.getRollupToEdit(id);
     } else {
-      toastNotifications.addDanger(`Invalid rollup id: ${id}`);
+      this.props.core.notifications.toasts.addDanger(`Invalid rollup id: ${id}`);
       this.props.history.push(ROUTES.ROLLUPS);
     }
   };
@@ -125,11 +126,11 @@ export default class EditRollup extends Component<EditRollupProps, EditRollupSta
           this.setState({ cronExpression: response.response.rollup.schedule.cron.expression, recurringDefinition: "cron" });
         }
       } else {
-        toastNotifications.addDanger(`Could not load the rollup job: ${response.error}`);
+        this.props.core.notifications.toasts.addDanger(`Could not load the rollup job: ${response.error}`);
         this.props.history.push(ROUTES.ROLLUPS);
       }
     } catch (err) {
-      toastNotifications.addDanger(getErrorMessage(err, "Could not load the rollup job"));
+      this.props.core.notifications.toasts.addDanger(getErrorMessage(err, "Could not load the rollup job"));
       this.props.history.push(ROUTES.ROLLUPS);
     }
   };
@@ -240,7 +241,7 @@ export default class EditRollup extends Component<EditRollupProps, EditRollupSta
         await this.onUpdate(rollupId, rollupJSON);
       }
     } catch (err) {
-      toastNotifications.addDanger("Invalid Rollup JSON");
+      this.props.core.notifications.toasts.addDanger("Invalid Rollup JSON");
       console.error(err);
     }
 
@@ -252,12 +253,12 @@ export default class EditRollup extends Component<EditRollupProps, EditRollupSta
       const { rollupService } = this.props;
       const { rollupPrimaryTerm, rollupSeqNo } = this.state;
       if (rollupSeqNo == null || rollupPrimaryTerm == null) {
-        toastNotifications.addDanger("Could not update rollup without seqNo and primaryTerm");
+        this.props.core.notifications.toasts.addDanger("Could not update rollup without seqNo and primaryTerm");
         return;
       }
       const response = await rollupService.putRollup(rollup, rollupId, rollupSeqNo, rollupPrimaryTerm);
       if (response.ok) {
-        toastNotifications.addSuccess(`Changes to "${response.response._id}" saved!`);
+        this.props.core.notifications.toasts.addSuccess(`Changes to "${response.response._id}" saved!`);
         this.props.history.push(ROUTES.ROLLUPS);
       } else {
         this.setState({ submitError: response.error });

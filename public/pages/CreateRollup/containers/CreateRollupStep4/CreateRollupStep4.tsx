@@ -15,7 +15,7 @@
 
 import React, { Component } from "react";
 import { EuiSpacer, EuiTitle, EuiFlexGroup, EuiFlexItem, EuiComboBoxOptionOption, EuiCallOut } from "@elastic/eui";
-import chrome from "ui/chrome";
+import { CoreStart } from "kibana/public";
 import { RouteComponentProps } from "react-router-dom";
 import { RollupService } from "../../../../services";
 import { BREADCRUMBS, ROUTES } from "../../../../utils/constants";
@@ -54,6 +54,7 @@ interface CreateRollupProps extends RouteComponentProps {
   pageSize: number;
   delayTime: number | undefined;
   delayTimeunit: string;
+  core: CoreStart;
 }
 
 export default class CreateRollupStep4 extends Component<CreateRollupProps> {
@@ -62,7 +63,7 @@ export default class CreateRollupStep4 extends Component<CreateRollupProps> {
   }
 
   componentDidMount = async (): Promise<void> => {
-    chrome.breadcrumbs.set([BREADCRUMBS.INDEX_MANAGEMENT, BREADCRUMBS.ROLLUPS]);
+    this.props.core.chrome.setBreadcrumbs([BREADCRUMBS.INDEX_MANAGEMENT, BREADCRUMBS.ROLLUPS]);
   };
 
   onCancel = (): void => {

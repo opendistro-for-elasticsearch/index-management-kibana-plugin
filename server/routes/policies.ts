@@ -18,8 +18,6 @@ import { schema } from "@kbn/config-schema";
 import { NodeServices } from "../models/interfaces";
 import { NODE_API } from "../../utils/constants";
 
-// type Server = Legacy.Server;
-
 export default function (services: NodeServices, router: IRouter) {
   const { policyService } = services;
 

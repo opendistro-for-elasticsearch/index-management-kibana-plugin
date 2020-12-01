@@ -15,8 +15,8 @@
 
 import React, { ChangeEvent, Component } from "react";
 import { EuiSpacer, EuiTitle, EuiFlexGroup, EuiFlexItem, EuiCallOut, EuiComboBoxOptionOption } from "@elastic/eui";
-import chrome from "ui/chrome";
 import { RouteComponentProps } from "react-router-dom";
+import { CoreStart } from "kibana/public";
 import { RollupService } from "../../../../services";
 import { BREADCRUMBS, ROUTES } from "../../../../utils/constants";
 import CreateRollupSteps from "../../components/CreateRollupSteps";
@@ -46,6 +46,7 @@ interface CreateRollupStep2Props extends RouteComponentProps {
   onChangeTimezone: (e: ChangeEvent<HTMLSelectElement>) => void;
   onDimensionSelectionChange: (selectedFields: DimensionItem[]) => void;
   onMetricSelectionChange: (selectedFields: MetricItem[]) => void;
+  core: CoreStart;
 }
 
 export default class CreateRollupStep2 extends Component<CreateRollupStep2Props> {
@@ -54,7 +55,7 @@ export default class CreateRollupStep2 extends Component<CreateRollupStep2Props>
   }
 
   componentDidMount = async (): Promise<void> => {
-    chrome.breadcrumbs.set([BREADCRUMBS.INDEX_MANAGEMENT, BREADCRUMBS.ROLLUPS]);
+    this.props.core.chrome.setBreadcrumbs([BREADCRUMBS.INDEX_MANAGEMENT, BREADCRUMBS.ROLLUPS]);
   };
 
   onCancel = (): void => {

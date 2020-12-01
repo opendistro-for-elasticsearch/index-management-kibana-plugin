@@ -3,7 +3,7 @@ import React from "react";
 import ReactDOM from "react-dom";
 import { render, unmountComponentAtNode } from "react-dom";
 import { HashRouter as Router, Route } from "react-router-dom";
-import { IndexService, ManagedIndexService, PolicyService, ServicesContext } from "./services";
+import { IndexService, ManagedIndexService, PolicyService, RollupService, ServicesContext } from "./services";
 import { DarkModeContext } from "./components/DarkMode";
 import Main from "./pages/Main";
 import { CoreServicesContext } from "./components/core_services";
@@ -14,7 +14,8 @@ export function renderApp(coreStart: CoreStart, params: AppMountParameters) {
   const indexService = new IndexService(http);
   const managedIndexService = new ManagedIndexService(http);
   const policyService = new PolicyService(http);
-  const services = { indexService, managedIndexService, policyService };
+  const rollupService = new RollupService(http);
+  const services = { indexService, managedIndexService, policyService, rollupService };
 
   // const isDarkMode = chrome.getUiSettingsClient().get("theme:darkMode") || false;
   const isDarkMode = coreStart.uiSettings.get("theme:darkMode") || false;
