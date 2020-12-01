@@ -26,7 +26,7 @@ import { ServicesConsumer, ServicesContext } from "../../../services";
 import { ModalProvider, ModalRoot } from "../../../components/Modal";
 import { BrowserServices } from "../../../models/interfaces";
 import { BREADCRUMBS, ROUTES } from "../../../utils/constants";
-import { testRollup } from "../../../utils/testConstants";
+import { testRollup } from "../../../../test/testConstants";
 
 function renderEditRollupWithRouter(initialEntries = ["/"]) {
   return {
