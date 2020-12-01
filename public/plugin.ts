@@ -15,7 +15,6 @@ export class IndexManagementPlugin implements Plugin<IndexManagementPluginSetup,
       category: {
         id: 'odfe',
         label: 'Open Distro for Elasticsearch',
-        euiIconType: 'logoKibana',
         order: 2000,
       },
       mount: async (params: AppMountParameters) => {
