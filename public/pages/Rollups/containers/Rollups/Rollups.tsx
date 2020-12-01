@@ -15,7 +15,6 @@
 
 import React, { Component } from "react";
 import _ from "lodash";
-import chrome from "ui/chrome";
 import { BREADCRUMBS, ROUTES } from "../../../../utils/constants";
 import queryString from "query-string";
 import { getErrorMessage } from "../../../../utils/helpers";
@@ -126,7 +125,6 @@ export default class Rollups extends Component<RollupsProps, RollupsState> {
       const rollupJobsResponse = await rollupService.getRollups(queryObject);
       if (rollupJobsResponse.ok) {
         const { rollups, totalRollups, metadata } = rollupJobsResponse.response;
-        // const rollupItems = this.matchMetadata(rollups, metadata);
         this.setState({ rollups, totalRollups, rollupExplain: metadata });
       } else {
         this.props.core.notifications.toasts.addDanger(rollupJobsResponse.error);

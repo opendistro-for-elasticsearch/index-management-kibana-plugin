@@ -28,8 +28,6 @@ import { getMustQuery } from "../utils/helpers";
 import { RollupsSort, ServerResponse } from "../models/types";
 import { DocumentRollup, Rollup, RollupMetadata } from "../../models/interfaces";
 
-//Todo: modify this file to upgrade to 7.10
-
 export default class RollupService {
   esDriver: IClusterClient;
 

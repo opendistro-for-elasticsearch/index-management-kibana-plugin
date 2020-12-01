@@ -75,7 +75,7 @@ export default function (services: NodeServices, router: IRouter) {
 
   router.get(
     {
-      path: `${NODE_API.POLICIES}/{id}`,
+      path: `${NODE_API.ROLLUPS}/{id}`,
       validate: {
         params: schema.object({
           id: schema.string(),
@@ -84,12 +84,6 @@ export default function (services: NodeServices, router: IRouter) {
     },
     rollupService.getRollup
   );
-
-  // server.route({
-  //   path: `${NODE_API.ROLLUPS}/{id}`,
-  //   method: REQUEST.DELETE,
-  //   handler: rollupService.deleteRollup,
-  // });
 
   router.delete(
     {
@@ -103,12 +97,6 @@ export default function (services: NodeServices, router: IRouter) {
     rollupService.deleteRollup
   );
 
-  // server.route({
-  //   path: `${NODE_API.ROLLUPS}/{id}/_start`,
-  //   method: REQUEST.POST,
-  //   handler: rollupService.startRollup,
-  // });
-
   router.post(
     {
       path: `${NODE_API.ROLLUPS}/{id}/_start`,
@@ -118,12 +106,6 @@ export default function (services: NodeServices, router: IRouter) {
     },
     rollupService.startRollup
   );
-
-  // server.route({
-  //   path: `${NODE_API.ROLLUPS}/{id}/_stop`,
-  //   method: REQUEST.POST,
-  //   handler: rollupService.stopRollup,
-  // });
 
   router.post(
     {
@@ -135,12 +117,6 @@ export default function (services: NodeServices, router: IRouter) {
     rollupService.stopRollup
   );
 
-  // server.route({
-  //   path: `${NODE_API._MAPPINGS}`,
-  //   method: REQUEST.POST,
-  //   handler: rollupService.getMappings,
-  // });
-
   router.post(
     {
       path: NODE_API._MAPPINGS,
@@ -149,24 +125,5 @@ export default function (services: NodeServices, router: IRouter) {
       },
     },
     rollupService.getMappings
-  );
-
-  // server.route({
-  //   path: `${NODE_API.ROLLUPS}/{id}/_explain`,
-  //   method: REQUEST.GET,
-  //   handler: rollupService.explainRollup,
-  // });
-
-  //Not called by frontend anywhere, but preserving for future use
-  router.get(
-    {
-      path: `${NODE_API.ROLLUPS}/{id}/_explain`,
-      validate: {
-        params: schema.object({
-          id: schema.string(),
-        }),
-      },
-    },
-    rollupService.explainRollup
   );
 }

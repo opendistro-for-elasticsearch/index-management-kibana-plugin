@@ -1,8 +1,8 @@
 import { IndexManagementPluginSetup, IndexManagementPluginStart } from ".";
 import { Plugin, CoreSetup, CoreStart, IClusterClient } from "../../../src/core/server";
 import ismPlugin from "./clusters/ism/ismPlugin";
-import { PolicyService, ManagedIndexService, IndexService } from "./services";
-import { indices, policies, managedIndices } from "../server/routes";
+import { PolicyService, ManagedIndexService, IndexService, RollupService } from "./services";
+import { indices, policies, managedIndices, rollups } from "../server/routes";
 
 export class IndexPatternManagementPlugin implements Plugin<IndexManagementPluginSetup, IndexManagementPluginStart> {
   public async setup(core: CoreSetup) {
@@ -15,7 +15,8 @@ export class IndexPatternManagementPlugin implements Plugin<IndexManagementPlugi
     const indexService = new IndexService(esDriver);
     const policyService = new PolicyService(esDriver);
     const managedIndexService = new ManagedIndexService(esDriver);
-    const services = { indexService, policyService, managedIndexService };
+    const rollupService = new RollupService(esDriver);
+    const services = { indexService, policyService, managedIndexService, rollupService };
 
     // create router
     const router = core.http.createRouter();
@@ -23,6 +24,8 @@ export class IndexPatternManagementPlugin implements Plugin<IndexManagementPlugi
     indices(services, router);
     policies(services, router);
     managedIndices(services, router);
+    rollups(services, router);
+
     return {};
   }
 

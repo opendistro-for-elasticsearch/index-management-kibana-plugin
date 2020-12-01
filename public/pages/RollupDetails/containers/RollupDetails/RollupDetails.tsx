@@ -30,7 +30,6 @@ import {
   EuiCodeBlock,
   EuiHealth,
 } from "@elastic/eui";
-import chrome from "ui/chrome";
 import { RouteComponentProps } from "react-router-dom";
 import queryString from "query-string";
 import { CoreStart } from "kibana/public";
@@ -127,7 +126,7 @@ export default class RollupDetails extends Component<RollupDetailsProps, RollupD
     this.props.core.chrome.setBreadcrumbs([BREADCRUMBS.INDEX_MANAGEMENT, BREADCRUMBS.ROLLUPS]);
     const { id } = queryString.parse(this.props.location.search);
     if (typeof id === "string") {
-      chrome.breadcrumbs.push({ text: id });
+      this.props.core.chrome.setBreadcrumbs([BREADCRUMBS.INDEX_MANAGEMENT, BREADCRUMBS.ROLLUPS, { text: id }]);
       this.props.history.push(`${ROUTES.ROLLUP_DETAILS}?id=${id}`);
       await this.getRollup(id);
       this.forceUpdate();

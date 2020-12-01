@@ -14,7 +14,6 @@
  */
 
 import React, { ChangeEvent, Component } from "react";
-import chrome from "ui/chrome";
 import { RouteComponentProps } from "react-router-dom";
 import moment from "moment";
 import queryString from "query-string";
@@ -87,8 +86,7 @@ export default class EditRollup extends Component<EditRollupProps, EditRollupSta
     this.props.core.chrome.setBreadcrumbs([BREADCRUMBS.INDEX_MANAGEMENT, BREADCRUMBS.ROLLUPS]);
     const { id } = queryString.parse(this.props.location.search);
     if (typeof id === "string" && !!id) {
-      chrome.breadcrumbs.push(BREADCRUMBS.EDIT_ROLLUP);
-      chrome.breadcrumbs.push({ text: id });
+      this.props.core.chrome.setBreadcrumbs([BREADCRUMBS.INDEX_MANAGEMENT, BREADCRUMBS.ROLLUPS, BREADCRUMBS.EDIT_ROLLUP, { text: id }]);
 
       await this.getRollupToEdit(id);
     } else {
