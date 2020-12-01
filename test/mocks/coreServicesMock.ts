@@ -13,6 +13,8 @@
  * permissions and limitations under the License.
  */
 
+import { CoreStart } from "kibana/public";
+
 const coreServicesMock = {
   uiSettings: {
     get: jest.fn(),
@@ -28,4 +30,4 @@ const coreServicesMock = {
   },
 };
 
-export default coreServicesMock;
+export default coreServicesMock as CoreStart;

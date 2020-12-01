@@ -17,13 +17,12 @@ import React from "react";
 import "@testing-library/jest-dom/extend-expect";
 import { render, fireEvent, wait } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
-import { toastNotifications } from "ui/notify";
 import RolloverAliasModal from "./RolloverAliasModal";
-import { browserServicesMock } from "../../../../../test/mocks";
+import { browserServicesMock, coreServicesMock } from "../../../../../test/mocks";
 
 describe("<RolloverAliasModal /> spec", () => {
   it("renders the component", () => {
-    render(<RolloverAliasModal services={browserServicesMock} index="some_index" onClose={() => {}} />);
+    render(<RolloverAliasModal services={browserServicesMock} index="some_index" onClose={() => {}} core={coreServicesMock} />);
     // EuiOverlayMask appends an element to the body so we should have two, an empty div from react-test-library
     // and our EuiOverlayMask element
     expect(document.body.children).toHaveLength(2);
@@ -32,7 +31,9 @@ describe("<RolloverAliasModal /> spec", () => {
 
   it("calls close when close button clicked", () => {
     const onClose = jest.fn();
-    const { getByTestId } = render(<RolloverAliasModal services={browserServicesMock} index="some_index" onClose={onClose} />);
+    const { getByTestId } = render(
+      <RolloverAliasModal services={browserServicesMock} index="some_index" onClose={onClose} core={coreServicesMock} />
+    );
 
     fireEvent.click(getByTestId("editRolloverAliasModalCloseButton"));
     expect(onClose).toHaveBeenCalled();
@@ -40,7 +41,7 @@ describe("<RolloverAliasModal /> spec", () => {
 
   it("disables add button when no alias", async () => {
     const { getByTestId, getByPlaceholderText } = render(
-      <RolloverAliasModal services={browserServicesMock} index="some_index" onClose={() => {}} />
+      <RolloverAliasModal services={browserServicesMock} index="some_index" onClose={() => {}} core={coreServicesMock} />
     );
 
     expect(getByTestId("editRolloverAliasModalAddButton")).toBeDisabled();
@@ -53,7 +54,7 @@ describe("<RolloverAliasModal /> spec", () => {
   it("shows success toaster when successful", async () => {
     browserServicesMock.indexService.editRolloverAlias = jest.fn().mockResolvedValue({ ok: true, response: { acknowledged: true } });
     const { getByTestId, getByPlaceholderText } = render(
-      <RolloverAliasModal services={browserServicesMock} index="some_index" onClose={() => {}} />
+      <RolloverAliasModal services={browserServicesMock} index="some_index" onClose={() => {}} core={coreServicesMock} />
     );
 
     await userEvent.type(getByPlaceholderText("Rollover alias"), "some_alias");
@@ -62,14 +63,14 @@ describe("<RolloverAliasModal /> spec", () => {
 
     await wait();
 
-    expect(toastNotifications.addSuccess).toHaveBeenCalledTimes(1);
-    expect(toastNotifications.addSuccess).toHaveBeenCalledWith("Edited rollover alias on some_index");
+    expect(coreServicesMock.notifications.toasts.addSuccess).toHaveBeenCalledTimes(1);
+    expect(coreServicesMock.notifications.toasts.addSuccess).toHaveBeenCalledWith("Edited rollover alias on some_index");
   });
 
   it("shows error toaster when error is thrown", async () => {
     browserServicesMock.indexService.editRolloverAlias = jest.fn().mockRejectedValue(new Error("this is an error"));
     const { getByTestId, getByPlaceholderText } = render(
-      <RolloverAliasModal services={browserServicesMock} index="some_index" onClose={() => {}} />
+      <RolloverAliasModal services={browserServicesMock} index="some_index" onClose={() => {}} core={coreServicesMock} />
     );
 
     await userEvent.type(getByPlaceholderText("Rollover alias"), "some_alias");
@@ -78,14 +79,14 @@ describe("<RolloverAliasModal /> spec", () => {
 
     await wait();
 
-    expect(toastNotifications.addDanger).toHaveBeenCalledTimes(1);
-    expect(toastNotifications.addDanger).toHaveBeenCalledWith("this is an error");
+    expect(coreServicesMock.notifications.toasts.addDanger).toHaveBeenCalledTimes(1);
+    expect(coreServicesMock.notifications.toasts.addDanger).toHaveBeenCalledWith("this is an error");
   });
 
   it("shows error toaster when error is returned", async () => {
     browserServicesMock.indexService.editRolloverAlias = jest.fn().mockResolvedValue({ ok: false, error: "some error" });
     const { getByTestId, getByPlaceholderText } = render(
-      <RolloverAliasModal services={browserServicesMock} index="some_index" onClose={() => {}} />
+      <RolloverAliasModal services={browserServicesMock} index="some_index" onClose={() => {}} core={coreServicesMock} />
     );
 
     await userEvent.type(getByPlaceholderText("Rollover alias"), "some_alias");
@@ -94,8 +95,8 @@ describe("<RolloverAliasModal /> spec", () => {
 
     await wait();
 
-    expect(toastNotifications.addDanger).toHaveBeenCalledTimes(1);
-    expect(toastNotifications.addDanger).toHaveBeenCalledWith("some error");
+    expect(coreServicesMock.notifications.toasts.addDanger).toHaveBeenCalledTimes(1);
+    expect(coreServicesMock.notifications.toasts.addDanger).toHaveBeenCalledWith("some error");
   });
 
   it("shows error toaster when call is not acknowledged", async () => {
@@ -104,7 +105,7 @@ describe("<RolloverAliasModal /> spec", () => {
       response: { acknowledged: false },
     });
     const { getByTestId, getByPlaceholderText } = render(
-      <RolloverAliasModal services={browserServicesMock} index="some_index" onClose={() => {}} />
+      <RolloverAliasModal services={browserServicesMock} index="some_index" onClose={() => {}} core={coreServicesMock} />
     );
 
     await userEvent.type(getByPlaceholderText("Rollover alias"), "some_alias");
@@ -113,7 +114,7 @@ describe("<RolloverAliasModal /> spec", () => {
 
     await wait();
 
-    expect(toastNotifications.addDanger).toHaveBeenCalledTimes(1);
-    expect(toastNotifications.addDanger).toHaveBeenCalledWith("Failed to edit rollover alias on some_index");
+    expect(coreServicesMock.notifications.toasts.addDanger).toHaveBeenCalledTimes(1);
+    expect(coreServicesMock.notifications.toasts.addDanger).toHaveBeenCalledWith("Failed to edit rollover alias on some_index");
   });
 });

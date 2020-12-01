@@ -14,17 +14,18 @@
  */
 
 import React from "react";
+import { MemoryRouter as Router, Redirect, Route, RouteComponentProps, Switch } from "react-router-dom";
 import { render, wait, fireEvent } from "@testing-library/react";
+import userEvent from "@testing-library/user-event";
+import { CoreStart } from "kibana/public";
 import CreatePolicy from "./CreatePolicy";
 import { ServicesConsumer, ServicesContext } from "../../../../services";
-import { MemoryRouter as Router, Redirect, Route, RouteComponentProps, Switch } from "react-router-dom";
 import { browserServicesMock, coreServicesMock } from "../../../../../test/mocks";
 import { BrowserServices } from "../../../../models/interfaces";
 import { ModalProvider, ModalRoot } from "../../../../components/Modal";
 import { DEFAULT_POLICY } from "../../utils/constants";
-import userEvent from "@testing-library/user-event";
 import { ROUTES } from "../../../../utils/constants";
-import { CoreServicesContext } from "../../../../components/core_services";
+import { CoreServicesConsumer, CoreServicesContext } from "../../../../components/core_services";
 
 jest.mock("../../components/DefinePolicy", () => require("../../components/DefinePolicy/__mocks__/DefinePolicyMock"));
 
@@ -37,25 +38,31 @@ function renderCreatePolicyWithRouter(initialEntries = ["/"]) {
             <ServicesConsumer>
               {(services: BrowserServices | null) =>
                 services && (
-                  <ModalProvider>
-                    <ModalRoot services={services} />
-                    <Switch>
-                      <Route
-                        path={ROUTES.CREATE_POLICY}
-                        render={(props: RouteComponentProps) => (
-                          <CreatePolicy {...props} isEdit={false} policyService={services.policyService} />
-                        )}
-                      />
-                      <Route
-                        path={ROUTES.EDIT_POLICY}
-                        render={(props: RouteComponentProps) => (
-                          <CreatePolicy {...props} isEdit={true} policyService={services.policyService} />
-                        )}
-                      />
-                      <Route path={ROUTES.INDEX_POLICIES} render={(props: RouteComponentProps) => <div>Testing Policies</div>} />
-                      <Redirect from="/" to={ROUTES.CREATE_POLICY} />
-                    </Switch>
-                  </ModalProvider>
+                  <CoreServicesConsumer>
+                    {(core: CoreStart | null) =>
+                      core && (
+                        <ModalProvider>
+                          <ModalRoot services={services} />
+                          <Switch>
+                            <Route
+                              path={ROUTES.CREATE_POLICY}
+                              render={(props: RouteComponentProps) => (
+                                <CreatePolicy {...props} isEdit={false} policyService={services.policyService} core={core} />
+                              )}
+                            />
+                            <Route
+                              path={ROUTES.EDIT_POLICY}
+                              render={(props: RouteComponentProps) => (
+                                <CreatePolicy {...props} isEdit={true} policyService={services.policyService} core={core} />
+                              )}
+                            />
+                            <Route path={ROUTES.INDEX_POLICIES} render={(props: RouteComponentProps) => <div>Testing Policies</div>} />
+                            <Redirect from="/" to={ROUTES.CREATE_POLICY} />
+                          </Switch>
+                        </ModalProvider>
+                      )
+                    }
+                  </CoreServicesConsumer>
                 )
               }
             </ServicesConsumer>

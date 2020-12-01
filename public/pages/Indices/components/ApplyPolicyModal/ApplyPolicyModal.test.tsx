@@ -16,24 +16,16 @@
 import React from "react";
 import "@testing-library/jest-dom/extend-expect";
 import { render, wait } from "@testing-library/react";
-import { toastNotifications } from "ui/notify";
 import ApplyPolicyModal from "./ApplyPolicyModal";
-import { browserServicesMock, httpClientMock } from "../../../../../test/mocks";
-
-jest.mock("ui/notify", () => ({
-  toastNotifications: {
-    addDanger: jest.fn().mockName("addDanger"),
-    addSuccess: jest.fn().mockName("addSuccess"),
-  },
-}));
+import { browserServicesMock, coreServicesMock, httpClientMock } from "../../../../../test/mocks";
 
 // TODO: fireEvent for applyPolicy, but need to figure out how to get react-testing-library to work
 //  with the combo_box in modal
 
 describe("<ApplyPolicyModal /> spec", () => {
   it("renders the component", async () => {
-    httpClientMock.post = jest.fn().mockResolvedValue({ data: { ok: true, resp: { hits: { hits: [{ _id: "test_index" }] } } } });
-    render(<ApplyPolicyModal onClose={() => {}} services={browserServicesMock} indices={[]} />);
+    httpClientMock.post = jest.fn().mockResolvedValue({ ok: true, resp: { hits: { hits: [{ _id: "test_index" }] } } });
+    render(<ApplyPolicyModal onClose={() => {}} services={browserServicesMock} indices={[]} core={coreServicesMock} />);
 
     // EuiOverlayMask appends an element to the body so we should have two, an empty div from react-test-library
     // and our EuiOverlayMask element
@@ -42,40 +34,40 @@ describe("<ApplyPolicyModal /> spec", () => {
   });
 
   it("successfully calls search policies on mount", async () => {
-    httpClientMock.post = jest.fn().mockResolvedValue({ data: { ok: true, resp: { hits: { hits: [{ _id: "test_index" }] } } } });
+    httpClientMock.post = jest.fn().mockResolvedValue({ ok: true, resp: { hits: { hits: [{ _id: "test_index" }] } } });
     const spy = jest.spyOn(browserServicesMock.indexService, "searchPolicies");
-    render(<ApplyPolicyModal onClose={() => {}} services={browserServicesMock} indices={[]} />);
+    render(<ApplyPolicyModal onClose={() => {}} services={browserServicesMock} indices={[]} core={coreServicesMock} />);
 
     expect(spy).toHaveBeenCalledTimes(1);
     expect(spy).toHaveBeenCalledWith("", true);
-    expect(toastNotifications.addDanger).not.toHaveBeenCalled();
+    expect(coreServicesMock.notifications.toasts.addDanger).not.toHaveBeenCalled();
   });
 
   it("adds danger toaster on safe error", async () => {
-    httpClientMock.post = jest.fn().mockResolvedValue({ data: { ok: false, error: "some error" } });
+    httpClientMock.post = jest.fn().mockResolvedValue({ ok: false, error: "some error" });
     const spy = jest.spyOn(browserServicesMock.indexService, "searchPolicies");
-    render(<ApplyPolicyModal onClose={() => {}} services={browserServicesMock} indices={[]} />);
+    render(<ApplyPolicyModal onClose={() => {}} services={browserServicesMock} indices={[]} core={coreServicesMock} />);
 
     // wait 1 tick for the searchPolicies promise to resolve
     await wait();
 
     expect(spy).toHaveBeenCalledTimes(1);
     expect(spy).toHaveBeenCalledWith("", true);
-    expect(toastNotifications.addDanger).toHaveBeenCalledTimes(1);
-    expect(toastNotifications.addDanger).toHaveBeenCalledWith("some error");
+    expect(coreServicesMock.notifications.toasts.addDanger).toHaveBeenCalledTimes(1);
+    expect(coreServicesMock.notifications.toasts.addDanger).toHaveBeenCalledWith("some error");
   });
 
   it("adds danger toaster on unsafe error", async () => {
     httpClientMock.post = jest.fn().mockRejectedValue(new Error("testing error"));
     const spy = jest.spyOn(browserServicesMock.indexService, "searchPolicies");
-    render(<ApplyPolicyModal onClose={() => {}} services={browserServicesMock} indices={[]} />);
+    render(<ApplyPolicyModal onClose={() => {}} services={browserServicesMock} indices={[]} core={coreServicesMock} />);
 
     // wait 1 tick for the searchPolicies promise to resolve
     await wait();
 
     expect(spy).toHaveBeenCalledTimes(1);
     expect(spy).toHaveBeenCalledWith("", true);
-    expect(toastNotifications.addDanger).toHaveBeenCalledTimes(1);
-    expect(toastNotifications.addDanger).toHaveBeenCalledWith("testing error");
+    expect(coreServicesMock.notifications.toasts.addDanger).toHaveBeenCalledTimes(1);
+    expect(coreServicesMock.notifications.toasts.addDanger).toHaveBeenCalledWith("testing error");
   });
 });

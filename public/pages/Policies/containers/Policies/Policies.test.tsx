@@ -20,15 +20,14 @@ import { render, wait } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { Redirect, Route, RouteComponentProps, Switch } from "react-router-dom";
 import { MemoryRouter as Router } from "react-router-dom";
-import { toastNotifications } from "ui/notify";
-import chrome from "ui/chrome";
-import { browserServicesMock } from "../../../../../test/mocks";
+import { browserServicesMock, coreServicesMock } from "../../../../../test/mocks";
 import Policies from "./Policies";
 import { TEXT } from "../../components/PolicyEmptyPrompt/PolicyEmptyPrompt";
 import { ModalProvider, ModalRoot } from "../../../../components/Modal";
 import { ServicesConsumer, ServicesContext } from "../../../../services";
 import { BREADCRUMBS, ROUTES } from "../../../../utils/constants";
 import { BrowserServices } from "../../../../models/interfaces";
+import { CoreServicesConsumer, CoreServicesContext } from "../../../../components/core_services";
 
 // TODO: Move common renderWith or with___ helpers into top level tests directory
 function renderPoliciesWithRouter() {
@@ -36,28 +35,34 @@ function renderPoliciesWithRouter() {
     ...render(
       <Router>
         <ServicesContext.Provider value={browserServicesMock}>
-          <ServicesConsumer>
-            {(services: BrowserServices | null) =>
-              services && (
-                <ModalProvider>
-                  <ModalRoot services={services} />
-                  <Switch>
-                    <Route
-                      path={ROUTES.INDEX_POLICIES}
-                      render={(props: RouteComponentProps) => (
-                        <div style={{ padding: "25px 25px" }}>
-                          <Policies {...props} policyService={services.policyService} />
-                        </div>
-                      )}
-                    />
-                    <Route path={ROUTES.CREATE_POLICY} render={(props) => <div>Testing create policy</div>} />
-                    <Route path={ROUTES.EDIT_POLICY} render={(props) => <div>Testing edit policy: {props.location.search}</div>} />
-                    <Redirect from="/" to={ROUTES.INDEX_POLICIES} />
-                  </Switch>
-                </ModalProvider>
-              )
-            }
-          </ServicesConsumer>
+          <CoreServicesContext.Provider value={coreServicesMock}>
+            <CoreServicesConsumer>
+              {(core: coreStart | null) => (
+                <ServicesConsumer>
+                  {(services: BrowserServices | null) =>
+                    services && (
+                      <ModalProvider>
+                        <ModalRoot services={services} />
+                        <Switch>
+                          <Route
+                            path={ROUTES.INDEX_POLICIES}
+                            render={(props: RouteComponentProps) => (
+                              <div style={{ padding: "25px 25px" }}>
+                                <Policies {...props} policyService={services.policyService} core={coreServicesMock} />
+                              </div>
+                            )}
+                          />
+                          <Route path={ROUTES.CREATE_POLICY} render={(props) => <div>Testing create policy</div>} />
+                          <Route path={ROUTES.EDIT_POLICY} render={(props) => <div>Testing edit policy: {props.location.search}</div>} />
+                          <Redirect from="/" to={ROUTES.INDEX_POLICIES} />
+                        </Switch>
+                      </ModalProvider>
+                    )
+                  }
+                </ServicesConsumer>
+              )}{" "}
+            </CoreServicesConsumer>
+          </CoreServicesContext.Provider>
         </ServicesContext.Provider>
       </Router>
     ),

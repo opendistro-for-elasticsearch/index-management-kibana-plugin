@@ -33,7 +33,7 @@ exports[`<ChangeManagedIndices /> spec renders the component 1`] = `
       />
       <div
         class="euiFormRow"
-        id="icae32130-335d-11eb-936b-232f1102e68a-row"
+        id="some_html_id-row"
       >
         <div
           class="euiFormRow__labelWrapper"
@@ -41,7 +41,7 @@ exports[`<ChangeManagedIndices /> spec renders the component 1`] = `
           <label
             aria-invalid="false"
             class="euiFormLabel euiFormRow__label"
-            for="icae32130-335d-11eb-936b-232f1102e68a"
+            for="some_html_id"
           >
             Managed indices
           </label>
@@ -50,7 +50,7 @@ exports[`<ChangeManagedIndices /> spec renders the component 1`] = `
           class="euiFormRow__fieldWrapper"
         >
           <div
-            aria-describedby="icae32130-335d-11eb-936b-232f1102e68a-help"
+            aria-describedby="some_html_id-help"
             aria-expanded="false"
             aria-haspopup="listbox"
             class="euiComboBox"
@@ -74,7 +74,7 @@ exports[`<ChangeManagedIndices /> spec renders the component 1`] = `
                     <input
                       aria-controls=""
                       data-test-subj="comboBoxSearchInput"
-                      id="icae32130-335d-11eb-936b-232f1102e68a"
+                      id="some_html_id"
                       role="textbox"
                       style="box-sizing: content-box; width: 2px;"
                       value=""
@@ -93,21 +93,7 @@ exports[`<ChangeManagedIndices /> spec renders the component 1`] = `
                     data-test-subj="comboBoxToggleListButton"
                     type="button"
                   >
-                    <svg
-                      aria-hidden="true"
-                      class="euiIcon euiIcon--medium euiIcon-isLoaded euiFormControlLayoutCustomIcon__icon"
-                      focusable="false"
-                      height="16"
-                      role="img"
-                      viewBox="0 0 16 16"
-                      width="16"
-                      xmlns="http://www.w3.org/2000/svg"
-                    >
-                      <path
-                        d="M13.069 5.157L8.384 9.768a.546.546 0 01-.768 0L2.93 5.158a.552.552 0 00-.771 0 .53.53 0 000 .759l4.684 4.61c.641.631 1.672.63 2.312 0l4.684-4.61a.53.53 0 000-.76.552.552 0 00-.771 0z"
-                        fill-rule="non-zero"
-                      />
-                    </svg>
+                    EuiIconMock
                   </button>
                 </div>
               </div>
@@ -115,7 +101,7 @@ exports[`<ChangeManagedIndices /> spec renders the component 1`] = `
           </div>
           <div
             class="euiFormHelpText euiFormRow__text"
-            id="icae32130-335d-11eb-936b-232f1102e68a-help"
+            id="some_html_id-help"
           >
             You can use * as wildcards to form index patterns.
           </div>
@@ -123,14 +109,14 @@ exports[`<ChangeManagedIndices /> spec renders the component 1`] = `
       </div>
       <div
         class="euiFormRow"
-        id="icae51d01-335d-11eb-936b-232f1102e68a-row"
+        id="some_html_id-row"
       >
         <div
           class="euiFormRow__labelWrapper"
         >
           <label
             class="euiFormLabel euiFormRow__label"
-            for="icae51d01-335d-11eb-936b-232f1102e68a"
+            for="some_html_id"
           >
             State filters
           </label>
@@ -139,7 +125,7 @@ exports[`<ChangeManagedIndices /> spec renders the component 1`] = `
           class="euiFormRow__fieldWrapper"
         >
           <div
-            aria-describedby="icae51d01-335d-11eb-936b-232f1102e68a-help"
+            aria-describedby="some_html_id-help"
             aria-expanded="false"
             aria-haspopup="listbox"
             class="euiComboBox euiComboBox-isDisabled"
@@ -169,7 +155,7 @@ exports[`<ChangeManagedIndices /> spec renders the component 1`] = `
                       aria-controls=""
                       data-test-subj="comboBoxSearchInput"
                       disabled=""
-                      id="icae51d01-335d-11eb-936b-232f1102e68a"
+                      id="some_html_id"
                       role="textbox"
                       style="box-sizing: content-box; width: 2px;"
                       value=""
@@ -189,21 +175,7 @@ exports[`<ChangeManagedIndices /> spec renders the component 1`] = `
                     disabled=""
                     type="button"
                   >
-                    <svg
-                      aria-hidden="true"
-                      class="euiIcon euiIcon--medium euiIcon-isLoaded euiFormControlLayoutCustomIcon__icon"
-                      focusable="false"
-                      height="16"
-                      role="img"
-                      viewBox="0 0 16 16"
-                      width="16"
-                      xmlns="http://www.w3.org/2000/svg"
-                    >
-                      <path
-                        d="M13.069 5.157L8.384 9.768a.546.546 0 01-.768 0L2.93 5.158a.552.552 0 00-.771 0 .53.53 0 000 .759l4.684 4.61c.641.631 1.672.63 2.312 0l4.684-4.61a.53.53 0 000-.76.552.552 0 00-.771 0z"
-                        fill-rule="non-zero"
-                      />
-                    </svg>
+                    EuiIconMock
                   </button>
                 </div>
               </div>
@@ -211,7 +183,7 @@ exports[`<ChangeManagedIndices /> spec renders the component 1`] = `
           </div>
           <div
             class="euiFormHelpText euiFormRow__text"
-            id="icae51d01-335d-11eb-936b-232f1102e68a-help"
+            id="some_html_id-help"
           >
             Apply new policy only on managed indices in these states.
           </div>
