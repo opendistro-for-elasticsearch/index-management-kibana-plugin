@@ -1,5 +1,5 @@
 /*
- * Copyright 2019 Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ * Copyright 2020 Amazon.com, Inc. or its affiliates. All Rights Reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License").
  * You may not use this file except in compliance with the License.
@@ -16,13 +16,13 @@
 import React from "react";
 import "@testing-library/jest-dom/extend-expect";
 import { render, wait } from "@testing-library/react";
-import chrome from "ui/chrome";
 import { HashRouter as Router, Redirect, Route, Switch } from "react-router-dom";
 import ChangePolicy from "./ChangePolicy";
-import { browserServicesMock } from "../../../../../test/mocks";
+import { browserServicesMock, coreServicesMock } from "../../../../../test/mocks";
 import { BREADCRUMBS, ROUTES } from "../../../../utils/constants";
 import { ServicesConsumer, ServicesContext } from "../../../../services";
 import { ModalProvider, ModalRoot } from "../../../../components/Modal";
+import { CoreServicesContext } from "../../../../components/core_services";
 
 function renderWithRouter(Component: React.ComponentType<any>) {
   return {
@@ -31,17 +31,19 @@ function renderWithRouter(Component: React.ComponentType<any>) {
         <Switch>
           <Route
             path={ROUTES.CHANGE_POLICY}
-            render={props => (
-              <ServicesContext.Provider value={browserServicesMock}>
-                <ModalProvider>
-                  <ServicesConsumer>{services => services && <ModalRoot services={services} />}</ServicesConsumer>
-                  <ServicesConsumer>
-                    {({ managedIndexService, indexService }: any) => (
-                      <Component indexService={indexService} managedIndexService={managedIndexService} {...props} />
-                    )}
-                  </ServicesConsumer>
-                </ModalProvider>
-              </ServicesContext.Provider>
+            render={(props) => (
+              <CoreServicesContext.Provider value={coreServicesMock}>
+                <ServicesContext.Provider value={browserServicesMock}>
+                  <ModalProvider>
+                    <ServicesConsumer>{(services) => services && <ModalRoot services={services} />}</ServicesConsumer>
+                    <ServicesConsumer>
+                      {({ managedIndexService, indexService }: any) => (
+                        <Component indexService={indexService} managedIndexService={managedIndexService} {...props} />
+                      )}
+                    </ServicesConsumer>
+                  </ModalProvider>
+                </ServicesContext.Provider>
+              </CoreServicesContext.Provider>
             )}
           />
           <Redirect from="/" to={ROUTES.CHANGE_POLICY} />
@@ -62,9 +64,8 @@ describe("<ChangePolicy /> spec", () => {
 
   it("sets breadcrumbs when mounting", async () => {
     renderWithRouter(ChangePolicy);
-
-    expect(chrome.breadcrumbs.set).toHaveBeenCalledTimes(1);
-    expect(chrome.breadcrumbs.set).toHaveBeenCalledWith([
+    expect(coreServicesMock.chrome.setBreadcrumbs).toHaveBeenCalledTimes(1);
+    expect(coreServicesMock.chrome.setBreadcrumbs).toHaveBeenCalledWith([
       BREADCRUMBS.INDEX_MANAGEMENT,
       BREADCRUMBS.MANAGED_INDICES,
       BREADCRUMBS.CHANGE_POLICY,
