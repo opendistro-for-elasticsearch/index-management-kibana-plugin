@@ -16,7 +16,7 @@
 import { httpClientMock } from "../../test/mocks";
 import { NODE_API } from "../../utils/constants";
 import RollupService from "./RollupService";
-import { testRollup } from "../../test/testConstants";
+import { testRollup } from "../../test/constants";
 
 const rollupService = new RollupService(httpClientMock);
 

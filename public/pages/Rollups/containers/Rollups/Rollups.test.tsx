@@ -27,7 +27,7 @@ import { ModalProvider, ModalRoot } from "../../../../components/Modal";
 import { BREADCRUMBS, ROUTES } from "../../../../utils/constants";
 import Rollups from "./Rollups";
 import { TEXT } from "../../components/RollupEmptyPrompt/RollupEmptyPrompt";
-import { testRollup } from "../../../../../test/testConstants";
+import { testRollup } from "../../../../../test/constants";
 
 function renderRollupsWithRouter() {
   return {
