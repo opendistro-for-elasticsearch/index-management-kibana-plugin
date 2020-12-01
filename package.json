@@ -1,6 +1,6 @@
 {
   "name": "opendistro_index_management_kibana",
-  "version": "1.11.0.0",
+  "version": "1.12.0.0",
   "description": "Kibana plugin for Index Management",
   "main": "index.js",
   "license": "Apache-2.0",
@@ -8,6 +8,9 @@
   "kibana": {
     "version": "7.10.0",
     "templateVersion": "1.0.0"
+  },
+  "config": {
+    "id": "opendistroIndexManagementKibana"
   },
   "repository": {
     "type": "git",
@@ -20,7 +23,8 @@
     "lint": "eslint .",
     "plugin-helpers": "node ../../scripts/plugin_helpers",
     "test:jest": "NODE_PATH=../../node_modules ../../node_modules/.bin/jest --config ./test/jest.config.js",
-    "build": "yarn plugin-helpers build"
+    "build": "yarn plugin-helpers build",
+    "postbuild": "echo Renaming build artifact to [$npm_package_config_id-$npm_package_version.zip] && mv build/$npm_package_config_id*.zip build/$npm_package_config_id-$npm_package_version.zip"
   },
   "husky": {
     "hooks": {
