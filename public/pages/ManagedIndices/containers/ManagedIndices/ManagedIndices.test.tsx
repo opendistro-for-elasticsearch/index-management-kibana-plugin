@@ -14,21 +14,20 @@
  */
 
 import React from "react";
-import "@testing-library/jest-dom/extend-expect";
-import { render, fireEvent, wait } from "@testing-library/react";
-// @ts-ignore
-import userEvent from "@testing-library/user-event";
 import { Redirect, Route, Switch } from "react-router-dom";
 import { HashRouter as Router } from "react-router-dom";
-import { toastNotifications } from "ui/notify";
-import chrome from "ui/chrome";
-import { browserServicesMock } from "../../../../../test/mocks";
+import "@testing-library/jest-dom/extend-expect";
+import { render, fireEvent, wait } from "@testing-library/react";
+import userEvent from "@testing-library/user-event";
+import { CoreStart } from "kibana/public";
+import { browserServicesMock, coreServicesMock } from "../../../../../test/mocks";
 import ManagedIndices from "./ManagedIndices";
 import { TEXT } from "../../components/ManagedIndexEmptyPrompt/ManagedIndexEmptyPrompt";
 import { ModalProvider, ModalRoot } from "../../../../components/Modal";
 import { ServicesConsumer, ServicesContext } from "../../../../services";
 import { BREADCRUMBS, ROUTES } from "../../../../utils/constants";
 import { ManagedIndexItem } from "../../../../../models/interfaces";
+import { CoreServicesConsumer, CoreServicesContext } from "../../../../components/core_services";
 
 function renderWithRouter(Component: React.ComponentType<any>) {
   return {
@@ -38,14 +37,20 @@ function renderWithRouter(Component: React.ComponentType<any>) {
           <Route
             path={ROUTES.MANAGED_INDICES}
             render={(props) => (
-              <ServicesContext.Provider value={browserServicesMock}>
-                <ModalProvider>
-                  <ServicesConsumer>{(services) => services && <ModalRoot services={services} />}</ServicesConsumer>
-                  <ServicesConsumer>
-                    {({ managedIndexService }: any) => <Component managedIndexService={managedIndexService} {...props} />}
-                  </ServicesConsumer>
-                </ModalProvider>
-              </ServicesContext.Provider>
+              <CoreServicesContext.Provider value={coreServicesMock}>
+                <ServicesContext.Provider value={browserServicesMock}>
+                  <ModalProvider>
+                    <ServicesConsumer>{(services) => services && <ModalRoot services={services} />}</ServicesConsumer>
+                    <CoreServicesConsumer>
+                      {(core: CoreStart | null) => (
+                        <ServicesConsumer>
+                          {({ managedIndexService }: any) => <Component managedIndexService={managedIndexService} core={core} {...props} />}
+                        </ServicesConsumer>
+                      )}
+                    </CoreServicesConsumer>
+                  </ModalProvider>
+                </ServicesContext.Provider>
+              </CoreServicesContext.Provider>
             )}
           />
           <Redirect from="/" to={ROUTES.MANAGED_INDICES} />
@@ -80,8 +85,8 @@ describe("<ManagedIndices /> spec", () => {
       .mockResolvedValue({ ok: true, response: { managedIndices: [], totalManagedIndices: 0 } });
     renderWithRouter(ManagedIndices);
 
-    expect(chrome.breadcrumbs.set).toHaveBeenCalledTimes(1);
-    expect(chrome.breadcrumbs.set).toHaveBeenCalledWith([BREADCRUMBS.INDEX_MANAGEMENT, BREADCRUMBS.MANAGED_INDICES]);
+    expect(coreServicesMock.chrome.setBreadcrumbs).toHaveBeenCalledTimes(1);
+    expect(coreServicesMock.chrome.setBreadcrumbs).toHaveBeenCalledWith([BREADCRUMBS.INDEX_MANAGEMENT, BREADCRUMBS.MANAGED_INDICES]);
   });
 
   it("loads managed indices", async () => {
@@ -112,8 +117,8 @@ describe("<ManagedIndices /> spec", () => {
 
     await wait();
 
-    expect(toastNotifications.addDanger).toHaveBeenCalledTimes(1);
-    expect(toastNotifications.addDanger).toHaveBeenCalledWith("some error");
+    expect(coreServicesMock.notifications.toasts.addDanger).toHaveBeenCalledTimes(1);
+    expect(coreServicesMock.notifications.toasts.addDanger).toHaveBeenCalledWith("some error");
   });
 
   it("adds error toaster when get managed indices throws error", async () => {
@@ -122,8 +127,8 @@ describe("<ManagedIndices /> spec", () => {
 
     await wait();
 
-    expect(toastNotifications.addDanger).toHaveBeenCalledTimes(1);
-    expect(toastNotifications.addDanger).toHaveBeenCalledWith("rejected error");
+    expect(coreServicesMock.notifications.toasts.addDanger).toHaveBeenCalledTimes(1);
+    expect(coreServicesMock.notifications.toasts.addDanger).toHaveBeenCalledWith("rejected error");
   });
 
   it("can remove a policy from a managed index", async () => {
@@ -160,8 +165,8 @@ describe("<ManagedIndices /> spec", () => {
     userEvent.click(getByTestId("confirmationModalActionButton"));
     await wait();
 
-    expect(toastNotifications.addSuccess).toHaveBeenCalledTimes(1);
-    expect(toastNotifications.addSuccess).toHaveBeenCalledWith("Removed policy from 1 managed indices");
+    expect(coreServicesMock.notifications.toasts.addSuccess).toHaveBeenCalledTimes(1);
+    expect(coreServicesMock.notifications.toasts.addSuccess).toHaveBeenCalledWith("Removed policy from 1 managed indices");
   });
 
   it("sorts/paginates the table", async () => {

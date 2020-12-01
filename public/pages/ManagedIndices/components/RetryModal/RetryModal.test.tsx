@@ -18,9 +18,8 @@ import "@testing-library/jest-dom/extend-expect";
 import { render, fireEvent, wait } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import RetryModal from "./RetryModal";
-import { browserServicesMock } from "../../../../../test/mocks";
+import { browserServicesMock, coreServicesMock } from "../../../../../test/mocks";
 import { ManagedIndexItem } from "../../../../../models/interfaces";
-import { toastNotifications } from "ui/notify";
 
 const retryItems: ManagedIndexItem[] = [
   {
@@ -32,7 +31,10 @@ const retryItems: ManagedIndexItem[] = [
     policy: {
       description: "some description",
       default_state: "one",
-      states: [{ name: "one", actions: [{ delete: {} }], transitions: [] }, { name: "two", actions: [{ delete: {} }], transitions: [] }],
+      states: [
+        { name: "one", actions: [{ delete: {} }], transitions: [] },
+        { name: "two", actions: [{ delete: {} }], transitions: [] },
+      ],
     },
     enabled: false,
     managedIndexMetaData: null,
@@ -41,7 +43,7 @@ const retryItems: ManagedIndexItem[] = [
 
 describe("<RetryModal /> spec", () => {
   it("renders the component", () => {
-    render(<RetryModal services={browserServicesMock} retryItems={retryItems} onClose={() => {}} />);
+    render(<RetryModal services={browserServicesMock} retryItems={retryItems} onClose={() => {}} core={coreServicesMock} />);
     // EuiOverlayMask appends an element to the body so we should have two, an empty div from react-test-library
     // and our EuiOverlayMask element
     expect(document.body.children).toHaveLength(2);
@@ -50,7 +52,9 @@ describe("<RetryModal /> spec", () => {
 
   it("calls close when close button clicked", () => {
     const onClose = jest.fn();
-    const { getByTestId } = render(<RetryModal services={browserServicesMock} retryItems={retryItems} onClose={onClose} />);
+    const { getByTestId } = render(
+      <RetryModal services={browserServicesMock} retryItems={retryItems} onClose={onClose} core={coreServicesMock} />
+    );
 
     fireEvent.click(getByTestId("retryModalCloseButton"));
     expect(onClose).toHaveBeenCalled();
@@ -108,7 +112,9 @@ describe("<RetryModal /> spec", () => {
         managedIndexMetaData: null,
       },
     ];
-    const { getByLabelText } = render(<RetryModal services={browserServicesMock} retryItems={retryItems} onClose={() => {}} />);
+    const { getByLabelText } = render(
+      <RetryModal services={browserServicesMock} retryItems={retryItems} onClose={() => {}} core={coreServicesMock} />
+    );
 
     expect(getByLabelText("Retry failed policy from")).toBeDisabled();
   });
@@ -161,7 +167,9 @@ describe("<RetryModal /> spec", () => {
         managedIndexMetaData: null,
       },
     ];
-    const { getByLabelText } = render(<RetryModal services={browserServicesMock} retryItems={retryItems} onClose={() => {}} />);
+    const { getByLabelText } = render(
+      <RetryModal services={browserServicesMock} retryItems={retryItems} onClose={() => {}} core={coreServicesMock} />
+    );
 
     expect(getByLabelText("Retry failed policy from")).toBeDisabled();
   });
@@ -171,7 +179,7 @@ describe("<RetryModal /> spec", () => {
       .fn()
       .mockResolvedValue({ ok: true, response: { updatedIndices: 1, failedIndices: [], failures: false } });
     const { getByLabelText, getByTestId, getByText } = render(
-      <RetryModal services={browserServicesMock} retryItems={retryItems} onClose={() => {}} />
+      <RetryModal services={browserServicesMock} retryItems={retryItems} onClose={() => {}} core={coreServicesMock} />
     );
 
     fireEvent.click(getByLabelText("Retry policy from selected state"));
@@ -188,32 +196,36 @@ describe("<RetryModal /> spec", () => {
     await wait();
 
     expect(browserServicesMock.managedIndexService.retryManagedIndexPolicy).toHaveBeenCalledWith(["some_index"], "two");
-    expect(toastNotifications.addSuccess).toHaveBeenCalledTimes(1);
-    expect(toastNotifications.addSuccess).toHaveBeenCalledWith("Retried 1 managed indices");
+    expect(coreServicesMock.notifications.toasts.addSuccess).toHaveBeenCalledTimes(1);
+    expect(coreServicesMock.notifications.toasts.addSuccess).toHaveBeenCalledWith("Retried 1 managed indices");
   });
 
   it("shows error toaster when error is thrown", async () => {
     browserServicesMock.managedIndexService.retryManagedIndexPolicy = jest.fn().mockRejectedValue(new Error("this is an error"));
-    const { getByTestId } = render(<RetryModal services={browserServicesMock} retryItems={retryItems} onClose={() => {}} />);
+    const { getByTestId } = render(
+      <RetryModal services={browserServicesMock} retryItems={retryItems} onClose={() => {}} core={coreServicesMock} />
+    );
 
     fireEvent.click(getByTestId("retryModalRetryButton"));
 
     await wait();
 
-    expect(toastNotifications.addDanger).toHaveBeenCalledTimes(1);
-    expect(toastNotifications.addDanger).toHaveBeenCalledWith("this is an error");
+    expect(coreServicesMock.notifications.toasts.addDanger).toHaveBeenCalledTimes(1);
+    expect(coreServicesMock.notifications.toasts.addDanger).toHaveBeenCalledWith("this is an error");
   });
 
   it("shows error toaster when error is returned", async () => {
     browserServicesMock.managedIndexService.retryManagedIndexPolicy = jest.fn().mockResolvedValue({ ok: false, error: "some error" });
-    const { getByTestId } = render(<RetryModal services={browserServicesMock} retryItems={retryItems} onClose={() => {}} />);
+    const { getByTestId } = render(
+      <RetryModal services={browserServicesMock} retryItems={retryItems} onClose={() => {}} core={coreServicesMock} />
+    );
 
     fireEvent.click(getByTestId("retryModalRetryButton"));
 
     await wait();
 
-    expect(toastNotifications.addDanger).toHaveBeenCalledTimes(1);
-    expect(toastNotifications.addDanger).toHaveBeenCalledWith("some error");
+    expect(coreServicesMock.notifications.toasts.addDanger).toHaveBeenCalledTimes(1);
+    expect(coreServicesMock.notifications.toasts.addDanger).toHaveBeenCalledWith("some error");
   });
 
   it("shows error toaster with each failed reason", async () => {
@@ -221,13 +233,15 @@ describe("<RetryModal /> spec", () => {
       ok: true,
       response: { updatedIndices: 0, failures: true, failedIndices: [{ indexName: "index_a", reason: "some reason" }] },
     });
-    const { getByTestId } = render(<RetryModal services={browserServicesMock} retryItems={retryItems} onClose={() => {}} />);
+    const { getByTestId } = render(
+      <RetryModal services={browserServicesMock} retryItems={retryItems} onClose={() => {}} core={coreServicesMock} />
+    );
 
     fireEvent.click(getByTestId("retryModalRetryButton"));
 
     await wait();
 
-    expect(toastNotifications.addDanger).toHaveBeenCalledTimes(1);
-    expect(toastNotifications.addDanger).toHaveBeenCalledWith("Failed to retry: [index_a, some reason]");
+    expect(coreServicesMock.notifications.toasts.addDanger).toHaveBeenCalledTimes(1);
+    expect(coreServicesMock.notifications.toasts.addDanger).toHaveBeenCalledWith("Failed to retry: [index_a, some reason]");
   });
 });

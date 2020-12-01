@@ -17,12 +17,13 @@ import React from "react";
 import "@testing-library/jest-dom/extend-expect";
 import { render, wait } from "@testing-library/react";
 import { HashRouter as Router, Redirect, Route, Switch } from "react-router-dom";
+import { CoreStart } from "kibana/public";
 import ChangePolicy from "./ChangePolicy";
 import { browserServicesMock, coreServicesMock } from "../../../../../test/mocks";
 import { BREADCRUMBS, ROUTES } from "../../../../utils/constants";
 import { ServicesConsumer, ServicesContext } from "../../../../services";
 import { ModalProvider, ModalRoot } from "../../../../components/Modal";
-import { CoreServicesContext } from "../../../../components/core_services";
+import { CoreServicesConsumer, CoreServicesContext } from "../../../../components/core_services";
 
 function renderWithRouter(Component: React.ComponentType<any>) {
   return {
@@ -36,11 +37,15 @@ function renderWithRouter(Component: React.ComponentType<any>) {
                 <ServicesContext.Provider value={browserServicesMock}>
                   <ModalProvider>
                     <ServicesConsumer>{(services) => services && <ModalRoot services={services} />}</ServicesConsumer>
-                    <ServicesConsumer>
-                      {({ managedIndexService, indexService }: any) => (
-                        <Component indexService={indexService} managedIndexService={managedIndexService} {...props} />
+                    <CoreServicesConsumer>
+                      {(core: CoreStart | null) => (
+                        <ServicesConsumer>
+                          {({ managedIndexService, indexService }: any) => (
+                            <Component indexService={indexService} managedIndexService={managedIndexService} core={core} {...props} />
+                          )}
+                        </ServicesConsumer>
                       )}
-                    </ServicesConsumer>
+                    </CoreServicesConsumer>
                   </ModalProvider>
                 </ServicesContext.Provider>
               </CoreServicesContext.Provider>
