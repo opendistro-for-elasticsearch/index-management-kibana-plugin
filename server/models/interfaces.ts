@@ -14,8 +14,7 @@
  */
 
 import { IndexService, ManagedIndexService, PolicyService, RollupService } from "../services";
-import { DocumentPolicy, ManagedIndexItem, Rollup } from "../../models/interfaces";
-import { RollupItem } from "../../public/pages/Rollups/models/interfaces";
+import { DocumentPolicy, DocumentRollup, ManagedIndexItem, Rollup } from "../../models/interfaces";
 
 export interface NodeServices {
   indexService: IndexService;
@@ -72,8 +71,9 @@ export interface GetFieldsResponse {
 }
 
 export interface GetRollupsResponse {
-  rollups: RollupItem[];
+  rollups: DocumentRollup[];
   totalRollups: number;
+  metadata: any;
 }
 
 export interface PutRollupResponse {
@@ -123,6 +123,17 @@ export interface PutRollupParams {
   body: string;
 }
 
+export interface DeleteRollupParams {
+  rollupId: string;
+}
+
+export interface PutRollupParams {
+  rollupId: string;
+  if_seq_no?: string;
+  if_primary_term?: string;
+  body: string;
+}
+
 // TODO: remove optional failedIndices after fixing retry API to always array
 export interface RetryResponse {
   failures: boolean;
@@ -151,6 +162,7 @@ export interface BackendFailedIndex {
   index_uuid: string;
   reason: string;
 }
+
 export interface FailedIndex {
   indexName: string;
   indexUuid: string;
@@ -175,6 +187,7 @@ export interface ExplainAPIManagedIndexMetaData {
 
 export interface IndexManagementApi {
   [API_ROUTE: string]: string;
+
   readonly POLICY_BASE: string;
   readonly EXPLAIN_BASE: string;
   readonly RETRY_BASE: string;

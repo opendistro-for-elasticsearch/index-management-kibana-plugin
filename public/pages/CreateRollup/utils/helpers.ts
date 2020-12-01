@@ -30,7 +30,7 @@ export const parseTimeunit = (timeunit: string): string => {
 };
 
 //Returns true if field type is numeric
-export const isNumericMapping = (fieldType: string | null): boolean => {
+export const isNumericMapping = (fieldType: string | undefined): boolean => {
   return (
     fieldType == "long" ||
     fieldType == "integer" ||

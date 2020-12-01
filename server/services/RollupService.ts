@@ -196,17 +196,35 @@ export default class RollupService {
       const params = { rollupId: id };
       const { callAsCurrentUser: callWithRequest } = this.esDriver.asScoped(request);
       const getResponse = await callWithRequest(request, "ism.getRollup", params);
+      const metadata = await callWithRequest(request, "ism.explainRollup", params);
       const rollup = _.get(getResponse, "rollup", null);
       const seqNo = _.get(getResponse, "_seq_no");
       const primaryTerm = _.get(getResponse, "_primary_term");
+
+      //Form response
       if (rollup) {
-        response.custom({
-          statusCode: 200,
-          body: {
-            ok: true,
-            response: { id, seqNo: seqNo as number, primaryTerm: primaryTerm as number, rollup: rollup as Rollup },
-          },
-        });
+        if (metadata) {
+          return response.custom({
+            statusCode: 200,
+            body: {
+              ok: true,
+              response: {
+                _id: id,
+                _seqNo: seqNo as number,
+                _primaryTerm: primaryTerm as number,
+                rollup: rollup as Rollup,
+                metadata: metadata,
+              },
+            },
+          });
+        } else
+          return response.custom({
+            statusCode: 200,
+            body: {
+              ok: false,
+              error: "Failed to load metadata",
+            },
+          });
       } else {
         return response.custom({
           statusCode: 200,
@@ -260,11 +278,11 @@ export default class RollupService {
   explainRollup = async (
     context: RequestHandlerContext,
     request: KibanaRequest,
-    response: KibanaResponseFactory
+    response: KibanaResponseFactory,
+    idParams: string
   ): Promise<IKibanaResponse<ServerResponse<RollupMetadata[]>>> => {
     try {
-      const { id } = request.params as { id: string };
-      const params = { rollupId: id };
+      const params = { rollupId: idParams };
       const { callAsCurrentUser: callWithRequest } = this.esDriver.asScoped(request);
       const rollupMetadata = await callWithRequest(request, "ism.explainRollup", params);
       if (rollupMetadata) {
@@ -336,15 +354,15 @@ export default class RollupService {
 
       const { callAsCurrentUser: callWithRequest } = this.esDriver.asScoped(request);
       const searchResponse: SearchResponse<any> = await callWithRequest(request, "search", params);
-
       const totalRollups = searchResponse.hits.total.value;
+
       const rollups = searchResponse.hits.hits.map((hit) => ({
         _seqNo: hit._seq_no as number,
         _primaryTerm: hit._primary_term as number,
         _id: hit._id,
         rollup: hit._source,
+        metadata: null,
       }));
-
       let ids = "";
       rollups.map((rollup) => {
         if (rollups.indexOf(rollup) == 0) {
@@ -353,15 +371,16 @@ export default class RollupService {
           ids = ids + "," + rollup._id;
         }
       });
+      const explainResponse = await this.explainRollup(context, request, response, ids);
       return response.custom({
         statusCode: 200,
-        body: { ok: true, response: { rollups: rollups, totalRollups: totalRollups } },
+        body: { ok: true, response: { rollups: rollups, totalRollups: totalRollups, metadata: explainResponse.response } },
       });
     } catch (err) {
       if (err.statusCode === 404 && err.body.error.type === "index_not_found_exception") {
         return response.custom({
           statusCode: 200,
-          body: { ok: true, response: { rollups: [], totalRollups: 0 } },
+          body: { ok: true, response: { rollups: [], totalRollups: 0, metadata: null } },
         });
       }
       console.error("Index Management - RollupService - getRollups", err);

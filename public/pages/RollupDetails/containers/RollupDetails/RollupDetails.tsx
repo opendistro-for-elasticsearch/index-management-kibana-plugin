@@ -41,7 +41,14 @@ import GeneralInformation from "../../components/GeneralInformation/GeneralInfor
 import RollupStatus from "../../components/RollupStatus/RollupStatus";
 import AggregationAndMetricsSettings from "../../components/AggregationAndMetricsSettings/AggregationAndMetricsSettings";
 import { parseTimeunit } from "../../../CreateRollup/utils/helpers";
-import { DimensionItem, MetricItem, RollupDimensionItem, RollupMetadata, RollupMetricItem } from "../../../../../models/interfaces";
+import {
+  DimensionItem,
+  MetricItem,
+  RollupDimensionItem,
+  RollupMetadata,
+  RollupMetricItem,
+  DateHistogramItem,
+} from "../../../../../models/interfaces";
 import { renderTime } from "../../../Rollups/utils/helpers";
 import DeleteModal from "../../../Rollups/components/DeleteModal";
 
@@ -55,9 +62,10 @@ interface RollupDetailsState {
   description: string;
   sourceIndex: string;
   targetIndex: string;
-  rollupJSON: string;
-  recurringJob: string;
-  recurringDefinition: string;
+  rollupJSON: any;
+  continuousJob: string;
+  continuousDefinition: string;
+
   interval: number;
   intervalTimeunit: string;
   cronExpression: string;
@@ -65,7 +73,7 @@ interface RollupDetailsState {
   delayTime: number | undefined;
   delayTimeunit: string;
   lastUpdated: string;
-  metadata: RollupMetadata | null;
+  metadata: RollupMetadata | undefined;
 
   timestamp: string;
   histogramInterval: string;
@@ -90,8 +98,8 @@ export default class RollupDetails extends Component<RollupDetailsProps, RollupD
       sourceIndex: "",
       targetIndex: "",
 
-      recurringJob: "no",
-      recurringDefinition: "fixed",
+      continuousJob: "no",
+      continuousDefinition: "fixed",
       interval: 2,
       intervalTimeunit: "MINUTES",
       cronExpression: "",
@@ -100,7 +108,7 @@ export default class RollupDetails extends Component<RollupDetailsProps, RollupD
       delayTimeunit: "MINUTES",
       rollupJSON: "",
       lastUpdated: "-",
-      metadata: null,
+      metadata: undefined,
 
       timestamp: "",
       histogramInterval: "",
@@ -133,18 +141,17 @@ export default class RollupDetails extends Component<RollupDetailsProps, RollupD
     try {
       const { rollupService } = this.props;
       const response = await rollupService.getRollup(rollupId);
-      const explainResponse = await rollupService.explainRollup(rollupId);
 
       if (response.ok) {
         const newJSON = response.response;
         const selectedMetrics = this.parseMetric(response.response.rollup.metrics);
         const selectedDimensionField = this.parseDimension(response.response.rollup.dimensions);
         this.setState({
-          rollupId: response.response.id,
+          rollupId: response.response._id,
           description: response.response.rollup.description,
           sourceIndex: response.response.rollup.source_index,
           targetIndex: response.response.rollup.target_index,
-          delayTime: response.response.rollup.delay,
+          delayTime: response.response.rollup.delay as number,
           pageSize: response.response.rollup.page_size,
           rollupJSON: newJSON,
           lastUpdated: renderTime(response.response.rollup.last_updated_time),
@@ -159,8 +166,10 @@ export default class RollupDetails extends Component<RollupDetailsProps, RollupD
           dimensionsShown: selectedDimensionField.slice(0, 10),
           enabled: response.response.rollup.enabled,
         });
-        //TODO: fix this to match new data model
-        if (response.response.rollup.schedule.cron == undefined) {
+        if (response.response.metadata != null) {
+          this.setState({ metadata: response.response.metadata[response.response._id] });
+        }
+        if ("interval" in response.response.rollup.schedule) {
           this.setState({
             interval: response.response.rollup.schedule.interval.period,
             intervalTimeunit: response.response.rollup.schedule.interval.unit,
@@ -171,12 +180,6 @@ export default class RollupDetails extends Component<RollupDetailsProps, RollupD
       } else {
         this.props.core.notifications.toasts.addDanger(`Could not load the rollup job: ${response.error}`);
         this.props.history.push(ROUTES.ROLLUPS);
-      }
-      if (explainResponse.ok) {
-        let metadata = explainResponse.response[rollupId];
-        this.setState({ metadata: metadata });
-      } else {
-        this.props.core.notifications.toasts.addDanger(`Could not load the explain API of rollup job: ${explainResponse.error}`);
       }
     } catch (err) {
       this.props.core.notifications.toasts.addDanger(getErrorMessage(err, "Could not load the rollup job"));
@@ -303,8 +306,8 @@ export default class RollupDetails extends Component<RollupDetailsProps, RollupD
       description,
       sourceIndex,
       targetIndex,
-      recurringJob,
-      recurringDefinition,
+      continuousJob,
+      continuousDefinition,
       interval,
       intervalTimeunit,
       cronExpression,
@@ -325,8 +328,8 @@ export default class RollupDetails extends Component<RollupDetailsProps, RollupD
       isDeleteModalVisible,
     } = this.state;
 
-    let scheduleText = recurringJob ? "Continuous, " : "Not continuous, ";
-    if (recurringDefinition == "fixed") {
+    let scheduleText = continuousJob ? "Continuous, " : "Not continuous, ";
+    if (continuousDefinition == "fixed") {
       scheduleText += "every " + interval + " " + parseTimeunit(intervalTimeunit);
     } else {
       scheduleText += "defined by cron expression: " + cronExpression;

@@ -72,8 +72,8 @@ interface CreateRollupFormState {
   selectedFields: FieldItem[];
   jobEnabledByDefault: boolean;
 
-  recurringJob: string;
-  recurringDefinition: string;
+  continuousJob: string;
+  continuousDefinition: string;
   interval: number;
   intervalError: string;
   intervalTimeunit: string;
@@ -126,8 +126,8 @@ export default class CreateRollupForm extends Component<CreateRollupFormProps, C
       timeunit: "h",
 
       jobEnabledByDefault: true,
-      recurringJob: "no",
-      recurringDefinition: "fixed",
+      continuousJob: "no",
+      continuousDefinition: "fixed",
       interval: 1,
       intervalTimeunit: "MINUTES",
       cronExpression: "",
@@ -212,8 +212,8 @@ export default class CreateRollupForm extends Component<CreateRollupFormProps, C
       }
     } else if (currentStep == 3) {
       //Check if interval is a valid value and is specified.
-      const { intervalError, recurringDefinition } = this.state;
-      if (recurringDefinition == "fixed") {
+      const { intervalError, continuousDefinition } = this.state;
+      if (continuousDefinition == "fixed") {
         if (intervalError != "") {
           const intervalErrorMsg = "Interval value is required.";
           this.setState({ submitError: intervalErrorMsg, intervalError: intervalErrorMsg });
@@ -391,15 +391,15 @@ export default class CreateRollupForm extends Component<CreateRollupFormProps, C
     this.setState({ pageSize: e.target.valueAsNumber, rollupJSON: newJSON });
   };
 
-  onChangeRecurringDefinition = (e: ChangeEvent<HTMLSelectElement>): void => {
-    this.setState({ recurringDefinition: e.target.value });
+  onChangeContinuousDefinition = (e: ChangeEvent<HTMLSelectElement>): void => {
+    this.setState({ continuousDefinition: e.target.value });
   };
 
   updateSchedule = (): void => {
-    const { recurringDefinition, cronExpression, interval, intervalTimeunit, cronTimezone } = this.state;
+    const { continuousDefinition, cronExpression, interval, intervalTimeunit, cronTimezone } = this.state;
     let newJSON = this.state.rollupJSON;
 
-    if (recurringDefinition == "cron") {
+    if (continuousDefinition == "cron") {
       newJSON.rollup.schedule.cron = { expression: `${cronExpression}`, timezone: `${cronTimezone}` };
       delete newJSON.rollup.schedule["interval"];
     } else {
@@ -413,10 +413,10 @@ export default class CreateRollupForm extends Component<CreateRollupFormProps, C
     this.setState({ rollupJSON: newJSON });
   };
 
-  onChangeRecurringJob = (optionId: string): void => {
+  onChangeContinuousJob = (optionId: string): void => {
     let newJSON = this.state.rollupJSON;
     newJSON.rollup.continuous = optionId == "yes";
-    this.setState({ recurringJob: optionId, rollupJSON: newJSON });
+    this.setState({ continuousJob: optionId, rollupJSON: newJSON });
   };
 
   //Update delay field in JSON if delay value is defined.
@@ -542,8 +542,8 @@ export default class CreateRollupForm extends Component<CreateRollupFormProps, C
       timeunit,
 
       jobEnabledByDefault,
-      recurringJob,
-      recurringDefinition,
+      continuousJob,
+      continuousDefinition,
       interval,
       intervalTimeunit,
       intervalError,
@@ -600,8 +600,8 @@ export default class CreateRollupForm extends Component<CreateRollupFormProps, C
           {...this.props}
           currentStep={this.state.currentStep}
           jobEnabledByDefault={jobEnabledByDefault}
-          recurringJob={recurringJob}
-          recurringDefinition={recurringDefinition}
+          continuousJob={continuousJob}
+          continuousDefinition={continuousDefinition}
           interval={interval}
           intervalTimeunit={intervalTimeunit}
           intervalError={intervalError}
@@ -616,8 +616,8 @@ export default class CreateRollupForm extends Component<CreateRollupFormProps, C
           onChangeDelayTime={this.onChangeDelayTime}
           onChangeIntervalTime={this.onChangeIntervalTime}
           onChangePage={this.onChangePage}
-          onChangeRecurringDefinition={this.onChangeRecurringDefinition}
-          onChangeRecurringJob={this.onChangeRecurringJob}
+          onChangeContinuousDefinition={this.onChangeContinuousDefinition}
+          onChangeContinuousJob={this.onChangeContinuousJob}
           onChangeDelayTimeunit={this.onChangeDelayTimeunit}
           onChangeIntervalTimeunit={this.onChangeIntervalTimeunit}
         />
@@ -635,8 +635,8 @@ export default class CreateRollupForm extends Component<CreateRollupFormProps, C
           selectedDimensionField={selectedDimensionField}
           selectedMetrics={selectedMetrics}
           jobEnabledByDefault={jobEnabledByDefault}
-          recurringJob={recurringJob}
-          recurringDefinition={recurringDefinition}
+          continuousJob={continuousJob}
+          continuousDefinition={continuousDefinition}
           interval={interval}
           intervalTimeunit={intervalTimeunit}
           cronExpression={cronExpression}
