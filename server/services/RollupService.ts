@@ -58,7 +58,7 @@ export default class RollupService {
         params = { rollupId: id, body: JSON.stringify(request.body) };
       }
       const { callAsCurrentUser: callWithRequest } = this.esDriver.asScoped(request);
-      const putRollupResponse: PutRollupResponse = await callWithRequest(request, method, params);
+      const putRollupResponse: PutRollupResponse = await callWithRequest(method, params);
       return response.custom({
         statusCode: 200,
         body: {
@@ -90,7 +90,7 @@ export default class RollupService {
       const { id } = request.params as { id: string };
       const params: DeleteRollupParams = { rollupId: id };
       const { callAsCurrentUser: callWithRequest } = this.esDriver.asScoped(request);
-      const deleteRollupResponse: DeleteRollupResponse = await callWithRequest(request, "ism.deleteRollup", params);
+      const deleteRollupResponse: DeleteRollupResponse = await callWithRequest("ism.deleteRollup", params);
       if (response.result !== "deleted") {
         return response.custom({
           statusCode: 200,
@@ -128,7 +128,7 @@ export default class RollupService {
       const { id } = request.params as { id: string };
       const params = { rollupId: id };
       const { callAsCurrentUser: callWithRequest } = this.esDriver.asScoped(request);
-      const startResponse = await callWithRequest(request, "ism.startRollup", params);
+      const startResponse = await callWithRequest("ism.startRollup", params);
       const acknowledged = _.get(startResponse, "acknowledged");
       if (acknowledged) {
         return response.custom({
@@ -159,7 +159,7 @@ export default class RollupService {
       const { id } = request.params as { id: string };
       const params = { rollupId: id };
       const { callAsCurrentUser: callWithRequest } = this.esDriver.asScoped(request);
-      const stopResponse = await callWithRequest(request, "ism.stopRollup", params);
+      const stopResponse = await callWithRequest("ism.stopRollup", params);
       const acknowledged = _.get(stopResponse, "acknowledged");
       if (acknowledged) {
         return response.custom({
@@ -193,8 +193,8 @@ export default class RollupService {
       const { id } = request.params as { id: string };
       const params = { rollupId: id };
       const { callAsCurrentUser: callWithRequest } = this.esDriver.asScoped(request);
-      const getResponse = await callWithRequest(request, "ism.getRollup", params);
-      const metadata = await callWithRequest(request, "ism.explainRollup", params);
+      const getResponse = await callWithRequest("ism.getRollup", params);
+      const metadata = await callWithRequest("ism.explainRollup", params);
       const rollup = _.get(getResponse, "rollup", null);
       const seqNo = _.get(getResponse, "_seq_no");
       const primaryTerm = _.get(getResponse, "_primary_term");
@@ -253,7 +253,7 @@ export default class RollupService {
       const { index } = request.body as { index: string };
       const params = { index: index };
       const { callWithRequest } = this.esDriver.getCluster(CLUSTER.DATA);
-      const mappings = await callWithRequest(request, "indices.getMapping", params);
+      const mappings = await callWithRequest("indices.getMapping", params);
       return response.custom({
         statusCode: 200,
         body: {
@@ -282,7 +282,7 @@ export default class RollupService {
     try {
       const params = { rollupId: idParams };
       const { callAsCurrentUser: callWithRequest } = this.esDriver.asScoped(request);
-      const rollupMetadata = await callWithRequest(request, "ism.explainRollup", params);
+      const rollupMetadata = await callWithRequest("ism.explainRollup", params);
       if (rollupMetadata) {
         return response.custom({
           statusCode: 200,
@@ -306,7 +306,7 @@ export default class RollupService {
         statusCode: 200,
         body: {
           ok: false,
-          error: err.message,
+          error: "Explain rollup: " + err.message,
         },
       });
     }
@@ -351,7 +351,7 @@ export default class RollupService {
       };
 
       const { callAsCurrentUser: callWithRequest } = this.esDriver.asScoped(request);
-      const searchResponse: SearchResponse<any> = await callWithRequest(request, "search", params);
+      const searchResponse: SearchResponse<any> = await callWithRequest("search", params);
       const totalRollups = searchResponse.hits.total.value;
 
       const rollups = searchResponse.hits.hits.map((hit) => ({
@@ -370,6 +370,7 @@ export default class RollupService {
         }
       });
       const explainResponse = await this.explainRollup(context, request, response, ids);
+      console.log("Finish explain response");
       return response.custom({
         statusCode: 200,
         body: { ok: true, response: { rollups: rollups, totalRollups: totalRollups, metadata: explainResponse.response } },
@@ -386,7 +387,7 @@ export default class RollupService {
         statusCode: 200,
         body: {
           ok: false,
-          error: err.message,
+          error: "Error in getRollups " + err.message,
         },
       });
     }
