@@ -252,7 +252,7 @@ export default class RollupService {
     try {
       const { index } = request.body as { index: string };
       const params = { index: index };
-      const { callWithRequest } = this.esDriver.getCluster(CLUSTER.DATA);
+      const { callAsCurrentUser: callWithRequest } = this.esDriver.asScoped(request);
       const mappings = await callWithRequest("indices.getMapping", params);
       return response.custom({
         statusCode: 200,
