@@ -22,12 +22,6 @@ import { NODE_API } from "../../utils/constants";
 export default function (services: NodeServices, router: IRouter) {
   const { rollupService } = services;
 
-  // server.route({
-  //   path: NODE_API.ROLLUPS,
-  //   method: REQUEST.GET,
-  //   handler: rollupService.getRollups,
-  // });
-
   router.get(
     {
       path: NODE_API.ROLLUPS,
@@ -44,12 +38,6 @@ export default function (services: NodeServices, router: IRouter) {
     rollupService.getRollups
   );
 
-  // server.route({
-  //   path: `${NODE_API.ROLLUPS}/{id}`,
-  //   method: REQUEST.PUT,
-  //   handler: rollupService.putRollup,
-  // });
-
   router.put(
     {
       path: `${NODE_API.ROLLUPS}/{id}`,
@@ -58,20 +46,14 @@ export default function (services: NodeServices, router: IRouter) {
           id: schema.string(),
         }),
         query: schema.object({
-          seqNo: schema.number(),
-          primaryTerm: schema.number(),
+          seqNo: schema.maybe(schema.number()),
+          primaryTerm: schema.maybe(schema.number()),
         }),
         body: schema.any(),
       },
     },
     rollupService.putRollup
   );
-
-  // server.route({
-  //   path: `${NODE_API.ROLLUPS}/{id}`,
-  //   method: REQUEST.GET,
-  //   handler: rollupService.getRollup,
-  // });
 
   router.get(
     {

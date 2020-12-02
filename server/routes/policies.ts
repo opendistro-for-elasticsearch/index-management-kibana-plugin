@@ -45,8 +45,8 @@ export default function (services: NodeServices, router: IRouter) {
           id: schema.string(),
         }),
         query: schema.object({
-          seqNo: schema.number(),
-          primaryTerm: schema.number(),
+          seqNo: schema.maybe(schema.number()),
+          primaryTerm: schema.maybe(schema.number()),
         }),
         body: schema.any(),
       },
