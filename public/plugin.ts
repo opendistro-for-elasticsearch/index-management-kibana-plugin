@@ -9,12 +9,12 @@ export class IndexManagementPlugin implements Plugin<IndexManagementPluginSetup,
 
   public setup(core: CoreSetup): IndexManagementPluginSetup {
     core.application.register({
-      id: "indexManagement",
+      id: "opendistro_index_management_kibana",
       title: "Index Management",
       order: 7000,
       category: {
-        id: 'odfe',
-        label: 'Open Distro for Elasticsearch',
+        id: "odfe",
+        label: "Open Distro for Elasticsearch",
         order: 2000,
       },
       mount: async (params: AppMountParameters) => {

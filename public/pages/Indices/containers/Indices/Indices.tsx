@@ -81,7 +81,6 @@ export default class Indices extends Component<IndicesProps, IndicesState> {
   }
 
   async componentDidMount() {
-    // chrome.breadcrumbs.set([BREADCRUMBS.INDEX_MANAGEMENT, BREADCRUMBS.INDICES]);
     this.props.core.chrome.setBreadcrumbs([BREADCRUMBS.INDEX_MANAGEMENT, BREADCRUMBS.INDICES]);
     await this.getIndices();
   }
