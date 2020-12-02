@@ -163,7 +163,6 @@ export default class ManagedIndices extends Component<ManagedIndicesProps, Manag
   }
 
   async componentDidMount() {
-    // chrome.breadcrumbs.set([BREADCRUMBS.INDEX_MANAGEMENT, BREADCRUMBS.MANAGED_INDICES]);
     this.props.core.chrome.setBreadcrumbs([BREADCRUMBS.INDEX_MANAGEMENT, BREADCRUMBS.MANAGED_INDICES]);
     await this.getManagedIndices();
   }

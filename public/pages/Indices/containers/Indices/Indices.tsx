@@ -174,7 +174,11 @@ export default class Indices extends Component<IndicesProps, IndicesState> {
                     text: "Apply policy",
                     buttonProps: {
                       disabled: !selectedItems.length,
-                      onClick: () => onShow(ApplyPolicyModal, { indices: selectedItems.map((item: ManagedCatIndex) => item.index) }),
+                      onClick: () =>
+                        onShow(ApplyPolicyModal, {
+                          indices: selectedItems.map((item: ManagedCatIndex) => item.index),
+                          core: this.props.core,
+                        }),
                     },
                   },
                 ]}

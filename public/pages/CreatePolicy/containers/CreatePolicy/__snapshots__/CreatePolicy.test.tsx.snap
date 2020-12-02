@@ -132,7 +132,7 @@ exports[`<CreatePolicy /> spec renders the create component 1`] = `
                 type="button"
               >
                 <span
-                  class="euiButton__content"
+                  class="euiButtonContent euiButton__content"
                 >
                   EuiIconMock
                   <span
@@ -148,12 +148,12 @@ exports[`<CreatePolicy /> spec renders the create component 1`] = `
             class="euiFlexItem"
           >
             <button
-              class="euiButton euiButton--primary"
+              class="euiButton euiButton--primary euiButton-isDisabled"
               disabled=""
               type="button"
             >
               <span
-                class="euiButton__content"
+                class="euiButtonContent euiButton__content"
               >
                 EuiIconMock
                 <span
@@ -213,7 +213,7 @@ exports[`<CreatePolicy /> spec renders the create component 1`] = `
         type="button"
       >
         <span
-          class="euiButtonEmpty__content"
+          class="euiButtonContent euiButtonEmpty__content"
         >
           <span
             class="euiButtonEmpty__text"
@@ -232,7 +232,7 @@ exports[`<CreatePolicy /> spec renders the create component 1`] = `
         type="button"
       >
         <span
-          class="euiButton__content"
+          class="euiButtonContent euiButton__content"
         >
           <span
             class="euiButton__text"
@@ -565,3 +565,5 @@ exports[`<CreatePolicy /> spec renders the edit component 1`] = `
   </div>
 </div>
 `;
+
+exports[`<CreatePolicy /> spec routes back to policies if given bad id 1`] = `null`;

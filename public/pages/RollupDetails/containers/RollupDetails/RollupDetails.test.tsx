@@ -14,44 +14,45 @@
  */
 
 import React from "react";
-import chrome from "ui/chrome";
-import { toastNotifications } from "ui/notify";
 import { render, wait } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { MemoryRouter as Router } from "react-router";
 import { Redirect, Route, RouteComponentProps, Switch } from "react-router-dom";
-import { browserServicesMock } from "../../../../../test/mocks";
+import { browserServicesMock, coreServicesMock } from "../../../../../test/mocks";
 import { BrowserServices } from "../../../../models/interfaces";
 import { ModalProvider, ModalRoot } from "../../../../components/Modal";
 import { BREADCRUMBS, ROUTES } from "../../../../utils/constants";
 import RollupDetails from "./RollupDetails";
 import { ServicesConsumer, ServicesContext } from "../../../../services";
 import { testRollup, testRollup2 } from "../../../../../test/constants";
+import { CoreServicesContext } from "../../../../components/core_services";
 
 function renderRollupDetailsWithRouter(initialEntries = ["/"]) {
   return {
     ...render(
       <Router initialEntries={initialEntries}>
-        <ServicesContext.Provider value={browserServicesMock}>
-          <ServicesConsumer>
-            {(services: BrowserServices | null) =>
-              services && (
-                <ModalProvider>
-                  <ModalRoot services={services} />
-                  <Switch>
-                    <Route
-                      path={ROUTES.ROLLUP_DETAILS}
-                      render={(props: RouteComponentProps) => <RollupDetails {...props} rollupService={services.rollupService} />}
-                    />
-                    <Route path={ROUTES.EDIT_ROLLUP} render={(props) => <div>Testing edit rollup: {props.location.search}</div>} />
-                    <Route path={ROUTES.ROLLUPS} render={(props) => <div>Testing rollup landing page</div>} />
-                    <Redirect from="/" to={ROUTES.ROLLUP_DETAILS} />
-                  </Switch>
-                </ModalProvider>
-              )
-            }
-          </ServicesConsumer>
-        </ServicesContext.Provider>
+        <CoreServicesContext.Provider value={coreServicesMock}>
+          <ServicesContext.Provider value={browserServicesMock}>
+            <ServicesConsumer>
+              {(services: BrowserServices | null) =>
+                services && (
+                  <ModalProvider>
+                    <ModalRoot services={services} />
+                    <Switch>
+                      <Route
+                        path={ROUTES.ROLLUP_DETAILS}
+                        render={(props: RouteComponentProps) => <RollupDetails {...props} rollupService={services.rollupService} />}
+                      />
+                      <Route path={ROUTES.EDIT_ROLLUP} render={(props) => <div>Testing edit rollup: {props.location.search}</div>} />
+                      <Route path={ROUTES.ROLLUPS} render={(props) => <div>Testing rollup landing page</div>} />
+                      <Redirect from="/" to={ROUTES.ROLLUP_DETAILS} />
+                    </Switch>
+                  </ModalProvider>
+                )
+              }
+            </ServicesConsumer>
+          </ServicesContext.Provider>
+        </CoreServicesContext.Provider>
       </Router>
     ),
   };
@@ -75,11 +76,12 @@ describe("<RollupDetails /> spec", () => {
     });
     renderRollupDetailsWithRouter([`${ROUTES.ROLLUP_DETAILS}?id=${testRollup._id}`]);
 
-    expect(chrome.breadcrumbs.set).toHaveBeenCalledTimes(1);
-    expect(chrome.breadcrumbs.set).toHaveBeenCalledWith([BREADCRUMBS.INDEX_MANAGEMENT, BREADCRUMBS.ROLLUPS]);
-
-    expect(chrome.breadcrumbs.push).toHaveBeenCalledTimes(1);
-    expect(chrome.breadcrumbs.push).toHaveBeenCalledWith({ text: testRollup._id });
+    expect(coreServicesMock.chrome.setBreadcrumbs).toHaveBeenCalledTimes(1);
+    expect(coreServicesMock.chrome.setBreadcrumbs).toHaveBeenCalledWith([
+      BREADCRUMBS.INDEX_MANAGEMENT,
+      BREADCRUMBS.ROLLUPS,
+      { text: testRollup._id },
+    ]);
   });
 
   it("can disable rollup job", async () => {
@@ -105,7 +107,7 @@ describe("<RollupDetails /> spec", () => {
     await wait();
 
     expect(browserServicesMock.rollupService.stopRollup).toHaveBeenCalledTimes(1);
-    expect(toastNotifications.addSuccess).toHaveBeenCalledTimes(1);
+    expect(coreServicesMock.notifications.toasts.addSuccess).toHaveBeenCalledTimes(1);
   });
 
   it("shows toast when failed to disable rollup job", async () => {
@@ -131,7 +133,7 @@ describe("<RollupDetails /> spec", () => {
     await wait();
     debug();
     expect(browserServicesMock.rollupService.stopRollup).toHaveBeenCalledTimes(1);
-    expect(toastNotifications.addDanger).toHaveBeenCalledTimes(1);
+    expect(coreServicesMock.notifications.toasts.addDanger).toHaveBeenCalledTimes(1);
   });
 
   it("can enable rollup job", async () => {
@@ -158,7 +160,7 @@ describe("<RollupDetails /> spec", () => {
     await wait();
 
     expect(browserServicesMock.rollupService.startRollup).toHaveBeenCalledTimes(1);
-    expect(toastNotifications.addSuccess).toHaveBeenCalledTimes(1);
+    expect(coreServicesMock.notifications.toasts.addSuccess).toHaveBeenCalledTimes(1);
   });
 
   it("can delete a rollup job", async () => {
@@ -187,7 +189,7 @@ describe("<RollupDetails /> spec", () => {
     await wait();
 
     expect(browserServicesMock.rollupService.deleteRollup).toHaveBeenCalledTimes(1);
-    expect(toastNotifications.addSuccess).toHaveBeenCalledTimes(1);
+    expect(coreServicesMock.notifications.toasts.addSuccess).toHaveBeenCalledTimes(1);
   });
 
   it("can show a started rollup job", async () => {

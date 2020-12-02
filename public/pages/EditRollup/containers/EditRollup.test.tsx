@@ -14,43 +14,44 @@
  */
 
 import React from "react";
-import chrome from "ui/chrome";
-import { toastNotifications } from "ui/notify";
 import { fireEvent, render, wait } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { MemoryRouter as Router } from "react-router";
 import { Redirect, Route, RouteComponentProps, Switch } from "react-router-dom";
 import EditRollup from "./EditRollup";
-import { browserServicesMock } from "../../../../test/mocks";
+import { browserServicesMock, coreServicesMock } from "../../../../test/mocks";
 import { ServicesConsumer, ServicesContext } from "../../../services";
 import { ModalProvider, ModalRoot } from "../../../components/Modal";
 import { BrowserServices } from "../../../models/interfaces";
 import { BREADCRUMBS, ROUTES } from "../../../utils/constants";
 import { testRollup } from "../../../../test/constants";
+import { CoreServicesContext } from "../../../components/core_services";
 
 function renderEditRollupWithRouter(initialEntries = ["/"]) {
   return {
     ...render(
       <Router initialEntries={initialEntries}>
-        <ServicesContext.Provider value={browserServicesMock}>
-          <ServicesConsumer>
-            {(services: BrowserServices | null) =>
-              services && (
-                <ModalProvider>
-                  <ModalRoot services={services} />
-                  <Switch>
-                    <Route
-                      path={ROUTES.EDIT_ROLLUP}
-                      render={(props: RouteComponentProps) => <EditRollup {...props} rollupService={services.rollupService} />}
-                    />
-                    <Route path={ROUTES.ROLLUPS} render={(props) => <div>Testing rollup landing page</div>} />
-                    <Redirect from="/" to={ROUTES.EDIT_ROLLUP} />
-                  </Switch>
-                </ModalProvider>
-              )
-            }
-          </ServicesConsumer>
-        </ServicesContext.Provider>
+        <CoreServicesContext.Provider value={coreServicesMock}>
+          <ServicesContext.Provider value={browserServicesMock}>
+            <ServicesConsumer>
+              {(services: BrowserServices | null) =>
+                services && (
+                  <ModalProvider>
+                    <ModalRoot services={services} />
+                    <Switch>
+                      <Route
+                        path={ROUTES.EDIT_ROLLUP}
+                        render={(props: RouteComponentProps) => <EditRollup {...props} rollupService={services.rollupService} />}
+                      />
+                      <Route path={ROUTES.ROLLUPS} render={(props) => <div>Testing rollup landing page</div>} />
+                      <Redirect from="/" to={ROUTES.EDIT_ROLLUP} />
+                    </Switch>
+                  </ModalProvider>
+                )
+              }
+            </ServicesConsumer>
+          </ServicesContext.Provider>
+        </CoreServicesContext.Provider>
       </Router>
     ),
   };
@@ -74,12 +75,13 @@ describe("<EditRollup /> spec", () => {
     });
     renderEditRollupWithRouter([`${ROUTES.EDIT_ROLLUP}?id=${testRollup._id}`]);
 
-    expect(chrome.breadcrumbs.set).toHaveBeenCalledTimes(1);
-    expect(chrome.breadcrumbs.set).toHaveBeenCalledWith([BREADCRUMBS.INDEX_MANAGEMENT, BREADCRUMBS.ROLLUPS]);
-
-    expect(chrome.breadcrumbs.push).toHaveBeenCalledTimes(2);
-    expect(chrome.breadcrumbs.push).toHaveBeenCalledWith(BREADCRUMBS.EDIT_ROLLUP);
-    expect(chrome.breadcrumbs.push).toHaveBeenCalledWith({ text: testRollup._id });
+    expect(coreServicesMock.chrome.setBreadcrumbs).toHaveBeenCalledTimes(1);
+    expect(coreServicesMock.chrome.setBreadcrumbs).toHaveBeenCalledWith([
+      BREADCRUMBS.INDEX_MANAGEMENT,
+      BREADCRUMBS.ROLLUPS,
+      BREADCRUMBS.EDIT_ROLLUP,
+      { text: testRollup._id },
+    ]);
   });
 
   it("adds error toaster when get rollup has error", async () => {
@@ -88,8 +90,8 @@ describe("<EditRollup /> spec", () => {
 
     await wait();
 
-    expect(toastNotifications.addDanger).toHaveBeenCalledTimes(1);
-    expect(toastNotifications.addDanger).toHaveBeenCalledWith("Could not load the rollup job: some error");
+    expect(coreServicesMock.notifications.toasts.addDanger).toHaveBeenCalledTimes(1);
+    expect(coreServicesMock.notifications.toasts.addDanger).toHaveBeenCalledWith("Could not load the rollup job: some error");
 
     await wait(() => getByText("Testing rollup landing page"));
   });
@@ -100,8 +102,8 @@ describe("<EditRollup /> spec", () => {
 
     await wait();
 
-    expect(toastNotifications.addDanger).toHaveBeenCalledTimes(1);
-    expect(toastNotifications.addDanger).toHaveBeenCalledWith("rejected error");
+    expect(coreServicesMock.notifications.toasts.addDanger).toHaveBeenCalledTimes(1);
+    expect(coreServicesMock.notifications.toasts.addDanger).toHaveBeenCalledWith("rejected error");
     await wait(() => getByText("Testing rollup landing page"));
   });
 

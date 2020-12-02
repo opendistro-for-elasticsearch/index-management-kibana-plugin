@@ -32,11 +32,11 @@ describe("rollupService spec", () => {
 
   it("calls get rollups nodejs route when calling getRollups", async () => {
     httpClientMock.get = jest.fn().mockResolvedValue({ data: {} });
-    const queryParamsString = "test";
-    await rollupService.getRollups(queryParamsString);
+    const queryObject = {};
+    await rollupService.getRollups(queryObject);
 
     expect(httpClientMock.get).toHaveBeenCalledTimes(1);
-    expect(httpClientMock.get).toHaveBeenCalledWith(`..${NODE_API.ROLLUPS}?${queryParamsString}`);
+    expect(httpClientMock.get).toHaveBeenCalledWith(`..${NODE_API.ROLLUPS}`);
   });
 
   it("calls put rollup nodejs route when calling putRollup", async () => {
