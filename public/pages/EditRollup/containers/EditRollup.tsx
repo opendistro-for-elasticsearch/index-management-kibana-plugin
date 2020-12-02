@@ -105,9 +105,9 @@ export default class EditRollup extends Component<EditRollupProps, EditRollupSta
         newJSON.rollup = response.response.rollup;
 
         this.setState({
-          rollupSeqNo: response.response.seqNo,
-          rollupPrimaryTerm: response.response.primaryTerm,
-          rollupId: response.response.id,
+          rollupSeqNo: response.response._seqNo,
+          rollupPrimaryTerm: response.response._primaryTerm,
+          rollupId: response.response._id,
           description: response.response.rollup.description,
           jobEnabledByDefault: response.response.rollup.enabled,
           pageSize: response.response.rollup.page_size,
