@@ -361,19 +361,21 @@ export default class RollupService {
         rollup: hit._source,
         metadata: null,
       }));
-      let ids = "";
-      rollups.map((rollup) => {
-        if (rollups.indexOf(rollup) == 0) {
-          ids = ids + rollup._id;
-        } else {
-          ids = ids + "," + rollup._id;
-        }
-      });
+      const ids = rollups.map((rollup) => rollup._id).join(",");
       const explainResponse = await this.explainRollup(context, request, response, ids);
-      return response.custom({
-        statusCode: 200,
-        body: { ok: true, response: { rollups: rollups, totalRollups: totalRollups, metadata: explainResponse.response } },
-      });
+      if (explainResponse.payload.ok) {
+        rollups.map((item) => {
+          item.metadata = explainResponse.payload.response[item._id];
+        });
+        return response.custom({
+          statusCode: 200,
+          body: { ok: true, response: { rollups: rollups, totalRollups: totalRollups, metadata: explainResponse } },
+        });
+      } else
+        return response.custom({
+          statusCode: 200,
+          body: { ok: false, error: explainResponse.payload.error },
+        });
     } catch (err) {
       if (err.statusCode === 404 && err.body.error.type === "index_not_found_exception") {
         return response.custom({
