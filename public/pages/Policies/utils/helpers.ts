@@ -13,7 +13,7 @@
  * permissions and limitations under the License.
  */
 
-import queryString from "querystring";
+import queryString from "query-string";
 // @ts-ignore
 import moment from "moment";
 import { DEFAULT_QUERY_PARAMS } from "./constants";

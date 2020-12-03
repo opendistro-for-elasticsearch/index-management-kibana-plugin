@@ -16,7 +16,7 @@
 import React, { Component } from "react";
 import _ from "lodash";
 import { RouteComponentProps } from "react-router-dom";
-import queryString from "querystring";
+import queryString from "query-string";
 import {
   EuiBasicTable,
   EuiHorizontalRule,

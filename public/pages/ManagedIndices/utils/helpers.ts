@@ -13,7 +13,7 @@
  * permissions and limitations under the License.
  */
 
-import queryString from "querystring";
+import queryString from "query-string";
 import { DEFAULT_QUERY_PARAMS } from "./constants";
 import { ManagedIndicesQueryParams } from "../models/interfaces";
 
