@@ -69,7 +69,6 @@ export default class RollupService {
     return response;
   };
 
-  //TODO: Check if the body is posted correctly
   //Function to search for fields from a source index using GET /${source_index}/_mapping
   getMappings = async (index: string): Promise<ServerResponse<any>> => {
     const url = `..${NODE_API._MAPPINGS}`;
