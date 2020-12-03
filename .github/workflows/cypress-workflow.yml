@@ -62,7 +62,6 @@ jobs:
           npm uninstall -g yarn
           echo "Installing yarn ${{ steps.versions_step.outputs.yarn_version }}"
           npm i -g yarn@${{ steps.versions.outputs.yarn_version }}
-          npm install wait-on
       - name: Bootstrap plugin/kibana
         run: |
           mkdir -p kibana/plugins
@@ -76,6 +75,8 @@ jobs:
           sleep 300
         # timeout 300 bash -c 'while [[ "$(curl -s localhost:5601/api/status | jq -r '.status.overall.state')" != "green" ]]; do sleep 5; done'
       # for now just chrome, use matrix to do all browsers later
+        wait-on: 'http://localhost:5601'
+        wait-on-timeout: 120
       - name: Cypress tests
         uses: cypress-io/github-action@v2
         with:
