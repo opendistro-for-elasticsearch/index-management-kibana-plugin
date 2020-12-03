@@ -126,7 +126,6 @@ export default class Policies extends Component<PoliciesProps, PoliciesState> {
   }
 
   async componentDidMount() {
-    // chrome.breadcrumbs.set([BREADCRUMBS.INDEX_MANAGEMENT, BREADCRUMBS.INDEX_POLICIES]);
     this.props.core.chrome.setBreadcrumbs([BREADCRUMBS.INDEX_MANAGEMENT, BREADCRUMBS.INDEX_POLICIES]);
     await this.getPolicies();
   }
