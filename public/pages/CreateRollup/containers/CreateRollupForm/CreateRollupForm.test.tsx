@@ -147,7 +147,12 @@ function renderCreateRollupFormWithRouter() {
                         path={ROUTES.CREATE_ROLLUP}
                         render={(props: RouteComponentProps) => (
                           <div style={{ padding: "25px 25px" }}>
-                            <CreateRollupForm {...props} rollupService={services.rollupService} indexService={services.indexService} />
+                            <CreateRollupForm
+                              {...props}
+                              rollupService={services.rollupService}
+                              indexService={services.indexService}
+                              core={coreServicesMock}
+                            />
                           </div>
                         )}
                       />

@@ -32,6 +32,7 @@ exports[`<Rollups /> spec renders the component 1`] = `
           >
             <button
               class="euiButton euiButton--primary euiButton-isDisabled"
+              data-test-subj="disableButton"
               disabled=""
               type="button"
             >
@@ -51,6 +52,7 @@ exports[`<Rollups /> spec renders the component 1`] = `
           >
             <button
               class="euiButton euiButton--primary euiButton-isDisabled"
+              data-test-subj="enableButton"
               disabled=""
               type="button"
             >

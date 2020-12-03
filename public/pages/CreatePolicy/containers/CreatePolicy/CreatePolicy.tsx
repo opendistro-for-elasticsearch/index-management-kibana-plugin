@@ -77,7 +77,6 @@ export default class CreatePolicy extends Component<CreatePolicyProps, CreatePol
       }
     } else {
       this.props.core.chrome.setBreadcrumbs([BREADCRUMBS.INDEX_MANAGEMENT, BREADCRUMBS.INDEX_POLICIES, BREADCRUMBS.CREATE_POLICY]);
-      console.log(this.props.core.chrome.getBreadcrumbs$());
       this.setState({ jsonString: DEFAULT_POLICY });
     }
   };

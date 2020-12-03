@@ -13,7 +13,7 @@
  * permissions and limitations under the License.
  */
 
-import React, { Component } from "react";
+import React from "react";
 import { render, wait } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { MemoryRouter as Router } from "react-router";
@@ -26,38 +26,36 @@ import { BREADCRUMBS, ROUTES } from "../../../../utils/constants";
 import Rollups from "./Rollups";
 import { TEXT } from "../../components/RollupEmptyPrompt/RollupEmptyPrompt";
 import { testRollup } from "../../../../../test/constants";
-import { CoreServicesConsumer, CoreServicesContext } from "../../../../components/core_services";
-import { CoreStart } from "kibana/public";
 
 function renderRollupsWithRouter() {
   return {
     ...render(
       <Router>
-        <Switch>
-          <Route
-            path={ROUTES.ROLLUPS}
-            render={(props: RouteComponentProps) => (
-              <CoreServicesContext.Provider value={coreServicesMock}>
-                <ServicesContext.Provider value={browserServicesMock}>
-                  <ModalProvider>
-                    <ServicesConsumer>{(services) => services && <ModalRoot services={services} />} </ServicesConsumer>
-                    <CoreServicesConsumer>
-                      {(core: CoreStart | null) => (
-                        <ServicesConsumer>
-                          {({ rollupService }: any) => <Component rollupService={rollupService} core={core} {...props} />}
-                        </ServicesConsumer>
+        <ServicesContext.Provider value={browserServicesMock}>
+          <ServicesConsumer>
+            {(services: BrowserServices | null) =>
+              services && (
+                <ModalProvider>
+                  <ModalRoot services={services} />
+                  <Switch>
+                    <Route
+                      path={ROUTES.ROLLUPS}
+                      render={(props: RouteComponentProps) => (
+                        <div style={{ padding: "25px 25px" }}>
+                          <Rollups {...props} rollupService={services.rollupService} core={coreServicesMock} />
+                        </div>
                       )}
-                    </CoreServicesConsumer>
-                  </ModalProvider>
-                </ServicesContext.Provider>
-              </CoreServicesContext.Provider>
-            )}
-          />
-          <Route path={ROUTES.CREATE_ROLLUP} render={(props) => <div>Testing create rollup</div>} />
-          <Route path={ROUTES.EDIT_ROLLUP} render={(props) => <div>Testing edit rollup: {props.location.search}</div>} />
-          <Route path={ROUTES.ROLLUP_DETAILS} render={(props) => <div>Testing rollup details: {props.location.search}</div>} />
-          <Redirect from="/" to={ROUTES.ROLLUPS} />
-        </Switch>
+                    />
+                    <Route path={ROUTES.CREATE_ROLLUP} render={(props) => <div>Testing create rollup</div>} />
+                    <Route path={ROUTES.EDIT_ROLLUP} render={(props) => <div>Testing edit rollup: {props.location.search}</div>} />
+                    <Route path={ROUTES.ROLLUP_DETAILS} render={(props) => <div>Testing rollup details: {props.location.search}</div>} />
+                    <Redirect from="/" to={ROUTES.ROLLUPS} />
+                  </Switch>
+                </ModalProvider>
+              )
+            }
+          </ServicesConsumer>
+        </ServicesContext.Provider>
       </Router>
     ),
   };
@@ -192,13 +190,13 @@ describe("<Rollups /> spec", () => {
 
     await wait(() => getByText(testRollup._id));
 
-    expect(getByText("Enable")).toBeDisabled();
+    expect(getByTestId("enableButton")).toBeDisabled();
 
     userEvent.click(getByTestId(`checkboxSelectRow-${testRollup._id}`));
 
-    expect(getByText("Enable")).toBeEnabled();
+    expect(getByTestId("enableButton")).toBeEnabled();
 
-    userEvent.click(getByText("Enable"));
+    userEvent.click(getByTestId("enableButton"));
 
     await wait();
 
@@ -222,13 +220,13 @@ describe("<Rollups /> spec", () => {
 
     await wait(() => getByText(testRollup._id));
 
-    expect(getByText("Disable")).toBeDisabled();
+    expect(getByTestId("disableButton")).toBeDisabled();
 
     userEvent.click(getByTestId(`checkboxSelectRow-${testRollup._id}`));
 
-    expect(getByText("Disable")).toBeEnabled();
+    expect(getByTestId("disableButton")).toBeEnabled();
 
-    userEvent.click(getByText("Disable"));
+    userEvent.click(getByTestId("disableButton"));
 
     await wait();
 

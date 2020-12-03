@@ -41,7 +41,9 @@ function renderRollupDetailsWithRouter(initialEntries = ["/"]) {
                     <Switch>
                       <Route
                         path={ROUTES.ROLLUP_DETAILS}
-                        render={(props: RouteComponentProps) => <RollupDetails {...props} rollupService={services.rollupService} />}
+                        render={(props: RouteComponentProps) => (
+                          <RollupDetails {...props} rollupService={services.rollupService} core={coreServicesMock} />
+                        )}
                       />
                       <Route path={ROUTES.EDIT_ROLLUP} render={(props) => <div>Testing edit rollup: {props.location.search}</div>} />
                       <Route path={ROUTES.ROLLUPS} render={(props) => <div>Testing rollup landing page</div>} />
@@ -76,7 +78,7 @@ describe("<RollupDetails /> spec", () => {
     });
     renderRollupDetailsWithRouter([`${ROUTES.ROLLUP_DETAILS}?id=${testRollup._id}`]);
 
-    expect(coreServicesMock.chrome.setBreadcrumbs).toHaveBeenCalledTimes(1);
+    expect(coreServicesMock.chrome.setBreadcrumbs).toHaveBeenCalledTimes(2);
     expect(coreServicesMock.chrome.setBreadcrumbs).toHaveBeenCalledWith([
       BREADCRUMBS.INDEX_MANAGEMENT,
       BREADCRUMBS.ROLLUPS,
@@ -120,7 +122,7 @@ describe("<RollupDetails /> spec", () => {
       ok: false,
       response: "some error",
     });
-    const { getByTestId, debug } = renderRollupDetailsWithRouter([`${ROUTES.ROLLUP_DETAILS}?id=${testRollup._id}`]);
+    const { getByTestId } = renderRollupDetailsWithRouter([`${ROUTES.ROLLUP_DETAILS}?id=${testRollup._id}`]);
 
     await wait();
 
@@ -131,7 +133,7 @@ describe("<RollupDetails /> spec", () => {
     userEvent.click(getByTestId("disableButton"));
 
     await wait();
-    debug();
+
     expect(browserServicesMock.rollupService.stopRollup).toHaveBeenCalledTimes(1);
     expect(coreServicesMock.notifications.toasts.addDanger).toHaveBeenCalledTimes(1);
   });

@@ -41,7 +41,9 @@ function renderEditRollupWithRouter(initialEntries = ["/"]) {
                     <Switch>
                       <Route
                         path={ROUTES.EDIT_ROLLUP}
-                        render={(props: RouteComponentProps) => <EditRollup {...props} rollupService={services.rollupService} />}
+                        render={(props: RouteComponentProps) => (
+                          <EditRollup {...props} rollupService={services.rollupService} core={coreServicesMock} />
+                        )}
                       />
                       <Route path={ROUTES.ROLLUPS} render={(props) => <div>Testing rollup landing page</div>} />
                       <Redirect from="/" to={ROUTES.EDIT_ROLLUP} />

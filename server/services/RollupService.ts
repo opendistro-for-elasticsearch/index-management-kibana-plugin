@@ -370,7 +370,6 @@ export default class RollupService {
         }
       });
       const explainResponse = await this.explainRollup(context, request, response, ids);
-      console.log("Finish explain response");
       return response.custom({
         statusCode: 200,
         body: { ok: true, response: { rollups: rollups, totalRollups: totalRollups, metadata: explainResponse.response } },

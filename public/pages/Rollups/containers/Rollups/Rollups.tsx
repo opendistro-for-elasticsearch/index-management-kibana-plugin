@@ -399,7 +399,7 @@ export default class Rollups extends Component<RollupsProps, RollupsState> {
           <EuiFlexItem grow={false}>
             <EuiFlexGroup alignItems="center" gutterSize="s">
               <EuiFlexItem grow={false}>
-                <EuiButton disabled={!selectedItems.length} onClick={this.onDisable}>
+                <EuiButton disabled={!selectedItems.length} onClick={this.onDisable} data-test-subj="disableButton">
                   Disable
                 </EuiButton>
               </EuiFlexItem>
@@ -409,6 +409,7 @@ export default class Rollups extends Component<RollupsProps, RollupsState> {
                   onClick={() => {
                     this.onEnable();
                   }}
+                  data-test-subj="enableButton"
                 >
                   Enable
                 </EuiButton>
