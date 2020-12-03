@@ -5,13 +5,13 @@ Compatible with Kibana 7.10.0
 
 ### Features
 
-* Add support for rollup functionality ( [#128](https://github.com/opendistro-for-elasticsearch/index-management-kibana-plugin/pull/128), [#141](https://github.com/opendistro-for-elasticsearch/index-management-kibana-plugin/pull/141) )
+* Add support for rollup functionality ([#128](https://github.com/opendistro-for-elasticsearch/index-management-kibana-plugin/pull/128), [#141](https://github.com/opendistro-for-elasticsearch/index-management-kibana-plugin/pull/141))
 
 ### Enhancements
 
-* Change side bar position of index management ( [#140](https://github.com/opendistro-for-elasticsearch/index-management-kibana-plugin/pull/140), [#142](https://github.com/opendistro-for-elasticsearch/index-management-kibana-plugin/pull/142) )
+* Change side bar position of index management ([#140](https://github.com/opendistro-for-elasticsearch/index-management-kibana-plugin/pull/140), [#142](https://github.com/opendistro-for-elasticsearch/index-management-kibana-plugin/pull/142))
  
 
 ### Maintainence
 
- * Add suppport for Kibana 7.10.0 ( [#144] (https://github.com/opendistro-for-elasticsearch/index-management-kibana-plugin/pull/144) ) 
+ * Add suppport for Kibana 7.10.0 ([#144](https://github.com/opendistro-for-elasticsearch/index-management-kibana-plugin/pull/144)) 
