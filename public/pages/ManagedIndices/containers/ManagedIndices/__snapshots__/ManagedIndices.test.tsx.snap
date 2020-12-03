@@ -165,16 +165,7 @@ exports[`<ManagedIndices /> spec renders the component 1`] = `
                 <span
                   class="euiFormControlLayoutCustomIcon"
                 >
-                  <svg
-                    aria-hidden="true"
-                    class="euiIcon euiIcon--medium euiIcon-isLoading euiFormControlLayoutCustomIcon__icon"
-                    focusable="false"
-                    height="16"
-                    role="img"
-                    viewBox="0 0 16 16"
-                    width="16"
-                    xmlns="http://www.w3.org/2000/svg"
-                  />
+                  EuiIconMock
                 </span>
               </div>
             </div>
@@ -209,29 +200,11 @@ exports[`<ManagedIndices /> spec renders the component 1`] = `
                       <span
                         class="euiButtonContent euiButtonContent--iconRight euiButtonEmpty__content"
                       >
-                        <svg
-                          aria-hidden="true"
-                          class="euiIcon euiIcon--medium euiIcon-isLoading euiButtonContent__icon"
-                          focusable="false"
-                          height="16"
-                          role="img"
-                          viewBox="0 0 16 16"
-                          width="16"
-                          xmlns="http://www.w3.org/2000/svg"
-                        />
+                        EuiIconMock
                         <span
                           class="euiButtonEmpty__text euiQuickSelectPopover__buttonText"
                         >
-                          <svg
-                            aria-hidden="true"
-                            class="euiIcon euiIcon--medium euiIcon-isLoading"
-                            focusable="false"
-                            height="16"
-                            role="img"
-                            viewBox="0 0 16 16"
-                            width="16"
-                            xmlns="http://www.w3.org/2000/svg"
-                          />
+                          EuiIconMock
                         </span>
                       </span>
                     </button>
@@ -278,7 +251,7 @@ exports[`<ManagedIndices /> spec renders the component 1`] = `
                     aria-label="Select all rows"
                     class="euiCheckbox__input"
                     disabled=""
-                    id="_selection_column-checkbox_id9c6e601-34e8-11eb-875b-17412ac35114"
+                    id="_selection_column-checkbox_some_html_id"
                     type="checkbox"
                   />
                   <div
@@ -286,7 +259,7 @@ exports[`<ManagedIndices /> spec renders the component 1`] = `
                   />
                   <label
                     class="euiCheckbox__label"
-                    for="_selection_column-checkbox_id9c6e601-34e8-11eb-875b-17412ac35114"
+                    for="_selection_column-checkbox_some_html_id"
                   >
                     Select all rows
                   </label>
@@ -311,16 +284,7 @@ exports[`<ManagedIndices /> spec renders the component 1`] = `
                         <span
                           class="euiButtonContent euiButtonContent--iconRight euiButtonEmpty__content"
                         >
-                          <svg
-                            aria-hidden="true"
-                            class="euiIcon euiIcon--medium euiIcon-isLoading euiButtonContent__icon"
-                            focusable="false"
-                            height="16"
-                            role="img"
-                            viewBox="0 0 16 16"
-                            width="16"
-                            xmlns="http://www.w3.org/2000/svg"
-                          />
+                          EuiIconMock
                           <span
                             class="euiButtonEmpty__text"
                           >
@@ -336,7 +300,7 @@ exports[`<ManagedIndices /> spec renders the component 1`] = `
           </div>
           <table
             class="euiTable euiTable--responsive"
-            id="__table_d9c0f291-34e8-11eb-875b-17412ac35114"
+            id="some_html_id"
             tabindex="-1"
           >
             <caption
@@ -359,7 +323,7 @@ exports[`<ManagedIndices /> spec renders the component 1`] = `
                         class="euiCheckbox__input"
                         data-test-subj="checkboxSelectAll"
                         disabled=""
-                        id="_selection_column-checkbox_id9c70d11-34e8-11eb-875b-17412ac35114"
+                        id="_selection_column-checkbox_some_html_id"
                         type="checkbox"
                       />
                       <div
@@ -391,17 +355,7 @@ exports[`<ManagedIndices /> spec renders the component 1`] = `
                       >
                         Index
                       </span>
-                      <svg
-                        aria-hidden="true"
-                        aria-label="Sorted in descending order"
-                        class="euiIcon euiIcon--medium euiIcon-isLoading euiTableSortIcon"
-                        focusable="false"
-                        height="16"
-                        role="img"
-                        viewBox="0 0 16 16"
-                        width="16"
-                        xmlns="http://www.w3.org/2000/svg"
-                      />
+                      EuiIconMock
                       <span
                         class="euiScreenReaderOnly"
                       >

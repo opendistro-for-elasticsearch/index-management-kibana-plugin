@@ -13,7 +13,7 @@
  * permissions and limitations under the License.
  */
 
-import { IHttpService } from "angular";
+import { HttpSetup } from "kibana/public";
 
 const httpClientMock = jest.fn() as any;
 
@@ -23,4 +23,4 @@ httpClientMock.head = jest.fn();
 httpClientMock.post = jest.fn();
 httpClientMock.put = jest.fn();
 
-export default httpClientMock as IHttpService;
+export default httpClientMock as HttpSetup;

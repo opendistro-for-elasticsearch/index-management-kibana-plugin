@@ -15,7 +15,7 @@
 
 import React, { ChangeEvent, Component, Fragment } from "react";
 import { EuiSpacer, EuiTitle, EuiFlexGroup, EuiFlexItem, EuiButton, EuiButtonEmpty, EuiCallOut, EuiLink, EuiIcon } from "@elastic/eui";
-import queryString from "querystring";
+import queryString from "query-string";
 import { RouteComponentProps } from "react-router-dom";
 import { CoreStart } from "kibana/public";
 import { DEFAULT_POLICY } from "../../utils/constants";

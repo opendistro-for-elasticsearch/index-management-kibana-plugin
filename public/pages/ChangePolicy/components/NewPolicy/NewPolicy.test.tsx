@@ -36,6 +36,7 @@ describe("<NewPolicy /> spec", () => {
           onChangeStateRadio={() => {}}
           onStateSelectChange={() => {}}
           selectedPoliciesError=""
+          core={coreServicesMock}
         />
       </CoreServicesContext.Provider>
     );
@@ -58,6 +59,7 @@ describe("<NewPolicy /> spec", () => {
           onChangeStateRadio={() => {}}
           onStateSelectChange={() => {}}
           selectedPoliciesError=""
+          core={coreServicesMock}
         />
       </CoreServicesContext.Provider>
     );
@@ -81,13 +83,14 @@ describe("<NewPolicy /> spec", () => {
           onChangeStateRadio={() => {}}
           onStateSelectChange={() => {}}
           selectedPoliciesError=""
+          core={coreServicesMock}
         />
       </CoreServicesContext.Provider>
     );
 
     await wait();
 
-    expect(coreServicesMock.notifications.toasts.addDanger).toHaveBeenCalledTimes(2);
+    expect(coreServicesMock.notifications.toasts.addDanger).toHaveBeenCalledTimes(1);
     expect(coreServicesMock.notifications.toasts.addDanger).toHaveBeenCalledWith("some error");
   });
 
@@ -106,13 +109,14 @@ describe("<NewPolicy /> spec", () => {
           onChangeStateRadio={() => {}}
           onStateSelectChange={() => {}}
           selectedPoliciesError=""
+          core={coreServicesMock}
         />
       </CoreServicesContext.Provider>
     );
 
     await wait();
 
-    expect(coreServicesMock.notifications.toasts.addDanger).toHaveBeenCalledTimes(2);
+    expect(coreServicesMock.notifications.toasts.addDanger).toHaveBeenCalledTimes(1);
     expect(coreServicesMock.notifications.toasts.addDanger).toHaveBeenCalledWith("You have not created a policy yet");
   });
 });
