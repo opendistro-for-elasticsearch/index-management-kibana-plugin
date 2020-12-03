@@ -14,4 +14,4 @@ Compatible with Kibana 7.10.0
 
 ### Maintainence
 
- * Add suppport for Kibana 7.10.0 (#144) 
+ * Add suppport for Kibana 7.10.0 ( [#144] (https://github.com/opendistro-for-elasticsearch/index-management-kibana-plugin/pull/144) ) 
