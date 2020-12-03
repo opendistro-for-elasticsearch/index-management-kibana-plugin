@@ -79,7 +79,7 @@ jobs:
         uses: cypress-io/github-action@v2
         with:
           working-directory: kibana/plugins/index-management-kibana-plugin
-          start: yarn run cypress run
+          command: yarn run cypress run
           wait-on: 'http://localhost:5601'
           browser: chrome
       # Screenshots are only captured on failure, will change this once we do visual regression tests
