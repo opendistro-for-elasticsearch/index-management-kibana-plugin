@@ -17,7 +17,6 @@ import { IRouter } from "kibana/server";
 import { schema } from "@kbn/config-schema";
 import { NodeServices } from "../models/interfaces";
 import { NODE_API } from "../../utils/constants";
-//TODO: Update this to upgrade to 7.10 and clean up code
 
 export default function (services: NodeServices, router: IRouter) {
   const { rollupService } = services;
