@@ -24,6 +24,7 @@ import TimeAggregation from "../../components/TimeAggregations";
 import AdvancedAggregation from "../../components/AdvancedAggregation";
 import MetricsCalculation from "../../components/MetricsCalculation";
 import { DimensionItem, FieldItem, MetricItem } from "../../../../../models/interfaces";
+import { CoreServicesContext } from "../../../../components/core_services";
 
 interface CreateRollupStep2Props extends RouteComponentProps {
   rollupService: RollupService;
@@ -46,16 +47,16 @@ interface CreateRollupStep2Props extends RouteComponentProps {
   onChangeTimezone: (e: ChangeEvent<HTMLSelectElement>) => void;
   onDimensionSelectionChange: (selectedFields: DimensionItem[]) => void;
   onMetricSelectionChange: (selectedFields: MetricItem[]) => void;
-  core: CoreStart;
 }
 
 export default class CreateRollupStep2 extends Component<CreateRollupStep2Props> {
+  core = React.useContext(CoreServicesContext) as CoreStart;
   constructor(props: CreateRollupStep2Props) {
     super(props);
   }
 
   componentDidMount = async (): Promise<void> => {
-    this.props.core.chrome.setBreadcrumbs([BREADCRUMBS.INDEX_MANAGEMENT, BREADCRUMBS.ROLLUPS]);
+    this.core.chrome.setBreadcrumbs([BREADCRUMBS.INDEX_MANAGEMENT, BREADCRUMBS.ROLLUPS]);
   };
 
   onCancel = (): void => {

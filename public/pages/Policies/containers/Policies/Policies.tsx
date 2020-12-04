@@ -43,10 +43,10 @@ import { BREADCRUMBS, ROUTES } from "../../../../utils/constants";
 import { PolicyService } from "../../../../services";
 import { getErrorMessage } from "../../../../utils/helpers";
 import ConfirmationModal from "../../../../components/ConfirmationModal";
+import { CoreServicesContext } from "../../../../components/core_services";
 
 interface PoliciesProps extends RouteComponentProps {
   policyService: PolicyService;
-  core: CoreStart;
 }
 
 interface PoliciesState {
@@ -63,6 +63,7 @@ interface PoliciesState {
 
 export default class Policies extends Component<PoliciesProps, PoliciesState> {
   columns: EuiTableFieldDataColumnType<PolicyItem>[];
+  core = React.useContext(CoreServicesContext) as CoreStart;
 
   constructor(props: PoliciesProps) {
     super(props);
@@ -126,7 +127,7 @@ export default class Policies extends Component<PoliciesProps, PoliciesState> {
   }
 
   async componentDidMount() {
-    this.props.core.chrome.setBreadcrumbs([BREADCRUMBS.INDEX_MANAGEMENT, BREADCRUMBS.INDEX_POLICIES]);
+    this.core.chrome.setBreadcrumbs([BREADCRUMBS.INDEX_MANAGEMENT, BREADCRUMBS.INDEX_POLICIES]);
     await this.getPolicies();
   }
 
@@ -156,10 +157,10 @@ export default class Policies extends Component<PoliciesProps, PoliciesState> {
         } = getPoliciesResponse;
         this.setState({ policies, totalPolicies });
       } else {
-        this.props.core.notifications.toasts.addDanger(getPoliciesResponse.error);
+        this.core.notifications.toasts.addDanger(getPoliciesResponse.error);
       }
     } catch (err) {
-      this.props.core.notifications.toasts.addDanger(getErrorMessage(err, "There was a problem loading the policies"));
+      this.core.notifications.toasts.addDanger(getErrorMessage(err, "There was a problem loading the policies"));
     }
     this.setState({ loadingPolicies: false });
   };
@@ -169,13 +170,13 @@ export default class Policies extends Component<PoliciesProps, PoliciesState> {
     try {
       const deletePolicyResponse = await policyService.deletePolicy(policyId);
       if (deletePolicyResponse.ok) {
-        this.props.core.notifications.toasts.addSuccess(`Deleted the policy: ${policyId}`);
+        this.core.notifications.toasts.addSuccess(`Deleted the policy: ${policyId}`);
         return true;
       } else {
-        this.props.core.notifications.toasts.addDanger(`Failed to delete the policy, ${deletePolicyResponse.error}`);
+        this.core.notifications.toasts.addDanger(`Failed to delete the policy, ${deletePolicyResponse.error}`);
       }
     } catch (err) {
-      this.props.core.notifications.toasts.addDanger(getErrorMessage(err, "There was a problem deleting the policy"));
+      this.core.notifications.toasts.addDanger(getErrorMessage(err, "There was a problem deleting the policy"));
     }
     return false;
   };

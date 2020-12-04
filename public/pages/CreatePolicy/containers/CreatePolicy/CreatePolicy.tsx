@@ -25,11 +25,11 @@ import { Policy } from "../../../../../models/interfaces";
 import { PolicyService } from "../../../../services";
 import { BREADCRUMBS, DOCUMENTATION_URL, ROUTES } from "../../../../utils/constants";
 import { getErrorMessage } from "../../../../utils/helpers";
+import { CoreServicesContext } from "../../../../components/core_services";
 
 interface CreatePolicyProps extends RouteComponentProps {
   isEdit: boolean;
   policyService: PolicyService;
-  core: CoreStart;
 }
 
 interface CreatePolicyState {
@@ -58,25 +58,21 @@ export default class CreatePolicy extends Component<CreatePolicyProps, CreatePol
       hasSubmitted: false,
     };
   }
+  core = React.useContext(CoreServicesContext) as CoreStart;
 
   componentDidMount = async (): Promise<void> => {
-    this.props.core.chrome.setBreadcrumbs([BREADCRUMBS.INDEX_MANAGEMENT, BREADCRUMBS.INDEX_POLICIES]);
+    this.core.chrome.setBreadcrumbs([BREADCRUMBS.INDEX_MANAGEMENT, BREADCRUMBS.INDEX_POLICIES]);
     if (this.props.isEdit) {
       const { id } = queryString.parse(this.props.location.search);
       if (typeof id === "string" && !!id) {
-        this.props.core.chrome.setBreadcrumbs([
-          BREADCRUMBS.INDEX_MANAGEMENT,
-          BREADCRUMBS.INDEX_POLICIES,
-          BREADCRUMBS.EDIT_POLICY,
-          { text: id },
-        ]);
+        this.core.chrome.setBreadcrumbs([BREADCRUMBS.INDEX_MANAGEMENT, BREADCRUMBS.INDEX_POLICIES, BREADCRUMBS.EDIT_POLICY, { text: id }]);
         await this.getPolicyToEdit(id);
       } else {
-        this.props.core.notifications.toasts.addDanger(`Invalid policy id: ${id}`);
+        this.core.notifications.toasts.addDanger(`Invalid policy id: ${id}`);
         this.props.history.push(ROUTES.INDEX_POLICIES);
       }
     } else {
-      this.props.core.chrome.setBreadcrumbs([BREADCRUMBS.INDEX_MANAGEMENT, BREADCRUMBS.INDEX_POLICIES, BREADCRUMBS.CREATE_POLICY]);
+      this.core.chrome.setBreadcrumbs([BREADCRUMBS.INDEX_MANAGEMENT, BREADCRUMBS.INDEX_POLICIES, BREADCRUMBS.CREATE_POLICY]);
       this.setState({ jsonString: DEFAULT_POLICY });
     }
   };
@@ -93,11 +89,11 @@ export default class CreatePolicy extends Component<CreatePolicyProps, CreatePol
           jsonString: JSON.stringify({ policy: response.response.policy }, null, 4),
         });
       } else {
-        this.props.core.notifications.toasts.addDanger(`Could not load the policy: ${response.error}`);
+        this.core.notifications.toasts.addDanger(`Could not load the policy: ${response.error}`);
         this.props.history.push(ROUTES.INDEX_POLICIES);
       }
     } catch (err) {
-      this.props.core.notifications.toasts.addDanger(getErrorMessage(err, "Could not load the policy"));
+      this.core.notifications.toasts.addDanger(getErrorMessage(err, "Could not load the policy"));
       this.props.history.push(ROUTES.INDEX_POLICIES);
     }
   };
@@ -107,7 +103,7 @@ export default class CreatePolicy extends Component<CreatePolicyProps, CreatePol
     try {
       const response = await policyService.putPolicy(policy, policyId);
       if (response.ok) {
-        this.props.core.notifications.toasts.addSuccess(`Created policy: ${response.response._id}`);
+        this.core.notifications.toasts.addSuccess(`Created policy: ${response.response._id}`);
         this.props.history.push(ROUTES.INDEX_POLICIES);
       } else {
         this.setState({ submitError: response.error });
@@ -122,12 +118,12 @@ export default class CreatePolicy extends Component<CreatePolicyProps, CreatePol
       const { policyService } = this.props;
       const { policyPrimaryTerm, policySeqNo } = this.state;
       if (policySeqNo == null || policyPrimaryTerm == null) {
-        this.props.core.notifications.toasts.addDanger("Could not update policy without seqNo and primaryTerm");
+        this.core.notifications.toasts.addDanger("Could not update policy without seqNo and primaryTerm");
         return;
       }
       const response = await policyService.putPolicy(policy, policyId, policySeqNo, policyPrimaryTerm);
       if (response.ok) {
-        this.props.core.notifications.toasts.addSuccess(`Updated policy: ${response.response._id}`);
+        this.core.notifications.toasts.addSuccess(`Updated policy: ${response.response._id}`);
         this.props.history.push(ROUTES.INDEX_POLICIES);
       } else {
         this.setState({ submitError: response.error });
@@ -175,7 +171,7 @@ export default class CreatePolicy extends Component<CreatePolicyProps, CreatePol
         else await this.onCreate(policyId, policy);
       }
     } catch (err) {
-      this.props.core.notifications.toasts.addDanger("Invalid Policy JSON");
+      this.core.notifications.toasts.addDanger("Invalid Policy JSON");
       console.error(err);
     }
 

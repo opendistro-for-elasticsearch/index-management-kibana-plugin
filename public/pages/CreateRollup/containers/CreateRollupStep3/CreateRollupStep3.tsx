@@ -23,6 +23,7 @@ import { getErrorMessage } from "../../../../utils/helpers";
 import { Rollup } from "../../../../../models/interfaces";
 import CreateRollupSteps from "../../components/CreateRollupSteps";
 import Schedule from "../../components/Schedule";
+import { CoreServicesContext } from "../../../../components/core_services";
 
 interface CreateRollupProps extends RouteComponentProps {
   rollupService: RollupService;
@@ -48,7 +49,6 @@ interface CreateRollupProps extends RouteComponentProps {
   onChangeContinuousJob: (optionId: string) => void;
   onChangeDelayTimeunit: (e: ChangeEvent<HTMLSelectElement>) => void;
   onChangeIntervalTimeunit: (e: ChangeEvent<HTMLSelectElement>) => void;
-  core: CoreStart;
 }
 
 interface CreateRollupState {
@@ -62,6 +62,7 @@ interface CreateRollupState {
 }
 
 export default class CreateRollupStep3 extends Component<CreateRollupProps, CreateRollupState> {
+  core = React.useContext(CoreServicesContext) as CoreStart;
   constructor(props: CreateRollupProps) {
     super(props);
 
@@ -77,7 +78,7 @@ export default class CreateRollupStep3 extends Component<CreateRollupProps, Crea
   }
 
   componentDidMount = async (): Promise<void> => {
-    this.props.core.chrome.setBreadcrumbs([BREADCRUMBS.INDEX_MANAGEMENT, BREADCRUMBS.ROLLUPS]);
+    this.core.chrome.setBreadcrumbs([BREADCRUMBS.INDEX_MANAGEMENT, BREADCRUMBS.ROLLUPS]);
   };
 
   onCreate = async (rollupId: string, rollup: Rollup): Promise<void> => {
@@ -85,7 +86,7 @@ export default class CreateRollupStep3 extends Component<CreateRollupProps, Crea
     try {
       const response = await rollupService.putRollup(rollup, rollupId);
       if (response.ok) {
-        this.props.core.notifications.toasts.addSuccess(`Created rollup: ${response.response._id}`);
+        this.core.notifications.toasts.addSuccess(`Created rollup: ${response.response._id}`);
         this.props.history.push(ROUTES.ROLLUPS);
       } else {
         this.setState({ submitError: response.error });
@@ -100,12 +101,12 @@ export default class CreateRollupStep3 extends Component<CreateRollupProps, Crea
       const { rollupService } = this.props;
       const { rollupPrimaryTerm, rollupSeqNo } = this.state;
       if (rollupSeqNo == null || rollupPrimaryTerm == null) {
-        this.props.core.notifications.toasts.addDanger("Could not update rollup without seqNo and primaryTerm");
+        this.core.notifications.toasts.addDanger("Could not update rollup without seqNo and primaryTerm");
         return;
       }
       const response = await rollupService.putRollup(rollup, rollupId, rollupSeqNo, rollupPrimaryTerm);
       if (response.ok) {
-        this.props.core.notifications.toasts.addSuccess(`Updated rollup: ${response.response._id}`);
+        this.core.notifications.toasts.addSuccess(`Updated rollup: ${response.response._id}`);
         this.props.history.push(ROUTES.ROLLUPS);
       } else {
         this.setState({ submitError: response.error });

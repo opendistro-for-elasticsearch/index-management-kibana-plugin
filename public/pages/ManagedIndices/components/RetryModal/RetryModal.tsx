@@ -32,12 +32,12 @@ import { CoreStart } from "kibana/public";
 import { ManagedIndexItem, State } from "../../../../../models/interfaces";
 import { BrowserServices } from "../../../../models/interfaces";
 import { getErrorMessage } from "../../../../utils/helpers";
+import { CoreServicesContext } from "../../../../components/core_services";
 
 interface RetryModalProps {
   services: BrowserServices;
   retryItems: ManagedIndexItem[];
   onClose: () => void;
-  core: CoreStart;
 }
 
 interface RetryModalState {
@@ -52,6 +52,7 @@ enum Radio {
 }
 
 export default class RetryModal extends Component<RetryModalProps, RetryModalState> {
+  core = React.useContext(CoreServicesContext) as CoreStart;
   state = {
     radioIdSelected: Radio.Current,
     stateSelected: "",
@@ -107,20 +108,20 @@ export default class RetryModal extends Component<RetryModalProps, RetryModalSta
           response: { updatedIndices, failedIndices, failures },
         } = response;
         if (failures) {
-          this.props.core.notifications.toasts.addDanger(
+          this.core.notifications.toasts.addDanger(
             `Failed to retry: ${failedIndices.map((failedIndex) => `[${failedIndex.indexName}, ${failedIndex.reason}]`).join(", ")}`
           );
         }
 
         if (updatedIndices) {
-          this.props.core.notifications.toasts.addSuccess(`Retried ${updatedIndices} managed indices`);
+          this.core.notifications.toasts.addSuccess(`Retried ${updatedIndices} managed indices`);
         }
       } else {
-        this.props.core.notifications.toasts.addDanger(response.error);
+        this.core.notifications.toasts.addDanger(response.error);
       }
       onClose();
     } catch (err) {
-      this.props.core.notifications.toasts.addDanger(getErrorMessage(err, "There was a problem retrying managed indices"));
+      this.core.notifications.toasts.addDanger(getErrorMessage(err, "There was a problem retrying managed indices"));
     }
   };
 

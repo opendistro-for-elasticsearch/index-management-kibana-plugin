@@ -24,11 +24,11 @@ import { BREADCRUMBS } from "../../../../utils/constants";
 import { ManagedIndexItem } from "../../../../../models/interfaces";
 import { getErrorMessage } from "../../../../utils/helpers";
 import { PolicyOption } from "../../models/interfaces";
+import { CoreServicesContext } from "../../../../components/core_services";
 
 interface ChangePolicyProps extends RouteComponentProps {
   managedIndexService: ManagedIndexService;
   indexService: IndexService;
-  core: CoreStart;
 }
 
 interface ChangePolicyState {
@@ -48,6 +48,7 @@ export enum Radio {
 }
 
 export default class ChangePolicy extends Component<ChangePolicyProps, ChangePolicyState> {
+  core = React.useContext(CoreServicesContext) as CoreStart;
   state: ChangePolicyState = {
     selectedPolicies: [],
     selectedManagedIndices: [],
@@ -60,7 +61,7 @@ export default class ChangePolicy extends Component<ChangePolicyProps, ChangePol
   };
 
   async componentDidMount(): Promise<void> {
-    this.props.core.chrome.setBreadcrumbs([BREADCRUMBS.INDEX_MANAGEMENT, BREADCRUMBS.MANAGED_INDICES, BREADCRUMBS.CHANGE_POLICY]);
+    this.core.chrome.setBreadcrumbs([BREADCRUMBS.INDEX_MANAGEMENT, BREADCRUMBS.MANAGED_INDICES, BREADCRUMBS.CHANGE_POLICY]);
   }
 
   onChangeSelectedPolicy = (selectedPolicies: PolicyOption[]): void => {
@@ -108,20 +109,20 @@ export default class ChangePolicy extends Component<ChangePolicyProps, ChangePol
       if (changePolicyResponse.ok) {
         const { updatedIndices, failedIndices, failures } = changePolicyResponse.response;
         if (updatedIndices) {
-          this.props.core.notifications.toasts.addSuccess(`Changed policy on ${updatedIndices} indices`);
+          this.core.notifications.toasts.addSuccess(`Changed policy on ${updatedIndices} indices`);
         }
         if (failures) {
-          this.props.core.notifications.toasts.addDanger(
+          this.core.notifications.toasts.addDanger(
             `Failed to change policy on ${failedIndices
               .map((failedIndex) => `[${failedIndex.indexName}, ${failedIndex.reason}]`)
               .join(", ")}`
           );
         }
       } else {
-        this.props.core.notifications.toasts.addDanger(changePolicyResponse.error);
+        this.core.notifications.toasts.addDanger(changePolicyResponse.error);
       }
     } catch (err) {
-      this.props.core.notifications.toasts.addDanger(getErrorMessage(err, "There was a problem changing policy"));
+      this.core.notifications.toasts.addDanger(getErrorMessage(err, "There was a problem changing policy"));
     }
   };
 

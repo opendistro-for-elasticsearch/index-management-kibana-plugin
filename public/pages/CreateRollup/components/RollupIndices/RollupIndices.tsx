@@ -21,6 +21,7 @@ import { EuiComboBoxOptionOption } from "@elastic/eui/src/components/combo_box/t
 import { IndexItem } from "../../../../../models/interfaces";
 import IndexService from "../../../../services/IndexService";
 import _ from "lodash";
+import { CoreServicesContext } from "../../../../components/core_services";
 
 interface RollupIndicesProps {
   indexService: IndexService;
@@ -31,7 +32,6 @@ interface RollupIndicesProps {
   onChangeSourceIndex: (options: EuiComboBoxOptionOption<IndexItem>[]) => void;
   onChangeTargetIndex: (options: EuiComboBoxOptionOption<IndexItem>[]) => void;
   hasAggregation: boolean;
-  core: CoreStart;
 }
 
 interface RollupIndicesState {
@@ -41,6 +41,7 @@ interface RollupIndicesState {
 }
 
 export default class RollupIndices extends Component<RollupIndicesProps, RollupIndicesState> {
+  core = React.useContext(CoreServicesContext) as CoreStart;
   constructor(props: RollupIndicesProps) {
     super(props);
     this.state = {
@@ -70,13 +71,13 @@ export default class RollupIndices extends Component<RollupIndicesProps, RollupI
         this.setState({ indexOptions: options.concat(indices), targetIndexOptions: indices });
       } else {
         if (getIndicesResponse.error.startsWith("[index_not_found_exception]")) {
-          this.props.core.notifications.toasts.addDanger("No index available");
+          this.core.notifications.toasts.addDanger("No index available");
         } else {
-          this.props.core.notifications.toasts.addDanger(getIndicesResponse.error);
+          this.core.notifications.toasts.addDanger(getIndicesResponse.error);
         }
       }
     } catch (err) {
-      this.props.core.notifications.toasts.addDanger(err.message);
+      this.core.notifications.toasts.addDanger(err.message);
     }
 
     this.setState({ isLoading: false });

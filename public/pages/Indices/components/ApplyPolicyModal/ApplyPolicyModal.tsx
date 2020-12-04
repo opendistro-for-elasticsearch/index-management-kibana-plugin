@@ -40,12 +40,12 @@ import { Policy, State } from "../../../../../models/interfaces";
 import { getErrorMessage } from "../../../../utils/helpers";
 import { DOCUMENTATION_URL } from "../../../../utils/constants";
 import { CoreStart } from "kibana/public";
+import { CoreServicesContext } from "../../../../components/core_services";
 
 interface ApplyPolicyModalProps {
   onClose: () => void;
   services: BrowserServices;
   indices: string[];
-  core: CoreStart;
 }
 
 interface ApplyPolicyModalState {
@@ -70,6 +70,7 @@ export default class ApplyPolicyModal extends Component<ApplyPolicyModalProps, A
     rolloverAliasError: "",
     hasSubmitted: false,
   };
+  core = React.useContext(CoreServicesContext) as CoreStart;
 
   async componentDidMount(): Promise<void> {
     await this.onPolicySearchChange("");
@@ -87,13 +88,13 @@ export default class ApplyPolicyModal extends Component<ApplyPolicyModalProps, A
       if (applyPolicyResponse.ok) {
         const { updatedIndices, failedIndices, failures } = applyPolicyResponse.response;
         if (updatedIndices) {
-          this.props.core.notifications.toasts.addSuccess(`Applied policy to ${updatedIndices} indices`);
+          this.core.notifications.toasts.addSuccess(`Applied policy to ${updatedIndices} indices`);
           if (hasRolloverAction && rolloverAlias && indices.length === 1) {
             await this.onEditRolloverAlias(indices[0], rolloverAlias);
           }
         }
         if (failures) {
-          this.props.core.notifications.toasts.addDanger(
+          this.core.notifications.toasts.addDanger(
             `Failed to apply policy to ${failedIndices
               .map((failedIndex) => `[${failedIndex.indexName}, ${failedIndex.reason}]`)
               .join(", ")}`
@@ -101,10 +102,10 @@ export default class ApplyPolicyModal extends Component<ApplyPolicyModalProps, A
         }
         onClose();
       } else {
-        this.props.core.notifications.toasts.addDanger(applyPolicyResponse.error);
+        this.core.notifications.toasts.addDanger(applyPolicyResponse.error);
       }
     } catch (err) {
-      this.props.core.notifications.toasts.addDanger(getErrorMessage(err, "There was a problem adding policy to indices"));
+      this.core.notifications.toasts.addDanger(getErrorMessage(err, "There was a problem adding policy to indices"));
     }
   };
 
@@ -116,15 +117,15 @@ export default class ApplyPolicyModal extends Component<ApplyPolicyModalProps, A
       const response = await indexService.editRolloverAlias(index, rolloverAlias);
       if (response.ok) {
         if (response.response.acknowledged) {
-          this.props.core.notifications.toasts.addSuccess(`Edited rollover alias on ${index}`);
+          this.core.notifications.toasts.addSuccess(`Edited rollover alias on ${index}`);
         } else {
-          this.props.core.notifications.toasts.addDanger(`Failed to edit rollover alias on ${index}`);
+          this.core.notifications.toasts.addDanger(`Failed to edit rollover alias on ${index}`);
         }
       } else {
-        this.props.core.notifications.toasts.addDanger(response.error);
+        this.core.notifications.toasts.addDanger(response.error);
       }
     } catch (err) {
-      this.props.core.notifications.toasts.addDanger(getErrorMessage(err, `There was a problem editing rollover alias on ${index}`));
+      this.core.notifications.toasts.addDanger(getErrorMessage(err, `There was a problem editing rollover alias on ${index}`));
     }
   };
 
@@ -143,13 +144,13 @@ export default class ApplyPolicyModal extends Component<ApplyPolicyModalProps, A
         this.setState({ policyOptions: policies });
       } else {
         if (searchPoliciesResponse.error.startsWith("[index_not_found_exception]")) {
-          this.props.core.notifications.toasts.addDanger("You have not created a policy yet");
+          this.core.notifications.toasts.addDanger("You have not created a policy yet");
         } else {
-          this.props.core.notifications.toasts.addDanger(searchPoliciesResponse.error);
+          this.core.notifications.toasts.addDanger(searchPoliciesResponse.error);
         }
       }
     } catch (err) {
-      this.props.core.notifications.toasts.addDanger(err.message);
+      this.core.notifications.toasts.addDanger(err.message);
     }
 
     this.setState({ isLoading: false });

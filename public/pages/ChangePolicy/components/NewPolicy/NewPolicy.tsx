@@ -16,6 +16,7 @@
 import React from "react";
 import _ from "lodash";
 import { EuiSpacer, EuiText, EuiRadioGroup, EuiFormRow, EuiSelect, EuiComboBox, EuiLink, EuiIcon } from "@elastic/eui";
+import { CoreStart } from "kibana/public";
 import { ContentPanel } from "../../../../components/ContentPanel";
 import { IndexService } from "../../../../services";
 import { Radio } from "../../containers/ChangePolicy/ChangePolicy";
@@ -23,7 +24,7 @@ import { Policy } from "../../../../../models/interfaces";
 import { PolicyOption } from "../../models/interfaces";
 import { getErrorMessage } from "../../../../utils/helpers";
 import { DOCUMENTATION_URL } from "../../../../utils/constants";
-import { CoreStart } from "kibana/public";
+import { CoreServicesContext } from "../../../../components/core_services";
 
 interface NewPolicyProps {
   indexService: IndexService;
@@ -34,7 +35,6 @@ interface NewPolicyProps {
   onChangePolicy: (selectedPolicies: PolicyOption[]) => void;
   onChangeStateRadio: (optionId: string) => void;
   onStateSelectChange: (e: React.ChangeEvent<HTMLSelectElement>) => void;
-  core: CoreStart;
 }
 
 interface NewPolicyState {
@@ -44,6 +44,7 @@ interface NewPolicyState {
 }
 
 export default class NewPolicy extends React.Component<NewPolicyProps, NewPolicyState> {
+  core = React.useContext(CoreServicesContext) as CoreStart;
   state = {
     stateOptions: [],
     policiesIsLoading: false,
@@ -67,13 +68,13 @@ export default class NewPolicy extends React.Component<NewPolicyProps, NewPolicy
         this.setState({ policies });
       } else {
         if (searchPoliciesResponse.error.startsWith("[index_not_found_exception]")) {
-          this.props.core.notifications.toasts.addDanger("You have not created a policy yet");
+          this.core.notifications.toasts.addDanger("You have not created a policy yet");
         } else {
-          this.props.core.notifications.toasts.addDanger(searchPoliciesResponse.error);
+          this.core.notifications.toasts.addDanger(searchPoliciesResponse.error);
         }
       }
     } catch (err) {
-      this.props.core.notifications.toasts.addDanger(getErrorMessage(err, "There was a problem searching policies"));
+      this.core.notifications.toasts.addDanger(getErrorMessage(err, "There was a problem searching policies"));
     }
 
     this.setState({ policiesIsLoading: false });

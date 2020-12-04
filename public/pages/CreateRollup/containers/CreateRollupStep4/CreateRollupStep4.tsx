@@ -24,6 +24,7 @@ import CreateRollupSteps from "../../components/CreateRollupSteps";
 import HistogramAndMetrics from "../../components/HistogramAndMetrics";
 import JobNameAndIndices from "../../components/JobNameAndIndices";
 import ScheduleRolesAndNotifications from "../../components/ScheduleRolesAndNotifications";
+import { CoreServicesContext } from "../../../../components/core_services";
 
 interface CreateRollupProps extends RouteComponentProps {
   rollupService: RollupService;
@@ -53,16 +54,16 @@ interface CreateRollupProps extends RouteComponentProps {
   pageSize: number;
   delayTime: number | undefined;
   delayTimeunit: string;
-  core: CoreStart;
 }
 
 export default class CreateRollupStep4 extends Component<CreateRollupProps> {
+  core = React.useContext(CoreServicesContext) as CoreStart;
   constructor(props: CreateRollupProps) {
     super(props);
   }
 
   componentDidMount = async (): Promise<void> => {
-    this.props.core.chrome.setBreadcrumbs([BREADCRUMBS.INDEX_MANAGEMENT, BREADCRUMBS.ROLLUPS]);
+    this.core.chrome.setBreadcrumbs([BREADCRUMBS.INDEX_MANAGEMENT, BREADCRUMBS.ROLLUPS]);
   };
 
   onCancel = (): void => {

@@ -29,12 +29,12 @@ import {
 import { CoreStart } from "kibana/public";
 import { BrowserServices } from "../../../../models/interfaces";
 import { getErrorMessage } from "../../../../utils/helpers";
+import { CoreServicesContext } from "../../../../components/core_services";
 
 interface RolloverAliasModalProps {
   onClose: () => void;
   services: BrowserServices;
   index: string;
-  core: CoreStart;
 }
 
 interface RolloverAliasModalState {
@@ -42,6 +42,7 @@ interface RolloverAliasModalState {
 }
 
 export default class RolloverAliasModal extends Component<RolloverAliasModalProps, RolloverAliasModalState> {
+  core = React.useContext(CoreServicesContext) as CoreStart;
   state: RolloverAliasModalState = {
     rolloverAlias: "",
   };
@@ -57,16 +58,16 @@ export default class RolloverAliasModal extends Component<RolloverAliasModalProp
       const response = await indexService.editRolloverAlias(index, rolloverAlias);
       if (response.ok) {
         if (response.response.acknowledged) {
-          this.props.core.notifications.toasts.addSuccess(`Edited rollover alias on ${index}`);
+          this.core.notifications.toasts.addSuccess(`Edited rollover alias on ${index}`);
         } else {
-          this.props.core.notifications.toasts.addDanger(`Failed to edit rollover alias on ${index}`);
+          this.core.notifications.toasts.addDanger(`Failed to edit rollover alias on ${index}`);
         }
       } else {
-        this.props.core.notifications.toasts.addDanger(response.error);
+        this.core.notifications.toasts.addDanger(response.error);
       }
       onClose();
     } catch (err) {
-      this.props.core.notifications.toasts.addDanger(getErrorMessage(err, `There was a problem editing rollover alias on ${index}`));
+      this.core.notifications.toasts.addDanger(getErrorMessage(err, `There was a problem editing rollover alias on ${index}`));
     }
   };
 

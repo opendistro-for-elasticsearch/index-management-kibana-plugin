@@ -19,6 +19,7 @@ import { CoreStart } from "kibana/public";
 import { ContentPanel } from "../../../../components/ContentPanel";
 import { ManagedIndexService } from "../../../../services";
 import { ManagedIndexItem, State } from "../../../../../models/interfaces";
+import { CoreServicesContext } from "../../../../components/core_services";
 
 interface ChangeManagedIndicesProps {
   managedIndexService: ManagedIndexService;
@@ -27,7 +28,6 @@ interface ChangeManagedIndicesProps {
   onChangeManagedIndices: (selectedManagedIndices: { label: string; value?: ManagedIndexItem }[]) => void;
   onChangeStateFilters: (stateFilter: { label: string }[]) => void;
   managedIndicesError: string;
-  core: CoreStart;
 }
 
 interface ChangeManagedIndicesState {
@@ -37,6 +37,7 @@ interface ChangeManagedIndicesState {
 }
 
 export default class ChangeManagedIndices extends Component<ChangeManagedIndicesProps, ChangeManagedIndicesState> {
+  core = React.useContext(CoreServicesContext) as CoreStart;
   state = {
     managedIndicesIsLoading: false,
     managedIndices: [],
@@ -63,13 +64,13 @@ export default class ChangeManagedIndices extends Component<ChangeManagedIndices
         this.setState({ managedIndices: options.concat(managedIndices) });
       } else {
         if (managedIndicesResponse.error.startsWith("[index_not_found_exception]")) {
-          this.props.core.notifications.toasts.addDanger("You have not created a managed index yet");
+          this.core.notifications.toasts.addDanger("You have not created a managed index yet");
         } else {
-          this.props.core.notifications.toasts.addDanger(managedIndicesResponse.error);
+          this.core.notifications.toasts.addDanger(managedIndicesResponse.error);
         }
       }
     } catch (err) {
-      this.props.core.notifications.toasts.addDanger(err.message);
+      this.core.notifications.toasts.addDanger(err.message);
     }
 
     this.setState({ managedIndicesIsLoading: false });

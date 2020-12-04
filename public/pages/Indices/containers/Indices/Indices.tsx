@@ -41,10 +41,10 @@ import { getURLQueryParams } from "../../utils/helpers";
 import { IndicesQueryParams } from "../../models/interfaces";
 import { BREADCRUMBS } from "../../../../utils/constants";
 import { getErrorMessage } from "../../../../utils/helpers";
+import { CoreServicesContext } from "../../../../components/core_services";
 
 interface IndicesProps extends RouteComponentProps {
   indexService: IndexService;
-  core: CoreStart;
 }
 
 interface IndicesState {
@@ -60,11 +60,10 @@ interface IndicesState {
 }
 
 export default class Indices extends Component<IndicesProps, IndicesState> {
+  core = React.useContext(CoreServicesContext) as CoreStart;
   constructor(props: IndicesProps) {
     super(props);
-
     const { from, size, search, sortField, sortDirection } = getURLQueryParams(this.props.location);
-
     this.state = {
       totalIndices: 0,
       from,
@@ -81,7 +80,7 @@ export default class Indices extends Component<IndicesProps, IndicesState> {
   }
 
   async componentDidMount() {
-    this.props.core.chrome.setBreadcrumbs([BREADCRUMBS.INDEX_MANAGEMENT, BREADCRUMBS.INDICES]);
+    this.core.chrome.setBreadcrumbs([BREADCRUMBS.INDEX_MANAGEMENT, BREADCRUMBS.INDICES]);
     await this.getIndices();
   }
 
@@ -109,10 +108,10 @@ export default class Indices extends Component<IndicesProps, IndicesState> {
         const { indices, totalIndices } = getIndicesResponse.response;
         this.setState({ indices, totalIndices });
       } else {
-        this.props.core.notifications.toasts.addDanger(getIndicesResponse.error);
+        this.core.notifications.toasts.addDanger(getIndicesResponse.error);
       }
     } catch (err) {
-      this.props.core.notifications.toasts.addDanger(getErrorMessage(err, "There was a problem loading the indices"));
+      this.core.notifications.toasts.addDanger(getErrorMessage(err, "There was a problem loading the indices"));
     }
     this.setState({ loadingIndices: false });
   };
@@ -177,7 +176,7 @@ export default class Indices extends Component<IndicesProps, IndicesState> {
                       onClick: () =>
                         onShow(ApplyPolicyModal, {
                           indices: selectedItems.map((item: ManagedCatIndex) => item.index),
-                          core: this.props.core,
+                          core: this.core,
                         }),
                     },
                   },
