@@ -17,6 +17,5 @@
 
 export function getErrorMessage(err: any, defaultMessage: string) {
   if (err && err.message) return err.message;
-  // if (isAngularHttpError(err)) return err.data.message;
   return defaultMessage;
 }
