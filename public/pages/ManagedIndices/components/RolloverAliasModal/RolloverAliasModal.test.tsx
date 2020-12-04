@@ -20,7 +20,6 @@ import userEvent from "@testing-library/user-event";
 import RolloverAliasModal from "./RolloverAliasModal";
 import { browserServicesMock, coreServicesMock } from "../../../../../test/mocks";
 import { CoreServicesContext } from "../../../../components/core_services";
-import RetryModal from "../RetryModal";
 
 describe("<RolloverAliasModal /> spec", () => {
   it("renders the component", () => {
