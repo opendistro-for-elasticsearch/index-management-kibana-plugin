@@ -82,7 +82,9 @@ export default function (services: NodeServices, router: IRouter) {
     {
       path: `${NODE_API.ROLLUPS}/{id}/_start`,
       validate: {
-        body: schema.any(),
+        params: schema.object({
+          id: schema.string(),
+        }),
       },
     },
     rollupService.startRollup
@@ -92,7 +94,9 @@ export default function (services: NodeServices, router: IRouter) {
     {
       path: `${NODE_API.ROLLUPS}/{id}/_stop`,
       validate: {
-        body: schema.any(),
+        params: schema.object({
+          id: schema.string(),
+        }),
       },
     },
     rollupService.stopRollup
