@@ -42,7 +42,7 @@ interface RolloverAliasModalState {
 }
 
 export default class RolloverAliasModal extends Component<RolloverAliasModalProps, RolloverAliasModalState> {
-  core = React.useContext(CoreServicesContext) as CoreStart;
+  static contextType = CoreServicesContext;
   state: RolloverAliasModalState = {
     rolloverAlias: "",
   };
@@ -58,16 +58,16 @@ export default class RolloverAliasModal extends Component<RolloverAliasModalProp
       const response = await indexService.editRolloverAlias(index, rolloverAlias);
       if (response.ok) {
         if (response.response.acknowledged) {
-          this.core.notifications.toasts.addSuccess(`Edited rollover alias on ${index}`);
+          this.context.notifications.toasts.addSuccess(`Edited rollover alias on ${index}`);
         } else {
-          this.core.notifications.toasts.addDanger(`Failed to edit rollover alias on ${index}`);
+          this.context.notifications.toasts.addDanger(`Failed to edit rollover alias on ${index}`);
         }
       } else {
-        this.core.notifications.toasts.addDanger(response.error);
+        this.context.notifications.toasts.addDanger(response.error);
       }
       onClose();
     } catch (err) {
-      this.core.notifications.toasts.addDanger(getErrorMessage(err, `There was a problem editing rollover alias on ${index}`));
+      this.context.notifications.toasts.addDanger(getErrorMessage(err, `There was a problem editing rollover alias on ${index}`));
     }
   };
 

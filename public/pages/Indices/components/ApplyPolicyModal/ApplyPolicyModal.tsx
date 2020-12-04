@@ -60,6 +60,7 @@ interface ApplyPolicyModalState {
 }
 
 export default class ApplyPolicyModal extends Component<ApplyPolicyModalProps, ApplyPolicyModalState> {
+  static contextType = CoreServicesContext;
   state: ApplyPolicyModalState = {
     isLoading: false,
     selectedPolicy: null,
@@ -70,7 +71,6 @@ export default class ApplyPolicyModal extends Component<ApplyPolicyModalProps, A
     rolloverAliasError: "",
     hasSubmitted: false,
   };
-  core = React.useContext(CoreServicesContext) as CoreStart;
 
   async componentDidMount(): Promise<void> {
     await this.onPolicySearchChange("");
@@ -88,13 +88,13 @@ export default class ApplyPolicyModal extends Component<ApplyPolicyModalProps, A
       if (applyPolicyResponse.ok) {
         const { updatedIndices, failedIndices, failures } = applyPolicyResponse.response;
         if (updatedIndices) {
-          this.core.notifications.toasts.addSuccess(`Applied policy to ${updatedIndices} indices`);
+          this.context.notifications.toasts.addSuccess(`Applied policy to ${updatedIndices} indices`);
           if (hasRolloverAction && rolloverAlias && indices.length === 1) {
             await this.onEditRolloverAlias(indices[0], rolloverAlias);
           }
         }
         if (failures) {
-          this.core.notifications.toasts.addDanger(
+          this.context.notifications.toasts.addDanger(
             `Failed to apply policy to ${failedIndices
               .map((failedIndex) => `[${failedIndex.indexName}, ${failedIndex.reason}]`)
               .join(", ")}`
@@ -102,10 +102,10 @@ export default class ApplyPolicyModal extends Component<ApplyPolicyModalProps, A
         }
         onClose();
       } else {
-        this.core.notifications.toasts.addDanger(applyPolicyResponse.error);
+        this.context.notifications.toasts.addDanger(applyPolicyResponse.error);
       }
     } catch (err) {
-      this.core.notifications.toasts.addDanger(getErrorMessage(err, "There was a problem adding policy to indices"));
+      this.context.notifications.toasts.addDanger(getErrorMessage(err, "There was a problem adding policy to indices"));
     }
   };
 
@@ -117,15 +117,15 @@ export default class ApplyPolicyModal extends Component<ApplyPolicyModalProps, A
       const response = await indexService.editRolloverAlias(index, rolloverAlias);
       if (response.ok) {
         if (response.response.acknowledged) {
-          this.core.notifications.toasts.addSuccess(`Edited rollover alias on ${index}`);
+          this.context.notifications.toasts.addSuccess(`Edited rollover alias on ${index}`);
         } else {
-          this.core.notifications.toasts.addDanger(`Failed to edit rollover alias on ${index}`);
+          this.context.notifications.toasts.addDanger(`Failed to edit rollover alias on ${index}`);
         }
       } else {
-        this.core.notifications.toasts.addDanger(response.error);
+        this.context.notifications.toasts.addDanger(response.error);
       }
     } catch (err) {
-      this.core.notifications.toasts.addDanger(getErrorMessage(err, `There was a problem editing rollover alias on ${index}`));
+      this.context.notifications.toasts.addDanger(getErrorMessage(err, `There was a problem editing rollover alias on ${index}`));
     }
   };
 
@@ -144,13 +144,13 @@ export default class ApplyPolicyModal extends Component<ApplyPolicyModalProps, A
         this.setState({ policyOptions: policies });
       } else {
         if (searchPoliciesResponse.error.startsWith("[index_not_found_exception]")) {
-          this.core.notifications.toasts.addDanger("You have not created a policy yet");
+          this.context.notifications.toasts.addDanger("You have not created a policy yet");
         } else {
-          this.core.notifications.toasts.addDanger(searchPoliciesResponse.error);
+          this.context.notifications.toasts.addDanger(searchPoliciesResponse.error);
         }
       }
     } catch (err) {
-      this.core.notifications.toasts.addDanger(err.message);
+      this.context.notifications.toasts.addDanger(err.message);
     }
 
     this.setState({ isLoading: false });

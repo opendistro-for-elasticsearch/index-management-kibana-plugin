@@ -62,8 +62,8 @@ interface PoliciesState {
 }
 
 export default class Policies extends Component<PoliciesProps, PoliciesState> {
+  static contextType = CoreServicesContext;
   columns: EuiTableFieldDataColumnType<PolicyItem>[];
-  core = React.useContext(CoreServicesContext) as CoreStart;
 
   constructor(props: PoliciesProps) {
     super(props);
@@ -127,7 +127,7 @@ export default class Policies extends Component<PoliciesProps, PoliciesState> {
   }
 
   async componentDidMount() {
-    this.core.chrome.setBreadcrumbs([BREADCRUMBS.INDEX_MANAGEMENT, BREADCRUMBS.INDEX_POLICIES]);
+    this.context.chrome.setBreadcrumbs([BREADCRUMBS.INDEX_MANAGEMENT, BREADCRUMBS.INDEX_POLICIES]);
     await this.getPolicies();
   }
 
@@ -157,10 +157,10 @@ export default class Policies extends Component<PoliciesProps, PoliciesState> {
         } = getPoliciesResponse;
         this.setState({ policies, totalPolicies });
       } else {
-        this.core.notifications.toasts.addDanger(getPoliciesResponse.error);
+        this.context.notifications.toasts.addDanger(getPoliciesResponse.error);
       }
     } catch (err) {
-      this.core.notifications.toasts.addDanger(getErrorMessage(err, "There was a problem loading the policies"));
+      this.context.notifications.toasts.addDanger(getErrorMessage(err, "There was a problem loading the policies"));
     }
     this.setState({ loadingPolicies: false });
   };
@@ -170,13 +170,13 @@ export default class Policies extends Component<PoliciesProps, PoliciesState> {
     try {
       const deletePolicyResponse = await policyService.deletePolicy(policyId);
       if (deletePolicyResponse.ok) {
-        this.core.notifications.toasts.addSuccess(`Deleted the policy: ${policyId}`);
+        this.context.notifications.toasts.addSuccess(`Deleted the policy: ${policyId}`);
         return true;
       } else {
-        this.core.notifications.toasts.addDanger(`Failed to delete the policy, ${deletePolicyResponse.error}`);
+        this.context.notifications.toasts.addDanger(`Failed to delete the policy, ${deletePolicyResponse.error}`);
       }
     } catch (err) {
-      this.core.notifications.toasts.addDanger(getErrorMessage(err, "There was a problem deleting the policy"));
+      this.context.notifications.toasts.addDanger(getErrorMessage(err, "There was a problem deleting the policy"));
     }
     return false;
   };

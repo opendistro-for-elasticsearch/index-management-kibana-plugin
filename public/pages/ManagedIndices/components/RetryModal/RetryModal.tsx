@@ -52,7 +52,7 @@ enum Radio {
 }
 
 export default class RetryModal extends Component<RetryModalProps, RetryModalState> {
-  core = React.useContext(CoreServicesContext) as CoreStart;
+  static contextType = CoreServicesContext;
   state = {
     radioIdSelected: Radio.Current,
     stateSelected: "",
@@ -108,20 +108,20 @@ export default class RetryModal extends Component<RetryModalProps, RetryModalSta
           response: { updatedIndices, failedIndices, failures },
         } = response;
         if (failures) {
-          this.core.notifications.toasts.addDanger(
+          this.context.notifications.toasts.addDanger(
             `Failed to retry: ${failedIndices.map((failedIndex) => `[${failedIndex.indexName}, ${failedIndex.reason}]`).join(", ")}`
           );
         }
 
         if (updatedIndices) {
-          this.core.notifications.toasts.addSuccess(`Retried ${updatedIndices} managed indices`);
+          this.context.notifications.toasts.addSuccess(`Retried ${updatedIndices} managed indices`);
         }
       } else {
-        this.core.notifications.toasts.addDanger(response.error);
+        this.context.notifications.toasts.addDanger(response.error);
       }
       onClose();
     } catch (err) {
-      this.core.notifications.toasts.addDanger(getErrorMessage(err, "There was a problem retrying managed indices"));
+      this.context.notifications.toasts.addDanger(getErrorMessage(err, "There was a problem retrying managed indices"));
     }
   };
 

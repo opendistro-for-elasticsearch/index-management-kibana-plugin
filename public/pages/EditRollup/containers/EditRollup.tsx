@@ -56,8 +56,7 @@ interface EditRollupState {
 }
 
 export default class EditRollup extends Component<EditRollupProps, EditRollupState> {
-  core = React.useContext(CoreServicesContext) as CoreStart;
-
+  static contextType = CoreServicesContext;
   constructor(props: EditRollupProps) {
     super(props);
     this.state = {
@@ -87,10 +86,10 @@ export default class EditRollup extends Component<EditRollupProps, EditRollupSta
   componentDidMount = async (): Promise<void> => {
     const { id } = queryString.parse(this.props.location.search);
     if (typeof id === "string" && !!id) {
-      this.core.chrome.setBreadcrumbs([BREADCRUMBS.INDEX_MANAGEMENT, BREADCRUMBS.ROLLUPS, BREADCRUMBS.EDIT_ROLLUP, { text: id }]);
+      this.context.chrome.setBreadcrumbs([BREADCRUMBS.INDEX_MANAGEMENT, BREADCRUMBS.ROLLUPS, BREADCRUMBS.EDIT_ROLLUP, { text: id }]);
       await this.getRollupToEdit(id);
     } else {
-      this.core.notifications.toasts.addDanger(`Invalid rollup id: ${id}`);
+      this.context.notifications.toasts.addDanger(`Invalid rollup id: ${id}`);
       this.props.history.push(ROUTES.ROLLUPS);
     }
   };
@@ -124,11 +123,11 @@ export default class EditRollup extends Component<EditRollupProps, EditRollupSta
           this.setState({ cronExpression: response.response.rollup.schedule.cron.expression, continuousDefinition: "cron" });
         }
       } else {
-        this.core.notifications.toasts.addDanger(`Could not load the rollup job: ${response.error}`);
+        this.context.notifications.toasts.addDanger(`Could not load the rollup job: ${response.error}`);
         this.props.history.push(ROUTES.ROLLUPS);
       }
     } catch (err) {
-      this.core.notifications.toasts.addDanger(getErrorMessage(err, "Could not load the rollup job"));
+      this.context.notifications.toasts.addDanger(getErrorMessage(err, "Could not load the rollup job"));
       this.props.history.push(ROUTES.ROLLUPS);
     }
   };
@@ -239,7 +238,7 @@ export default class EditRollup extends Component<EditRollupProps, EditRollupSta
         await this.onUpdate(rollupId, rollupJSON);
       }
     } catch (err) {
-      this.core.notifications.toasts.addDanger("Invalid Rollup JSON");
+      this.context.notifications.toasts.addDanger("Invalid Rollup JSON");
       console.error(err);
     }
 
@@ -251,12 +250,12 @@ export default class EditRollup extends Component<EditRollupProps, EditRollupSta
       const { rollupService } = this.props;
       const { rollupPrimaryTerm, rollupSeqNo } = this.state;
       if (rollupSeqNo == null || rollupPrimaryTerm == null) {
-        this.core.notifications.toasts.addDanger("Could not update rollup without seqNo and primaryTerm");
+        this.context.notifications.toasts.addDanger("Could not update rollup without seqNo and primaryTerm");
         return;
       }
       const response = await rollupService.putRollup(rollup, rollupId, rollupSeqNo, rollupPrimaryTerm);
       if (response.ok) {
-        this.core.notifications.toasts.addSuccess(`Changes to "${response.response._id}" saved!`);
+        this.context.notifications.toasts.addSuccess(`Changes to "${response.response._id}" saved!`);
         this.props.history.push(ROUTES.ROLLUPS);
       } else {
         this.setState({ submitError: response.error });

@@ -86,6 +86,7 @@ interface CreateRollupFormState {
 }
 
 export default class CreateRollupForm extends Component<CreateRollupFormProps, CreateRollupFormState> {
+  static contextType = CoreServicesContext;
   constructor(props: CreateRollupFormProps) {
     super(props);
 
@@ -141,10 +142,8 @@ export default class CreateRollupForm extends Component<CreateRollupFormProps, C
     this._prev = this._prev.bind(this);
   }
 
-  core = React.useContext(CoreServicesContext) as CoreStart;
-
   componentDidMount = async (): Promise<void> => {
-    this.core.chrome.setBreadcrumbs([BREADCRUMBS.INDEX_MANAGEMENT, BREADCRUMBS.ROLLUPS, BREADCRUMBS.CREATE_ROLLUP]);
+    this.context.chrome.setBreadcrumbs([BREADCRUMBS.INDEX_MANAGEMENT, BREADCRUMBS.ROLLUPS, BREADCRUMBS.CREATE_ROLLUP]);
   };
 
   getMappings = async (srcIndex: string): Promise<void> => {
@@ -165,10 +164,10 @@ export default class CreateRollupForm extends Component<CreateRollupFormProps, C
         );
         this.setState({ mappings, fields, allMappings });
       } else {
-        this.core.notifications.toasts.addDanger(`Could not load fields: ${response.error}`);
+        this.context.notifications.toasts.addDanger(`Could not load fields: ${response.error}`);
       }
     } catch (err) {
-      this.core.notifications.toasts.addDanger(getErrorMessage(err, "Could not load fields"));
+      this.context.notifications.toasts.addDanger(getErrorMessage(err, "Could not load fields"));
     }
   };
 
@@ -487,7 +486,7 @@ export default class CreateRollupForm extends Component<CreateRollupFormProps, C
         await this.onCreate(rollupId, rollupJSON);
       }
     } catch (err) {
-      this.core.notifications.toasts.addDanger("Invalid Rollup JSON");
+      this.context.notifications.toasts.addDanger("Invalid Rollup JSON");
       console.error(err);
     }
 
@@ -503,15 +502,15 @@ export default class CreateRollupForm extends Component<CreateRollupFormProps, C
     try {
       const response = await rollupService.putRollup(rollup, rollupId);
       if (response.ok) {
-        this.core.notifications.toasts.addSuccess(`Created rollup: ${response.response._id}`);
+        this.context.notifications.toasts.addSuccess(`Created rollup: ${response.response._id}`);
         this.props.history.push(ROUTES.ROLLUPS);
       } else {
         this.setState({ submitError: response.error });
-        this.core.notifications.toasts.addDanger(`Failed to create rollup: ${response.error}`);
+        this.context.notifications.toasts.addDanger(`Failed to create rollup: ${response.error}`);
       }
     } catch (err) {
       this.setState({ submitError: getErrorMessage(err, "There was a problem creating the rollup job") });
-      this.core.notifications.toasts.addDanger(
+      this.context.notifications.toasts.addDanger(
         `Failed to create rollup: ${getErrorMessage(err, "There was a problem creating the rollup job")}`
       );
     }

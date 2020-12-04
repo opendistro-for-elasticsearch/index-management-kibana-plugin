@@ -60,7 +60,7 @@ interface IndicesState {
 }
 
 export default class Indices extends Component<IndicesProps, IndicesState> {
-  core = React.useContext(CoreServicesContext) as CoreStart;
+  static contextType = CoreServicesContext;
   constructor(props: IndicesProps) {
     super(props);
     const { from, size, search, sortField, sortDirection } = getURLQueryParams(this.props.location);
@@ -80,7 +80,7 @@ export default class Indices extends Component<IndicesProps, IndicesState> {
   }
 
   async componentDidMount() {
-    this.core.chrome.setBreadcrumbs([BREADCRUMBS.INDEX_MANAGEMENT, BREADCRUMBS.INDICES]);
+    this.context.chrome.setBreadcrumbs([BREADCRUMBS.INDEX_MANAGEMENT, BREADCRUMBS.INDICES]);
     await this.getIndices();
   }
 
@@ -108,10 +108,10 @@ export default class Indices extends Component<IndicesProps, IndicesState> {
         const { indices, totalIndices } = getIndicesResponse.response;
         this.setState({ indices, totalIndices });
       } else {
-        this.core.notifications.toasts.addDanger(getIndicesResponse.error);
+        this.context.notifications.toasts.addDanger(getIndicesResponse.error);
       }
     } catch (err) {
-      this.core.notifications.toasts.addDanger(getErrorMessage(err, "There was a problem loading the indices"));
+      this.context.notifications.toasts.addDanger(getErrorMessage(err, "There was a problem loading the indices"));
     }
     this.setState({ loadingIndices: false });
   };
@@ -176,7 +176,7 @@ export default class Indices extends Component<IndicesProps, IndicesState> {
                       onClick: () =>
                         onShow(ApplyPolicyModal, {
                           indices: selectedItems.map((item: ManagedCatIndex) => item.index),
-                          core: this.core,
+                          core: this.context,
                         }),
                     },
                   },

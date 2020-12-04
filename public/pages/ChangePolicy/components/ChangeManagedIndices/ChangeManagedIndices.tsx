@@ -15,7 +15,6 @@
 
 import React, { Component } from "react";
 import { EuiSpacer, EuiComboBox, EuiFormRow } from "@elastic/eui";
-import { CoreStart } from "kibana/public";
 import { ContentPanel } from "../../../../components/ContentPanel";
 import { ManagedIndexService } from "../../../../services";
 import { ManagedIndexItem, State } from "../../../../../models/interfaces";
@@ -37,7 +36,7 @@ interface ChangeManagedIndicesState {
 }
 
 export default class ChangeManagedIndices extends Component<ChangeManagedIndicesProps, ChangeManagedIndicesState> {
-  core = React.useContext(CoreServicesContext) as CoreStart;
+  static contextType = CoreServicesContext;
   state = {
     managedIndicesIsLoading: false,
     managedIndices: [],
@@ -64,13 +63,13 @@ export default class ChangeManagedIndices extends Component<ChangeManagedIndices
         this.setState({ managedIndices: options.concat(managedIndices) });
       } else {
         if (managedIndicesResponse.error.startsWith("[index_not_found_exception]")) {
-          this.core.notifications.toasts.addDanger("You have not created a managed index yet");
+          this.context.notifications.toasts.addDanger("You have not created a managed index yet");
         } else {
-          this.core.notifications.toasts.addDanger(managedIndicesResponse.error);
+          this.context.notifications.toasts.addDanger(managedIndicesResponse.error);
         }
       }
     } catch (err) {
-      this.core.notifications.toasts.addDanger(err.message);
+      this.context.notifications.toasts.addDanger(err.message);
     }
 
     this.setState({ managedIndicesIsLoading: false });

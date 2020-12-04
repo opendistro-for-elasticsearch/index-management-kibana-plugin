@@ -88,7 +88,7 @@ interface RollupDetailsState {
 }
 
 export default class RollupDetails extends Component<RollupDetailsProps, RollupDetailsState> {
-  core = React.useContext(CoreServicesContext) as CoreStart;
+  static contextType = CoreServicesContext;
   constructor(props: RollupDetailsProps) {
     super(props);
 
@@ -124,15 +124,15 @@ export default class RollupDetails extends Component<RollupDetailsProps, RollupD
   }
 
   componentDidMount = async (): Promise<void> => {
-    this.core.chrome.setBreadcrumbs([BREADCRUMBS.INDEX_MANAGEMENT, BREADCRUMBS.ROLLUPS]);
+    this.context.chrome.setBreadcrumbs([BREADCRUMBS.INDEX_MANAGEMENT, BREADCRUMBS.ROLLUPS]);
     const { id } = queryString.parse(this.props.location.search);
     if (typeof id === "string") {
-      this.core.chrome.setBreadcrumbs([BREADCRUMBS.INDEX_MANAGEMENT, BREADCRUMBS.ROLLUPS, { text: id }]);
+      this.context.chrome.setBreadcrumbs([BREADCRUMBS.INDEX_MANAGEMENT, BREADCRUMBS.ROLLUPS, { text: id }]);
       this.props.history.push(`${ROUTES.ROLLUP_DETAILS}?id=${id}`);
       await this.getRollup(id);
       this.forceUpdate();
     } else {
-      this.core.notifications.toasts.addDanger(`Invalid rollup id: ${id}`);
+      this.context.notifications.toasts.addDanger(`Invalid rollup id: ${id}`);
       this.props.history.push(ROUTES.ROLLUPS);
     }
   };
@@ -178,11 +178,11 @@ export default class RollupDetails extends Component<RollupDetailsProps, RollupD
           this.setState({ cronExpression: response.response.rollup.schedule.cron.expression });
         }
       } else {
-        this.core.notifications.toasts.addDanger(`Could not load the rollup job: ${response.error}`);
+        this.context.notifications.toasts.addDanger(`Could not load the rollup job: ${response.error}`);
         this.props.history.push(ROUTES.ROLLUPS);
       }
     } catch (err) {
-      this.core.notifications.toasts.addDanger(getErrorMessage(err, "Could not load the rollup job"));
+      this.context.notifications.toasts.addDanger(getErrorMessage(err, "Could not load the rollup job"));
       this.props.history.push(ROUTES.ROLLUPS);
     }
   };
@@ -224,12 +224,12 @@ export default class RollupDetails extends Component<RollupDetailsProps, RollupD
         //Show success message
         await this.getRollup(rollupId);
         this.forceUpdate();
-        this.core.notifications.toasts.addSuccess(`${rollupId} is disabled`);
+        this.context.notifications.toasts.addSuccess(`${rollupId} is disabled`);
       } else {
-        this.core.notifications.toasts.addDanger(`Could not stop the rollup job "${rollupId}" : ${response.error}`);
+        this.context.notifications.toasts.addDanger(`Could not stop the rollup job "${rollupId}" : ${response.error}`);
       }
     } catch (err) {
-      this.core.notifications.toasts.addDanger(getErrorMessage(err, "Could not stop the rollup job: " + rollupId));
+      this.context.notifications.toasts.addDanger(getErrorMessage(err, "Could not stop the rollup job: " + rollupId));
     }
   };
 
@@ -245,12 +245,12 @@ export default class RollupDetails extends Component<RollupDetailsProps, RollupD
         //Show success message
         await this.getRollup(rollupId);
         this.forceUpdate();
-        this.core.notifications.toasts.addSuccess(`${rollupId} is enabled`);
+        this.context.notifications.toasts.addSuccess(`${rollupId} is enabled`);
       } else {
-        this.core.notifications.toasts.addDanger(`Could not start the rollup job "${rollupId}" : ${response.error}`);
+        this.context.notifications.toasts.addDanger(`Could not start the rollup job "${rollupId}" : ${response.error}`);
       }
     } catch (err) {
-      this.core.notifications.toasts.addDanger(getErrorMessage(err, "Could not start the rollup job: " + rollupId));
+      this.context.notifications.toasts.addDanger(getErrorMessage(err, "Could not start the rollup job: " + rollupId));
     }
   };
 
@@ -281,13 +281,13 @@ export default class RollupDetails extends Component<RollupDetailsProps, RollupD
       if (response.ok) {
         this.closeDeleteModal();
         //Show success message
-        this.core.notifications.toasts.addSuccess(`"${rollupId}" successfully deleted!`);
+        this.context.notifications.toasts.addSuccess(`"${rollupId}" successfully deleted!`);
         this.props.history.push(ROUTES.ROLLUPS);
       } else {
-        this.core.notifications.toasts.addDanger(`Could not delete the rollup job "${rollupId}" : ${response.error}`);
+        this.context.notifications.toasts.addDanger(`Could not delete the rollup job "${rollupId}" : ${response.error}`);
       }
     } catch (err) {
-      this.core.notifications.toasts.addDanger(getErrorMessage(err, "Could not delete the rollup job"));
+      this.context.notifications.toasts.addDanger(getErrorMessage(err, "Could not delete the rollup job"));
     }
   };
 

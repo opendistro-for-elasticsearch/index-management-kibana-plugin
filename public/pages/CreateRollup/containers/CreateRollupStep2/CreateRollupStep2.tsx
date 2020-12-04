@@ -50,13 +50,13 @@ interface CreateRollupStep2Props extends RouteComponentProps {
 }
 
 export default class CreateRollupStep2 extends Component<CreateRollupStep2Props> {
-  core = React.useContext(CoreServicesContext) as CoreStart;
+  static contextType = CoreServicesContext;
   constructor(props: CreateRollupStep2Props) {
     super(props);
   }
 
   componentDidMount = async (): Promise<void> => {
-    this.core.chrome.setBreadcrumbs([BREADCRUMBS.INDEX_MANAGEMENT, BREADCRUMBS.ROLLUPS]);
+    this.context.chrome.setBreadcrumbs([BREADCRUMBS.INDEX_MANAGEMENT, BREADCRUMBS.ROLLUPS]);
   };
 
   onCancel = (): void => {

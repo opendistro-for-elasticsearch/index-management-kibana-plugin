@@ -70,8 +70,8 @@ interface ManagedIndicesState {
 }
 
 export default class ManagedIndices extends Component<ManagedIndicesProps, ManagedIndicesState> {
+  static contextType = CoreServicesContext;
   columns: EuiTableFieldDataColumnType<ManagedIndexItem>[];
-  core = React.useContext(CoreServicesContext) as CoreStart;
 
   constructor(props: ManagedIndicesProps) {
     super(props);
@@ -164,7 +164,7 @@ export default class ManagedIndices extends Component<ManagedIndicesProps, Manag
   }
 
   async componentDidMount() {
-    this.core.chrome.setBreadcrumbs([BREADCRUMBS.INDEX_MANAGEMENT, BREADCRUMBS.MANAGED_INDICES]);
+    this.context.chrome.setBreadcrumbs([BREADCRUMBS.INDEX_MANAGEMENT, BREADCRUMBS.MANAGED_INDICES]);
     await this.getManagedIndices();
   }
 
@@ -221,10 +221,10 @@ export default class ManagedIndices extends Component<ManagedIndicesProps, Manag
         } = getManagedIndicesResponse;
         this.setState({ managedIndices, totalManagedIndices });
       } else {
-        this.core.notifications.toasts.addDanger(getManagedIndicesResponse.error);
+        this.context.notifications.toasts.addDanger(getManagedIndicesResponse.error);
       }
     } catch (err) {
-      this.core.notifications.toasts.addDanger(getErrorMessage(err, "There was a problem loading the managed indices"));
+      this.context.notifications.toasts.addDanger(getErrorMessage(err, "There was a problem loading the managed indices"));
     }
     this.setState({ loadingManagedIndices: false });
   };
@@ -237,20 +237,20 @@ export default class ManagedIndices extends Component<ManagedIndicesProps, Manag
       if (removePolicyResponse.ok) {
         const { updatedIndices, failedIndices, failures } = removePolicyResponse.response;
         if (updatedIndices) {
-          this.core.notifications.toasts.addSuccess(`Removed policy from ${updatedIndices} managed indices`);
+          this.context.notifications.toasts.addSuccess(`Removed policy from ${updatedIndices} managed indices`);
         }
         if (failures) {
-          this.core.notifications.toasts.addDanger(
+          this.context.notifications.toasts.addDanger(
             `Failed to remove policy from ${failedIndices
               .map((failedIndex) => `[${failedIndex.indexName}, ${failedIndex.reason}]`)
               .join(", ")}`
           );
         }
       } else {
-        this.core.notifications.toasts.addDanger(removePolicyResponse.error);
+        this.context.notifications.toasts.addDanger(removePolicyResponse.error);
       }
     } catch (err) {
-      this.core.notifications.toasts.addDanger(getErrorMessage(err, "There was a problem removing the policies"));
+      this.context.notifications.toasts.addDanger(getErrorMessage(err, "There was a problem removing the policies"));
     }
   };
 
@@ -333,7 +333,7 @@ export default class ManagedIndices extends Component<ManagedIndicesProps, Manag
           onClickModal: (onShow: (component: any, props: object) => void) => () =>
             onShow(RolloverAliasModal, {
               index: selectedItems[0].index,
-              core: this.core,
+              core: this.context,
             }),
         },
       },

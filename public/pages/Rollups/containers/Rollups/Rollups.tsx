@@ -75,7 +75,7 @@ interface RollupsState {
 }
 
 export default class Rollups extends Component<RollupsProps, RollupsState> {
-  core = React.useContext(CoreServicesContext) as CoreStart;
+  static contextType = CoreServicesContext;
   constructor(props: RollupsProps) {
     super(props);
 
@@ -100,7 +100,8 @@ export default class Rollups extends Component<RollupsProps, RollupsState> {
   }
 
   async componentDidMount() {
-    this.core.chrome.setBreadcrumbs([BREADCRUMBS.INDEX_MANAGEMENT, BREADCRUMBS.ROLLUPS]);
+    console.log(this.context);
+    this.context.chrome.setBreadcrumbs([BREADCRUMBS.INDEX_MANAGEMENT, BREADCRUMBS.ROLLUPS]);
     await this.getRollups();
   }
 
@@ -128,10 +129,10 @@ export default class Rollups extends Component<RollupsProps, RollupsState> {
         const { rollups, totalRollups, metadata } = rollupJobsResponse.response;
         this.setState({ rollups, totalRollups, rollupExplain: metadata });
       } else {
-        this.core.notifications.toasts.addDanger(rollupJobsResponse.error);
+        this.context.notifications.toasts.addDanger(rollupJobsResponse.error);
       }
     } catch (err) {
-      this.core.notifications.toasts.addDanger(getErrorMessage(err, "There was a problem loading the rollups"));
+      this.context.notifications.toasts.addDanger(getErrorMessage(err, "There was a problem loading the rollups"));
     }
     this.setState({ loadingRollups: false });
   };
@@ -158,12 +159,12 @@ export default class Rollups extends Component<RollupsProps, RollupsState> {
         if (response.ok) {
           this.closeDeleteModal();
           //Show success message
-          this.core.notifications.toasts.addSuccess(`"${rollupId}" successfully deleted!`);
+          this.context.notifications.toasts.addSuccess(`"${rollupId}" successfully deleted!`);
         } else {
-          this.core.notifications.toasts.addDanger(`Could not delete the rollup job "${rollupId}" : ${response.error}`);
+          this.context.notifications.toasts.addDanger(`Could not delete the rollup job "${rollupId}" : ${response.error}`);
         }
       } catch (err) {
-        this.core.notifications.toasts.addDanger(getErrorMessage(err, "Could not delete the rollup job"));
+        this.context.notifications.toasts.addDanger(getErrorMessage(err, "Could not delete the rollup job"));
       }
     }
     await this.getRollups();
@@ -179,12 +180,12 @@ export default class Rollups extends Component<RollupsProps, RollupsState> {
 
         if (response.ok) {
           //Show success message
-          this.core.notifications.toasts.addSuccess(`${rollupId} is disabled`);
+          this.context.notifications.toasts.addSuccess(`${rollupId} is disabled`);
         } else {
-          this.core.notifications.toasts.addDanger(`Could not stop the rollup job "${rollupId}" : ${response.error}`);
+          this.context.notifications.toasts.addDanger(`Could not stop the rollup job "${rollupId}" : ${response.error}`);
         }
       } catch (err) {
-        this.core.notifications.toasts.addDanger(getErrorMessage(err, "Could not stop the rollup job"));
+        this.context.notifications.toasts.addDanger(getErrorMessage(err, "Could not stop the rollup job"));
       }
     }
     await this.getRollups();
@@ -200,12 +201,12 @@ export default class Rollups extends Component<RollupsProps, RollupsState> {
 
         if (response.ok) {
           //Show success message
-          this.core.notifications.toasts.addSuccess(`${rollupId} is enabled`);
+          this.context.notifications.toasts.addSuccess(`${rollupId} is enabled`);
         } else {
-          this.core.notifications.toasts.addDanger(`Could not start the rollup job "${rollupId}" : ${response.error}`);
+          this.context.notifications.toasts.addDanger(`Could not start the rollup job "${rollupId}" : ${response.error}`);
         }
       } catch (err) {
-        this.core.notifications.toasts.addDanger(getErrorMessage(err, "Could not start the rollup job"));
+        this.context.notifications.toasts.addDanger(getErrorMessage(err, "Could not start the rollup job"));
       }
     }
     await this.getRollups();

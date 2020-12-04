@@ -44,7 +44,7 @@ interface NewPolicyState {
 }
 
 export default class NewPolicy extends React.Component<NewPolicyProps, NewPolicyState> {
-  core = React.useContext(CoreServicesContext) as CoreStart;
+  static contextType = CoreServicesContext;
   state = {
     stateOptions: [],
     policiesIsLoading: false,
@@ -68,13 +68,13 @@ export default class NewPolicy extends React.Component<NewPolicyProps, NewPolicy
         this.setState({ policies });
       } else {
         if (searchPoliciesResponse.error.startsWith("[index_not_found_exception]")) {
-          this.core.notifications.toasts.addDanger("You have not created a policy yet");
+          this.context.notifications.toasts.addDanger("You have not created a policy yet");
         } else {
-          this.core.notifications.toasts.addDanger(searchPoliciesResponse.error);
+          this.context.notifications.toasts.addDanger(searchPoliciesResponse.error);
         }
       }
     } catch (err) {
-      this.core.notifications.toasts.addDanger(getErrorMessage(err, "There was a problem searching policies"));
+      this.context.notifications.toasts.addDanger(getErrorMessage(err, "There was a problem searching policies"));
     }
 
     this.setState({ policiesIsLoading: false });

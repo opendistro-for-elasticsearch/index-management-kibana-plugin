@@ -48,7 +48,7 @@ export enum Radio {
 }
 
 export default class ChangePolicy extends Component<ChangePolicyProps, ChangePolicyState> {
-  core = React.useContext(CoreServicesContext) as CoreStart;
+  static contextType = CoreServicesContext;
   state: ChangePolicyState = {
     selectedPolicies: [],
     selectedManagedIndices: [],
@@ -61,7 +61,7 @@ export default class ChangePolicy extends Component<ChangePolicyProps, ChangePol
   };
 
   async componentDidMount(): Promise<void> {
-    this.core.chrome.setBreadcrumbs([BREADCRUMBS.INDEX_MANAGEMENT, BREADCRUMBS.MANAGED_INDICES, BREADCRUMBS.CHANGE_POLICY]);
+    this.context.chrome.setBreadcrumbs([BREADCRUMBS.INDEX_MANAGEMENT, BREADCRUMBS.MANAGED_INDICES, BREADCRUMBS.CHANGE_POLICY]);
   }
 
   onChangeSelectedPolicy = (selectedPolicies: PolicyOption[]): void => {
@@ -109,20 +109,20 @@ export default class ChangePolicy extends Component<ChangePolicyProps, ChangePol
       if (changePolicyResponse.ok) {
         const { updatedIndices, failedIndices, failures } = changePolicyResponse.response;
         if (updatedIndices) {
-          this.core.notifications.toasts.addSuccess(`Changed policy on ${updatedIndices} indices`);
+          this.context.notifications.toasts.addSuccess(`Changed policy on ${updatedIndices} indices`);
         }
         if (failures) {
-          this.core.notifications.toasts.addDanger(
+          this.context.notifications.toasts.addDanger(
             `Failed to change policy on ${failedIndices
               .map((failedIndex) => `[${failedIndex.indexName}, ${failedIndex.reason}]`)
               .join(", ")}`
           );
         }
       } else {
-        this.core.notifications.toasts.addDanger(changePolicyResponse.error);
+        this.context.notifications.toasts.addDanger(changePolicyResponse.error);
       }
     } catch (err) {
-      this.core.notifications.toasts.addDanger(getErrorMessage(err, "There was a problem changing policy"));
+      this.context.notifications.toasts.addDanger(getErrorMessage(err, "There was a problem changing policy"));
     }
   };
 

@@ -41,7 +41,7 @@ interface RollupIndicesState {
 }
 
 export default class RollupIndices extends Component<RollupIndicesProps, RollupIndicesState> {
-  core = React.useContext(CoreServicesContext) as CoreStart;
+  static contextType = CoreServicesContext;
   constructor(props: RollupIndicesProps) {
     super(props);
     this.state = {
@@ -71,13 +71,13 @@ export default class RollupIndices extends Component<RollupIndicesProps, RollupI
         this.setState({ indexOptions: options.concat(indices), targetIndexOptions: indices });
       } else {
         if (getIndicesResponse.error.startsWith("[index_not_found_exception]")) {
-          this.core.notifications.toasts.addDanger("No index available");
+          this.context.notifications.toasts.addDanger("No index available");
         } else {
-          this.core.notifications.toasts.addDanger(getIndicesResponse.error);
+          this.context.notifications.toasts.addDanger(getIndicesResponse.error);
         }
       }
     } catch (err) {
-      this.core.notifications.toasts.addDanger(err.message);
+      this.context.notifications.toasts.addDanger(err.message);
     }
 
     this.setState({ isLoading: false });

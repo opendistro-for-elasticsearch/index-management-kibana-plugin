@@ -113,27 +113,26 @@ export default class Main extends Component<MainProps, object> {
                                 {...props}
                                 managedIndexService={services.managedIndexService}
                                 indexService={services.indexService}
-                                core={core}
                               />
                             )}
                           />
                           <Route
                             path={ROUTES.CREATE_POLICY}
                             render={(props: RouteComponentProps) => (
-                              <CreatePolicy {...props} isEdit={false} policyService={services.policyService} core={core} />
+                              <CreatePolicy {...props} isEdit={false} policyService={services.policyService} />
                             )}
                           />
                           <Route
                             path={ROUTES.EDIT_POLICY}
                             render={(props: RouteComponentProps) => (
-                              <CreatePolicy {...props} isEdit={true} policyService={services.policyService} core={core} />
+                              <CreatePolicy {...props} isEdit={true} policyService={services.policyService} />
                             )}
                           />
                           <Route
                             path={ROUTES.INDEX_POLICIES}
                             render={(props: RouteComponentProps) => (
                               <div style={{ padding: "25px 25px" }}>
-                                <Policies {...props} policyService={services.policyService} core={core} />
+                                <Policies {...props} policyService={services.policyService} />
                               </div>
                             )}
                           />
@@ -141,7 +140,7 @@ export default class Main extends Component<MainProps, object> {
                             path={ROUTES.MANAGED_INDICES}
                             render={(props: RouteComponentProps) => (
                               <div>
-                                <ManagedIndices {...props} managedIndexService={services.managedIndexService} core={core} />
+                                <ManagedIndices {...props} managedIndexService={services.managedIndexService} />
                               </div>
                             )}
                           />
@@ -149,7 +148,7 @@ export default class Main extends Component<MainProps, object> {
                             path={ROUTES.INDICES}
                             render={(props: RouteComponentProps) => (
                               <div style={{ padding: "25px 25px" }}>
-                                <Indices {...props} indexService={services.indexService} core={core} />
+                                <Indices {...props} indexService={services.indexService} />
                               </div>
                             )}
                           />
@@ -157,7 +156,7 @@ export default class Main extends Component<MainProps, object> {
                             path={ROUTES.ROLLUPS}
                             render={(props: RouteComponentProps) => (
                               <div style={{ padding: "25px 25px" }}>
-                                <Rollups {...props} rollupService={services.rollupService} core={core} />
+                                <Rollups {...props} rollupService={services.rollupService} />
                               </div>
                             )}
                           />
@@ -165,12 +164,7 @@ export default class Main extends Component<MainProps, object> {
                             path={ROUTES.CREATE_ROLLUP}
                             render={(props: RouteComponentProps) => (
                               <div style={{ padding: "25px 25px" }}>
-                                <CreateRollupForm
-                                  {...props}
-                                  rollupService={services.rollupService}
-                                  indexService={services.indexService}
-                                  core={core}
-                                />
+                                <CreateRollupForm {...props} rollupService={services.rollupService} indexService={services.indexService} />
                               </div>
                             )}
                           />
@@ -178,7 +172,7 @@ export default class Main extends Component<MainProps, object> {
                             path={ROUTES.EDIT_ROLLUP}
                             render={(props: RouteComponentProps) => (
                               <div style={{ padding: "25px 25px" }}>
-                                <EditRollup {...props} rollupService={services.rollupService} core={core} />
+                                <EditRollup {...props} rollupService={services.rollupService} />
                               </div>
                             )}
                           />
@@ -186,7 +180,7 @@ export default class Main extends Component<MainProps, object> {
                             path={ROUTES.ROLLUP_DETAILS}
                             render={(props: RouteComponentProps) => (
                               <div style={{ padding: "25px 25px" }}>
-                                <RollupDetails {...props} rollupService={services.rollupService} core={core} />
+                                <RollupDetails {...props} rollupService={services.rollupService} />
                               </div>
                             )}
                           />
