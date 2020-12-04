@@ -16,7 +16,6 @@
 import React, { ChangeEvent, Component } from "react";
 import { EuiSpacer, EuiTitle, EuiFlexGroup, EuiFlexItem, EuiCallOut, EuiComboBoxOptionOption } from "@elastic/eui";
 import { RouteComponentProps } from "react-router-dom";
-import { CoreStart } from "kibana/public";
 import { RollupService } from "../../../../services";
 import { BREADCRUMBS, ROUTES } from "../../../../utils/constants";
 import CreateRollupSteps from "../../components/CreateRollupSteps";

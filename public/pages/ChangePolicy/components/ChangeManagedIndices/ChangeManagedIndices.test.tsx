@@ -19,20 +19,23 @@ import { render, wait } from "@testing-library/react";
 import ChangeManagedIndices from "./ChangeManagedIndices";
 import { browserServicesMock } from "../../../../../test/mocks";
 import coreServicesMock from "../../../../../test/mocks/coreServicesMock";
+import { CoreServicesContext } from "../../../../components/core_services";
+import RetryModal from "../../../ManagedIndices/components/RetryModal";
 
 describe("<ChangeManagedIndices /> spec", () => {
   it("renders the component", async () => {
     browserServicesMock.managedIndexService.getManagedIndices = jest.fn().mockResolvedValue({ ok: true, response: { hits: { hits: [] } } });
     const { container } = render(
-      <ChangeManagedIndices
-        managedIndexService={browserServicesMock.managedIndexService}
-        selectedManagedIndices={[]}
-        selectedStateFilters={[]}
-        onChangeManagedIndices={() => {}}
-        onChangeStateFilters={() => {}}
-        managedIndicesError=""
-        core={coreServicesMock}
-      />
+      <CoreServicesContext.Provider value={coreServicesMock}>
+        <ChangeManagedIndices
+          managedIndexService={browserServicesMock.managedIndexService}
+          selectedManagedIndices={[]}
+          selectedStateFilters={[]}
+          onChangeManagedIndices={() => {}}
+          onChangeStateFilters={() => {}}
+          managedIndicesError=""
+        />
+      </CoreServicesContext.Provider>
     );
 
     await wait();
@@ -43,15 +46,16 @@ describe("<ChangeManagedIndices /> spec", () => {
   it("shows danger toaster when search fails", async () => {
     browserServicesMock.managedIndexService.getManagedIndices = jest.fn().mockRejectedValue(new Error("this is an error"));
     render(
-      <ChangeManagedIndices
-        managedIndexService={browserServicesMock.managedIndexService}
-        selectedManagedIndices={[]}
-        selectedStateFilters={[]}
-        onChangeManagedIndices={() => {}}
-        onChangeStateFilters={() => {}}
-        managedIndicesError=""
-        core={coreServicesMock}
-      />
+      <CoreServicesContext.Provider value={coreServicesMock}>
+        <ChangeManagedIndices
+          managedIndexService={browserServicesMock.managedIndexService}
+          selectedManagedIndices={[]}
+          selectedStateFilters={[]}
+          onChangeManagedIndices={() => {}}
+          onChangeStateFilters={() => {}}
+          managedIndicesError=""
+        />
+      </CoreServicesContext.Provider>
     );
 
     await wait();
@@ -63,15 +67,16 @@ describe("<ChangeManagedIndices /> spec", () => {
   it("shows danger toaster when search gracefully fails", async () => {
     browserServicesMock.managedIndexService.getManagedIndices = jest.fn().mockResolvedValue({ ok: false, error: "some error" });
     render(
-      <ChangeManagedIndices
-        managedIndexService={browserServicesMock.managedIndexService}
-        selectedManagedIndices={[]}
-        selectedStateFilters={[]}
-        onChangeManagedIndices={() => {}}
-        onChangeStateFilters={() => {}}
-        managedIndicesError=""
-        core={coreServicesMock}
-      />
+      <CoreServicesContext.Provider value={coreServicesMock}>
+        <ChangeManagedIndices
+          managedIndexService={browserServicesMock.managedIndexService}
+          selectedManagedIndices={[]}
+          selectedStateFilters={[]}
+          onChangeManagedIndices={() => {}}
+          onChangeStateFilters={() => {}}
+          managedIndicesError=""
+        />
+      </CoreServicesContext.Provider>
     );
 
     await wait();
@@ -85,15 +90,16 @@ describe("<ChangeManagedIndices /> spec", () => {
       .fn()
       .mockResolvedValue({ ok: false, error: "[index_not_found_exception]and other stuff" });
     render(
-      <ChangeManagedIndices
-        managedIndexService={browserServicesMock.managedIndexService}
-        selectedManagedIndices={[]}
-        selectedStateFilters={[]}
-        onChangeManagedIndices={() => {}}
-        onChangeStateFilters={() => {}}
-        managedIndicesError=""
-        core={coreServicesMock}
-      />
+      <CoreServicesContext.Provider value={coreServicesMock}>
+        <ChangeManagedIndices
+          managedIndexService={browserServicesMock.managedIndexService}
+          selectedManagedIndices={[]}
+          selectedStateFilters={[]}
+          onChangeManagedIndices={() => {}}
+          onChangeStateFilters={() => {}}
+          managedIndicesError=""
+        />
+      </CoreServicesContext.Provider>
     );
 
     await wait();

@@ -46,7 +46,7 @@ function renderPoliciesWithRouter() {
                         path={ROUTES.INDEX_POLICIES}
                         render={(props: RouteComponentProps) => (
                           <div style={{ padding: "25px 25px" }}>
-                            <Policies {...props} policyService={services.policyService} core={coreServicesMock} />
+                            <Policies {...props} policyService={services.policyService} />
                           </div>
                         )}
                       />

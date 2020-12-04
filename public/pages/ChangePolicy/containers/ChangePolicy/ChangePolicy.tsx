@@ -16,7 +16,6 @@
 import React, { Component } from "react";
 import { RouteComponentProps } from "react-router-dom";
 import { EuiSpacer, EuiTitle, EuiButton, EuiFlexGroup, EuiFlexItem } from "@elastic/eui";
-import { CoreStart } from "kibana/public";
 import { IndexService, ManagedIndexService } from "../../../../services";
 import ChangeManagedIndices from "../../components/ChangeManagedIndices";
 import NewPolicy from "../../components/NewPolicy";

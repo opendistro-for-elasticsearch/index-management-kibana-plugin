@@ -19,10 +19,16 @@ import { render, fireEvent, wait } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import RolloverAliasModal from "./RolloverAliasModal";
 import { browserServicesMock, coreServicesMock } from "../../../../../test/mocks";
+import { CoreServicesContext } from "../../../../components/core_services";
+import RetryModal from "../RetryModal";
 
 describe("<RolloverAliasModal /> spec", () => {
   it("renders the component", () => {
-    render(<RolloverAliasModal services={browserServicesMock} index="some_index" onClose={() => {}} core={coreServicesMock} />);
+    render(
+      <CoreServicesContext.Provider value={coreServicesMock}>
+        <RolloverAliasModal services={browserServicesMock} index="some_index" onClose={() => {}} />
+      </CoreServicesContext.Provider>
+    );
     // EuiOverlayMask appends an element to the body so we should have two, an empty div from react-test-library
     // and our EuiOverlayMask element
     expect(document.body.children).toHaveLength(2);
@@ -32,7 +38,9 @@ describe("<RolloverAliasModal /> spec", () => {
   it("calls close when close button clicked", () => {
     const onClose = jest.fn();
     const { getByTestId } = render(
-      <RolloverAliasModal services={browserServicesMock} index="some_index" onClose={onClose} core={coreServicesMock} />
+      <CoreServicesContext.Provider value={coreServicesMock}>
+        <RolloverAliasModal services={browserServicesMock} index="some_index" onClose={onClose} />
+      </CoreServicesContext.Provider>
     );
 
     fireEvent.click(getByTestId("editRolloverAliasModalCloseButton"));
@@ -41,7 +49,9 @@ describe("<RolloverAliasModal /> spec", () => {
 
   it("disables add button when no alias", async () => {
     const { getByTestId, getByPlaceholderText } = render(
-      <RolloverAliasModal services={browserServicesMock} index="some_index" onClose={() => {}} core={coreServicesMock} />
+      <CoreServicesContext.Provider value={coreServicesMock}>
+        <RolloverAliasModal services={browserServicesMock} index="some_index" onClose={() => {}} />
+      </CoreServicesContext.Provider>
     );
 
     expect(getByTestId("editRolloverAliasModalAddButton")).toBeDisabled();
@@ -54,7 +64,9 @@ describe("<RolloverAliasModal /> spec", () => {
   it("shows success toaster when successful", async () => {
     browserServicesMock.indexService.editRolloverAlias = jest.fn().mockResolvedValue({ ok: true, response: { acknowledged: true } });
     const { getByTestId, getByPlaceholderText } = render(
-      <RolloverAliasModal services={browserServicesMock} index="some_index" onClose={() => {}} core={coreServicesMock} />
+      <CoreServicesContext.Provider value={coreServicesMock}>
+        <RolloverAliasModal services={browserServicesMock} index="some_index" onClose={() => {}} />
+      </CoreServicesContext.Provider>
     );
 
     await userEvent.type(getByPlaceholderText("Rollover alias"), "some_alias");
@@ -70,7 +82,9 @@ describe("<RolloverAliasModal /> spec", () => {
   it("shows error toaster when error is thrown", async () => {
     browserServicesMock.indexService.editRolloverAlias = jest.fn().mockRejectedValue(new Error("this is an error"));
     const { getByTestId, getByPlaceholderText } = render(
-      <RolloverAliasModal services={browserServicesMock} index="some_index" onClose={() => {}} core={coreServicesMock} />
+      <CoreServicesContext.Provider value={coreServicesMock}>
+        <RolloverAliasModal services={browserServicesMock} index="some_index" onClose={() => {}} />
+      </CoreServicesContext.Provider>
     );
 
     await userEvent.type(getByPlaceholderText("Rollover alias"), "some_alias");
@@ -86,7 +100,9 @@ describe("<RolloverAliasModal /> spec", () => {
   it("shows error toaster when error is returned", async () => {
     browserServicesMock.indexService.editRolloverAlias = jest.fn().mockResolvedValue({ ok: false, error: "some error" });
     const { getByTestId, getByPlaceholderText } = render(
-      <RolloverAliasModal services={browserServicesMock} index="some_index" onClose={() => {}} core={coreServicesMock} />
+      <CoreServicesContext.Provider value={coreServicesMock}>
+        <RolloverAliasModal services={browserServicesMock} index="some_index" onClose={() => {}} />
+      </CoreServicesContext.Provider>
     );
 
     await userEvent.type(getByPlaceholderText("Rollover alias"), "some_alias");
@@ -105,7 +121,9 @@ describe("<RolloverAliasModal /> spec", () => {
       response: { acknowledged: false },
     });
     const { getByTestId, getByPlaceholderText } = render(
-      <RolloverAliasModal services={browserServicesMock} index="some_index" onClose={() => {}} core={coreServicesMock} />
+      <CoreServicesContext.Provider value={coreServicesMock}>
+        <RolloverAliasModal services={browserServicesMock} index="some_index" onClose={() => {}} />
+      </CoreServicesContext.Provider>
     );
 
     await userEvent.type(getByPlaceholderText("Rollover alias"), "some_alias");

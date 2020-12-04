@@ -32,7 +32,6 @@ import {
 } from "@elastic/eui";
 import { RouteComponentProps } from "react-router-dom";
 import queryString from "query-string";
-import { CoreStart } from "kibana/public";
 import { RollupService } from "../../../../services";
 import { BREADCRUMBS, ROUTES } from "../../../../utils/constants";
 import { getErrorMessage } from "../../../../utils/helpers";

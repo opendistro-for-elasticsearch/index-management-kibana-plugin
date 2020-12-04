@@ -36,7 +36,6 @@ describe("<NewPolicy /> spec", () => {
           onChangeStateRadio={() => {}}
           onStateSelectChange={() => {}}
           selectedPoliciesError=""
-          core={coreServicesMock}
         />
       </CoreServicesContext.Provider>
     );
@@ -59,7 +58,6 @@ describe("<NewPolicy /> spec", () => {
           onChangeStateRadio={() => {}}
           onStateSelectChange={() => {}}
           selectedPoliciesError=""
-          core={coreServicesMock}
         />
       </CoreServicesContext.Provider>
     );
@@ -83,7 +81,6 @@ describe("<NewPolicy /> spec", () => {
           onChangeStateRadio={() => {}}
           onStateSelectChange={() => {}}
           selectedPoliciesError=""
-          core={coreServicesMock}
         />
       </CoreServicesContext.Provider>
     );
@@ -109,7 +106,6 @@ describe("<NewPolicy /> spec", () => {
           onChangeStateRadio={() => {}}
           onStateSelectChange={() => {}}
           selectedPoliciesError=""
-          core={coreServicesMock}
         />
       </CoreServicesContext.Provider>
     );

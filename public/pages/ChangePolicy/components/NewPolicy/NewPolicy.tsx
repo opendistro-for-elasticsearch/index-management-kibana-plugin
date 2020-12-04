@@ -16,7 +16,6 @@
 import React from "react";
 import _ from "lodash";
 import { EuiSpacer, EuiText, EuiRadioGroup, EuiFormRow, EuiSelect, EuiComboBox, EuiLink, EuiIcon } from "@elastic/eui";
-import { CoreStart } from "kibana/public";
 import { ContentPanel } from "../../../../components/ContentPanel";
 import { IndexService } from "../../../../services";
 import { Radio } from "../../containers/ChangePolicy/ChangePolicy";

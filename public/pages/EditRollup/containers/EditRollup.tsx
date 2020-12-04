@@ -18,7 +18,6 @@ import { RouteComponentProps } from "react-router-dom";
 import moment from "moment";
 import queryString from "query-string";
 import { EuiFlexItem, EuiFlexGroup, EuiButton, EuiTitle, EuiSpacer, EuiButtonEmpty } from "@elastic/eui";
-import { CoreStart } from "kibana/public";
 import ConfigureRollup from "../../CreateRollup/components/ConfigureRollup";
 import Schedule from "../../CreateRollup/components/Schedule";
 import { getErrorMessage } from "../../../utils/helpers";

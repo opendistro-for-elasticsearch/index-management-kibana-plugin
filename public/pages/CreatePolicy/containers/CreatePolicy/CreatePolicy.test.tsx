@@ -47,13 +47,13 @@ function renderCreatePolicyWithRouter(initialEntries = ["/"]) {
                             <Route
                               path={ROUTES.CREATE_POLICY}
                               render={(props: RouteComponentProps) => (
-                                <CreatePolicy {...props} isEdit={false} policyService={services.policyService} core={core} />
+                                <CreatePolicy {...props} isEdit={false} policyService={services.policyService} />
                               )}
                             />
                             <Route
                               path={ROUTES.EDIT_POLICY}
                               render={(props: RouteComponentProps) => (
-                                <CreatePolicy {...props} isEdit={true} policyService={services.policyService} core={core} />
+                                <CreatePolicy {...props} isEdit={true} policyService={services.policyService} />
                               )}
                             />
                             <Route path={ROUTES.INDEX_POLICIES} render={(props: RouteComponentProps) => <div>Testing Policies</div>} />

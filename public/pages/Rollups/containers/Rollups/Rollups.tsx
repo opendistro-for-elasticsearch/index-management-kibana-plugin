@@ -45,7 +45,6 @@ import {
   EuiLink,
   EuiTableFieldDataColumnType,
 } from "@elastic/eui";
-import { CoreStart } from "kibana/public";
 import { RollupService } from "../../../../services";
 import RollupEmptyPrompt from "../../components/RollupEmptyPrompt";
 import { RollupQueryParams } from "../../models/interfaces";
@@ -100,7 +99,6 @@ export default class Rollups extends Component<RollupsProps, RollupsState> {
   }
 
   async componentDidMount() {
-    console.log(this.context);
     this.context.chrome.setBreadcrumbs([BREADCRUMBS.INDEX_MANAGEMENT, BREADCRUMBS.ROLLUPS]);
     await this.getRollups();
   }

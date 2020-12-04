@@ -41,9 +41,7 @@ function renderRollupDetailsWithRouter(initialEntries = ["/"]) {
                     <Switch>
                       <Route
                         path={ROUTES.ROLLUP_DETAILS}
-                        render={(props: RouteComponentProps) => (
-                          <RollupDetails {...props} rollupService={services.rollupService} core={coreServicesMock} />
-                        )}
+                        render={(props: RouteComponentProps) => <RollupDetails {...props} rollupService={services.rollupService} />}
                       />
                       <Route path={ROUTES.EDIT_ROLLUP} render={(props) => <div>Testing edit rollup: {props.location.search}</div>} />
                       <Route path={ROUTES.ROLLUPS} render={(props) => <div>Testing rollup landing page</div>} />

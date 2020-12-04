@@ -35,7 +35,6 @@ import {
 } from "@elastic/eui";
 import queryString from "query-string";
 import _ from "lodash";
-import { CoreStart } from "kibana/public";
 import { ContentPanel, ContentPanelActions } from "../../../../components/ContentPanel";
 import ManagedIndexControls from "../../components/ManagedIndexControls";
 import ManagedIndexEmptyPrompt from "../../components/ManagedIndexEmptyPrompt";

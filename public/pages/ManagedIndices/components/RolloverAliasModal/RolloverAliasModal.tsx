@@ -26,7 +26,6 @@ import {
   EuiFormRow,
   EuiFieldText,
 } from "@elastic/eui";
-import { CoreStart } from "kibana/public";
 import { BrowserServices } from "../../../../models/interfaces";
 import { getErrorMessage } from "../../../../utils/helpers";
 import { CoreServicesContext } from "../../../../components/core_services";

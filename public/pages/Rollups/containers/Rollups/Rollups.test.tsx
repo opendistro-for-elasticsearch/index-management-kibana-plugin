@@ -26,36 +26,39 @@ import { BREADCRUMBS, ROUTES } from "../../../../utils/constants";
 import Rollups from "./Rollups";
 import { TEXT } from "../../components/RollupEmptyPrompt/RollupEmptyPrompt";
 import { testRollup } from "../../../../../test/constants";
+import { CoreServicesContext } from "../../../../components/core_services";
 
 function renderRollupsWithRouter() {
   return {
     ...render(
       <Router>
-        <ServicesContext.Provider value={browserServicesMock}>
-          <ServicesConsumer>
-            {(services: BrowserServices | null) =>
-              services && (
-                <ModalProvider>
-                  <ModalRoot services={services} />
-                  <Switch>
-                    <Route
-                      path={ROUTES.ROLLUPS}
-                      render={(props: RouteComponentProps) => (
-                        <div style={{ padding: "25px 25px" }}>
-                          <Rollups {...props} rollupService={services.rollupService} core={coreServicesMock} />
-                        </div>
-                      )}
-                    />
-                    <Route path={ROUTES.CREATE_ROLLUP} render={(props) => <div>Testing create rollup</div>} />
-                    <Route path={ROUTES.EDIT_ROLLUP} render={(props) => <div>Testing edit rollup: {props.location.search}</div>} />
-                    <Route path={ROUTES.ROLLUP_DETAILS} render={(props) => <div>Testing rollup details: {props.location.search}</div>} />
-                    <Redirect from="/" to={ROUTES.ROLLUPS} />
-                  </Switch>
-                </ModalProvider>
-              )
-            }
-          </ServicesConsumer>
-        </ServicesContext.Provider>
+        <CoreServicesContext.Provider value={coreServicesMock}>
+          <ServicesContext.Provider value={browserServicesMock}>
+            <ServicesConsumer>
+              {(services: BrowserServices | null) =>
+                services && (
+                  <ModalProvider>
+                    <ModalRoot services={services} />
+                    <Switch>
+                      <Route
+                        path={ROUTES.ROLLUPS}
+                        render={(props: RouteComponentProps) => (
+                          <div style={{ padding: "25px 25px" }}>
+                            <Rollups {...props} rollupService={services.rollupService} />
+                          </div>
+                        )}
+                      />
+                      <Route path={ROUTES.CREATE_ROLLUP} render={(props) => <div>Testing create rollup</div>} />
+                      <Route path={ROUTES.EDIT_ROLLUP} render={(props) => <div>Testing edit rollup: {props.location.search}</div>} />
+                      <Route path={ROUTES.ROLLUP_DETAILS} render={(props) => <div>Testing rollup details: {props.location.search}</div>} />
+                      <Redirect from="/" to={ROUTES.ROLLUPS} />
+                    </Switch>
+                  </ModalProvider>
+                )
+              }
+            </ServicesConsumer>
+          </ServicesContext.Provider>
+        </CoreServicesContext.Provider>
       </Router>
     ),
   };

@@ -30,7 +30,6 @@ import {
   EuiTableSelectionType,
 } from "@elastic/eui";
 import _ from "lodash";
-import { CoreStart } from "kibana/public";
 import { ContentPanel, ContentPanelActions } from "../../../../components/ContentPanel";
 import PolicyControls from "../../components/PolicyControls";
 import PolicyEmptyPrompt from "../../components/PolicyEmptyPrompt";

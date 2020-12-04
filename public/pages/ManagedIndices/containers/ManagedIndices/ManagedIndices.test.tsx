@@ -44,7 +44,7 @@ function renderWithRouter(Component: React.ComponentType<any>) {
                     <CoreServicesConsumer>
                       {(core: CoreStart | null) => (
                         <ServicesConsumer>
-                          {({ managedIndexService }: any) => <Component managedIndexService={managedIndexService} core={core} {...props} />}
+                          {({ managedIndexService }: any) => <Component managedIndexService={managedIndexService} {...props} />}
                         </ServicesConsumer>
                       )}
                     </CoreServicesConsumer>

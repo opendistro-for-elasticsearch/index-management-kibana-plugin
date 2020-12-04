@@ -39,7 +39,6 @@ import { PolicyOption } from "../../models/interfaces";
 import { Policy, State } from "../../../../../models/interfaces";
 import { getErrorMessage } from "../../../../utils/helpers";
 import { DOCUMENTATION_URL } from "../../../../utils/constants";
-import { CoreStart } from "kibana/public";
 import { CoreServicesContext } from "../../../../components/core_services";
 
 interface ApplyPolicyModalProps {

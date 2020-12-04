@@ -18,6 +18,7 @@ import "@testing-library/jest-dom/extend-expect";
 import { render, wait } from "@testing-library/react";
 import ApplyPolicyModal from "./ApplyPolicyModal";
 import { browserServicesMock, coreServicesMock, httpClientMock } from "../../../../../test/mocks";
+import { CoreServicesContext } from "../../../../components/core_services";
 
 // TODO: fireEvent for applyPolicy, but need to figure out how to get react-testing-library to work
 //  with the combo_box in modal
@@ -25,7 +26,7 @@ import { browserServicesMock, coreServicesMock, httpClientMock } from "../../../
 describe("<ApplyPolicyModal /> spec", () => {
   it("renders the component", async () => {
     httpClientMock.post = jest.fn().mockResolvedValue({ ok: true, resp: { hits: { hits: [{ _id: "test_index" }] } } });
-    render(<ApplyPolicyModal onClose={() => {}} services={browserServicesMock} indices={[]} core={coreServicesMock} />);
+    render(<ApplyPolicyModal onClose={() => {}} services={browserServicesMock} indices={[]} />);
 
     // EuiOverlayMask appends an element to the body so we should have two, an empty div from react-test-library
     // and our EuiOverlayMask element
@@ -36,7 +37,11 @@ describe("<ApplyPolicyModal /> spec", () => {
   it("successfully calls search policies on mount", async () => {
     httpClientMock.post = jest.fn().mockResolvedValue({ ok: true, resp: { hits: { hits: [{ _id: "test_index" }] } } });
     const spy = jest.spyOn(browserServicesMock.indexService, "searchPolicies");
-    render(<ApplyPolicyModal onClose={() => {}} services={browserServicesMock} indices={[]} core={coreServicesMock} />);
+    render(
+      <CoreServicesContext.Provider value={coreServicesMock}>
+        <ApplyPolicyModal onClose={() => {}} services={browserServicesMock} indices={[]} />
+      </CoreServicesContext.Provider>
+    );
 
     expect(spy).toHaveBeenCalledTimes(1);
     expect(spy).toHaveBeenCalledWith("", true);
@@ -46,7 +51,11 @@ describe("<ApplyPolicyModal /> spec", () => {
   it("adds danger toaster on safe error", async () => {
     httpClientMock.post = jest.fn().mockResolvedValue({ ok: false, error: "some error" });
     const spy = jest.spyOn(browserServicesMock.indexService, "searchPolicies");
-    render(<ApplyPolicyModal onClose={() => {}} services={browserServicesMock} indices={[]} core={coreServicesMock} />);
+    render(
+      <CoreServicesContext.Provider value={coreServicesMock}>
+        <ApplyPolicyModal onClose={() => {}} services={browserServicesMock} indices={[]} />
+      </CoreServicesContext.Provider>
+    );
 
     // wait 1 tick for the searchPolicies promise to resolve
     await wait();
@@ -60,7 +69,11 @@ describe("<ApplyPolicyModal /> spec", () => {
   it("adds danger toaster on unsafe error", async () => {
     httpClientMock.post = jest.fn().mockRejectedValue(new Error("testing error"));
     const spy = jest.spyOn(browserServicesMock.indexService, "searchPolicies");
-    render(<ApplyPolicyModal onClose={() => {}} services={browserServicesMock} indices={[]} core={coreServicesMock} />);
+    render(
+      <CoreServicesContext.Provider value={coreServicesMock}>
+        <ApplyPolicyModal onClose={() => {}} services={browserServicesMock} indices={[]} />
+      </CoreServicesContext.Provider>
+    );
 
     // wait 1 tick for the searchPolicies promise to resolve
     await wait();

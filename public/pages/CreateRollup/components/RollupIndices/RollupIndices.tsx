@@ -14,7 +14,6 @@
  */
 
 import React, { Component, Fragment } from "react";
-import { CoreStart } from "kibana/public";
 import { EuiSpacer, EuiFormRow, EuiComboBox, EuiCallOut } from "@elastic/eui";
 import { ContentPanel } from "../../../../components/ContentPanel";
 import { EuiComboBoxOptionOption } from "@elastic/eui/src/components/combo_box/types";

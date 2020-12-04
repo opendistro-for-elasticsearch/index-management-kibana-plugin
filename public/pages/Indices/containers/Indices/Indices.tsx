@@ -28,7 +28,6 @@ import {
   Pagination,
   EuiTableSelectionType,
 } from "@elastic/eui";
-import { CoreStart } from "kibana/public";
 import { ContentPanel, ContentPanelActions } from "../../../../components/ContentPanel";
 import IndexControls from "../../components/IndexControls";
 import ApplyPolicyModal from "../../components/ApplyPolicyModal";
