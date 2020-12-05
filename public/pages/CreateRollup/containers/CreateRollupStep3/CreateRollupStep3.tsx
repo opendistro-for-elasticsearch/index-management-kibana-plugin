@@ -15,8 +15,6 @@
 
 import React, { ChangeEvent, Component } from "react";
 import { EuiSpacer, EuiTitle, EuiFlexGroup, EuiFlexItem } from "@elastic/eui";
-import chrome from "ui/chrome";
-import { toastNotifications } from "ui/notify";
 import { RouteComponentProps } from "react-router-dom";
 import { RollupService } from "../../../../services";
 import { BREADCRUMBS, ROUTES } from "../../../../utils/constants";
@@ -24,6 +22,7 @@ import { getErrorMessage } from "../../../../utils/helpers";
 import { Rollup } from "../../../../../models/interfaces";
 import CreateRollupSteps from "../../components/CreateRollupSteps";
 import Schedule from "../../components/Schedule";
+import { CoreServicesContext } from "../../../../components/core_services";
 
 interface CreateRollupProps extends RouteComponentProps {
   rollupService: RollupService;
@@ -62,6 +61,7 @@ interface CreateRollupState {
 }
 
 export default class CreateRollupStep3 extends Component<CreateRollupProps, CreateRollupState> {
+  static contextType = CoreServicesContext;
   constructor(props: CreateRollupProps) {
     super(props);
 
@@ -77,7 +77,7 @@ export default class CreateRollupStep3 extends Component<CreateRollupProps, Crea
   }
 
   componentDidMount = async (): Promise<void> => {
-    chrome.breadcrumbs.set([BREADCRUMBS.INDEX_MANAGEMENT, BREADCRUMBS.ROLLUPS]);
+    this.context.chrome.setBreadcrumbs([BREADCRUMBS.INDEX_MANAGEMENT, BREADCRUMBS.ROLLUPS]);
   };
 
   onCreate = async (rollupId: string, rollup: Rollup): Promise<void> => {
@@ -85,7 +85,7 @@ export default class CreateRollupStep3 extends Component<CreateRollupProps, Crea
     try {
       const response = await rollupService.putRollup(rollup, rollupId);
       if (response.ok) {
-        toastNotifications.addSuccess(`Created rollup: ${response.response._id}`);
+        this.context.notifications.toasts.addSuccess(`Created rollup: ${response.response._id}`);
         this.props.history.push(ROUTES.ROLLUPS);
       } else {
         this.setState({ submitError: response.error });
@@ -100,12 +100,12 @@ export default class CreateRollupStep3 extends Component<CreateRollupProps, Crea
       const { rollupService } = this.props;
       const { rollupPrimaryTerm, rollupSeqNo } = this.state;
       if (rollupSeqNo == null || rollupPrimaryTerm == null) {
-        toastNotifications.addDanger("Could not update rollup without seqNo and primaryTerm");
+        this.context.notifications.toasts.addDanger("Could not update rollup without seqNo and primaryTerm");
         return;
       }
       const response = await rollupService.putRollup(rollup, rollupId, rollupSeqNo, rollupPrimaryTerm);
       if (response.ok) {
-        toastNotifications.addSuccess(`Updated rollup: ${response.response._id}`);
+        this.context.notifications.toasts.addSuccess(`Updated rollup: ${response.response._id}`);
         this.props.history.push(ROUTES.ROLLUPS);
       } else {
         this.setState({ submitError: response.error });

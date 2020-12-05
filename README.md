@@ -33,7 +33,7 @@ Ultimately, your directory structure should look like this:
 
 To build the plugin's distributable zip simply run `yarn build`.
 
-Example output: `./build/opendistro_index_management_kibana-1.3.0.0.zip`
+Example output: `./build/opendistroIndexManagementKibana-1.12.0.0.zip`
 
 
 ## Run
@@ -41,6 +41,7 @@ Example output: `./build/opendistro_index_management_kibana-1.3.0.0.zip`
 - `yarn start`
 
   - Starts Kibana and includes this plugin. Kibana will be available on `localhost:5601`.
+  - Please run in the Kibana root directory
   - You must have Elasticsearch running with the Index Management plugin
 
 ## Test
@@ -66,7 +67,7 @@ If you are running cypress tests with Kibana development server use the `--no-ba
 ## Contributing to Open Distro for Elasticsearch Index Management Kibana
 
 - Refer to [CONTRIBUTING.md](./CONTRIBUTING.md).
-- Since this is a Kibana plugin, it can be useful to review the [Kibana contributing guide](https://github.com/elastic/kibana/blob/master/CONTRIBUTING.md) alongside the documentation around [Kibana plugins](https://www.elastic.co/guide/en/kibana/master/kibana-plugins.html) and [plugin development](https://www.elastic.co/guide/en/kibana/master/plugin-development.html).
+- Since this is a Kibana plugin, it can be useful to review the [Kibana contributing guide](https://github.com/elastic/kibana/blob/master/CONTRIBUTING.md) alongside the documentation around [Kibana plugins](https://www.elastic.co/guide/en/kibana/master/kibana-plugins.html) and [plugin development](https://www.elastic.co/guide/en/kibana/master/external-plugin-development.html).
 
 ## Get Started and Contribute!
 

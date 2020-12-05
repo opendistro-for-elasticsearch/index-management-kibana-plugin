@@ -1,5 +1,5 @@
 /*
- * Copyright 2019 Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ * Copyright 2020 Amazon.com, Inc. or its affiliates. All Rights Reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License").
  * You may not use this file except in compliance with the License.
@@ -20,45 +20,46 @@ import { render, wait } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { Redirect, Route, RouteComponentProps, Switch } from "react-router-dom";
 import { MemoryRouter as Router } from "react-router-dom";
-import { toastNotifications } from "ui/notify";
-import chrome from "ui/chrome";
-import { browserServicesMock } from "../../../../../test/mocks";
+import { browserServicesMock, coreServicesMock } from "../../../../../test/mocks";
 import Policies from "./Policies";
 import { TEXT } from "../../components/PolicyEmptyPrompt/PolicyEmptyPrompt";
 import { ModalProvider, ModalRoot } from "../../../../components/Modal";
 import { ServicesConsumer, ServicesContext } from "../../../../services";
 import { BREADCRUMBS, ROUTES } from "../../../../utils/constants";
 import { BrowserServices } from "../../../../models/interfaces";
+import { CoreServicesContext } from "../../../../components/core_services";
 
 // TODO: Move common renderWith or with___ helpers into top level tests directory
 function renderPoliciesWithRouter() {
   return {
     ...render(
       <Router>
-        <ServicesContext.Provider value={browserServicesMock}>
-          <ServicesConsumer>
-            {(services: BrowserServices | null) =>
-              services && (
-                <ModalProvider>
-                  <ModalRoot services={services} />
-                  <Switch>
-                    <Route
-                      path={ROUTES.INDEX_POLICIES}
-                      render={(props: RouteComponentProps) => (
-                        <div style={{ padding: "25px 25px" }}>
-                          <Policies {...props} policyService={services.policyService} />
-                        </div>
-                      )}
-                    />
-                    <Route path={ROUTES.CREATE_POLICY} render={(props) => <div>Testing create policy</div>} />
-                    <Route path={ROUTES.EDIT_POLICY} render={(props) => <div>Testing edit policy: {props.location.search}</div>} />
-                    <Redirect from="/" to={ROUTES.INDEX_POLICIES} />
-                  </Switch>
-                </ModalProvider>
-              )
-            }
-          </ServicesConsumer>
-        </ServicesContext.Provider>
+        <CoreServicesContext.Provider value={coreServicesMock}>
+          <ServicesContext.Provider value={browserServicesMock}>
+            <ServicesConsumer>
+              {(services: BrowserServices | null) =>
+                services && (
+                  <ModalProvider>
+                    <ModalRoot services={services} />
+                    <Switch>
+                      <Route
+                        path={ROUTES.INDEX_POLICIES}
+                        render={(props: RouteComponentProps) => (
+                          <div style={{ padding: "25px 25px" }}>
+                            <Policies {...props} policyService={services.policyService} />
+                          </div>
+                        )}
+                      />
+                      <Route path={ROUTES.CREATE_POLICY} render={(props) => <div>Testing create policy</div>} />
+                      <Route path={ROUTES.EDIT_POLICY} render={(props) => <div>Testing edit policy: {props.location.search}</div>} />
+                      <Redirect from="/" to={ROUTES.INDEX_POLICIES} />
+                    </Switch>
+                  </ModalProvider>
+                )
+              }
+            </ServicesConsumer>
+          </ServicesContext.Provider>
+        </CoreServicesContext.Provider>
       </Router>
     ),
   };
@@ -85,30 +86,42 @@ const testPolicy = {
 
 describe("<IndexPolicies /> spec", () => {
   it("renders the component", async () => {
-    browserServicesMock.policyService.getPolicies = jest.fn().mockResolvedValue({ ok: true, response: { policies: [], totalPolicies: 0 } });
+    browserServicesMock.policyService.getPolicies = jest.fn().mockResolvedValue({
+      ok: true,
+      response: { policies: [], totalPolicies: 0 },
+    });
     const { container } = renderPoliciesWithRouter();
 
     expect(container.firstChild).toMatchSnapshot();
   });
 
   it("shows LOADING on mount", async () => {
-    browserServicesMock.policyService.getPolicies = jest.fn().mockResolvedValue({ ok: true, response: { policies: [], totalPolicies: 0 } });
+    browserServicesMock.policyService.getPolicies = jest.fn().mockResolvedValue({
+      ok: true,
+      response: { policies: [], totalPolicies: 0 },
+    });
     const { getByText } = renderPoliciesWithRouter();
 
     getByText(TEXT.LOADING);
   });
 
   it("sets breadcrumbs when mounting", async () => {
-    browserServicesMock.policyService.getPolicies = jest.fn().mockResolvedValue({ ok: true, response: { policies: [], totalPolicies: 0 } });
+    browserServicesMock.policyService.getPolicies = jest.fn().mockResolvedValue({
+      ok: true,
+      response: { policies: [], totalPolicies: 0 },
+    });
     renderPoliciesWithRouter();
 
-    expect(chrome.breadcrumbs.set).toHaveBeenCalledTimes(1);
-    expect(chrome.breadcrumbs.set).toHaveBeenCalledWith([BREADCRUMBS.INDEX_MANAGEMENT, BREADCRUMBS.INDEX_POLICIES]);
+    expect(coreServicesMock.chrome.setBreadcrumbs).toHaveBeenCalledTimes(1);
+    expect(coreServicesMock.chrome.setBreadcrumbs).toHaveBeenCalledWith([BREADCRUMBS.INDEX_MANAGEMENT, BREADCRUMBS.INDEX_POLICIES]);
   });
 
   it("loads policies", async () => {
     const policies = [testPolicy];
-    browserServicesMock.policyService.getPolicies = jest.fn().mockResolvedValue({ ok: true, response: { policies, totalPolicies: 1 } });
+    browserServicesMock.policyService.getPolicies = jest.fn().mockResolvedValue({
+      ok: true,
+      response: { policies, totalPolicies: 1 },
+    });
     const { getByText } = renderPoliciesWithRouter();
     await wait();
 
@@ -121,8 +134,8 @@ describe("<IndexPolicies /> spec", () => {
 
     await wait();
 
-    expect(toastNotifications.addDanger).toHaveBeenCalledTimes(1);
-    expect(toastNotifications.addDanger).toHaveBeenCalledWith("some error");
+    expect(coreServicesMock.notifications.toasts.addDanger).toHaveBeenCalledTimes(1);
+    expect(coreServicesMock.notifications.toasts.addDanger).toHaveBeenCalledWith("some error");
   });
 
   it("adds error toaster when get policies throws error", async () => {
@@ -131,8 +144,8 @@ describe("<IndexPolicies /> spec", () => {
 
     await wait();
 
-    expect(toastNotifications.addDanger).toHaveBeenCalledTimes(1);
-    expect(toastNotifications.addDanger).toHaveBeenCalledWith("rejected error");
+    expect(coreServicesMock.notifications.toasts.addDanger).toHaveBeenCalledTimes(1);
+    expect(coreServicesMock.notifications.toasts.addDanger).toHaveBeenCalledWith("rejected error");
   });
 
   it("can delete a policy", async () => {
@@ -159,15 +172,18 @@ describe("<IndexPolicies /> spec", () => {
     await wait();
 
     expect(browserServicesMock.policyService.deletePolicy).toHaveBeenCalledTimes(1);
-    expect(toastNotifications.addSuccess).toHaveBeenCalledTimes(1);
-    expect(toastNotifications.addSuccess).toHaveBeenCalledWith(`Deleted the policy: ${testPolicy.id}`);
+    expect(coreServicesMock.notifications.toasts.addSuccess).toHaveBeenCalledTimes(1);
+    expect(coreServicesMock.notifications.toasts.addSuccess).toHaveBeenCalledWith(`Deleted the policy: ${testPolicy.id}`);
 
     await wait(() => expect(queryByText(testPolicy.id)).toBeNull());
   });
 
   it("can route to edit policy", async () => {
     const policies = [testPolicy];
-    browserServicesMock.policyService.getPolicies = jest.fn().mockResolvedValue({ ok: true, response: { policies, totalPolicies: 1 } });
+    browserServicesMock.policyService.getPolicies = jest.fn().mockResolvedValue({
+      ok: true,
+      response: { policies, totalPolicies: 1 },
+    });
     const { getByText, getByTestId } = renderPoliciesWithRouter();
 
     await wait(() => getByText(testPolicy.id));
@@ -184,7 +200,10 @@ describe("<IndexPolicies /> spec", () => {
   });
 
   it("can route to create policy", async () => {
-    browserServicesMock.policyService.getPolicies = jest.fn().mockResolvedValue({ ok: true, response: { policies: [], totalPolicies: 1 } });
+    browserServicesMock.policyService.getPolicies = jest.fn().mockResolvedValue({
+      ok: true,
+      response: { policies: [], totalPolicies: 1 },
+    });
     const { getByText, getByTestId } = renderPoliciesWithRouter();
 
     await wait();
@@ -196,7 +215,10 @@ describe("<IndexPolicies /> spec", () => {
 
   it("can open and close a policy in modal", async () => {
     const policies = [testPolicy];
-    browserServicesMock.policyService.getPolicies = jest.fn().mockResolvedValue({ ok: true, response: { policies, totalPolicies: 1 } });
+    browserServicesMock.policyService.getPolicies = jest.fn().mockResolvedValue({
+      ok: true,
+      response: { policies, totalPolicies: 1 },
+    });
     const { getByText, queryByText, getByTestId } = renderPoliciesWithRouter();
 
     await wait(() => getByText(testPolicy.id));
@@ -214,7 +236,10 @@ describe("<IndexPolicies /> spec", () => {
 
   it("can go to edit a policy from modal", async () => {
     const policies = [testPolicy];
-    browserServicesMock.policyService.getPolicies = jest.fn().mockResolvedValue({ ok: true, response: { policies, totalPolicies: 1 } });
+    browserServicesMock.policyService.getPolicies = jest.fn().mockResolvedValue({
+      ok: true,
+      response: { policies, totalPolicies: 1 },
+    });
     const { getByText, getByTestId } = renderPoliciesWithRouter();
 
     await wait(() => getByText(testPolicy.id));

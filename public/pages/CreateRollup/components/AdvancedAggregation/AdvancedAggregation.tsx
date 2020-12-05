@@ -383,8 +383,11 @@ export default class AdvancedAggregation extends Component<AdvancedAggregationPr
               </EuiFlexItem>
               <EuiFlexItem>
                 <EuiFormHelpText>
-                  You can aggregate additional fields from the source index into the target index. Rollup supports the terms aggregation
-                  (for all field types) and histogram aggregation (for numeric fields).
+                  The sequence of fields may influence rollup performance.
+                  <EuiLink external={true} href="https://opendistro.github.io/for-elasticsearch-docs/docs/index-rollups/">
+                    {" "}
+                    Learn more
+                  </EuiLink>
                 </EuiFormHelpText>
               </EuiFlexItem>
               {selectedDimensionField.length != 0 && (

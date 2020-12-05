@@ -1,5 +1,5 @@
 /*
- * Copyright 2019 Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ * Copyright 2020 Amazon.com, Inc. or its affiliates. All Rights Reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License").
  * You may not use this file except in compliance with the License.
@@ -16,15 +16,14 @@
 import React, { Component } from "react";
 import { RouteComponentProps } from "react-router-dom";
 import { EuiSpacer, EuiTitle, EuiButton, EuiFlexGroup, EuiFlexItem } from "@elastic/eui";
-import chrome from "ui/chrome";
 import { IndexService, ManagedIndexService } from "../../../../services";
 import ChangeManagedIndices from "../../components/ChangeManagedIndices";
 import NewPolicy from "../../components/NewPolicy";
 import { BREADCRUMBS } from "../../../../utils/constants";
 import { ManagedIndexItem } from "../../../../../models/interfaces";
-import { toastNotifications } from "ui/notify";
 import { getErrorMessage } from "../../../../utils/helpers";
 import { PolicyOption } from "../../models/interfaces";
+import { CoreServicesContext } from "../../../../components/core_services";
 
 interface ChangePolicyProps extends RouteComponentProps {
   managedIndexService: ManagedIndexService;
@@ -48,6 +47,7 @@ export enum Radio {
 }
 
 export default class ChangePolicy extends Component<ChangePolicyProps, ChangePolicyState> {
+  static contextType = CoreServicesContext;
   state: ChangePolicyState = {
     selectedPolicies: [],
     selectedManagedIndices: [],
@@ -60,7 +60,7 @@ export default class ChangePolicy extends Component<ChangePolicyProps, ChangePol
   };
 
   async componentDidMount(): Promise<void> {
-    chrome.breadcrumbs.set([BREADCRUMBS.INDEX_MANAGEMENT, BREADCRUMBS.MANAGED_INDICES, BREADCRUMBS.CHANGE_POLICY]);
+    this.context.chrome.setBreadcrumbs([BREADCRUMBS.INDEX_MANAGEMENT, BREADCRUMBS.MANAGED_INDICES, BREADCRUMBS.CHANGE_POLICY]);
   }
 
   onChangeSelectedPolicy = (selectedPolicies: PolicyOption[]): void => {
@@ -108,18 +108,20 @@ export default class ChangePolicy extends Component<ChangePolicyProps, ChangePol
       if (changePolicyResponse.ok) {
         const { updatedIndices, failedIndices, failures } = changePolicyResponse.response;
         if (updatedIndices) {
-          toastNotifications.addSuccess(`Changed policy on ${updatedIndices} indices`);
+          this.context.notifications.toasts.addSuccess(`Changed policy on ${updatedIndices} indices`);
         }
         if (failures) {
-          toastNotifications.addDanger(
-            `Failed to change policy on ${failedIndices.map(failedIndex => `[${failedIndex.indexName}, ${failedIndex.reason}]`).join(", ")}`
+          this.context.notifications.toasts.addDanger(
+            `Failed to change policy on ${failedIndices
+              .map((failedIndex) => `[${failedIndex.indexName}, ${failedIndex.reason}]`)
+              .join(", ")}`
           );
         }
       } else {
-        toastNotifications.addDanger(changePolicyResponse.error);
+        this.context.notifications.toasts.addDanger(changePolicyResponse.error);
       }
     } catch (err) {
-      toastNotifications.addDanger(getErrorMessage(err, "There was a problem changing policy"));
+      this.context.notifications.toasts.addDanger(getErrorMessage(err, "There was a problem changing policy"));
     }
   };
 
@@ -157,6 +159,7 @@ export default class ChangePolicy extends Component<ChangePolicyProps, ChangePol
         <EuiSpacer />
 
         <ChangeManagedIndices
+          {...this.props}
           managedIndexService={managedIndexService}
           selectedManagedIndices={selectedManagedIndices}
           selectedStateFilters={selectedStateFilters}
@@ -168,6 +171,7 @@ export default class ChangePolicy extends Component<ChangePolicyProps, ChangePol
         <EuiSpacer />
 
         <NewPolicy
+          {...this.props}
           indexService={indexService}
           selectedPolicies={selectedPolicies}
           stateRadioIdSelected={stateRadioIdSelected}

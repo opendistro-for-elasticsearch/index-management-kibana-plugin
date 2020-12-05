@@ -14,7 +14,6 @@
  */
 
 import React, { Component } from "react";
-import { toastNotifications } from "ui/notify";
 import {
   EuiButton,
   EuiButtonEmpty,
@@ -32,6 +31,7 @@ import {
 import { ManagedIndexItem, State } from "../../../../../models/interfaces";
 import { BrowserServices } from "../../../../models/interfaces";
 import { getErrorMessage } from "../../../../utils/helpers";
+import { CoreServicesContext } from "../../../../components/core_services";
 
 interface RetryModalProps {
   services: BrowserServices;
@@ -51,6 +51,7 @@ enum Radio {
 }
 
 export default class RetryModal extends Component<RetryModalProps, RetryModalState> {
+  static contextType = CoreServicesContext;
   state = {
     radioIdSelected: Radio.Current,
     stateSelected: "",
@@ -83,7 +84,7 @@ export default class RetryModal extends Component<RetryModalProps, RetryModalSta
       const tempStates = new Set(retryItem.policy.states.map((state: State) => state.name));
 
       // take intersection of two state sets
-      states = new Set([...states].filter(state => tempStates.has(state)));
+      states = new Set([...states].filter((state) => tempStates.has(state)));
     }
 
     const stateOptions = [...states].map((state: string) => ({ value: state, text: state }));
@@ -98,7 +99,7 @@ export default class RetryModal extends Component<RetryModalProps, RetryModalSta
       services: { managedIndexService },
     } = this.props;
     try {
-      const indices = retryItems.map(item => item.index);
+      const indices = retryItems.map((item) => item.index);
       const state = radioIdSelected == Radio.State ? stateSelected : null;
       const response = await managedIndexService.retryManagedIndexPolicy(indices, state);
       if (response.ok) {
@@ -106,20 +107,20 @@ export default class RetryModal extends Component<RetryModalProps, RetryModalSta
           response: { updatedIndices, failedIndices, failures },
         } = response;
         if (failures) {
-          toastNotifications.addDanger(
-            `Failed to retry: ${failedIndices.map(failedIndex => `[${failedIndex.indexName}, ${failedIndex.reason}]`).join(", ")}`
+          this.context.notifications.toasts.addDanger(
+            `Failed to retry: ${failedIndices.map((failedIndex) => `[${failedIndex.indexName}, ${failedIndex.reason}]`).join(", ")}`
           );
         }
 
         if (updatedIndices) {
-          toastNotifications.addSuccess(`Retried ${updatedIndices} managed indices`);
+          this.context.notifications.toasts.addSuccess(`Retried ${updatedIndices} managed indices`);
         }
       } else {
-        toastNotifications.addDanger(response.error);
+        this.context.notifications.toasts.addDanger(response.error);
       }
       onClose();
     } catch (err) {
-      toastNotifications.addDanger(getErrorMessage(err, "There was a problem retrying managed indices"));
+      this.context.notifications.toasts.addDanger(getErrorMessage(err, "There was a problem retrying managed indices"));
     }
   };
 

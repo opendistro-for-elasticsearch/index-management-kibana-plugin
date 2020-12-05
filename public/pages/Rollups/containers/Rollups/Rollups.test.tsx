@@ -14,13 +14,11 @@
  */
 
 import React from "react";
-import chrome from "ui/chrome";
-import { toastNotifications } from "ui/notify";
 import { render, wait } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { MemoryRouter as Router } from "react-router";
 import { Redirect, Route, RouteComponentProps, Switch } from "react-router-dom";
-import { browserServicesMock } from "../../../../../test/mocks";
+import { browserServicesMock, coreServicesMock } from "../../../../../test/mocks";
 import { ServicesConsumer, ServicesContext } from "../../../../services";
 import { BrowserServices } from "../../../../models/interfaces";
 import { ModalProvider, ModalRoot } from "../../../../components/Modal";
@@ -28,36 +26,39 @@ import { BREADCRUMBS, ROUTES } from "../../../../utils/constants";
 import Rollups from "./Rollups";
 import { TEXT } from "../../components/RollupEmptyPrompt/RollupEmptyPrompt";
 import { testRollup } from "../../../../../test/constants";
+import { CoreServicesContext } from "../../../../components/core_services";
 
 function renderRollupsWithRouter() {
   return {
     ...render(
       <Router>
-        <ServicesContext.Provider value={browserServicesMock}>
-          <ServicesConsumer>
-            {(services: BrowserServices | null) =>
-              services && (
-                <ModalProvider>
-                  <ModalRoot services={services} />
-                  <Switch>
-                    <Route
-                      path={ROUTES.ROLLUPS}
-                      render={(props: RouteComponentProps) => (
-                        <div style={{ padding: "25px 25px" }}>
-                          <Rollups {...props} rollupService={services.rollupService} />
-                        </div>
-                      )}
-                    />
-                    <Route path={ROUTES.CREATE_ROLLUP} render={(props) => <div>Testing create rollup</div>} />
-                    <Route path={ROUTES.EDIT_ROLLUP} render={(props) => <div>Testing edit rollup: {props.location.search}</div>} />
-                    <Route path={ROUTES.ROLLUP_DETAILS} render={(props) => <div>Testing rollup details: {props.location.search}</div>} />
-                    <Redirect from="/" to={ROUTES.ROLLUPS} />
-                  </Switch>
-                </ModalProvider>
-              )
-            }
-          </ServicesConsumer>
-        </ServicesContext.Provider>
+        <CoreServicesContext.Provider value={coreServicesMock}>
+          <ServicesContext.Provider value={browserServicesMock}>
+            <ServicesConsumer>
+              {(services: BrowserServices | null) =>
+                services && (
+                  <ModalProvider>
+                    <ModalRoot services={services} />
+                    <Switch>
+                      <Route
+                        path={ROUTES.ROLLUPS}
+                        render={(props: RouteComponentProps) => (
+                          <div style={{ padding: "25px 25px" }}>
+                            <Rollups {...props} rollupService={services.rollupService} />
+                          </div>
+                        )}
+                      />
+                      <Route path={ROUTES.CREATE_ROLLUP} render={(props) => <div>Testing create rollup</div>} />
+                      <Route path={ROUTES.EDIT_ROLLUP} render={(props) => <div>Testing edit rollup: {props.location.search}</div>} />
+                      <Route path={ROUTES.ROLLUP_DETAILS} render={(props) => <div>Testing rollup details: {props.location.search}</div>} />
+                      <Redirect from="/" to={ROUTES.ROLLUPS} />
+                    </Switch>
+                  </ModalProvider>
+                )
+              }
+            </ServicesConsumer>
+          </ServicesContext.Provider>
+        </CoreServicesContext.Provider>
       </Router>
     ),
   };
@@ -91,8 +92,8 @@ describe("<Rollups /> spec", () => {
     });
     renderRollupsWithRouter();
 
-    expect(chrome.breadcrumbs.set).toHaveBeenCalledTimes(1);
-    expect(chrome.breadcrumbs.set).toHaveBeenCalledWith([BREADCRUMBS.INDEX_MANAGEMENT, BREADCRUMBS.ROLLUPS]);
+    expect(coreServicesMock.chrome.setBreadcrumbs).toHaveBeenCalledTimes(1);
+    expect(coreServicesMock.chrome.setBreadcrumbs).toHaveBeenCalledWith([BREADCRUMBS.INDEX_MANAGEMENT, BREADCRUMBS.ROLLUPS]);
   });
 
   it("loads rollups", async () => {
@@ -113,8 +114,8 @@ describe("<Rollups /> spec", () => {
 
     await wait();
 
-    expect(toastNotifications.addDanger).toHaveBeenCalledTimes(1);
-    expect(toastNotifications.addDanger).toHaveBeenCalledWith("some error");
+    expect(coreServicesMock.notifications.toasts.addDanger).toHaveBeenCalledTimes(1);
+    expect(coreServicesMock.notifications.toasts.addDanger).toHaveBeenCalledWith("some error");
   });
 
   it("adds error toaster when get rollups throws error", async () => {
@@ -123,8 +124,8 @@ describe("<Rollups /> spec", () => {
 
     await wait();
 
-    expect(toastNotifications.addDanger).toHaveBeenCalledTimes(1);
-    expect(toastNotifications.addDanger).toHaveBeenCalledWith("rejected error");
+    expect(coreServicesMock.notifications.toasts.addDanger).toHaveBeenCalledTimes(1);
+    expect(coreServicesMock.notifications.toasts.addDanger).toHaveBeenCalledWith("rejected error");
   });
 
   it("can route to create rollup", async () => {
@@ -192,19 +193,19 @@ describe("<Rollups /> spec", () => {
 
     await wait(() => getByText(testRollup._id));
 
-    expect(getByText("Enable")).toBeDisabled();
+    expect(getByTestId("enableButton")).toBeDisabled();
 
     userEvent.click(getByTestId(`checkboxSelectRow-${testRollup._id}`));
 
-    expect(getByText("Enable")).toBeEnabled();
+    expect(getByTestId("enableButton")).toBeEnabled();
 
-    userEvent.click(getByText("Enable"));
+    userEvent.click(getByTestId("enableButton"));
 
     await wait();
 
     expect(browserServicesMock.rollupService.startRollup).toHaveBeenCalledTimes(1);
-    expect(toastNotifications.addSuccess).toHaveBeenCalledTimes(1);
-    expect(toastNotifications.addSuccess).toHaveBeenCalledWith(`${testRollup._id} is enabled`);
+    expect(coreServicesMock.notifications.toasts.addSuccess).toHaveBeenCalledTimes(1);
+    expect(coreServicesMock.notifications.toasts.addSuccess).toHaveBeenCalledWith(`${testRollup._id} is enabled`);
   });
 
   it("can disable a rollup job", async () => {
@@ -222,18 +223,18 @@ describe("<Rollups /> spec", () => {
 
     await wait(() => getByText(testRollup._id));
 
-    expect(getByText("Disable")).toBeDisabled();
+    expect(getByTestId("disableButton")).toBeDisabled();
 
     userEvent.click(getByTestId(`checkboxSelectRow-${testRollup._id}`));
 
-    expect(getByText("Disable")).toBeEnabled();
+    expect(getByTestId("disableButton")).toBeEnabled();
 
-    userEvent.click(getByText("Disable"));
+    userEvent.click(getByTestId("disableButton"));
 
     await wait();
 
     expect(browserServicesMock.rollupService.stopRollup).toHaveBeenCalledTimes(1);
-    expect(toastNotifications.addSuccess).toHaveBeenCalledTimes(1);
-    expect(toastNotifications.addSuccess).toHaveBeenCalledWith(`${testRollup._id} is disabled`);
+    expect(coreServicesMock.notifications.toasts.addSuccess).toHaveBeenCalledTimes(1);
+    expect(coreServicesMock.notifications.toasts.addSuccess).toHaveBeenCalledWith(`${testRollup._id} is disabled`);
   });
 });

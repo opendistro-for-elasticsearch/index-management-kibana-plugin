@@ -14,9 +14,7 @@
  */
 
 import React, { Component } from "react";
-import chrome from "ui/chrome";
 import { RouteComponentProps } from "react-router-dom";
-import { toastNotifications } from "ui/notify";
 import queryString from "query-string";
 import {
   EuiBasicTable,
@@ -44,6 +42,7 @@ import { BREADCRUMBS, ROUTES } from "../../../../utils/constants";
 import { PolicyService } from "../../../../services";
 import { getErrorMessage } from "../../../../utils/helpers";
 import ConfirmationModal from "../../../../components/ConfirmationModal";
+import { CoreServicesContext } from "../../../../components/core_services";
 
 interface PoliciesProps extends RouteComponentProps {
   policyService: PolicyService;
@@ -62,6 +61,7 @@ interface PoliciesState {
 }
 
 export default class Policies extends Component<PoliciesProps, PoliciesState> {
+  static contextType = CoreServicesContext;
   columns: EuiTableFieldDataColumnType<PolicyItem>[];
 
   constructor(props: PoliciesProps) {
@@ -126,7 +126,7 @@ export default class Policies extends Component<PoliciesProps, PoliciesState> {
   }
 
   async componentDidMount() {
-    chrome.breadcrumbs.set([BREADCRUMBS.INDEX_MANAGEMENT, BREADCRUMBS.INDEX_POLICIES]);
+    this.context.chrome.setBreadcrumbs([BREADCRUMBS.INDEX_MANAGEMENT, BREADCRUMBS.INDEX_POLICIES]);
     await this.getPolicies();
   }
 
@@ -146,19 +146,20 @@ export default class Policies extends Component<PoliciesProps, PoliciesState> {
     this.setState({ loadingPolicies: true });
     try {
       const { policyService, history } = this.props;
-      const queryParamsString = queryString.stringify(Policies.getQueryObjectFromState(this.state));
+      const queryObject = Policies.getQueryObjectFromState(this.state);
+      const queryParamsString = queryString.stringify(queryObject);
       history.replace({ ...this.props.location, search: queryParamsString });
-      const getPoliciesResponse = await policyService.getPolicies(queryParamsString);
+      const getPoliciesResponse = await policyService.getPolicies(queryObject);
       if (getPoliciesResponse.ok) {
         const {
           response: { policies, totalPolicies },
         } = getPoliciesResponse;
         this.setState({ policies, totalPolicies });
       } else {
-        toastNotifications.addDanger(getPoliciesResponse.error);
+        this.context.notifications.toasts.addDanger(getPoliciesResponse.error);
       }
     } catch (err) {
-      toastNotifications.addDanger(getErrorMessage(err, "There was a problem loading the policies"));
+      this.context.notifications.toasts.addDanger(getErrorMessage(err, "There was a problem loading the policies"));
     }
     this.setState({ loadingPolicies: false });
   };
@@ -168,13 +169,13 @@ export default class Policies extends Component<PoliciesProps, PoliciesState> {
     try {
       const deletePolicyResponse = await policyService.deletePolicy(policyId);
       if (deletePolicyResponse.ok) {
-        toastNotifications.addSuccess(`Deleted the policy: ${policyId}`);
+        this.context.notifications.toasts.addSuccess(`Deleted the policy: ${policyId}`);
         return true;
       } else {
-        toastNotifications.addDanger(`Failed to delete the policy, ${deletePolicyResponse.error}`);
+        this.context.notifications.toasts.addDanger(`Failed to delete the policy, ${deletePolicyResponse.error}`);
       }
     } catch (err) {
-      toastNotifications.addDanger(getErrorMessage(err, "There was a problem deleting the policy"));
+      this.context.notifications.toasts.addDanger(getErrorMessage(err, "There was a problem deleting the policy"));
     }
     return false;
   };
@@ -216,7 +217,7 @@ export default class Policies extends Component<PoliciesProps, PoliciesState> {
   onClickDelete = async (policyIds: string[]): Promise<void> => {
     if (!policyIds.length) return;
 
-    const deletePromises = policyIds.map(policyId => this.deletePolicy(policyId));
+    const deletePromises = policyIds.map((policyId) => this.deletePolicy(policyId));
 
     const deleted = (await Promise.all(deletePromises)).reduce((deleted: boolean, result: boolean) => deleted && result);
     if (deleted) await this.getPolicies();
@@ -264,7 +265,7 @@ export default class Policies extends Component<PoliciesProps, PoliciesState> {
                 selectedItems.length === 1 ? selectedItems[0].id : `${selectedItems.length} policies`
               } permanently? This action cannot be undone.`,
               actionMessage: "Delete",
-              onAction: () => this.onClickDelete(selectedItems.map(item => item.id)),
+              onAction: () => this.onClickDelete(selectedItems.map((item) => item.id)),
             }),
         },
       },

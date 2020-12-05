@@ -14,17 +14,18 @@
  */
 
 import React from "react";
+import { MemoryRouter as Router, Redirect, Route, RouteComponentProps, Switch } from "react-router-dom";
 import { render, wait, fireEvent } from "@testing-library/react";
+import userEvent from "@testing-library/user-event";
+import { CoreStart } from "kibana/public";
 import CreatePolicy from "./CreatePolicy";
 import { ServicesConsumer, ServicesContext } from "../../../../services";
-import { MemoryRouter as Router, Redirect, Route, RouteComponentProps, Switch } from "react-router-dom";
-import { browserServicesMock } from "../../../../../test/mocks";
+import { browserServicesMock, coreServicesMock } from "../../../../../test/mocks";
 import { BrowserServices } from "../../../../models/interfaces";
 import { ModalProvider, ModalRoot } from "../../../../components/Modal";
 import { DEFAULT_POLICY } from "../../utils/constants";
-import userEvent from "@testing-library/user-event";
-import { toastNotifications } from "ui/notify";
 import { ROUTES } from "../../../../utils/constants";
+import { CoreServicesConsumer, CoreServicesContext } from "../../../../components/core_services";
 
 jest.mock("../../components/DefinePolicy", () => require("../../components/DefinePolicy/__mocks__/DefinePolicyMock"));
 
@@ -32,33 +33,41 @@ function renderCreatePolicyWithRouter(initialEntries = ["/"]) {
   return {
     ...render(
       <Router initialEntries={initialEntries}>
-        <ServicesContext.Provider value={browserServicesMock}>
-          <ServicesConsumer>
-            {(services: BrowserServices | null) =>
-              services && (
-                <ModalProvider>
-                  <ModalRoot services={services} />
-                  <Switch>
-                    <Route
-                      path={ROUTES.CREATE_POLICY}
-                      render={(props: RouteComponentProps) => (
-                        <CreatePolicy {...props} isEdit={false} policyService={services.policyService} />
-                      )}
-                    />
-                    <Route
-                      path={ROUTES.EDIT_POLICY}
-                      render={(props: RouteComponentProps) => (
-                        <CreatePolicy {...props} isEdit={true} policyService={services.policyService} />
-                      )}
-                    />
-                    <Route path={ROUTES.INDEX_POLICIES} render={(props: RouteComponentProps) => <div>Testing Policies</div>} />
-                    <Redirect from="/" to={ROUTES.CREATE_POLICY} />
-                  </Switch>
-                </ModalProvider>
-              )
-            }
-          </ServicesConsumer>
-        </ServicesContext.Provider>
+        <CoreServicesContext.Provider value={coreServicesMock}>
+          <ServicesContext.Provider value={browserServicesMock}>
+            <ServicesConsumer>
+              {(services: BrowserServices | null) =>
+                services && (
+                  <CoreServicesConsumer>
+                    {(core: CoreStart | null) =>
+                      core && (
+                        <ModalProvider>
+                          <ModalRoot services={services} />
+                          <Switch>
+                            <Route
+                              path={ROUTES.CREATE_POLICY}
+                              render={(props: RouteComponentProps) => (
+                                <CreatePolicy {...props} isEdit={false} policyService={services.policyService} />
+                              )}
+                            />
+                            <Route
+                              path={ROUTES.EDIT_POLICY}
+                              render={(props: RouteComponentProps) => (
+                                <CreatePolicy {...props} isEdit={true} policyService={services.policyService} />
+                              )}
+                            />
+                            <Route path={ROUTES.INDEX_POLICIES} render={(props: RouteComponentProps) => <div>Testing Policies</div>} />
+                            <Redirect from="/" to={ROUTES.CREATE_POLICY} />
+                          </Switch>
+                        </ModalProvider>
+                      )
+                    }
+                  </CoreServicesConsumer>
+                )
+              }
+            </ServicesConsumer>
+          </ServicesContext.Provider>
+        </CoreServicesContext.Provider>
       </Router>
     ),
   };
@@ -86,8 +95,8 @@ describe("<CreatePolicy /> spec", () => {
     const { getByText } = renderCreatePolicyWithRouter([`${ROUTES.EDIT_POLICY}?id=one&id=two`]);
 
     await wait(() => getByText("Testing Policies"));
-    expect(toastNotifications.addDanger).toHaveBeenCalledTimes(1);
-    expect(toastNotifications.addDanger).toHaveBeenCalledWith("Invalid policy id: one,two");
+    expect(coreServicesMock.notifications.toasts.addDanger).toHaveBeenCalledTimes(1);
+    expect(coreServicesMock.notifications.toasts.addDanger).toHaveBeenCalledWith("Invalid policy id: one,two");
   });
 
   it("routes back to policies if getPolicy gracefully fails", async () => {
@@ -95,8 +104,8 @@ describe("<CreatePolicy /> spec", () => {
     const { getByText } = renderCreatePolicyWithRouter([`${ROUTES.EDIT_POLICY}?id=some_id`]);
 
     await wait(() => getByText("Testing Policies"));
-    expect(toastNotifications.addDanger).toHaveBeenCalledTimes(1);
-    expect(toastNotifications.addDanger).toHaveBeenCalledWith("Could not load the policy: some error");
+    expect(coreServicesMock.notifications.toasts.addDanger).toHaveBeenCalledTimes(1);
+    expect(coreServicesMock.notifications.toasts.addDanger).toHaveBeenCalledWith("Could not load the policy: some error");
   });
 
   it("routes back to policies if getPolicy gracefully fails", async () => {
@@ -104,8 +113,8 @@ describe("<CreatePolicy /> spec", () => {
     const { getByText } = renderCreatePolicyWithRouter([`${ROUTES.EDIT_POLICY}?id=some_id`]);
 
     await wait(() => getByText("Testing Policies"));
-    expect(toastNotifications.addDanger).toHaveBeenCalledTimes(1);
-    expect(toastNotifications.addDanger).toHaveBeenCalledWith("another error");
+    expect(coreServicesMock.notifications.toasts.addDanger).toHaveBeenCalledTimes(1);
+    expect(coreServicesMock.notifications.toasts.addDanger).toHaveBeenCalledWith("another error");
   });
 
   it("disallows editing policy ID when in edit", async () => {
@@ -146,7 +155,7 @@ describe("<CreatePolicy /> spec", () => {
     userEvent.click(getByTestId("createPolicyCreateButton"));
 
     await wait(() => getByText("Testing Policies"));
-    expect(toastNotifications.addSuccess).toHaveBeenCalledWith("Created policy: some_policy_id");
+    expect(coreServicesMock.notifications.toasts.addSuccess).toHaveBeenCalledWith("Created policy: some_policy_id");
   });
 
   it("shows a danger toaster when getting graceful error from create policy", async () => {
@@ -187,7 +196,7 @@ describe("<CreatePolicy /> spec", () => {
     userEvent.click(getByTestId("createPolicyCreateButton"));
 
     await wait(() => getByText("Testing Policies"));
-    expect(toastNotifications.addSuccess).toHaveBeenCalledWith("Updated policy: some_policy_id");
+    expect(coreServicesMock.notifications.toasts.addSuccess).toHaveBeenCalledWith("Updated policy: some_policy_id");
   });
 
   it("shows error when getting graceful error from create policy", async () => {

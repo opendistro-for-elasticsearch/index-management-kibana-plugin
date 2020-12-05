@@ -13,42 +13,69 @@
  * permissions and limitations under the License.
  */
 
-import { Legacy } from "kibana";
+import { IRouter } from "kibana/server";
+import { schema } from "@kbn/config-schema";
 import { NodeServices } from "../models/interfaces";
-import { NODE_API, REQUEST } from "../../utils/constants";
+import { NODE_API } from "../../utils/constants";
 
-type Server = Legacy.Server;
-
-export default function(server: Server, services: NodeServices) {
+export default function (services: NodeServices, router: IRouter) {
   const { managedIndexService } = services;
 
-  server.route({
-    path: NODE_API.MANAGED_INDICES,
-    method: REQUEST.GET,
-    handler: managedIndexService.getManagedIndices,
-  });
+  router.get(
+    {
+      path: NODE_API.MANAGED_INDICES,
+      validate: {
+        query: schema.object({
+          from: schema.number(),
+          size: schema.number(),
+          search: schema.string(),
+          sortField: schema.string(),
+          sortDirection: schema.string(),
+        }),
+      },
+    },
+    managedIndexService.getManagedIndices
+  );
 
-  server.route({
-    path: `${NODE_API.MANAGED_INDICES}/{id}`,
-    method: REQUEST.GET,
-    handler: managedIndexService.getManagedIndex,
-  });
+  router.get(
+    {
+      path: `${NODE_API.MANAGED_INDICES}/{id}`,
+      validate: {
+        params: schema.object({
+          id: schema.string(),
+        }),
+      },
+    },
+    managedIndexService.getManagedIndex
+  );
 
-  server.route({
-    path: NODE_API.RETRY,
-    method: REQUEST.POST,
-    handler: managedIndexService.retryManagedIndexPolicy,
-  });
+  router.post(
+    {
+      path: NODE_API.RETRY,
+      validate: {
+        body: schema.any(),
+      },
+    },
+    managedIndexService.retryManagedIndexPolicy
+  );
 
-  server.route({
-    path: NODE_API.CHANGE_POLICY,
-    method: REQUEST.POST,
-    handler: managedIndexService.changePolicy,
-  });
+  router.post(
+    {
+      path: NODE_API.CHANGE_POLICY,
+      validate: {
+        body: schema.any(),
+      },
+    },
+    managedIndexService.changePolicy
+  );
 
-  server.route({
-    path: NODE_API.REMOVE_POLICY,
-    method: REQUEST.POST,
-    handler: managedIndexService.removePolicy,
-  });
+  router.post(
+    {
+      path: NODE_API.REMOVE_POLICY,
+      validate: {
+        body: schema.any(),
+      },
+    },
+    managedIndexService.removePolicy
+  );
 }

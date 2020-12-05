@@ -15,7 +15,6 @@
 
 import React, { ChangeEvent, Component } from "react";
 import { EuiSpacer, EuiTitle, EuiFlexGroup, EuiFlexItem, EuiCallOut, EuiComboBoxOptionOption } from "@elastic/eui";
-import chrome from "ui/chrome";
 import { RouteComponentProps } from "react-router-dom";
 import { RollupService } from "../../../../services";
 import { BREADCRUMBS, ROUTES } from "../../../../utils/constants";
@@ -24,6 +23,7 @@ import TimeAggregation from "../../components/TimeAggregations";
 import AdvancedAggregation from "../../components/AdvancedAggregation";
 import MetricsCalculation from "../../components/MetricsCalculation";
 import { DimensionItem, FieldItem, MetricItem } from "../../../../../models/interfaces";
+import { CoreServicesContext } from "../../../../components/core_services";
 
 interface CreateRollupStep2Props extends RouteComponentProps {
   rollupService: RollupService;
@@ -49,12 +49,13 @@ interface CreateRollupStep2Props extends RouteComponentProps {
 }
 
 export default class CreateRollupStep2 extends Component<CreateRollupStep2Props> {
+  static contextType = CoreServicesContext;
   constructor(props: CreateRollupStep2Props) {
     super(props);
   }
 
   componentDidMount = async (): Promise<void> => {
-    chrome.breadcrumbs.set([BREADCRUMBS.INDEX_MANAGEMENT, BREADCRUMBS.ROLLUPS]);
+    this.context.chrome.setBreadcrumbs([BREADCRUMBS.INDEX_MANAGEMENT, BREADCRUMBS.ROLLUPS]);
   };
 
   onCancel = (): void => {

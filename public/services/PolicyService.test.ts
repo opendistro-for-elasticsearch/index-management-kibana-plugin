@@ -1,5 +1,5 @@
 /*
- * Copyright 2019 Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ * Copyright 2020 Amazon.com, Inc. or its affiliates. All Rights Reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License").
  * You may not use this file except in compliance with the License.
@@ -31,11 +31,11 @@ describe("PolicyService spec", () => {
 
   it("calls get policies nodejs route when calling getPolicies", async () => {
     httpClientMock.get = jest.fn().mockResolvedValue({ data: {} });
-    const queryParamsString = "test";
-    await policyService.getPolicies(queryParamsString);
+    const queryObject = {};
+    await policyService.getPolicies(queryObject);
 
     expect(httpClientMock.get).toHaveBeenCalledTimes(1);
-    expect(httpClientMock.get).toHaveBeenCalledWith(`..${NODE_API.POLICIES}?${queryParamsString}`);
+    expect(httpClientMock.get).toHaveBeenCalledWith(`..${NODE_API.POLICIES}`, { query: queryObject });
   });
 
   it("calls put policy nodejs route when calling putPolicy", async () => {
@@ -45,7 +45,7 @@ describe("PolicyService spec", () => {
     await policyService.putPolicy(policy, policyId);
 
     expect(httpClientMock.put).toHaveBeenCalledTimes(1);
-    expect(httpClientMock.put).toHaveBeenCalledWith(`..${NODE_API.POLICIES}/${policyId}`, policy);
+    expect(httpClientMock.put).toHaveBeenCalledWith(`..${NODE_API.POLICIES}/${policyId}`, { query: {}, body: JSON.stringify(policy) });
   });
 
   it("calls delete policy nodejs route when calling deletePolicy", async () => {

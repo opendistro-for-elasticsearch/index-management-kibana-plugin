@@ -1,5 +1,5 @@
 /*
- * Copyright 2019 Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ * Copyright 2020 Amazon.com, Inc. or its affiliates. All Rights Reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License").
  * You may not use this file except in compliance with the License.
@@ -13,25 +13,23 @@
  * permissions and limitations under the License.
  */
 
-import queryString from "query-string";
-import { IHttpResponse, IHttpService } from "angular";
+import { HttpSetup } from "kibana/public";
 import { GetPoliciesResponse, PutPolicyResponse } from "../../server/models/interfaces";
 import { ServerResponse } from "../../server/models/types";
 import { NODE_API } from "../../utils/constants";
 import { DocumentPolicy, Policy } from "../../models/interfaces";
 
 export default class PolicyService {
-  httpClient: IHttpService;
+  httpClient: HttpSetup;
 
-  constructor(httpClient: IHttpService) {
+  constructor(httpClient: HttpSetup) {
     this.httpClient = httpClient;
   }
 
-  getPolicies = async (queryParamsString: string): Promise<ServerResponse<GetPoliciesResponse>> => {
+  getPolicies = async (queryObject: object): Promise<ServerResponse<GetPoliciesResponse>> => {
     let url = `..${NODE_API.POLICIES}`;
-    if (queryParamsString) url += `?${queryParamsString}`;
-    const response = (await this.httpClient.get(url)) as IHttpResponse<ServerResponse<GetPoliciesResponse>>;
-    return response.data;
+    const response = (await this.httpClient.get(url, { query: queryObject })) as ServerResponse<GetPoliciesResponse>;
+    return response;
   };
 
   putPolicy = async (
@@ -40,22 +38,22 @@ export default class PolicyService {
     seqNo?: number,
     primaryTerm?: number
   ): Promise<ServerResponse<PutPolicyResponse>> => {
-    const queryParamsString = queryString.stringify({ seqNo, primaryTerm });
     let url = `..${NODE_API.POLICIES}/${policyId}`;
-    if (queryParamsString) url += `?${queryParamsString}`;
-    const response = (await this.httpClient.put(url, policy)) as IHttpResponse<ServerResponse<PutPolicyResponse>>;
-    return response.data;
+    const response = (await this.httpClient.put(url, { query: { seqNo, primaryTerm }, body: JSON.stringify(policy) })) as ServerResponse<
+      PutPolicyResponse
+    >;
+    return response;
   };
 
   getPolicy = async (policyId: string): Promise<ServerResponse<DocumentPolicy>> => {
     const url = `..${NODE_API.POLICIES}/${policyId}`;
-    const response = (await this.httpClient.get(url)) as IHttpResponse<ServerResponse<DocumentPolicy>>;
-    return response.data;
+    const response = (await this.httpClient.get(url)) as ServerResponse<DocumentPolicy>;
+    return response;
   };
 
   deletePolicy = async (policyId: string): Promise<ServerResponse<boolean>> => {
     const url = `..${NODE_API.POLICIES}/${policyId}`;
-    const response = (await this.httpClient.delete(url)) as IHttpResponse<ServerResponse<boolean>>;
-    return response.data;
+    const response = (await this.httpClient.delete(url)) as ServerResponse<boolean>;
+    return response;
   };
 }

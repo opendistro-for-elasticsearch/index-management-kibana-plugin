@@ -14,8 +14,6 @@
  */
 
 import React, { Component } from "react";
-import { toastNotifications } from "ui/notify";
-import chrome from "ui/chrome";
 import { RouteComponentProps } from "react-router-dom";
 import {
   EuiBasicTable,
@@ -52,6 +50,7 @@ import { getErrorMessage } from "../../../../utils/helpers";
 import ConfirmationModal from "../../../../components/ConfirmationModal";
 import RetryModal from "../../components/RetryModal";
 import RolloverAliasModal from "../../components/RolloverAliasModal";
+import { CoreServicesContext } from "../../../../components/core_services";
 
 interface ManagedIndicesProps extends RouteComponentProps {
   managedIndexService: ManagedIndexService;
@@ -70,6 +69,7 @@ interface ManagedIndicesState {
 }
 
 export default class ManagedIndices extends Component<ManagedIndicesProps, ManagedIndicesState> {
+  static contextType = CoreServicesContext;
   columns: EuiTableFieldDataColumnType<ManagedIndexItem>[];
 
   constructor(props: ManagedIndicesProps) {
@@ -163,7 +163,7 @@ export default class ManagedIndices extends Component<ManagedIndicesProps, Manag
   }
 
   async componentDidMount() {
-    chrome.breadcrumbs.set([BREADCRUMBS.INDEX_MANAGEMENT, BREADCRUMBS.MANAGED_INDICES]);
+    this.context.chrome.setBreadcrumbs([BREADCRUMBS.INDEX_MANAGEMENT, BREADCRUMBS.MANAGED_INDICES]);
     await this.getManagedIndices();
   }
 
@@ -210,19 +210,20 @@ export default class ManagedIndices extends Component<ManagedIndicesProps, Manag
     this.setState({ loadingManagedIndices: true });
     try {
       const { managedIndexService, history } = this.props;
-      const queryParamsString = queryString.stringify(ManagedIndices.getQueryObjectFromState(this.state));
+      const queryObject = ManagedIndices.getQueryObjectFromState(this.state);
+      const queryParamsString = queryString.stringify(queryObject);
       history.replace({ ...this.props.location, search: queryParamsString });
-      const getManagedIndicesResponse = await managedIndexService.getManagedIndices(queryParamsString);
+      const getManagedIndicesResponse = await managedIndexService.getManagedIndices(queryObject);
       if (getManagedIndicesResponse.ok) {
         const {
           response: { managedIndices, totalManagedIndices },
         } = getManagedIndicesResponse;
         this.setState({ managedIndices, totalManagedIndices });
       } else {
-        toastNotifications.addDanger(getManagedIndicesResponse.error);
+        this.context.notifications.toasts.addDanger(getManagedIndicesResponse.error);
       }
     } catch (err) {
-      toastNotifications.addDanger(getErrorMessage(err, "There was a problem loading the managed indices"));
+      this.context.notifications.toasts.addDanger(getErrorMessage(err, "There was a problem loading the managed indices"));
     }
     this.setState({ loadingManagedIndices: false });
   };
@@ -235,20 +236,20 @@ export default class ManagedIndices extends Component<ManagedIndicesProps, Manag
       if (removePolicyResponse.ok) {
         const { updatedIndices, failedIndices, failures } = removePolicyResponse.response;
         if (updatedIndices) {
-          toastNotifications.addSuccess(`Removed policy from ${updatedIndices} managed indices`);
+          this.context.notifications.toasts.addSuccess(`Removed policy from ${updatedIndices} managed indices`);
         }
         if (failures) {
-          toastNotifications.addDanger(
+          this.context.notifications.toasts.addDanger(
             `Failed to remove policy from ${failedIndices
               .map((failedIndex) => `[${failedIndex.indexName}, ${failedIndex.reason}]`)
               .join(", ")}`
           );
         }
       } else {
-        toastNotifications.addDanger(removePolicyResponse.error);
+        this.context.notifications.toasts.addDanger(removePolicyResponse.error);
       }
     } catch (err) {
-      toastNotifications.addDanger(getErrorMessage(err, "There was a problem removing the policies"));
+      this.context.notifications.toasts.addDanger(getErrorMessage(err, "There was a problem removing the policies"));
     }
   };
 
@@ -331,6 +332,7 @@ export default class ManagedIndices extends Component<ManagedIndicesProps, Manag
           onClickModal: (onShow: (component: any, props: object) => void) => () =>
             onShow(RolloverAliasModal, {
               index: selectedItems[0].index,
+              core: this.context,
             }),
         },
       },

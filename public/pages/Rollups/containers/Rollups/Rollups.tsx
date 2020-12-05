@@ -15,10 +15,8 @@
 
 import React, { Component } from "react";
 import _ from "lodash";
-import chrome from "ui/chrome";
 import { BREADCRUMBS, ROUTES } from "../../../../utils/constants";
 import queryString from "query-string";
-import { toastNotifications } from "ui/notify";
 import { getErrorMessage } from "../../../../utils/helpers";
 import { ManagedCatIndex } from "../../../../../server/models/interfaces";
 import { DEFAULT_PAGE_SIZE_OPTIONS, DEFAULT_QUERY_PARAMS } from "../../../Indices/utils/constants";
@@ -54,6 +52,7 @@ import { getURLQueryParams, renderContinuous, renderEnabled, renderTime } from "
 import DeleteModal from "../../components/DeleteModal";
 import { renderStatus } from "../../../RollupDetails/utils/helpers";
 import { DocumentRollup } from "../../../../../models/interfaces";
+import { CoreServicesContext } from "../../../../components/core_services";
 
 interface RollupsProps extends RouteComponentProps {
   rollupService: RollupService;
@@ -75,6 +74,7 @@ interface RollupsState {
 }
 
 export default class Rollups extends Component<RollupsProps, RollupsState> {
+  static contextType = CoreServicesContext;
   constructor(props: RollupsProps) {
     super(props);
 
@@ -99,7 +99,7 @@ export default class Rollups extends Component<RollupsProps, RollupsState> {
   }
 
   async componentDidMount() {
-    chrome.breadcrumbs.set([BREADCRUMBS.INDEX_MANAGEMENT, BREADCRUMBS.ROLLUPS]);
+    this.context.chrome.setBreadcrumbs([BREADCRUMBS.INDEX_MANAGEMENT, BREADCRUMBS.ROLLUPS]);
     await this.getRollups();
   }
 
@@ -119,18 +119,18 @@ export default class Rollups extends Component<RollupsProps, RollupsState> {
     this.setState({ loadingRollups: true });
     try {
       const { rollupService, history } = this.props;
+      const queryObject = Rollups.getQueryObjectFromState(this.state);
       const queryParamsString = queryString.stringify(Rollups.getQueryObjectFromState(this.state));
       history.replace({ ...this.props.location, search: queryParamsString });
-      const rollupJobsResponse = await rollupService.getRollups(queryParamsString);
+      const rollupJobsResponse = await rollupService.getRollups(queryObject);
       if (rollupJobsResponse.ok) {
         const { rollups, totalRollups, metadata } = rollupJobsResponse.response;
-        // const rollupItems = this.matchMetadata(rollups, metadata);
         this.setState({ rollups, totalRollups, rollupExplain: metadata });
       } else {
-        toastNotifications.addDanger(rollupJobsResponse.error);
+        this.context.notifications.toasts.addDanger(rollupJobsResponse.error);
       }
     } catch (err) {
-      toastNotifications.addDanger(getErrorMessage(err, "There was a problem loading the rollups"));
+      this.context.notifications.toasts.addDanger(getErrorMessage(err, "There was a problem loading the rollups"));
     }
     this.setState({ loadingRollups: false });
   };
@@ -157,12 +157,12 @@ export default class Rollups extends Component<RollupsProps, RollupsState> {
         if (response.ok) {
           this.closeDeleteModal();
           //Show success message
-          toastNotifications.addSuccess(`"${rollupId}" successfully deleted!`);
+          this.context.notifications.toasts.addSuccess(`"${rollupId}" successfully deleted!`);
         } else {
-          toastNotifications.addDanger(`Could not delete the rollup job "${rollupId}" : ${response.error}`);
+          this.context.notifications.toasts.addDanger(`Could not delete the rollup job "${rollupId}" : ${response.error}`);
         }
       } catch (err) {
-        toastNotifications.addDanger(getErrorMessage(err, "Could not delete the rollup job"));
+        this.context.notifications.toasts.addDanger(getErrorMessage(err, "Could not delete the rollup job"));
       }
     }
     await this.getRollups();
@@ -178,12 +178,12 @@ export default class Rollups extends Component<RollupsProps, RollupsState> {
 
         if (response.ok) {
           //Show success message
-          toastNotifications.addSuccess(`${rollupId} is disabled`);
+          this.context.notifications.toasts.addSuccess(`${rollupId} is disabled`);
         } else {
-          toastNotifications.addDanger(`Could not stop the rollup job "${rollupId}" : ${response.error}`);
+          this.context.notifications.toasts.addDanger(`Could not stop the rollup job "${rollupId}" : ${response.error}`);
         }
       } catch (err) {
-        toastNotifications.addDanger(getErrorMessage(err, "Could not stop the rollup job"));
+        this.context.notifications.toasts.addDanger(getErrorMessage(err, "Could not stop the rollup job"));
       }
     }
     await this.getRollups();
@@ -199,12 +199,12 @@ export default class Rollups extends Component<RollupsProps, RollupsState> {
 
         if (response.ok) {
           //Show success message
-          toastNotifications.addSuccess(`${rollupId} is enabled`);
+          this.context.notifications.toasts.addSuccess(`${rollupId} is enabled`);
         } else {
-          toastNotifications.addDanger(`Could not start the rollup job "${rollupId}" : ${response.error}`);
+          this.context.notifications.toasts.addDanger(`Could not start the rollup job "${rollupId}" : ${response.error}`);
         }
       } catch (err) {
-        toastNotifications.addDanger(getErrorMessage(err, "Could not start the rollup job"));
+        this.context.notifications.toasts.addDanger(getErrorMessage(err, "Could not start the rollup job"));
       }
     }
     await this.getRollups();
@@ -399,7 +399,7 @@ export default class Rollups extends Component<RollupsProps, RollupsState> {
           <EuiFlexItem grow={false}>
             <EuiFlexGroup alignItems="center" gutterSize="s">
               <EuiFlexItem grow={false}>
-                <EuiButton disabled={!selectedItems.length} onClick={this.onDisable}>
+                <EuiButton disabled={!selectedItems.length} onClick={this.onDisable} data-test-subj="disableButton">
                   Disable
                 </EuiButton>
               </EuiFlexItem>
@@ -409,6 +409,7 @@ export default class Rollups extends Component<RollupsProps, RollupsState> {
                   onClick={() => {
                     this.onEnable();
                   }}
+                  data-test-subj="enableButton"
                 >
                   Enable
                 </EuiButton>
