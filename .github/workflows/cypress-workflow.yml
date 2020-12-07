@@ -70,7 +70,6 @@ jobs:
           yarn kbn bootstrap
       - name: Run kibana server
         run: |
-          cd kibana/plugins/index-management-kibana-plugin
           yarn start --no-base-path --no-watch &
           sleep 300
         # timeout 300 bash -c 'while [[ "$(curl -s localhost:5601/api/status | jq -r '.status.overall.state')" != "green" ]]; do sleep 5; done'
