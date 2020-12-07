@@ -86,6 +86,7 @@ interface CreateRollupFormState {
 
 export default class CreateRollupForm extends Component<CreateRollupFormProps, CreateRollupFormState> {
   static contextType = CoreServicesContext;
+
   constructor(props: CreateRollupFormProps) {
     super(props);
 
@@ -431,6 +432,10 @@ export default class CreateRollupForm extends Component<CreateRollupFormProps, C
   updateDimension = (): void => {
     const { rollupJSON, selectedDimensionField } = this.state;
     let newJSON = rollupJSON;
+
+    //Clear the dimensions fields except the first item (date histogram)
+    newJSON.rollup.dimensions = rollupJSON.rollup.dimensions.splice(0, 1);
+
     //Push rest of dimensions
     selectedDimensionField.map((dimension) => {
       if (dimension.aggregationMethod == "terms") {
@@ -454,6 +459,10 @@ export default class CreateRollupForm extends Component<CreateRollupFormProps, C
   updateMetric = (): void => {
     const { rollupJSON, selectedMetrics } = this.state;
     let newJSON = rollupJSON;
+
+    //Clear the metrics array before pushing
+    newJSON.rollup.metrics = [];
+
     //Push all metrics
     selectedMetrics.map((metric) => {
       const metrics = [];
