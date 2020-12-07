@@ -15,16 +15,15 @@
 
 import React, { Component } from "react";
 import { EuiSpacer, EuiTitle, EuiFlexGroup, EuiFlexItem, EuiComboBoxOptionOption, EuiCallOut } from "@elastic/eui";
-import chrome from "ui/chrome";
 import { RouteComponentProps } from "react-router-dom";
 import { RollupService } from "../../../../services";
 import { BREADCRUMBS, ROUTES } from "../../../../utils/constants";
-import { IndexItem, MetricItem } from "../../../../../models/interfaces";
+import { DimensionItem, IndexItem, MetricItem } from "../../../../../models/interfaces";
 import CreateRollupSteps from "../../components/CreateRollupSteps";
 import HistogramAndMetrics from "../../components/HistogramAndMetrics";
 import JobNameAndIndices from "../../components/JobNameAndIndices";
 import ScheduleRolesAndNotifications from "../../components/ScheduleRolesAndNotifications";
-import { DimensionItem } from "../../models/interfaces";
+import { CoreServicesContext } from "../../../../components/core_services";
 
 interface CreateRollupProps extends RouteComponentProps {
   rollupService: RollupService;
@@ -45,8 +44,8 @@ interface CreateRollupProps extends RouteComponentProps {
   selectedMetrics: MetricItem[];
 
   jobEnabledByDefault: boolean;
-  recurringJob: string;
-  recurringDefinition: string;
+  continuousJob: string;
+  continuousDefinition: string;
   interval: number;
   intervalTimeunit: string;
   cronExpression: string;
@@ -57,12 +56,13 @@ interface CreateRollupProps extends RouteComponentProps {
 }
 
 export default class CreateRollupStep4 extends Component<CreateRollupProps> {
+  static contextType = CoreServicesContext;
   constructor(props: CreateRollupProps) {
     super(props);
   }
 
   componentDidMount = async (): Promise<void> => {
-    chrome.breadcrumbs.set([BREADCRUMBS.INDEX_MANAGEMENT, BREADCRUMBS.ROLLUPS]);
+    this.context.chrome.setBreadcrumbs([BREADCRUMBS.INDEX_MANAGEMENT, BREADCRUMBS.ROLLUPS]);
   };
 
   onCancel = (): void => {

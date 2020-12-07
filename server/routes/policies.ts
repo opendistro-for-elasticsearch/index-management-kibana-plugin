@@ -13,36 +13,68 @@
  * permissions and limitations under the License.
  */
 
-import { Legacy } from "kibana";
+import { IRouter } from "kibana/server";
+import { schema } from "@kbn/config-schema";
 import { NodeServices } from "../models/interfaces";
-import { NODE_API, REQUEST } from "../../utils/constants";
+import { NODE_API } from "../../utils/constants";
 
-type Server = Legacy.Server;
-
-export default function(server: Server, services: NodeServices) {
+export default function (services: NodeServices, router: IRouter) {
   const { policyService } = services;
 
-  server.route({
-    path: NODE_API.POLICIES,
-    method: REQUEST.GET,
-    handler: policyService.getPolicies,
-  });
+  router.get(
+    {
+      path: NODE_API.POLICIES,
+      validate: {
+        query: schema.object({
+          from: schema.number(),
+          size: schema.number(),
+          search: schema.string(),
+          sortField: schema.string(),
+          sortDirection: schema.string(),
+        }),
+      },
+    },
+    policyService.getPolicies
+  );
 
-  server.route({
-    path: `${NODE_API.POLICIES}/{id}`,
-    method: REQUEST.PUT,
-    handler: policyService.putPolicy,
-  });
+  router.put(
+    {
+      path: `${NODE_API.POLICIES}/{id}`,
+      validate: {
+        params: schema.object({
+          id: schema.string(),
+        }),
+        query: schema.object({
+          seqNo: schema.maybe(schema.number()),
+          primaryTerm: schema.maybe(schema.number()),
+        }),
+        body: schema.any(),
+      },
+    },
+    policyService.putPolicy
+  );
 
-  server.route({
-    path: `${NODE_API.POLICIES}/{id}`,
-    method: REQUEST.GET,
-    handler: policyService.getPolicy,
-  });
+  router.get(
+    {
+      path: `${NODE_API.POLICIES}/{id}`,
+      validate: {
+        params: schema.object({
+          id: schema.string(),
+        }),
+      },
+    },
+    policyService.getPolicy
+  );
 
-  server.route({
-    path: `${NODE_API.POLICIES}/{id}`,
-    method: REQUEST.DELETE,
-    handler: policyService.deletePolicy,
-  });
+  router.delete(
+    {
+      path: `${NODE_API.POLICIES}/{id}`,
+      validate: {
+        params: schema.object({
+          id: schema.string(),
+        }),
+      },
+    },
+    policyService.deletePolicy
+  );
 }

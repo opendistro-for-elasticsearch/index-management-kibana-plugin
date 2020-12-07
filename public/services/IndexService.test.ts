@@ -1,5 +1,5 @@
 /*
- * Copyright 2019 Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ * Copyright 2020 Amazon.com, Inc. or its affiliates. All Rights Reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License").
  * You may not use this file except in compliance with the License.
@@ -22,11 +22,11 @@ const indexService = new IndexService(httpClientMock);
 describe("IndexService spec", () => {
   it("calls get indices nodejs route when calling getIndices", async () => {
     httpClientMock.get = jest.fn().mockResolvedValue({ data: {} });
-    const queryParamsString = "test";
-    await indexService.getIndices(queryParamsString);
+    const queryObject = {};
+    await indexService.getIndices(queryObject);
 
     expect(httpClientMock.get).toHaveBeenCalledTimes(1);
-    expect(httpClientMock.get).toHaveBeenCalledWith(`..${NODE_API._INDICES}?${queryParamsString}`);
+    expect(httpClientMock.get).toHaveBeenCalledWith(`..${NODE_API._INDICES}`, { query: queryObject });
   });
 
   it("calls apply policy nodejs route when calling applyPolicy", async () => {
@@ -36,7 +36,7 @@ describe("IndexService spec", () => {
     await indexService.applyPolicy(indices, policyId);
 
     expect(httpClientMock.post).toHaveBeenCalledTimes(1);
-    expect(httpClientMock.post).toHaveBeenCalledWith(`..${NODE_API.APPLY_POLICY}`, { indices, policyId });
+    expect(httpClientMock.post).toHaveBeenCalledWith(`..${NODE_API.APPLY_POLICY}`, { body: JSON.stringify({ indices, policyId }) });
   });
 
   it("calls search nodejs route when calling searchPolicies", async () => {

@@ -16,7 +16,7 @@
 import { httpClientMock } from "../../test/mocks";
 import { NODE_API } from "../../utils/constants";
 import RollupService from "./RollupService";
-import { testRollup } from "../pages/CreateRollup/utils/constants";
+import { testRollup } from "../../test/constants";
 
 const rollupService = new RollupService(httpClientMock);
 
@@ -32,11 +32,11 @@ describe("rollupService spec", () => {
 
   it("calls get rollups nodejs route when calling getRollups", async () => {
     httpClientMock.get = jest.fn().mockResolvedValue({ data: {} });
-    const queryParamsString = "test";
-    await rollupService.getRollups(queryParamsString);
+    const queryObject = {};
+    await rollupService.getRollups(queryObject);
 
     expect(httpClientMock.get).toHaveBeenCalledTimes(1);
-    expect(httpClientMock.get).toHaveBeenCalledWith(`..${NODE_API.ROLLUPS}?${queryParamsString}`);
+    expect(httpClientMock.get).toHaveBeenCalledWith(`..${NODE_API.ROLLUPS}`, { query: {} });
   });
 
   it("calls put rollup nodejs route when calling putRollup", async () => {
@@ -45,7 +45,10 @@ describe("rollupService spec", () => {
     await rollupService.putRollup(testRollup.rollup, rollupId);
 
     expect(httpClientMock.put).toHaveBeenCalledTimes(1);
-    expect(httpClientMock.put).toHaveBeenCalledWith(`..${NODE_API.ROLLUPS}/${rollupId}`, testRollup.rollup);
+    expect(httpClientMock.put).toHaveBeenCalledWith(`..${NODE_API.ROLLUPS}/${rollupId}`, {
+      query: { primaryTerm: undefined, seqNo: undefined },
+      body: JSON.stringify(testRollup.rollup),
+    });
   });
 
   it("calls delete rollup nodejs route when calling deleteRollup", async () => {
@@ -63,7 +66,7 @@ describe("rollupService spec", () => {
     await rollupService.startRollup(rollupId);
 
     expect(httpClientMock.post).toHaveBeenCalledTimes(1);
-    expect(httpClientMock.post).toHaveBeenCalledWith(`..${NODE_API.ROLLUPS}/${rollupId}/_start`, "");
+    expect(httpClientMock.post).toHaveBeenCalledWith(`..${NODE_API.ROLLUPS}/${rollupId}/_start`);
   });
 
   it("calls stop rollup nodejs route when calling stopRollup", async () => {
@@ -72,7 +75,7 @@ describe("rollupService spec", () => {
     await rollupService.stopRollup(rollupId);
 
     expect(httpClientMock.post).toHaveBeenCalledTimes(1);
-    expect(httpClientMock.post).toHaveBeenCalledWith(`..${NODE_API.ROLLUPS}/${rollupId}/_stop`, "");
+    expect(httpClientMock.post).toHaveBeenCalledWith(`..${NODE_API.ROLLUPS}/${rollupId}/_stop`);
   });
 
   it("calls get mappings nodejs route when calling getMappings", async () => {
@@ -81,15 +84,6 @@ describe("rollupService spec", () => {
     await rollupService.getMappings(indexName);
 
     expect(httpClientMock.post).toHaveBeenCalledTimes(1);
-    expect(httpClientMock.post).toHaveBeenCalledWith(`..${NODE_API._MAPPINGS}`, { index: indexName });
-  });
-
-  it("calls explain rollup nodejs route when calling explainRollup", async () => {
-    httpClientMock.get = jest.fn().mockResolvedValue({ data: {} });
-    const rollupId = "rollup_id";
-    await rollupService.explainRollup(rollupId);
-
-    expect(httpClientMock.get).toHaveBeenCalledTimes(1);
-    expect(httpClientMock.get).toHaveBeenCalledWith(`..${NODE_API.ROLLUPS}/${rollupId}/_explain`);
+    expect(httpClientMock.post).toHaveBeenCalledWith(`..${NODE_API._MAPPINGS}`, { body: JSON.stringify({ index: indexName }) });
   });
 });

@@ -33,9 +33,9 @@ import {
 } from "@elastic/eui";
 import { ContentPanel, ContentPanelActions } from "../../../../components/ContentPanel";
 import { ModalConsumer } from "../../../../components/Modal";
-import { DimensionItem, MetricItem } from "../../models/interfaces";
 import { DEFAULT_PAGE_SIZE_OPTIONS } from "../../../Rollups/utils/constants";
 import { parseTimeunit } from "../../utils/helpers";
+import { DimensionItem, MetricItem } from "../../../../../models/interfaces";
 
 interface HistogramAndMetricsProps {
   rollupId: string;
@@ -79,7 +79,7 @@ const aggregationColumns: EuiTableFieldDataColumnType<DimensionItem>[] = [
     field: "field.type",
     name: "Field type",
     align: "left",
-    render: (type) => (type == null ? "-" : type),
+    render: (type) => (type == undefined ? "-" : type),
   },
   {
     field: "aggregationMethod",
@@ -98,7 +98,7 @@ const aggregationColumns: EuiTableFieldDataColumnType<DimensionItem>[] = [
   },
 ];
 
-const metricsColumns = [
+const metricsColumns: EuiTableFieldDataColumnType<MetricItem>[] = [
   {
     field: "source_field.label",
     name: "Field Name",

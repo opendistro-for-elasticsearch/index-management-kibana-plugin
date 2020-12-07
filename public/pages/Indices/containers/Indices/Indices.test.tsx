@@ -20,14 +20,14 @@ import { render, fireEvent, wait } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { Redirect, Route, Switch } from "react-router-dom";
 import { HashRouter as Router } from "react-router-dom";
-import { toastNotifications } from "ui/notify";
-import chrome from "ui/chrome";
-import { browserServicesMock } from "../../../../../test/mocks";
+import { CoreStart } from "kibana/public";
+import { browserServicesMock, coreServicesMock } from "../../../../../test/mocks";
 import Indices from "./Indices";
 import { TEXT } from "../../components/IndexEmptyPrompt/IndexEmptyPrompt";
 import { ModalProvider, ModalRoot } from "../../../../components/Modal";
 import { ServicesConsumer, ServicesContext } from "../../../../services";
 import { BREADCRUMBS, ROUTES } from "../../../../utils/constants";
+import { CoreServicesConsumer, CoreServicesContext } from "../../../../components/core_services";
 
 function renderWithRouter(Component: React.ComponentType<any>) {
   return {
@@ -37,12 +37,20 @@ function renderWithRouter(Component: React.ComponentType<any>) {
           <Route
             path={ROUTES.INDICES}
             render={(props) => (
-              <ServicesContext.Provider value={browserServicesMock}>
-                <ModalProvider>
-                  <ServicesConsumer>{(services) => services && <ModalRoot services={services} />}</ServicesConsumer>
-                  <ServicesConsumer>{({ indexService }: any) => <Component indexService={indexService} {...props} />}</ServicesConsumer>
-                </ModalProvider>
-              </ServicesContext.Provider>
+              <CoreServicesContext.Provider value={coreServicesMock}>
+                <ServicesContext.Provider value={browserServicesMock}>
+                  <ModalProvider>
+                    <ServicesConsumer>{(services) => services && <ModalRoot services={services} />}</ServicesConsumer>
+                    <CoreServicesConsumer>
+                      {(core: CoreStart | null) => (
+                        <ServicesConsumer>
+                          {({ indexService }: any) => <Component indexService={indexService} core={core} {...props} />}
+                        </ServicesConsumer>
+                      )}
+                    </CoreServicesConsumer>
+                  </ModalProvider>
+                </ServicesContext.Provider>
+              </CoreServicesContext.Provider>
             )}
           />
           <Redirect from="/" to={ROUTES.INDICES} />
@@ -71,8 +79,8 @@ describe("<Indices /> spec", () => {
     browserServicesMock.indexService.getIndices = jest.fn().mockResolvedValue({ ok: true, response: { indices: [], totalIndices: 0 } });
     renderWithRouter(Indices);
 
-    expect(chrome.breadcrumbs.set).toHaveBeenCalledTimes(1);
-    expect(chrome.breadcrumbs.set).toHaveBeenCalledWith([BREADCRUMBS.INDEX_MANAGEMENT, BREADCRUMBS.INDICES]);
+    expect(coreServicesMock.chrome.setBreadcrumbs).toHaveBeenCalledTimes(1);
+    expect(coreServicesMock.chrome.setBreadcrumbs).toHaveBeenCalledWith([BREADCRUMBS.INDEX_MANAGEMENT, BREADCRUMBS.INDICES]);
   });
 
   it("loads indices", async () => {
@@ -103,8 +111,8 @@ describe("<Indices /> spec", () => {
 
     await wait();
 
-    expect(toastNotifications.addDanger).toHaveBeenCalledTimes(1);
-    expect(toastNotifications.addDanger).toHaveBeenCalledWith("some error");
+    expect(coreServicesMock.notifications.toasts.addDanger).toHaveBeenCalledTimes(1);
+    expect(coreServicesMock.notifications.toasts.addDanger).toHaveBeenCalledWith("some error");
   });
 
   it("adds error toaster when get indices throws error", async () => {
@@ -113,8 +121,8 @@ describe("<Indices /> spec", () => {
 
     await wait();
 
-    expect(toastNotifications.addDanger).toHaveBeenCalledTimes(1);
-    expect(toastNotifications.addDanger).toHaveBeenCalledWith("rejected error");
+    expect(coreServicesMock.notifications.toasts.addDanger).toHaveBeenCalledTimes(1);
+    expect(coreServicesMock.notifications.toasts.addDanger).toHaveBeenCalledWith("rejected error");
   });
 
   it("can add a policy to an index", async () => {

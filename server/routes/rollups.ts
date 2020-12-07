@@ -13,60 +13,102 @@
  * permissions and limitations under the License.
  */
 
-import { Legacy } from "kibana";
+import { IRouter } from "kibana/server";
+import { schema } from "@kbn/config-schema";
 import { NodeServices } from "../models/interfaces";
-import { NODE_API, REQUEST } from "../../utils/constants";
+import { NODE_API } from "../../utils/constants";
 
-type Server = Legacy.Server;
-
-export default function (server: Server, services: NodeServices) {
+export default function (services: NodeServices, router: IRouter) {
   const { rollupService } = services;
 
-  server.route({
-    path: NODE_API.ROLLUPS,
-    method: REQUEST.GET,
-    handler: rollupService.getRollups,
-  });
+  router.get(
+    {
+      path: NODE_API.ROLLUPS,
+      validate: {
+        query: schema.object({
+          from: schema.number(),
+          size: schema.number(),
+          search: schema.string(),
+          sortField: schema.string(),
+          sortDirection: schema.string(),
+        }),
+      },
+    },
+    rollupService.getRollups
+  );
 
-  server.route({
-    path: `${NODE_API.ROLLUPS}/{id}`,
-    method: REQUEST.PUT,
-    handler: rollupService.putRollup,
-  });
+  router.put(
+    {
+      path: `${NODE_API.ROLLUPS}/{id}`,
+      validate: {
+        params: schema.object({
+          id: schema.string(),
+        }),
+        query: schema.object({
+          seqNo: schema.maybe(schema.number()),
+          primaryTerm: schema.maybe(schema.number()),
+        }),
+        body: schema.any(),
+      },
+    },
+    rollupService.putRollup
+  );
 
-  server.route({
-    path: `${NODE_API.ROLLUPS}/{id}`,
-    method: REQUEST.GET,
-    handler: rollupService.getRollup,
-  });
+  router.get(
+    {
+      path: `${NODE_API.ROLLUPS}/{id}`,
+      validate: {
+        params: schema.object({
+          id: schema.string(),
+        }),
+      },
+    },
+    rollupService.getRollup
+  );
 
-  server.route({
-    path: `${NODE_API.ROLLUPS}/{id}`,
-    method: REQUEST.DELETE,
-    handler: rollupService.deleteRollup,
-  });
+  router.delete(
+    {
+      path: `${NODE_API.ROLLUPS}/{id}`,
+      validate: {
+        params: schema.object({
+          id: schema.string(),
+        }),
+      },
+    },
+    rollupService.deleteRollup
+  );
 
-  server.route({
-    path: `${NODE_API.ROLLUPS}/{id}/_start`,
-    method: REQUEST.POST,
-    handler: rollupService.startRollup,
-  });
+  router.post(
+    {
+      path: `${NODE_API.ROLLUPS}/{id}/_start`,
+      validate: {
+        params: schema.object({
+          id: schema.string(),
+        }),
+      },
+    },
+    rollupService.startRollup
+  );
 
-  server.route({
-    path: `${NODE_API.ROLLUPS}/{id}/_stop`,
-    method: REQUEST.POST,
-    handler: rollupService.stopRollup,
-  });
+  router.post(
+    {
+      path: `${NODE_API.ROLLUPS}/{id}/_stop`,
+      validate: {
+        params: schema.object({
+          id: schema.string(),
+        }),
+      },
+    },
+    rollupService.stopRollup
+  );
 
-  server.route({
-    path: `${NODE_API._MAPPINGS}`,
-    method: REQUEST.POST,
-    handler: rollupService.getMappings,
-  });
-
-  server.route({
-    path: `${NODE_API.ROLLUPS}/{id}/_explain`,
-    method: REQUEST.GET,
-    handler: rollupService.explainRollup,
-  });
+  router.post(
+    {
+      path: NODE_API._MAPPINGS,
+      validate: {
+        body: schema.any(),
+      },
+    },
+    rollupService.getMappings
+  );
 }

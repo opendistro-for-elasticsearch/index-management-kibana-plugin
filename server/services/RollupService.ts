@@ -14,12 +14,11 @@
  */
 
 import _ from "lodash";
-import { Legacy } from "kibana";
+import { IClusterClient, KibanaRequest, KibanaResponseFactory, IKibanaResponse, ResponseError, RequestHandlerContext } from "kibana/server";
 import { CLUSTER, INDEX } from "../utils/constants";
 import {
   DeleteRollupParams,
   DeleteRollupResponse,
-  GetFieldsResponse,
   GetRollupsResponse,
   PutRollupParams,
   PutRollupResponse,
@@ -29,153 +28,300 @@ import { getMustQuery } from "../utils/helpers";
 import { RollupsSort, ServerResponse } from "../models/types";
 import { DocumentRollup, Rollup, RollupMetadata } from "../../models/interfaces";
 
-type Request = Legacy.Request;
-type ElasticsearchPlugin = Legacy.Plugins.elasticsearch.Plugin;
-type ResponseToolkit = Legacy.ResponseToolkit;
-
 export default class RollupService {
-  esDriver: ElasticsearchPlugin;
+  esDriver: IClusterClient;
 
-  constructor(esDriver: ElasticsearchPlugin) {
+  constructor(esDriver: IClusterClient) {
     this.esDriver = esDriver;
   }
 
   /**
    * Calls backend Put Rollup API
    */
-  putRollup = async (req: Request, h: ResponseToolkit): Promise<ServerResponse<PutRollupResponse>> => {
+  putRollup = async (
+    context: RequestHandlerContext,
+    request: KibanaRequest,
+    response: KibanaResponseFactory
+  ): Promise<IKibanaResponse<ServerResponse<PutRollupResponse> | ResponseError>> => {
     try {
-      const { id } = req.params;
-      const { seqNo, primaryTerm } = req.query as { seqNo?: string; primaryTerm?: string };
+      const { id } = request.params as { id: string };
+      const { seqNo, primaryTerm } = request.query as { seqNo?: string; primaryTerm?: string };
       let method = "ism.putRollup";
-      let params: PutRollupParams = { rollupId: id, if_seq_no: seqNo, if_primary_term: primaryTerm, body: JSON.stringify(req.payload) };
+      let params: PutRollupParams = {
+        rollupId: id,
+        if_seq_no: seqNo,
+        if_primary_term: primaryTerm,
+        body: JSON.stringify(request.body),
+      };
       if (seqNo === undefined || primaryTerm === undefined) {
         method = "ism.createRollup";
-        params = { rollupId: id, body: JSON.stringify(req.payload) };
+        params = { rollupId: id, body: JSON.stringify(request.body) };
       }
-      const { callWithRequest } = await this.esDriver.getCluster(CLUSTER.ISM);
-      const response = await callWithRequest(req, method, params);
-      return { ok: true, response: response };
+      const { callAsCurrentUser: callWithRequest } = this.esDriver.asScoped(request);
+      const putRollupResponse: PutRollupResponse = await callWithRequest(method, params);
+      return response.custom({
+        statusCode: 200,
+        body: {
+          ok: true,
+          response: putRollupResponse,
+        },
+      });
     } catch (err) {
       console.error("Index Management - RollupService - putRollup", err);
-      return { ok: false, error: err.message };
+      return response.custom({
+        statusCode: 200,
+        body: {
+          ok: false,
+          error: err.message,
+        },
+      });
     }
   };
 
   /**
    * Calls backend Delete Rollup API
    */
-  deleteRollup = async (req: Request, h: ResponseToolkit): Promise<ServerResponse<boolean>> => {
+  deleteRollup = async (
+    context: RequestHandlerContext,
+    request: KibanaRequest,
+    response: KibanaResponseFactory
+  ): Promise<IKibanaResponse<ServerResponse<boolean> | ResponseError>> => {
     try {
-      const { id } = req.params;
+      const { id } = request.params as { id: string };
       const params: DeleteRollupParams = { rollupId: id };
-      const { callWithRequest } = await this.esDriver.getCluster(CLUSTER.ISM);
-      const response: DeleteRollupResponse = await callWithRequest(req, "ism.deleteRollup", params);
-      if (response.result != "deleted") {
-        return { ok: false, error: response.result };
+      const { callAsCurrentUser: callWithRequest } = this.esDriver.asScoped(request);
+      const deleteRollupResponse: DeleteRollupResponse = await callWithRequest("ism.deleteRollup", params);
+      if (deleteRollupResponse.result !== "deleted") {
+        return response.custom({
+          statusCode: 200,
+          body: {
+            ok: false,
+            error: deleteRollupResponse.result,
+          },
+        });
       }
-      return { ok: true, response: true };
+      return response.custom({
+        statusCode: 200,
+        body: {
+          ok: true,
+          response: true,
+        },
+      });
     } catch (err) {
       console.error("Index Management - RollupService - deleteRollup:", err);
-      return { ok: false, error: err.message };
+      return response.custom({
+        statusCode: 200,
+        body: {
+          ok: false,
+          error: err.message,
+        },
+      });
     }
   };
 
-  startRollup = async (req: Request, h: ResponseToolkit): Promise<ServerResponse<boolean>> => {
+  startRollup = async (
+    context: RequestHandlerContext,
+    request: KibanaRequest,
+    response: KibanaResponseFactory
+  ): Promise<IKibanaResponse<ServerResponse<boolean>>> => {
     try {
-      const { id } = req.params;
+      const { id } = request.params as { id: string };
       const params = { rollupId: id };
-      const { callWithRequest } = await this.esDriver.getCluster(CLUSTER.ISM);
-      const getResponse = await callWithRequest(req, "ism.startRollup", params);
-      const acknowledged = _.get(getResponse, "acknowledged");
+      const { callAsCurrentUser: callWithRequest } = this.esDriver.asScoped(request);
+      const startResponse = await callWithRequest("ism.startRollup", params);
+      const acknowledged = _.get(startResponse, "acknowledged");
       if (acknowledged) {
-        return { ok: true, response: true };
+        return response.custom({
+          statusCode: 200,
+          body: { ok: true, response: true },
+        });
       } else {
-        return { ok: false, error: "Failed to start rollup" };
+        return response.custom({
+          statusCode: 200,
+          body: { ok: false, error: "Failed to start rollup" },
+        });
       }
     } catch (err) {
       console.error("Index Management - RollupService - startRollup:", err);
-      return { ok: false, error: err.message };
+      return response.custom({
+        statusCode: 200,
+        body: { ok: false, error: err.message },
+      });
     }
   };
 
-  stopRollup = async (req: Request, h: ResponseToolkit): Promise<ServerResponse<boolean>> => {
+  stopRollup = async (
+    context: RequestHandlerContext,
+    request: KibanaRequest,
+    response: KibanaResponseFactory
+  ): Promise<IKibanaResponse<ServerResponse<boolean>>> => {
     try {
-      const { id } = req.params;
+      const { id } = request.params as { id: string };
       const params = { rollupId: id };
-      const { callWithRequest } = await this.esDriver.getCluster(CLUSTER.ISM);
-      const getResponse = await callWithRequest(req, "ism.stopRollup", params);
-      const acknowledged = _.get(getResponse, "acknowledged");
+      const { callAsCurrentUser: callWithRequest } = this.esDriver.asScoped(request);
+      const stopResponse = await callWithRequest("ism.stopRollup", params);
+      const acknowledged = _.get(stopResponse, "acknowledged");
       if (acknowledged) {
-        return { ok: true, response: true };
+        return response.custom({
+          statusCode: 200,
+          body: { ok: true, response: true },
+        });
       } else {
-        return { ok: false, error: "Failed to stop rollup" };
+        return response.custom({
+          statusCode: 200,
+          body: { ok: false, error: "Failed to stop rollup" },
+        });
       }
     } catch (err) {
       console.error("Index Management - RollupService - stopRollup:", err);
-      return { ok: false, error: err.message };
+      return response.custom({
+        statusCode: 200,
+        body: { ok: false, error: err.message },
+      });
     }
   };
 
   /**
    * Calls backend Get Rollup API
    */
-  getRollup = async (req: Request, h: ResponseToolkit): Promise<ServerResponse<DocumentRollup>> => {
+  getRollup = async (
+    context: RequestHandlerContext,
+    request: KibanaRequest,
+    response: KibanaResponseFactory
+  ): Promise<IKibanaResponse<ServerResponse<DocumentRollup>>> => {
     try {
-      const { id } = req.params;
+      const { id } = request.params as { id: string };
       const params = { rollupId: id };
-      const { callWithRequest } = await this.esDriver.getCluster(CLUSTER.ISM);
-      const getResponse = await callWithRequest(req, "ism.getRollup", params);
+      const { callAsCurrentUser: callWithRequest } = this.esDriver.asScoped(request);
+      const getResponse = await callWithRequest("ism.getRollup", params);
+      const metadata = await callWithRequest("ism.explainRollup", params);
       const rollup = _.get(getResponse, "rollup", null);
       const seqNo = _.get(getResponse, "_seq_no");
       const primaryTerm = _.get(getResponse, "_primary_term");
+
+      //Form response
       if (rollup) {
-        return { ok: true, response: { id, seqNo: seqNo as number, primaryTerm: primaryTerm as number, rollup: rollup as Rollup } };
+        if (metadata) {
+          return response.custom({
+            statusCode: 200,
+            body: {
+              ok: true,
+              response: {
+                _id: id,
+                _seqNo: seqNo as number,
+                _primaryTerm: primaryTerm as number,
+                rollup: rollup as Rollup,
+                metadata: metadata,
+              },
+            },
+          });
+        } else
+          return response.custom({
+            statusCode: 200,
+            body: {
+              ok: false,
+              error: "Failed to load metadata",
+            },
+          });
       } else {
-        return { ok: false, error: "Failed to load rollup" };
+        return response.custom({
+          statusCode: 200,
+          body: {
+            ok: false,
+            error: "Failed to load rollup",
+          },
+        });
       }
     } catch (err) {
       console.error("Index Management - RollupService - getRollup:", err);
-      return { ok: false, error: err.message };
+      return response.custom({
+        statusCode: 200,
+        body: {
+          ok: false,
+          error: err.message,
+        },
+      });
     }
   };
 
-  getMappings = async (req: Request, h: ResponseToolkit): Promise<ServerResponse<any>> => {
+  getMappings = async (
+    context: RequestHandlerContext,
+    request: KibanaRequest,
+    response: KibanaResponseFactory
+  ): Promise<IKibanaResponse<ServerResponse<any>>> => {
     try {
-      const { index } = req.payload as { index: string };
+      const { index } = request.body as { index: string };
       const params = { index: index };
-      const { callWithRequest } = this.esDriver.getCluster(CLUSTER.DATA);
-      const mappings = await callWithRequest(req, "indices.getMapping", params);
-      return { ok: true, response: mappings };
+      const { callAsCurrentUser: callWithRequest } = this.esDriver.asScoped(request);
+      const mappings = await callWithRequest("indices.getMapping", params);
+      return response.custom({
+        statusCode: 200,
+        body: {
+          ok: true,
+          response: mappings,
+        },
+      });
     } catch (err) {
       console.error("Index Management - RollupService - getMapping:", err);
-      return { ok: false, error: err.message };
+      return response.custom({
+        statusCode: 200,
+        body: {
+          ok: false,
+          error: err.message,
+        },
+      });
     }
   };
 
-  explainRollup = async (req: Request, h: ResponseToolkit): Promise<ServerResponse<RollupMetadata[]>> => {
+  explainRollup = async (
+    context: RequestHandlerContext,
+    request: KibanaRequest,
+    response: KibanaResponseFactory,
+    idParams: string
+  ): Promise<IKibanaResponse<ServerResponse<RollupMetadata[]>>> => {
     try {
-      const { id } = req.params;
-      const params = { rollupId: id };
-      const { callWithRequest } = await this.esDriver.getCluster(CLUSTER.ISM);
-      const rollupMetadata = await callWithRequest(req, "ism.explainRollup", params);
+      const params = { rollupId: idParams };
+      const { callAsCurrentUser: callWithRequest } = this.esDriver.asScoped(request);
+      const rollupMetadata = await callWithRequest("ism.explainRollup", params);
       if (rollupMetadata) {
-        return { ok: true, response: rollupMetadata };
+        return response.custom({
+          statusCode: 200,
+          body: {
+            ok: true,
+            response: rollupMetadata,
+          },
+        });
       } else {
-        return { ok: false, error: "Failed to load rollup" };
+        return response.custom({
+          statusCode: 200,
+          body: {
+            ok: false,
+            error: "Failed to load rollup metadata",
+          },
+        });
       }
     } catch (err) {
       console.error("Index Management - RollupService - explainRollup:", err);
-      return { ok: false, error: err.message };
+      return response.custom({
+        statusCode: 200,
+        body: {
+          ok: false,
+          error: "Explain rollup: " + err.message,
+        },
+      });
     }
   };
 
   /**
    * Performs a fuzzy search request on rollup id
    */
-  getRollups = async (req: Request, h: ResponseToolkit): Promise<ServerResponse<GetRollupsResponse>> => {
+  getRollups = async (
+    context: RequestHandlerContext,
+    request: KibanaRequest,
+    response: KibanaResponseFactory
+  ): Promise<IKibanaResponse<ServerResponse<GetRollupsResponse>>> => {
     try {
-      const { from, size, search, sortDirection, sortField } = req.query as {
+      const { from, size, search, sortDirection, sortField } = request.query as {
         from: string;
         size: string;
         search: string;
@@ -204,32 +350,47 @@ export default class RollupService {
         },
       };
 
-      const { callWithRequest } = await this.esDriver.getCluster(CLUSTER.DATA);
-      const searchResponse: SearchResponse<any> = await callWithRequest(req, "search", params);
-
+      const { callAsCurrentUser: callWithRequest } = this.esDriver.asScoped(request);
+      const searchResponse: SearchResponse<any> = await callWithRequest("search", params);
       const totalRollups = searchResponse.hits.total.value;
+
       const rollups = searchResponse.hits.hits.map((hit) => ({
         _seqNo: hit._seq_no as number,
         _primaryTerm: hit._primary_term as number,
         _id: hit._id,
         rollup: hit._source,
+        metadata: null,
       }));
-
-      let ids = "";
-      rollups.map((rollup) => {
-        if (rollups.indexOf(rollup) == 0) {
-          ids = ids + rollup._id;
-        } else {
-          ids = ids + "," + rollup._id;
-        }
-      });
-      return { ok: true, response: { rollups: rollups, totalRollups: totalRollups } };
+      const ids = rollups.map((rollup) => rollup._id).join(",");
+      const explainResponse = await this.explainRollup(context, request, response, ids);
+      if (explainResponse.payload.ok) {
+        rollups.map((item) => {
+          item.metadata = explainResponse.payload.response[item._id];
+        });
+        return response.custom({
+          statusCode: 200,
+          body: { ok: true, response: { rollups: rollups, totalRollups: totalRollups, metadata: explainResponse } },
+        });
+      } else
+        return response.custom({
+          statusCode: 200,
+          body: { ok: false, error: explainResponse.payload.error },
+        });
     } catch (err) {
       if (err.statusCode === 404 && err.body.error.type === "index_not_found_exception") {
-        return { ok: true, response: { rollups: [], totalRollups: 0 } };
+        return response.custom({
+          statusCode: 200,
+          body: { ok: true, response: { rollups: [], totalRollups: 0, metadata: null } },
+        });
       }
       console.error("Index Management - RollupService - getRollups", err);
-      return { ok: false, error: err.message };
+      return response.custom({
+        statusCode: 200,
+        body: {
+          ok: false,
+          error: "Error in getRollups " + err.message,
+        },
+      });
     }
   };
 }

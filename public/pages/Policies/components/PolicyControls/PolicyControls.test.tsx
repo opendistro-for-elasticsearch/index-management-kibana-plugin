@@ -15,7 +15,7 @@
 
 import React from "react";
 import "@testing-library/jest-dom/extend-expect";
-import { render, fireEvent, wait } from "@testing-library/react";
+import { render, fireEvent, waitFor } from "@testing-library/react";
 // @ts-ignore
 import userEvent from "@testing-library/user-event";
 import PolicyControls from "./PolicyControls";
@@ -116,6 +116,6 @@ describe("<PolicyControls /> spec", () => {
 
     fireEvent.click(getByTestId("superDatePickerToggleRefreshButton"));
 
-    await wait(() => expect(onRefresh).toHaveBeenCalledTimes(2));
+    await waitFor(() => expect(onRefresh).toHaveBeenCalledTimes(2), { timeout: 3000 });
   });
 });

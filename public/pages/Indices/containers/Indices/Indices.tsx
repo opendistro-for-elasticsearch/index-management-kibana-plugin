@@ -1,5 +1,5 @@
 /*
- * Copyright 2019 Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ * Copyright 2020 Amazon.com, Inc. or its affiliates. All Rights Reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License").
  * You may not use this file except in compliance with the License.
@@ -14,8 +14,6 @@
  */
 
 import React, { Component } from "react";
-import chrome from "ui/chrome";
-import { toastNotifications } from "ui/notify";
 import _ from "lodash";
 import { RouteComponentProps } from "react-router-dom";
 import queryString from "query-string";
@@ -42,6 +40,7 @@ import { getURLQueryParams } from "../../utils/helpers";
 import { IndicesQueryParams } from "../../models/interfaces";
 import { BREADCRUMBS } from "../../../../utils/constants";
 import { getErrorMessage } from "../../../../utils/helpers";
+import { CoreServicesContext } from "../../../../components/core_services";
 
 interface IndicesProps extends RouteComponentProps {
   indexService: IndexService;
@@ -60,11 +59,10 @@ interface IndicesState {
 }
 
 export default class Indices extends Component<IndicesProps, IndicesState> {
+  static contextType = CoreServicesContext;
   constructor(props: IndicesProps) {
     super(props);
-
     const { from, size, search, sortField, sortDirection } = getURLQueryParams(this.props.location);
-
     this.state = {
       totalIndices: 0,
       from,
@@ -81,7 +79,7 @@ export default class Indices extends Component<IndicesProps, IndicesState> {
   }
 
   async componentDidMount() {
-    chrome.breadcrumbs.set([BREADCRUMBS.INDEX_MANAGEMENT, BREADCRUMBS.INDICES]);
+    this.context.chrome.setBreadcrumbs([BREADCRUMBS.INDEX_MANAGEMENT, BREADCRUMBS.INDICES]);
     await this.getIndices();
   }
 
@@ -101,17 +99,18 @@ export default class Indices extends Component<IndicesProps, IndicesState> {
     this.setState({ loadingIndices: true });
     try {
       const { indexService, history } = this.props;
-      const queryParamsString = queryString.stringify(Indices.getQueryObjectFromState(this.state));
+      const queryObject = Indices.getQueryObjectFromState(this.state);
+      const queryParamsString = queryString.stringify(queryObject);
       history.replace({ ...this.props.location, search: queryParamsString });
-      const getIndicesResponse = await indexService.getIndices(queryParamsString);
+      const getIndicesResponse = await indexService.getIndices(queryObject);
       if (getIndicesResponse.ok) {
         const { indices, totalIndices } = getIndicesResponse.response;
         this.setState({ indices, totalIndices });
       } else {
-        toastNotifications.addDanger(getIndicesResponse.error);
+        this.context.notifications.toasts.addDanger(getIndicesResponse.error);
       }
     } catch (err) {
-      toastNotifications.addDanger(getErrorMessage(err, "There was a problem loading the indices"));
+      this.context.notifications.toasts.addDanger(getErrorMessage(err, "There was a problem loading the indices"));
     }
     this.setState({ loadingIndices: false });
   };
@@ -173,7 +172,11 @@ export default class Indices extends Component<IndicesProps, IndicesState> {
                     text: "Apply policy",
                     buttonProps: {
                       disabled: !selectedItems.length,
-                      onClick: () => onShow(ApplyPolicyModal, { indices: selectedItems.map((item: ManagedCatIndex) => item.index) }),
+                      onClick: () =>
+                        onShow(ApplyPolicyModal, {
+                          indices: selectedItems.map((item: ManagedCatIndex) => item.index),
+                          core: this.context,
+                        }),
                     },
                   },
                 ]}

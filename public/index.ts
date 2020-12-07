@@ -1,5 +1,5 @@
 /*
- * Copyright 2019 Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ * Copyright 2020 Amazon.com, Inc. or its affiliates. All Rights Reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License").
  * You may not use this file except in compliance with the License.
@@ -13,10 +13,12 @@
  * permissions and limitations under the License.
  */
 
-import browserServicesMock from "./browserServicesMock";
-import historyMock from "./historyMock";
-import httpClientMock from "./httpClientMock";
-import styleMock from "./styleMock";
-import coreServicesMock from "./coreServicesMock";
+import { PluginInitializerContext } from "kibana/public";
+import { IndexManagementPlugin } from "./plugin";
 
-export { browserServicesMock, historyMock, httpClientMock, styleMock, coreServicesMock };
+export interface IndexManagementPluginSetup {}
+export interface IndexManagementPluginStart {}
+
+export function plugin(initializerContext: PluginInitializerContext) {
+  return new IndexManagementPlugin(initializerContext);
+}

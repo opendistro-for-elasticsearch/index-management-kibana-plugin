@@ -17,16 +17,14 @@ import React from "react";
 import { fireEvent, render, wait } from "@testing-library/react";
 import { Redirect, Route, RouteComponentProps, Switch } from "react-router-dom";
 import { MemoryRouter as Router } from "react-router";
+import userEvent from "@testing-library/user-event";
 import { ServicesConsumer, ServicesContext } from "../../../../services";
-import { browserServicesMock } from "../../../../../test/mocks";
+import { browserServicesMock, coreServicesMock } from "../../../../../test/mocks";
 import { BrowserServices } from "../../../../models/interfaces";
 import { ModalProvider, ModalRoot } from "../../../../components/Modal";
 import { BREADCRUMBS, ROUTES } from "../../../../utils/constants";
 import CreateRollupForm from "./CreateRollupForm";
-import chrome from "ui/chrome";
-import userEvent from "@testing-library/user-event";
-import { toastNotifications } from "ui/notify";
-import { testRollup } from "../../utils/constants";
+import { CoreServicesContext } from "../../../../components/core_services";
 
 const indices = [
   {
@@ -137,29 +135,36 @@ function renderCreateRollupFormWithRouter() {
   return {
     ...render(
       <Router>
-        <ServicesContext.Provider value={browserServicesMock}>
-          <ServicesConsumer>
-            {(services: BrowserServices | null) =>
-              services && (
-                <ModalProvider>
-                  <ModalRoot services={services} />
-                  <Switch>
-                    <Route
-                      path={ROUTES.CREATE_ROLLUP}
-                      render={(props: RouteComponentProps) => (
-                        <div style={{ padding: "25px 25px" }}>
-                          <CreateRollupForm {...props} rollupService={services.rollupService} indexService={services.indexService} />
-                        </div>
-                      )}
-                    />
-                    <Route path={ROUTES.ROLLUPS} render={(props) => <div>Testing rollup landing page</div>} />
-                    <Redirect from="/" to={ROUTES.CREATE_ROLLUP} />
-                  </Switch>
-                </ModalProvider>
-              )
-            }
-          </ServicesConsumer>
-        </ServicesContext.Provider>
+        <CoreServicesContext.Provider value={coreServicesMock}>
+          <ServicesContext.Provider value={browserServicesMock}>
+            <ServicesConsumer>
+              {(services: BrowserServices | null) =>
+                services && (
+                  <ModalProvider>
+                    <ModalRoot services={services} />
+                    <Switch>
+                      <Route
+                        path={ROUTES.CREATE_ROLLUP}
+                        render={(props: RouteComponentProps) => (
+                          <div style={{ padding: "25px 25px" }}>
+                            <CreateRollupForm
+                              {...props}
+                              rollupService={services.rollupService}
+                              indexService={services.indexService}
+                              core={coreServicesMock}
+                            />
+                          </div>
+                        )}
+                      />
+                      <Route path={ROUTES.ROLLUPS} render={(props) => <div>Testing rollup landing page</div>} />
+                      <Redirect from="/" to={ROUTES.CREATE_ROLLUP} />
+                    </Switch>
+                  </ModalProvider>
+                )
+              }
+            </ServicesConsumer>
+          </ServicesContext.Provider>
+        </CoreServicesContext.Provider>
       </Router>
     ),
   };
@@ -175,8 +180,12 @@ describe("<CreateRollupForm /> spec", () => {
   it("sets breadcrumbs when mounting", async () => {
     renderCreateRollupFormWithRouter();
 
-    expect(chrome.breadcrumbs.set).toHaveBeenCalledTimes(4);
-    expect(chrome.breadcrumbs.set).toHaveBeenCalledWith([BREADCRUMBS.INDEX_MANAGEMENT, BREADCRUMBS.ROLLUPS, BREADCRUMBS.CREATE_ROLLUP]);
+    expect(coreServicesMock.chrome.setBreadcrumbs).toHaveBeenCalledTimes(4);
+    expect(coreServicesMock.chrome.setBreadcrumbs).toHaveBeenCalledWith([
+      BREADCRUMBS.INDEX_MANAGEMENT,
+      BREADCRUMBS.ROLLUPS,
+      BREADCRUMBS.CREATE_ROLLUP,
+    ]);
   });
 
   it("routes back to rollup landing page if cancelled", async () => {
@@ -322,8 +331,8 @@ describe("<CreateRollupForm /> creation", () => {
     await wait();
 
     expect(browserServicesMock.rollupService.putRollup).toHaveBeenCalledTimes(1);
-    expect(toastNotifications.addSuccess).toHaveBeenCalledTimes(1);
-    expect(toastNotifications.addSuccess).toHaveBeenCalledWith(`Created rollup: some_rollup_id`);
+    expect(coreServicesMock.notifications.toasts.addSuccess).toHaveBeenCalledTimes(1);
+    expect(coreServicesMock.notifications.toasts.addSuccess).toHaveBeenCalledWith(`Created rollup: some_rollup_id`);
   });
 
   it("can set all values on step 2", async () => {

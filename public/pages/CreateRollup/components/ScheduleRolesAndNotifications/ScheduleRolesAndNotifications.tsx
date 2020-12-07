@@ -23,8 +23,8 @@ interface ScheduleRolesAndNotificationsProps {
   rollupId: string;
   onChangeStep: (step: number) => void;
   jobEnabledByDefault: boolean;
-  recurringJob: string;
-  recurringDefinition: string;
+  continuousJob: string;
+  continuousDefinition: string;
   interval: number;
   intervalTimeunit: string;
   cronExpression: string;
@@ -39,8 +39,8 @@ export default class ScheduleRolesAndNotifications extends Component<ScheduleRol
     const {
       onChangeStep,
       jobEnabledByDefault,
-      recurringJob,
-      recurringDefinition,
+      continuousJob,
+      continuousDefinition,
       interval,
       intervalTimeunit,
       cronExpression,
@@ -49,8 +49,8 @@ export default class ScheduleRolesAndNotifications extends Component<ScheduleRol
       delayTimeunit,
     } = this.props;
 
-    let scheduleText = recurringJob ? "Continuous, " : "Not continuous, ";
-    if (recurringDefinition == "fixed") {
+    let scheduleText = continuousJob ? "Continuous, " : "Not continuous, ";
+    if (continuousDefinition == "fixed") {
       scheduleText += "every " + interval + " " + parseTimeunit(intervalTimeunit);
     } else {
       scheduleText += "defined by cron expression: " + cronExpression;
