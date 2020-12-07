@@ -43,6 +43,7 @@ jobs:
         run: |
           mkdir -p kibana/plugins
           mv index-management-kibana-plugin kibana/plugins
+          cd kibana/plugins/index-management-kibana-plugin
           yarn kbn bootstrap
       - name: Run tests
         run: |
