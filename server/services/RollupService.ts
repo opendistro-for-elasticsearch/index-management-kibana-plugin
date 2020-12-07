@@ -91,7 +91,7 @@ export default class RollupService {
       const params: DeleteRollupParams = { rollupId: id };
       const { callAsCurrentUser: callWithRequest } = this.esDriver.asScoped(request);
       const deleteRollupResponse: DeleteRollupResponse = await callWithRequest("ism.deleteRollup", params);
-      if (response.result !== "deleted") {
+      if (deleteRollupResponse.result !== "deleted") {
         return response.custom({
           statusCode: 200,
           body: {
