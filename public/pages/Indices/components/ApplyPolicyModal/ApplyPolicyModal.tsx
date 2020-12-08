@@ -60,7 +60,6 @@ interface ApplyPolicyModalState {
 
 export default class ApplyPolicyModal extends Component<ApplyPolicyModalProps, ApplyPolicyModalState> {
   static contextType = CoreServicesContext;
-  toasts = this.context.notifications.toasts;
   state: ApplyPolicyModalState = {
     isLoading: false,
     selectedPolicy: null,
@@ -150,8 +149,7 @@ export default class ApplyPolicyModal extends Component<ApplyPolicyModalProps, A
         }
       }
     } catch (err) {
-      // if (this.context != null) this.context.notifications.toasts.addDanger(err.message);
-      this.toasts.addDanger(err.message);
+      if (this.context != null) this.context.notifications.toasts.addDanger(err.message);
     }
 
     this.setState({ isLoading: false });
