@@ -70,8 +70,7 @@ jobs:
           yarn kbn bootstrap
       - name: Run kibana server
         run: |
-          yarn start --no-base-path --no-watch &
-          sleep 300
+          yarn start --no-base-path --no-watch 
         # timeout 300 bash -c 'while [[ "$(curl -s localhost:5601/api/status | jq -r '.status.overall.state')" != "green" ]]; do sleep 5; done'
       # for now just chrome, use matrix to do all browsers later
       - name: Cypress tests
