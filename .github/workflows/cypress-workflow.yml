@@ -66,6 +66,7 @@ jobs:
         run: |
           mkdir -p kibana/plugins
           mv index-management-kibana-plugin kibana/plugins
+          cd kibana
           yarn kbn bootstrap
       - name: Run kibana server
         run: |
