@@ -25,6 +25,9 @@ describe("Indices", () => {
     // Set welcome screen tracking to false
     localStorage.setItem("home:welcome:show", "false");
 
+    // Wait for 5s to avoid 503 server unavailable error
+    cy.wait(5000);
+
     // Visit ISM Kibana
     cy.visit(`${Cypress.env("kibana")}/app/${PLUGIN_NAME}#/indices`);
 
