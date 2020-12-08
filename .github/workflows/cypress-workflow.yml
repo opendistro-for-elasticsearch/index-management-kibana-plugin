@@ -73,6 +73,7 @@ jobs:
           yarn start --no-base-path --no-watch &
           sleep 300
         # timeout 300 bash -c 'while [[ "$(curl -s localhost:5601/api/status | jq -r '.status.overall.state')" != "green" ]]; do sleep 5; done'
+          wait-on: 'http://localhost:5601'
       # for now just chrome, use matrix to do all browsers later
       - name: Cypress tests
         uses: cypress-io/github-action@v2
