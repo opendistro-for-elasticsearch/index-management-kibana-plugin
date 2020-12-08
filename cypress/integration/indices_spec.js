@@ -13,7 +13,6 @@
  * permissions and limitations under the License.
  */
 
-import waitOn from "wait-on";
 import { PLUGIN_NAME } from "../support/constants";
 import samplePolicy from "../fixtures/sample_policy";
 
