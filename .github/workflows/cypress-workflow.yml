@@ -79,7 +79,6 @@ jobs:
         with:
           working-directory: kibana/plugins/index-management-kibana-plugin
           command: yarn run cypress run
-          wait-on: 'http://localhost:5601'
           browser: chrome
       # Screenshots are only captured on failure, will change this once we do visual regression tests
       - uses: actions/upload-artifact@v1
