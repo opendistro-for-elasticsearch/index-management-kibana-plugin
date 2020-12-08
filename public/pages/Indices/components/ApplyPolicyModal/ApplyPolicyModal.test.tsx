@@ -59,7 +59,6 @@ describe("<ApplyPolicyModal /> spec", () => {
 
     // wait 1 tick for the searchPolicies promise to resolve
     await wait();
-    await wait();
 
     expect(spy).toHaveBeenCalledTimes(1);
     expect(spy).toHaveBeenCalledWith("", true);
