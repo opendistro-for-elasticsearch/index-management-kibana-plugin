@@ -361,21 +361,27 @@ export default class RollupService {
         rollup: hit._source,
         metadata: null,
       }));
-      const ids = rollups.map((rollup) => rollup._id).join(",");
-      const explainResponse = await this.explainRollup(context, request, response, ids);
-      if (explainResponse.payload.ok) {
-        rollups.map((item) => {
-          item.metadata = explainResponse.payload.response[item._id];
-        });
-        return response.custom({
-          statusCode: 200,
-          body: { ok: true, response: { rollups: rollups, totalRollups: totalRollups, metadata: explainResponse } },
-        });
-      } else
-        return response.custom({
-          statusCode: 200,
-          body: { ok: false, error: explainResponse.payload.error },
-        });
+      if (totalRollups) {
+        const ids = rollups.map((rollup) => rollup._id).join(",");
+        const explainResponse = await this.explainRollup(context, request, response, ids);
+        if (explainResponse.payload.ok) {
+          rollups.map((item) => {
+            item.metadata = explainResponse.payload.response[item._id];
+          });
+          return response.custom({
+            statusCode: 200,
+            body: { ok: true, response: { rollups: rollups, totalRollups: totalRollups, metadata: explainResponse } },
+          });
+        } else
+          return response.custom({
+            statusCode: 200,
+            body: { ok: false, error: explainResponse.payload.error },
+          });
+      }
+      return response.custom({
+        statusCode: 200,
+        body: { ok: true, response: { rollups: rollups, totalRollups: totalRollups, metadata: {} } },
+      });
     } catch (err) {
       if (err.statusCode === 404 && err.body.error.type === "index_not_found_exception") {
         return response.custom({

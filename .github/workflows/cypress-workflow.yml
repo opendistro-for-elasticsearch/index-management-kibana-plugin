@@ -38,7 +38,7 @@ jobs:
       - name: Get Kibana version
         id: kibana_version
         run: |
-          echo "::set-output name=kibana_version::$(node -p "(require('./index-management-kibana-plugin/package.json').kibana.version).match(/[.0-9]+/)[0]")"
+          echo "::set-output name=kibana_version::$(node -p "(require('./index-management-kibana-plugin/kibana.json').kibanaVersion).match(/[.0-9]+/)[0]")"
       - name: Checkout Kibana
         uses: actions/checkout@v2
         with:
@@ -69,16 +69,17 @@ jobs:
           yarn kbn bootstrap
       - name: Run kibana server
         run: |
-          cd kibana/plugins/index-management-kibana-plugin
+          cd kibana
           yarn start --no-base-path --no-watch &
           sleep 300
         # timeout 300 bash -c 'while [[ "$(curl -s localhost:5601/api/status | jq -r '.status.overall.state')" != "green" ]]; do sleep 5; done'
       # for now just chrome, use matrix to do all browsers later
       - name: Cypress tests
-        uses: cypress-io/github-action@v1
+        uses: cypress-io/github-action@v2
         with:
           working-directory: kibana/plugins/index-management-kibana-plugin
           command: yarn run cypress run
+          wait-on: 'http://localhost:5601'
           browser: chrome
       # Screenshots are only captured on failure, will change this once we do visual regression tests
       - uses: actions/upload-artifact@v1
