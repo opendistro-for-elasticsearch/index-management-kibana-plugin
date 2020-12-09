@@ -20,12 +20,10 @@ const POLICY_ID = "test_policy_id";
 const SAMPLE_INDEX = "sample_index";
 
 describe("Indices", () => {
+  const resources = [];
   beforeEach(() => {
     // Set welcome screen tracking to false
     localStorage.setItem("home:welcome:show", "false");
-
-    // Wait for 5s to avoid 503 server unavailable error
-    cy.wait(5000);
 
     // Visit ISM Kibana
     cy.visit(`${Cypress.env("kibana")}/app/${PLUGIN_NAME}#/indices`);
@@ -83,7 +81,10 @@ describe("Indices", () => {
       // Click apply policy button
       cy.get(`[data-test-subj="Apply policyButton"]`).click({ force: true });
 
-      cy.get(`input[data-test-subj="comboBoxSearchInput"]`).focus().type(POLICY_ID, { parseSpecialCharSequences: false, delay: 1 });
+      cy.get(`input[data-test-subj="comboBoxSearchInput"]`).focus().type(POLICY_ID, {
+        parseSpecialCharSequences: false,
+        delay: 1,
+      });
 
       // Click the policy option
       cy.get(`button[role="option"]`).first().click({ force: true });

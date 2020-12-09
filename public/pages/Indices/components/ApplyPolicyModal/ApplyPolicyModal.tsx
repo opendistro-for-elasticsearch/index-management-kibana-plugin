@@ -149,7 +149,7 @@ export default class ApplyPolicyModal extends Component<ApplyPolicyModalProps, A
         }
       }
     } catch (err) {
-      this.context.notifications.toasts.addDanger(err.message);
+      if (this.context != null) this.context.notifications.toasts.addDanger(err.message);
     }
 
     this.setState({ isLoading: false });
