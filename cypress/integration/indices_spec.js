@@ -20,7 +20,6 @@ const POLICY_ID = "test_policy_id";
 const SAMPLE_INDEX = "sample_index";
 
 describe("Indices", () => {
-  const resources = [];
   beforeEach(() => {
     // Set welcome screen tracking to false
     localStorage.setItem("home:welcome:show", "false");
