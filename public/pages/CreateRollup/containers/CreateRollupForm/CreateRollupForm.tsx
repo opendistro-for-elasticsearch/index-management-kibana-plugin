@@ -15,22 +15,21 @@
 
 import React, { ChangeEvent, Component } from "react";
 import { EuiButton, EuiButtonEmpty, EuiComboBoxOptionOption, EuiFlexGroup, EuiFlexItem } from "@elastic/eui";
-import chrome from "ui/chrome";
 import { RouteComponentProps } from "react-router-dom";
+import moment from "moment";
 import { RollupService } from "../../../../services";
 import { BREADCRUMBS, ROUTES } from "../../../../utils/constants";
 import IndexService from "../../../../services/IndexService";
 import { ManagedCatIndex } from "../../../../../server/models/interfaces";
 import CreateRollup from "../CreateRollup";
 import CreateRollupStep2 from "../CreateRollupStep2";
-import { toastNotifications } from "ui/notify";
 import { DimensionItem, FieldItem, IndexItem, MetricItem, Rollup } from "../../../../../models/interfaces";
 import { getErrorMessage } from "../../../../utils/helpers";
 import { EMPTY_ROLLUP } from "../../utils/constants";
 import CreateRollupStep3 from "../CreateRollupStep3";
 import CreateRollupStep4 from "../CreateRollupStep4";
-import moment from "moment";
 import { compareFieldItem, parseFieldOptions } from "../../utils/helpers";
+import { CoreServicesContext } from "../../../../components/core_services";
 
 interface CreateRollupFormProps extends RouteComponentProps {
   rollupService: RollupService;
@@ -72,8 +71,8 @@ interface CreateRollupFormState {
   selectedFields: FieldItem[];
   jobEnabledByDefault: boolean;
 
-  recurringJob: string;
-  recurringDefinition: string;
+  continuousJob: string;
+  continuousDefinition: string;
   interval: number;
   intervalError: string;
   intervalTimeunit: string;
@@ -86,6 +85,8 @@ interface CreateRollupFormState {
 }
 
 export default class CreateRollupForm extends Component<CreateRollupFormProps, CreateRollupFormState> {
+  static contextType = CoreServicesContext;
+
   constructor(props: CreateRollupFormProps) {
     super(props);
 
@@ -126,8 +127,8 @@ export default class CreateRollupForm extends Component<CreateRollupFormProps, C
       timeunit: "h",
 
       jobEnabledByDefault: true,
-      recurringJob: "no",
-      recurringDefinition: "fixed",
+      continuousJob: "no",
+      continuousDefinition: "fixed",
       interval: 1,
       intervalTimeunit: "MINUTES",
       cronExpression: "",
@@ -142,7 +143,7 @@ export default class CreateRollupForm extends Component<CreateRollupFormProps, C
   }
 
   componentDidMount = async (): Promise<void> => {
-    chrome.breadcrumbs.set([BREADCRUMBS.INDEX_MANAGEMENT, BREADCRUMBS.ROLLUPS, BREADCRUMBS.CREATE_ROLLUP]);
+    this.context.chrome.setBreadcrumbs([BREADCRUMBS.INDEX_MANAGEMENT, BREADCRUMBS.ROLLUPS, BREADCRUMBS.CREATE_ROLLUP]);
   };
 
   getMappings = async (srcIndex: string): Promise<void> => {
@@ -163,10 +164,10 @@ export default class CreateRollupForm extends Component<CreateRollupFormProps, C
         );
         this.setState({ mappings, fields, allMappings });
       } else {
-        toastNotifications.addDanger(`Could not load fields: ${response.error}`);
+        this.context.notifications.toasts.addDanger(`Could not load fields: ${response.error}`);
       }
     } catch (err) {
-      toastNotifications.addDanger(getErrorMessage(err, "Could not load fields"));
+      this.context.notifications.toasts.addDanger(getErrorMessage(err, "Could not load fields"));
     }
   };
 
@@ -212,8 +213,8 @@ export default class CreateRollupForm extends Component<CreateRollupFormProps, C
       }
     } else if (currentStep == 3) {
       //Check if interval is a valid value and is specified.
-      const { intervalError, recurringDefinition } = this.state;
-      if (recurringDefinition == "fixed") {
+      const { intervalError, continuousDefinition } = this.state;
+      if (continuousDefinition == "fixed") {
         if (intervalError != "") {
           const intervalErrorMsg = "Interval value is required.";
           this.setState({ submitError: intervalErrorMsg, intervalError: intervalErrorMsg });
@@ -391,15 +392,15 @@ export default class CreateRollupForm extends Component<CreateRollupFormProps, C
     this.setState({ pageSize: e.target.valueAsNumber, rollupJSON: newJSON });
   };
 
-  onChangeRecurringDefinition = (e: ChangeEvent<HTMLSelectElement>): void => {
-    this.setState({ recurringDefinition: e.target.value });
+  onChangeContinuousDefinition = (e: ChangeEvent<HTMLSelectElement>): void => {
+    this.setState({ continuousDefinition: e.target.value });
   };
 
   updateSchedule = (): void => {
-    const { recurringDefinition, cronExpression, interval, intervalTimeunit, cronTimezone } = this.state;
+    const { continuousDefinition, cronExpression, interval, intervalTimeunit, cronTimezone } = this.state;
     let newJSON = this.state.rollupJSON;
 
-    if (recurringDefinition == "cron") {
+    if (continuousDefinition == "cron") {
       newJSON.rollup.schedule.cron = { expression: `${cronExpression}`, timezone: `${cronTimezone}` };
       delete newJSON.rollup.schedule["interval"];
     } else {
@@ -413,10 +414,10 @@ export default class CreateRollupForm extends Component<CreateRollupFormProps, C
     this.setState({ rollupJSON: newJSON });
   };
 
-  onChangeRecurringJob = (optionId: string): void => {
+  onChangeContinuousJob = (optionId: string): void => {
     let newJSON = this.state.rollupJSON;
     newJSON.rollup.continuous = optionId == "yes";
-    this.setState({ recurringJob: optionId, rollupJSON: newJSON });
+    this.setState({ continuousJob: optionId, rollupJSON: newJSON });
   };
 
   //Update delay field in JSON if delay value is defined.
@@ -431,6 +432,10 @@ export default class CreateRollupForm extends Component<CreateRollupFormProps, C
   updateDimension = (): void => {
     const { rollupJSON, selectedDimensionField } = this.state;
     let newJSON = rollupJSON;
+
+    //Clear the dimensions fields except the first item (date histogram)
+    newJSON.rollup.dimensions = rollupJSON.rollup.dimensions.splice(0, 1);
+
     //Push rest of dimensions
     selectedDimensionField.map((dimension) => {
       if (dimension.aggregationMethod == "terms") {
@@ -454,6 +459,10 @@ export default class CreateRollupForm extends Component<CreateRollupFormProps, C
   updateMetric = (): void => {
     const { rollupJSON, selectedMetrics } = this.state;
     let newJSON = rollupJSON;
+
+    //Clear the metrics array before pushing
+    newJSON.rollup.metrics = [];
+
     //Push all metrics
     selectedMetrics.map((metric) => {
       const metrics = [];
@@ -485,7 +494,7 @@ export default class CreateRollupForm extends Component<CreateRollupFormProps, C
         await this.onCreate(rollupId, rollupJSON);
       }
     } catch (err) {
-      toastNotifications.addDanger("Invalid Rollup JSON");
+      this.context.notifications.toasts.addDanger("Invalid Rollup JSON");
       console.error(err);
     }
 
@@ -501,15 +510,17 @@ export default class CreateRollupForm extends Component<CreateRollupFormProps, C
     try {
       const response = await rollupService.putRollup(rollup, rollupId);
       if (response.ok) {
-        toastNotifications.addSuccess(`Created rollup: ${response.response._id}`);
+        this.context.notifications.toasts.addSuccess(`Created rollup: ${response.response._id}`);
         this.props.history.push(ROUTES.ROLLUPS);
       } else {
         this.setState({ submitError: response.error });
-        toastNotifications.addDanger(`Failed to create rollup: ${response.error}`);
+        this.context.notifications.toasts.addDanger(`Failed to create rollup: ${response.error}`);
       }
     } catch (err) {
       this.setState({ submitError: getErrorMessage(err, "There was a problem creating the rollup job") });
-      toastNotifications.addDanger(`Failed to create rollup: ${getErrorMessage(err, "There was a problem creating the rollup job")}`);
+      this.context.notifications.toasts.addDanger(
+        `Failed to create rollup: ${getErrorMessage(err, "There was a problem creating the rollup job")}`
+      );
     }
   };
 
@@ -540,8 +551,8 @@ export default class CreateRollupForm extends Component<CreateRollupFormProps, C
       timeunit,
 
       jobEnabledByDefault,
-      recurringJob,
-      recurringDefinition,
+      continuousJob,
+      continuousDefinition,
       interval,
       intervalTimeunit,
       intervalError,
@@ -598,8 +609,8 @@ export default class CreateRollupForm extends Component<CreateRollupFormProps, C
           {...this.props}
           currentStep={this.state.currentStep}
           jobEnabledByDefault={jobEnabledByDefault}
-          recurringJob={recurringJob}
-          recurringDefinition={recurringDefinition}
+          continuousJob={continuousJob}
+          continuousDefinition={continuousDefinition}
           interval={interval}
           intervalTimeunit={intervalTimeunit}
           intervalError={intervalError}
@@ -614,8 +625,8 @@ export default class CreateRollupForm extends Component<CreateRollupFormProps, C
           onChangeDelayTime={this.onChangeDelayTime}
           onChangeIntervalTime={this.onChangeIntervalTime}
           onChangePage={this.onChangePage}
-          onChangeRecurringDefinition={this.onChangeRecurringDefinition}
-          onChangeRecurringJob={this.onChangeRecurringJob}
+          onChangeContinuousDefinition={this.onChangeContinuousDefinition}
+          onChangeContinuousJob={this.onChangeContinuousJob}
           onChangeDelayTimeunit={this.onChangeDelayTimeunit}
           onChangeIntervalTimeunit={this.onChangeIntervalTimeunit}
         />
@@ -633,8 +644,8 @@ export default class CreateRollupForm extends Component<CreateRollupFormProps, C
           selectedDimensionField={selectedDimensionField}
           selectedMetrics={selectedMetrics}
           jobEnabledByDefault={jobEnabledByDefault}
-          recurringJob={recurringJob}
-          recurringDefinition={recurringDefinition}
+          continuousJob={continuousJob}
+          continuousDefinition={continuousDefinition}
           interval={interval}
           intervalTimeunit={intervalTimeunit}
           cronExpression={cronExpression}

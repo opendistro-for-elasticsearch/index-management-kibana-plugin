@@ -14,7 +14,6 @@
  */
 
 import React from "react";
-import "@testing-library/react/cleanup-after-each";
 import "@testing-library/jest-dom/extend-expect";
 import { configure } from "@testing-library/react";
 
@@ -29,7 +28,7 @@ jest.mock("@elastic/eui/lib/services/accessibility/html_id_generator", () => ({
 }));
 
 // @ts-ignore
-window.Worker = function() {
+window.Worker = function () {
   this.postMessage = () => {};
   // @ts-ignore
   this.terminate = () => {};
@@ -41,24 +40,6 @@ window.URL = {
     return "";
   },
 };
-
-jest.mock("ui/notify", () => ({
-  toastNotifications: {
-    addDanger: jest.fn().mockName("addDanger"),
-    addSuccess: jest.fn().mockName("addSuccess"),
-  },
-}));
-
-jest.mock("ui/chrome", () => ({
-  breadcrumbs: (() => {
-    const breadcrumbs = () => {};
-    // @ts-ignore
-    breadcrumbs.set = jest.fn();
-    // @ts-ignore
-    breadcrumbs.push = jest.fn();
-    return breadcrumbs;
-  })(),
-}));
 
 // https://github.com/elastic/eui/issues/2530
 jest.mock("@elastic/eui/lib/components/icon", () => ({

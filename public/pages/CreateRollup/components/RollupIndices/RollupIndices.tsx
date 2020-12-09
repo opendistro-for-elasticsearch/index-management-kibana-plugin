@@ -18,9 +18,9 @@ import { EuiSpacer, EuiFormRow, EuiComboBox, EuiCallOut } from "@elastic/eui";
 import { ContentPanel } from "../../../../components/ContentPanel";
 import { EuiComboBoxOptionOption } from "@elastic/eui/src/components/combo_box/types";
 import { IndexItem } from "../../../../../models/interfaces";
-import { toastNotifications } from "ui/notify";
 import IndexService from "../../../../services/IndexService";
 import _ from "lodash";
+import { CoreServicesContext } from "../../../../components/core_services";
 
 interface RollupIndicesProps {
   indexService: IndexService;
@@ -40,6 +40,7 @@ interface RollupIndicesState {
 }
 
 export default class RollupIndices extends Component<RollupIndicesProps, RollupIndicesState> {
+  static contextType = CoreServicesContext;
   constructor(props: RollupIndicesProps) {
     super(props);
     this.state = {
@@ -59,8 +60,8 @@ export default class RollupIndices extends Component<RollupIndicesProps, RollupI
     const { indexService } = this.props;
     this.setState({ isLoading: true, indexOptions: [] });
     try {
-      const queryParamsString = `from=0&size=10&search=${searchValue}&sortDirection=desc&sortField=index`;
-      const getIndicesResponse = await indexService.getIndices(queryParamsString);
+      const queryObject = { from: 0, size: 10, search: searchValue, sortDirection: "desc", sortField: "index" };
+      const getIndicesResponse = await indexService.getIndices(queryObject);
       if (getIndicesResponse.ok) {
         const options = searchValue.trim() ? [{ label: `${searchValue}*` }] : [];
         const indices = getIndicesResponse.response.indices.map((index: IndexItem) => ({
@@ -69,13 +70,13 @@ export default class RollupIndices extends Component<RollupIndicesProps, RollupI
         this.setState({ indexOptions: options.concat(indices), targetIndexOptions: indices });
       } else {
         if (getIndicesResponse.error.startsWith("[index_not_found_exception]")) {
-          toastNotifications.addDanger("No index available");
+          this.context.notifications.toasts.addDanger("No index available");
         } else {
-          toastNotifications.addDanger(getIndicesResponse.error);
+          this.context.notifications.toasts.addDanger(getIndicesResponse.error);
         }
       }
     } catch (err) {
-      toastNotifications.addDanger(err.message);
+      this.context.notifications.toasts.addDanger(err.message);
     }
 
     this.setState({ isLoading: false });

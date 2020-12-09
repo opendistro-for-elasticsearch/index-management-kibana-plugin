@@ -1,5 +1,5 @@
 /*
- * Copyright 2019 Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ * Copyright 2020 Amazon.com, Inc. or its affiliates. All Rights Reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License").
  * You may not use this file except in compliance with the License.
@@ -13,38 +13,37 @@
  * permissions and limitations under the License.
  */
 
-import { IHttpResponse, IHttpService } from "angular";
+import { HttpSetup } from "kibana/public";
 import { INDEX } from "../../server/utils/constants";
 import { AcknowledgedResponse, ApplyPolicyResponse, GetIndicesResponse, SearchResponse } from "../../server/models/interfaces";
 import { ServerResponse } from "../../server/models/types";
 import { NODE_API } from "../../utils/constants";
 
 export default class IndexService {
-  httpClient: IHttpService;
+  httpClient: HttpSetup;
 
-  constructor(httpClient: IHttpService) {
+  constructor(httpClient: HttpSetup) {
     this.httpClient = httpClient;
   }
 
-  getIndices = async (queryParamsString: string): Promise<ServerResponse<GetIndicesResponse>> => {
+  getIndices = async (queryObject: object): Promise<ServerResponse<GetIndicesResponse>> => {
     let url = `..${NODE_API._INDICES}`;
-    if (queryParamsString) url += `?${queryParamsString}`;
-    const response = (await this.httpClient.get(url)) as IHttpResponse<ServerResponse<GetIndicesResponse>>;
-    return response.data;
+    const response = (await this.httpClient.get(url, { query: queryObject })) as ServerResponse<GetIndicesResponse>;
+    return response;
   };
 
   applyPolicy = async (indices: string[], policyId: string): Promise<ServerResponse<ApplyPolicyResponse>> => {
     const body = { indices, policyId };
     const url = `..${NODE_API.APPLY_POLICY}`;
-    const response = (await this.httpClient.post(url, body)) as IHttpResponse<ServerResponse<ApplyPolicyResponse>>;
-    return response.data;
+    const response = (await this.httpClient.post(url, { body: JSON.stringify(body) })) as ServerResponse<ApplyPolicyResponse>;
+    return response;
   };
 
   editRolloverAlias = async (index: string, alias: string): Promise<ServerResponse<AcknowledgedResponse>> => {
     const body = { index, alias };
     const url = `..${NODE_API.EDIT_ROLLOVER_ALIAS}`;
-    const response = (await this.httpClient.post(url, body)) as IHttpResponse<ServerResponse<AcknowledgedResponse>>;
-    return response.data;
+    const response = (await this.httpClient.post(url, { body: JSON.stringify(body) })) as ServerResponse<AcknowledgedResponse>;
+    return response;
   };
 
   searchPolicies = async (searchValue: string, source: boolean = false): Promise<ServerResponse<SearchResponse<any>>> => {
@@ -62,7 +61,7 @@ export default class IndexService {
       query: { _source: source, query: { bool: { must: [mustQuery, { exists: { field: "policy" } }] } } },
     };
     const url = `..${NODE_API._SEARCH}`;
-    const response = (await this.httpClient.post(url, body)) as IHttpResponse<ServerResponse<any>>;
-    return response.data;
+    const response = (await this.httpClient.post(url, { body: JSON.stringify(body) })) as ServerResponse<any>;
+    return response;
   };
 }

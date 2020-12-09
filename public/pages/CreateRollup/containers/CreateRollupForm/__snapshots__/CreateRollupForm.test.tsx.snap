@@ -329,7 +329,7 @@ exports[`<CreateRollupForm /> spec renders the component 1`] = `
                           class="euiFormControlLayout__childrenWrapper"
                         >
                           <div
-                            class="euiComboBox__inputWrap euiComboBox__inputWrap--noWrap euiComboBox__inputWrap-isClearable"
+                            class="euiComboBox__inputWrap euiComboBox__inputWrap--noWrap euiComboBox__inputWrap-isLoading euiComboBox__inputWrap-isClearable"
                             data-test-subj="comboBoxInput"
                             tabindex="-1"
                           >
@@ -358,6 +358,9 @@ exports[`<CreateRollupForm /> spec renders the component 1`] = `
                           <div
                             class="euiFormControlLayoutIcons euiFormControlLayoutIcons--right"
                           >
+                            <span
+                              class="euiLoadingSpinner euiLoadingSpinner--medium"
+                            />
                             <button
                               aria-label="Open list of options"
                               class="euiFormControlLayoutCustomIcon euiFormControlLayoutCustomIcon--clickable"
@@ -411,7 +414,7 @@ exports[`<CreateRollupForm /> spec renders the component 1`] = `
                           class="euiFormControlLayout__childrenWrapper"
                         >
                           <div
-                            class="euiComboBox__inputWrap euiComboBox__inputWrap--noWrap euiComboBox__inputWrap-isClearable"
+                            class="euiComboBox__inputWrap euiComboBox__inputWrap--noWrap euiComboBox__inputWrap-isLoading euiComboBox__inputWrap-isClearable"
                             data-test-subj="comboBoxInput"
                             tabindex="-1"
                           >
@@ -440,6 +443,9 @@ exports[`<CreateRollupForm /> spec renders the component 1`] = `
                           <div
                             class="euiFormControlLayoutIcons euiFormControlLayoutIcons--right"
                           >
+                            <span
+                              class="euiLoadingSpinner euiLoadingSpinner--medium"
+                            />
                             <button
                               aria-label="Open list of options"
                               class="euiFormControlLayoutCustomIcon euiFormControlLayoutCustomIcon--clickable"
@@ -482,7 +488,7 @@ exports[`<CreateRollupForm /> spec renders the component 1`] = `
           type="button"
         >
           <span
-            class="euiButtonEmpty__content"
+            class="euiButtonContent euiButtonEmpty__content"
           >
             <span
               class="euiButtonEmpty__text"
@@ -501,7 +507,7 @@ exports[`<CreateRollupForm /> spec renders the component 1`] = `
           type="button"
         >
           <span
-            class="euiButton__content"
+            class="euiButtonContent euiButton__content"
           >
             <span
               class="euiButton__text"

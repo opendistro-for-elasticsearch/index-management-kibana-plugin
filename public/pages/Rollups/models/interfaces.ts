@@ -14,19 +14,12 @@
  */
 
 import { Direction } from "@elastic/eui";
-import { Rollup } from "../../../../models/interfaces";
-
-export interface RollupItem {
-  _id: string;
-  _seqNo: number;
-  _primaryTerm: number;
-  rollup: Rollup;
-}
+import { DocumentRollup } from "../../../../models/interfaces";
 
 export interface RollupQueryParams {
   from: number;
   size: number;
   search: string;
-  sortField: keyof RollupItem;
+  sortField: keyof DocumentRollup;
   sortDirection: Direction;
 }

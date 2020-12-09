@@ -1,5 +1,5 @@
 /*
- * Copyright 2019 Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ * Copyright 2020 Amazon.com, Inc. or its affiliates. All Rights Reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License").
  * You may not use this file except in compliance with the License.
@@ -15,8 +15,6 @@
 
 import React, { ChangeEvent, Component, Fragment } from "react";
 import { EuiSpacer, EuiTitle, EuiFlexGroup, EuiFlexItem, EuiButton, EuiButtonEmpty, EuiCallOut, EuiLink, EuiIcon } from "@elastic/eui";
-import chrome from "ui/chrome";
-import { toastNotifications } from "ui/notify";
 import queryString from "query-string";
 import { RouteComponentProps } from "react-router-dom";
 import { DEFAULT_POLICY } from "../../utils/constants";
@@ -26,6 +24,7 @@ import { Policy } from "../../../../../models/interfaces";
 import { PolicyService } from "../../../../services";
 import { BREADCRUMBS, DOCUMENTATION_URL, ROUTES } from "../../../../utils/constants";
 import { getErrorMessage } from "../../../../utils/helpers";
+import { CoreServicesContext } from "../../../../components/core_services";
 
 interface CreatePolicyProps extends RouteComponentProps {
   isEdit: boolean;
@@ -44,6 +43,7 @@ interface CreatePolicyState {
 }
 
 export default class CreatePolicy extends Component<CreatePolicyProps, CreatePolicyState> {
+  static contextType = CoreServicesContext;
   constructor(props: CreatePolicyProps) {
     super(props);
 
@@ -60,19 +60,23 @@ export default class CreatePolicy extends Component<CreatePolicyProps, CreatePol
   }
 
   componentDidMount = async (): Promise<void> => {
-    chrome.breadcrumbs.set([BREADCRUMBS.INDEX_MANAGEMENT, BREADCRUMBS.INDEX_POLICIES]);
+    this.context.chrome.setBreadcrumbs([BREADCRUMBS.INDEX_MANAGEMENT, BREADCRUMBS.INDEX_POLICIES]);
     if (this.props.isEdit) {
       const { id } = queryString.parse(this.props.location.search);
       if (typeof id === "string" && !!id) {
-        chrome.breadcrumbs.push(BREADCRUMBS.EDIT_POLICY);
-        chrome.breadcrumbs.push({ text: id });
+        this.context.chrome.setBreadcrumbs([
+          BREADCRUMBS.INDEX_MANAGEMENT,
+          BREADCRUMBS.INDEX_POLICIES,
+          BREADCRUMBS.EDIT_POLICY,
+          { text: id },
+        ]);
         await this.getPolicyToEdit(id);
       } else {
-        toastNotifications.addDanger(`Invalid policy id: ${id}`);
+        this.context.notifications.toasts.addDanger(`Invalid policy id: ${id}`);
         this.props.history.push(ROUTES.INDEX_POLICIES);
       }
     } else {
-      chrome.breadcrumbs.push(BREADCRUMBS.CREATE_POLICY);
+      this.context.chrome.setBreadcrumbs([BREADCRUMBS.INDEX_MANAGEMENT, BREADCRUMBS.INDEX_POLICIES, BREADCRUMBS.CREATE_POLICY]);
       this.setState({ jsonString: DEFAULT_POLICY });
     }
   };
@@ -89,11 +93,11 @@ export default class CreatePolicy extends Component<CreatePolicyProps, CreatePol
           jsonString: JSON.stringify({ policy: response.response.policy }, null, 4),
         });
       } else {
-        toastNotifications.addDanger(`Could not load the policy: ${response.error}`);
+        this.context.notifications.toasts.addDanger(`Could not load the policy: ${response.error}`);
         this.props.history.push(ROUTES.INDEX_POLICIES);
       }
     } catch (err) {
-      toastNotifications.addDanger(getErrorMessage(err, "Could not load the policy"));
+      this.context.notifications.toasts.addDanger(getErrorMessage(err, "Could not load the policy"));
       this.props.history.push(ROUTES.INDEX_POLICIES);
     }
   };
@@ -103,7 +107,7 @@ export default class CreatePolicy extends Component<CreatePolicyProps, CreatePol
     try {
       const response = await policyService.putPolicy(policy, policyId);
       if (response.ok) {
-        toastNotifications.addSuccess(`Created policy: ${response.response._id}`);
+        this.context.notifications.toasts.addSuccess(`Created policy: ${response.response._id}`);
         this.props.history.push(ROUTES.INDEX_POLICIES);
       } else {
         this.setState({ submitError: response.error });
@@ -118,12 +122,12 @@ export default class CreatePolicy extends Component<CreatePolicyProps, CreatePol
       const { policyService } = this.props;
       const { policyPrimaryTerm, policySeqNo } = this.state;
       if (policySeqNo == null || policyPrimaryTerm == null) {
-        toastNotifications.addDanger("Could not update policy without seqNo and primaryTerm");
+        this.context.notifications.toasts.addDanger("Could not update policy without seqNo and primaryTerm");
         return;
       }
       const response = await policyService.putPolicy(policy, policyId, policySeqNo, policyPrimaryTerm);
       if (response.ok) {
-        toastNotifications.addSuccess(`Updated policy: ${response.response._id}`);
+        this.context.notifications.toasts.addSuccess(`Updated policy: ${response.response._id}`);
         this.props.history.push(ROUTES.INDEX_POLICIES);
       } else {
         this.setState({ submitError: response.error });
@@ -171,7 +175,7 @@ export default class CreatePolicy extends Component<CreatePolicyProps, CreatePol
         else await this.onCreate(policyId, policy);
       }
     } catch (err) {
-      toastNotifications.addDanger("Invalid Policy JSON");
+      this.context.notifications.toasts.addDanger("Invalid Policy JSON");
       console.error(err);
     }
 

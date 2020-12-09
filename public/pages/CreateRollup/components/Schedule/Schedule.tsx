@@ -28,7 +28,7 @@ import {
   EuiFormHelpText,
   EuiText,
 } from "@elastic/eui";
-import { CalendarTimeunitOptions, DelayTimeunitOptions, ScheduleIntervalTimeunitOptions } from "../../utils/constants";
+import { DelayTimeunitOptions, ScheduleIntervalTimeunitOptions } from "../../utils/constants";
 import { ContentPanel } from "../../../../components/ContentPanel";
 
 interface ScheduleProps {
@@ -36,8 +36,8 @@ interface ScheduleProps {
   rollupId: string;
   rollupIdError: string;
   jobEnabledByDefault: boolean;
-  recurringJob: string;
-  recurringDefinition: string;
+  continuousJob: string;
+  continuousDefinition: string;
   interval: number;
   intervalTimeunit: string;
   intervalError: string;
@@ -52,8 +52,8 @@ interface ScheduleProps {
   onChangeDelayTime: (e: ChangeEvent<HTMLInputElement>) => void;
   onChangeIntervalTime: (e: ChangeEvent<HTMLInputElement>) => void;
   onChangePage: (e: ChangeEvent<HTMLInputElement>) => void;
-  onChangeRecurringDefinition: (e: ChangeEvent<HTMLSelectElement>) => void;
-  onChangeRecurringJob: (optionId: string) => void;
+  onChangeContinuousDefinition: (e: ChangeEvent<HTMLSelectElement>) => void;
+  onChangeContinuousJob: (optionId: string) => void;
   onChangeDelayTimeunit: (e: ChangeEvent<HTMLSelectElement>) => void;
   onChangeIntervalTimeunit: (e: ChangeEvent<HTMLSelectElement>) => void;
 }
@@ -98,10 +98,10 @@ const selectInterval = (
   </React.Fragment>
 );
 
-const isRecurring = (recurringJob: string, onChangeRecurringJob: (optionId: string) => void) => (
+const isContinuous = (continuousJob: string, onChangeContinuousJob: (optionId: string) => void) => (
   <React.Fragment>
     <EuiFormRow label="Continuous">
-      <EuiRadioGroup options={radios} idSelected={recurringJob} onChange={(id) => onChangeRecurringJob(id)} name="recurringJob" />
+      <EuiRadioGroup options={radios} idSelected={continuousJob} onChange={(id) => onChangeContinuousJob(id)} name="continuousJob" />
     </EuiFormRow>
     <EuiSpacer size="m" />
   </React.Fragment>
@@ -118,8 +118,8 @@ export default class Schedule extends Component<ScheduleProps> {
     const {
       isEdit,
       jobEnabledByDefault,
-      recurringJob,
-      recurringDefinition,
+      continuousJob,
+      continuousDefinition,
       interval,
       intervalTimeunit,
       intervalError,
@@ -134,8 +134,8 @@ export default class Schedule extends Component<ScheduleProps> {
       onChangeDelayTime,
       onChangeIntervalTime,
       onChangePage,
-      onChangeRecurringDefinition,
-      onChangeRecurringJob,
+      onChangeContinuousDefinition,
+      onChangeContinuousJob,
       onChangeDelayTimeunit,
       onChangeIntervalTimeunit,
     } = this.props;
@@ -152,22 +152,22 @@ export default class Schedule extends Component<ScheduleProps> {
             />
           )}
           <EuiSpacer size="m" />
-          {!isEdit && isRecurring(recurringJob, onChangeRecurringJob)}
+          {!isEdit && isContinuous(continuousJob, onChangeContinuousJob)}
 
           <EuiFormRow label="Rollup execution frequency">
             <EuiSelect
-              id="recurringDefinition"
+              id="continuousDefinition"
               options={[
                 { value: "fixed", text: "Define by fixed interval" },
                 { value: "cron", text: "Define by cron expression" },
               ]}
-              value={recurringDefinition}
-              onChange={onChangeRecurringDefinition}
+              value={continuousDefinition}
+              onChange={onChangeContinuousDefinition}
             />
           </EuiFormRow>
           <EuiSpacer size="m" />
 
-          {recurringDefinition == "fixed" ? (
+          {continuousDefinition == "fixed" ? (
             selectInterval(interval, intervalTimeunit, intervalError, onChangeIntervalTime, onChangeIntervalTimeunit)
           ) : (
             <React.Fragment>

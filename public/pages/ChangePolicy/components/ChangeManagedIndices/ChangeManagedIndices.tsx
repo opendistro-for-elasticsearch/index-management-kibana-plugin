@@ -15,10 +15,10 @@
 
 import React, { Component } from "react";
 import { EuiSpacer, EuiComboBox, EuiFormRow } from "@elastic/eui";
-import { toastNotifications } from "ui/notify";
 import { ContentPanel } from "../../../../components/ContentPanel";
 import { ManagedIndexService } from "../../../../services";
 import { ManagedIndexItem, State } from "../../../../../models/interfaces";
+import { CoreServicesContext } from "../../../../components/core_services";
 
 interface ChangeManagedIndicesProps {
   managedIndexService: ManagedIndexService;
@@ -36,6 +36,7 @@ interface ChangeManagedIndicesState {
 }
 
 export default class ChangeManagedIndices extends Component<ChangeManagedIndicesProps, ChangeManagedIndicesState> {
+  static contextType = CoreServicesContext;
   state = {
     managedIndicesIsLoading: false,
     managedIndices: [],
@@ -51,8 +52,8 @@ export default class ChangeManagedIndices extends Component<ChangeManagedIndices
     this.setState({ managedIndicesIsLoading: true, managedIndices: [] });
     try {
       // only bring back the first 10 results descending by name
-      const queryParamsString = `from=0&size=10&search=${searchValue}&sortDirection=desc&sortField=name`;
-      const managedIndicesResponse = await managedIndexService.getManagedIndices(queryParamsString);
+      const queryObject = { from: 0, size: 10, search: searchValue, sortDirection: "desc", sortField: "name" };
+      const managedIndicesResponse = await managedIndexService.getManagedIndices(queryObject);
       if (managedIndicesResponse.ok) {
         const options = searchValue.trim() ? [{ label: `${searchValue}*` }] : [];
         const managedIndices = managedIndicesResponse.response.managedIndices.map((managedIndex: ManagedIndexItem) => ({
@@ -62,13 +63,13 @@ export default class ChangeManagedIndices extends Component<ChangeManagedIndices
         this.setState({ managedIndices: options.concat(managedIndices) });
       } else {
         if (managedIndicesResponse.error.startsWith("[index_not_found_exception]")) {
-          toastNotifications.addDanger("You have not created a managed index yet");
+          this.context.notifications.toasts.addDanger("You have not created a managed index yet");
         } else {
-          toastNotifications.addDanger(managedIndicesResponse.error);
+          this.context.notifications.toasts.addDanger(managedIndicesResponse.error);
         }
       }
     } catch (err) {
-      toastNotifications.addDanger(err.message);
+      this.context.notifications.toasts.addDanger(err.message);
     }
 
     this.setState({ managedIndicesIsLoading: false });

@@ -14,7 +14,6 @@
  */
 
 import React, { Component } from "react";
-import { toastNotifications } from "ui/notify";
 import {
   EuiButton,
   EuiButtonEmpty,
@@ -29,6 +28,7 @@ import {
 } from "@elastic/eui";
 import { BrowserServices } from "../../../../models/interfaces";
 import { getErrorMessage } from "../../../../utils/helpers";
+import { CoreServicesContext } from "../../../../components/core_services";
 
 interface RolloverAliasModalProps {
   onClose: () => void;
@@ -41,6 +41,7 @@ interface RolloverAliasModalState {
 }
 
 export default class RolloverAliasModal extends Component<RolloverAliasModalProps, RolloverAliasModalState> {
+  static contextType = CoreServicesContext;
   state: RolloverAliasModalState = {
     rolloverAlias: "",
   };
@@ -56,16 +57,16 @@ export default class RolloverAliasModal extends Component<RolloverAliasModalProp
       const response = await indexService.editRolloverAlias(index, rolloverAlias);
       if (response.ok) {
         if (response.response.acknowledged) {
-          toastNotifications.addSuccess(`Edited rollover alias on ${index}`);
+          this.context.notifications.toasts.addSuccess(`Edited rollover alias on ${index}`);
         } else {
-          toastNotifications.addDanger(`Failed to edit rollover alias on ${index}`);
+          this.context.notifications.toasts.addDanger(`Failed to edit rollover alias on ${index}`);
         }
       } else {
-        toastNotifications.addDanger(response.error);
+        this.context.notifications.toasts.addDanger(response.error);
       }
       onClose();
     } catch (err) {
-      toastNotifications.addDanger(getErrorMessage(err, `There was a problem editing rollover alias on ${index}`));
+      this.context.notifications.toasts.addDanger(getErrorMessage(err, `There was a problem editing rollover alias on ${index}`));
     }
   };
 

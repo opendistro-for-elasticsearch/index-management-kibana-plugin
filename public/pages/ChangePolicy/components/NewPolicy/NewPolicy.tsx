@@ -16,7 +16,6 @@
 import React from "react";
 import _ from "lodash";
 import { EuiSpacer, EuiText, EuiRadioGroup, EuiFormRow, EuiSelect, EuiComboBox, EuiLink, EuiIcon } from "@elastic/eui";
-import { toastNotifications } from "ui/notify";
 import { ContentPanel } from "../../../../components/ContentPanel";
 import { IndexService } from "../../../../services";
 import { Radio } from "../../containers/ChangePolicy/ChangePolicy";
@@ -24,6 +23,7 @@ import { Policy } from "../../../../../models/interfaces";
 import { PolicyOption } from "../../models/interfaces";
 import { getErrorMessage } from "../../../../utils/helpers";
 import { DOCUMENTATION_URL } from "../../../../utils/constants";
+import { CoreServicesContext } from "../../../../components/core_services";
 
 interface NewPolicyProps {
   indexService: IndexService;
@@ -43,6 +43,7 @@ interface NewPolicyState {
 }
 
 export default class NewPolicy extends React.Component<NewPolicyProps, NewPolicyState> {
+  static contextType = CoreServicesContext;
   state = {
     stateOptions: [],
     policiesIsLoading: false,
@@ -66,13 +67,13 @@ export default class NewPolicy extends React.Component<NewPolicyProps, NewPolicy
         this.setState({ policies });
       } else {
         if (searchPoliciesResponse.error.startsWith("[index_not_found_exception]")) {
-          toastNotifications.addDanger("You have not created a policy yet");
+          this.context.notifications.toasts.addDanger("You have not created a policy yet");
         } else {
-          toastNotifications.addDanger(searchPoliciesResponse.error);
+          this.context.notifications.toasts.addDanger(searchPoliciesResponse.error);
         }
       }
     } catch (err) {
-      toastNotifications.addDanger(getErrorMessage(err, "There was a problem searching policies"));
+      this.context.notifications.toasts.addDanger(getErrorMessage(err, "There was a problem searching policies"));
     }
 
     this.setState({ policiesIsLoading: false });
@@ -85,7 +86,7 @@ export default class NewPolicy extends React.Component<NewPolicyProps, NewPolicy
     const hasSelectedPolicy = !!selectedPolicies.length;
     const stateOptions = _.flatten(
       selectedPolicies.map((selectedPolicy: PolicyOption) =>
-        selectedPolicy.value.states.map(state => ({ value: state.name, text: state.name }))
+        selectedPolicy.value.states.map((state) => ({ value: state.name, text: state.name }))
       )
     );
 

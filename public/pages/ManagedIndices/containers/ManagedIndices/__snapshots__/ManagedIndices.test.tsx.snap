@@ -26,7 +26,7 @@ exports[`<ManagedIndices /> spec renders the component 1`] = `
         rel="noreferrer"
       >
         <span
-          class="euiButton__content"
+          class="euiButtonContent euiButton__content"
         >
           <span
             class="euiButton__text"
@@ -73,13 +73,13 @@ exports[`<ManagedIndices /> spec renders the component 1`] = `
                 class="euiFlexItem euiFlexItem--flexGrowZero"
               >
                 <button
-                  class="euiButton euiButton--primary"
+                  class="euiButton euiButton--primary euiButton-isDisabled"
                   data-test-subj="Edit rollover aliasButton"
                   disabled=""
                   type="button"
                 >
                   <span
-                    class="euiButton__content"
+                    class="euiButtonContent euiButton__content"
                   >
                     <span
                       class="euiButton__text"
@@ -93,13 +93,13 @@ exports[`<ManagedIndices /> spec renders the component 1`] = `
                 class="euiFlexItem euiFlexItem--flexGrowZero"
               >
                 <button
-                  class="euiButton euiButton--primary"
+                  class="euiButton euiButton--primary euiButton-isDisabled"
                   data-test-subj="Remove policyButton"
                   disabled=""
                   type="button"
                 >
                   <span
-                    class="euiButton__content"
+                    class="euiButtonContent euiButton__content"
                   >
                     <span
                       class="euiButton__text"
@@ -113,13 +113,13 @@ exports[`<ManagedIndices /> spec renders the component 1`] = `
                 class="euiFlexItem euiFlexItem--flexGrowZero"
               >
                 <button
-                  class="euiButton euiButton--primary"
+                  class="euiButton euiButton--primary euiButton-isDisabled"
                   data-test-subj="Retry policyButton"
                   disabled=""
                   type="button"
                 >
                   <span
-                    class="euiButton__content"
+                    class="euiButtonContent euiButton__content"
                   >
                     <span
                       class="euiButton__text"
@@ -154,7 +154,7 @@ exports[`<ManagedIndices /> spec renders the component 1`] = `
               class="euiFormControlLayout__childrenWrapper"
             >
               <input
-                class="euiFieldSearch euiFieldSearch--fullWidth"
+                class="euiFieldSearch euiFieldSearch--fullWidth euiFieldSearch-isClearable"
                 placeholder="Search"
                 type="search"
                 value=""
@@ -193,12 +193,12 @@ exports[`<ManagedIndices /> spec renders the component 1`] = `
                   >
                     <button
                       aria-label="Date quick select"
-                      class="euiButtonEmpty euiButtonEmpty--primary euiButtonEmpty--xSmall euiButtonEmpty--iconRight euiFormControlLayout__prepend"
+                      class="euiButtonEmpty euiButtonEmpty--primary euiButtonEmpty--xSmall euiFormControlLayout__prepend"
                       data-test-subj="superDatePickerToggleQuickMenuButton"
                       type="button"
                     >
                       <span
-                        class="euiButtonEmpty__content"
+                        class="euiButtonContent euiButtonContent--iconRight euiButtonEmpty__content"
                       >
                         EuiIconMock
                         <span
@@ -278,11 +278,11 @@ exports[`<ManagedIndices /> spec renders the component 1`] = `
                       class="euiPopover__anchor"
                     >
                       <button
-                        class="euiButtonEmpty euiButtonEmpty--primary euiButtonEmpty--xSmall euiButtonEmpty--iconRight euiButtonEmpty--flushRight"
+                        class="euiButtonEmpty euiButtonEmpty--primary euiButtonEmpty--xSmall euiButtonEmpty--flushRight"
                         type="button"
                       >
                         <span
-                          class="euiButtonEmpty__content"
+                          class="euiButtonContent euiButtonContent--iconRight euiButtonEmpty__content"
                         >
                           EuiIconMock
                           <span

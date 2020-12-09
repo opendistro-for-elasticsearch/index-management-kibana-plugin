@@ -30,9 +30,7 @@ import {
   EuiCodeBlock,
   EuiHealth,
 } from "@elastic/eui";
-import chrome from "ui/chrome";
 import { RouteComponentProps } from "react-router-dom";
-import { toastNotifications } from "ui/notify";
 import queryString from "query-string";
 import { RollupService } from "../../../../services";
 import { BREADCRUMBS, ROUTES } from "../../../../utils/constants";
@@ -41,9 +39,17 @@ import GeneralInformation from "../../components/GeneralInformation/GeneralInfor
 import RollupStatus from "../../components/RollupStatus/RollupStatus";
 import AggregationAndMetricsSettings from "../../components/AggregationAndMetricsSettings/AggregationAndMetricsSettings";
 import { parseTimeunit } from "../../../CreateRollup/utils/helpers";
-import { DimensionItem, MetricItem, RollupDimensionItem, RollupMetadata, RollupMetricItem } from "../../../../../models/interfaces";
+import {
+  DimensionItem,
+  MetricItem,
+  RollupDimensionItem,
+  RollupMetadata,
+  RollupMetricItem,
+  DateHistogramItem,
+} from "../../../../../models/interfaces";
 import { renderTime } from "../../../Rollups/utils/helpers";
 import DeleteModal from "../../../Rollups/components/DeleteModal";
+import { CoreServicesContext } from "../../../../components/core_services";
 
 interface RollupDetailsProps extends RouteComponentProps {
   rollupService: RollupService;
@@ -54,9 +60,10 @@ interface RollupDetailsState {
   description: string;
   sourceIndex: string;
   targetIndex: string;
-  rollupJSON: string;
-  recurringJob: string;
-  recurringDefinition: string;
+  rollupJSON: any;
+  continuousJob: string;
+  continuousDefinition: string;
+
   interval: number;
   intervalTimeunit: string;
   cronExpression: string;
@@ -64,7 +71,7 @@ interface RollupDetailsState {
   delayTime: number | undefined;
   delayTimeunit: string;
   lastUpdated: string;
-  metadata: RollupMetadata | null;
+  metadata: RollupMetadata | undefined;
 
   timestamp: string;
   histogramInterval: string;
@@ -80,6 +87,7 @@ interface RollupDetailsState {
 }
 
 export default class RollupDetails extends Component<RollupDetailsProps, RollupDetailsState> {
+  static contextType = CoreServicesContext;
   constructor(props: RollupDetailsProps) {
     super(props);
 
@@ -89,8 +97,8 @@ export default class RollupDetails extends Component<RollupDetailsProps, RollupD
       sourceIndex: "",
       targetIndex: "",
 
-      recurringJob: "no",
-      recurringDefinition: "fixed",
+      continuousJob: "no",
+      continuousDefinition: "fixed",
       interval: 2,
       intervalTimeunit: "MINUTES",
       cronExpression: "",
@@ -99,7 +107,7 @@ export default class RollupDetails extends Component<RollupDetailsProps, RollupD
       delayTimeunit: "MINUTES",
       rollupJSON: "",
       lastUpdated: "-",
-      metadata: null,
+      metadata: undefined,
 
       timestamp: "",
       histogramInterval: "",
@@ -115,15 +123,15 @@ export default class RollupDetails extends Component<RollupDetailsProps, RollupD
   }
 
   componentDidMount = async (): Promise<void> => {
-    chrome.breadcrumbs.set([BREADCRUMBS.INDEX_MANAGEMENT, BREADCRUMBS.ROLLUPS]);
+    this.context.chrome.setBreadcrumbs([BREADCRUMBS.INDEX_MANAGEMENT, BREADCRUMBS.ROLLUPS]);
     const { id } = queryString.parse(this.props.location.search);
     if (typeof id === "string") {
-      chrome.breadcrumbs.push({ text: id });
+      this.context.chrome.setBreadcrumbs([BREADCRUMBS.INDEX_MANAGEMENT, BREADCRUMBS.ROLLUPS, { text: id }]);
       this.props.history.push(`${ROUTES.ROLLUP_DETAILS}?id=${id}`);
       await this.getRollup(id);
       this.forceUpdate();
     } else {
-      toastNotifications.addDanger(`Invalid rollup id: ${id}`);
+      this.context.notifications.toasts.addDanger(`Invalid rollup id: ${id}`);
       this.props.history.push(ROUTES.ROLLUPS);
     }
   };
@@ -132,18 +140,17 @@ export default class RollupDetails extends Component<RollupDetailsProps, RollupD
     try {
       const { rollupService } = this.props;
       const response = await rollupService.getRollup(rollupId);
-      const explainResponse = await rollupService.explainRollup(rollupId);
 
       if (response.ok) {
         const newJSON = response.response;
         const selectedMetrics = this.parseMetric(response.response.rollup.metrics);
         const selectedDimensionField = this.parseDimension(response.response.rollup.dimensions);
         this.setState({
-          rollupId: response.response.id,
+          rollupId: response.response._id,
           description: response.response.rollup.description,
           sourceIndex: response.response.rollup.source_index,
           targetIndex: response.response.rollup.target_index,
-          delayTime: response.response.rollup.delay,
+          delayTime: response.response.rollup.delay as number,
           pageSize: response.response.rollup.page_size,
           rollupJSON: newJSON,
           lastUpdated: renderTime(response.response.rollup.last_updated_time),
@@ -158,8 +165,10 @@ export default class RollupDetails extends Component<RollupDetailsProps, RollupD
           dimensionsShown: selectedDimensionField.slice(0, 10),
           enabled: response.response.rollup.enabled,
         });
-        //TODO: fix this to match new data model
-        if (response.response.rollup.schedule.cron == undefined) {
+        if (response.response.metadata != null) {
+          this.setState({ metadata: response.response.metadata[response.response._id] });
+        }
+        if ("interval" in response.response.rollup.schedule) {
           this.setState({
             interval: response.response.rollup.schedule.interval.period,
             intervalTimeunit: response.response.rollup.schedule.interval.unit,
@@ -168,17 +177,11 @@ export default class RollupDetails extends Component<RollupDetailsProps, RollupD
           this.setState({ cronExpression: response.response.rollup.schedule.cron.expression });
         }
       } else {
-        toastNotifications.addDanger(`Could not load the rollup job: ${response.error}`);
+        this.context.notifications.toasts.addDanger(`Could not load the rollup job: ${response.error}`);
         this.props.history.push(ROUTES.ROLLUPS);
       }
-      if (explainResponse.ok) {
-        let metadata = explainResponse.response[rollupId];
-        this.setState({ metadata: metadata });
-      } else {
-        toastNotifications.addDanger(`Could not load the explain API of rollup job: ${explainResponse.error}`);
-      }
     } catch (err) {
-      toastNotifications.addDanger(getErrorMessage(err, "Could not load the rollup job"));
+      this.context.notifications.toasts.addDanger(getErrorMessage(err, "Could not load the rollup job"));
       this.props.history.push(ROUTES.ROLLUPS);
     }
   };
@@ -220,12 +223,12 @@ export default class RollupDetails extends Component<RollupDetailsProps, RollupD
         //Show success message
         await this.getRollup(rollupId);
         this.forceUpdate();
-        toastNotifications.addSuccess(`${rollupId} is disabled`);
+        this.context.notifications.toasts.addSuccess(`${rollupId} is disabled`);
       } else {
-        toastNotifications.addDanger(`Could not stop the rollup job "${rollupId}" : ${response.error}`);
+        this.context.notifications.toasts.addDanger(`Could not stop the rollup job "${rollupId}" : ${response.error}`);
       }
     } catch (err) {
-      toastNotifications.addDanger(getErrorMessage(err, "Could not stop the rollup job: " + rollupId));
+      this.context.notifications.toasts.addDanger(getErrorMessage(err, "Could not stop the rollup job: " + rollupId));
     }
   };
 
@@ -241,12 +244,12 @@ export default class RollupDetails extends Component<RollupDetailsProps, RollupD
         //Show success message
         await this.getRollup(rollupId);
         this.forceUpdate();
-        toastNotifications.addSuccess(`${rollupId} is enabled`);
+        this.context.notifications.toasts.addSuccess(`${rollupId} is enabled`);
       } else {
-        toastNotifications.addDanger(`Could not start the rollup job "${rollupId}" : ${response.error}`);
+        this.context.notifications.toasts.addDanger(`Could not start the rollup job "${rollupId}" : ${response.error}`);
       }
     } catch (err) {
-      toastNotifications.addDanger(getErrorMessage(err, "Could not start the rollup job: " + rollupId));
+      this.context.notifications.toasts.addDanger(getErrorMessage(err, "Could not start the rollup job: " + rollupId));
     }
   };
 
@@ -277,13 +280,13 @@ export default class RollupDetails extends Component<RollupDetailsProps, RollupD
       if (response.ok) {
         this.closeDeleteModal();
         //Show success message
-        toastNotifications.addSuccess(`"${rollupId}" successfully deleted!`);
+        this.context.notifications.toasts.addSuccess(`"${rollupId}" successfully deleted!`);
         this.props.history.push(ROUTES.ROLLUPS);
       } else {
-        toastNotifications.addDanger(`Could not delete the rollup job "${rollupId}" : ${response.error}`);
+        this.context.notifications.toasts.addDanger(`Could not delete the rollup job "${rollupId}" : ${response.error}`);
       }
     } catch (err) {
-      toastNotifications.addDanger(getErrorMessage(err, "Could not delete the rollup job"));
+      this.context.notifications.toasts.addDanger(getErrorMessage(err, "Could not delete the rollup job"));
     }
   };
 
@@ -302,8 +305,8 @@ export default class RollupDetails extends Component<RollupDetailsProps, RollupD
       description,
       sourceIndex,
       targetIndex,
-      recurringJob,
-      recurringDefinition,
+      continuousJob,
+      continuousDefinition,
       interval,
       intervalTimeunit,
       cronExpression,
@@ -324,8 +327,8 @@ export default class RollupDetails extends Component<RollupDetailsProps, RollupD
       isDeleteModalVisible,
     } = this.state;
 
-    let scheduleText = recurringJob ? "Continuous, " : "Not continuous, ";
-    if (recurringDefinition == "fixed") {
+    let scheduleText = continuousJob ? "Continuous, " : "Not continuous, ";
+    if (continuousDefinition == "fixed") {
       scheduleText += "every " + interval + " " + parseTimeunit(intervalTimeunit);
     } else {
       scheduleText += "defined by cron expression: " + cronExpression;
