@@ -80,7 +80,10 @@ describe("Indices", () => {
       // Click apply policy button
       cy.get(`[data-test-subj="Apply policyButton"]`).click({ force: true });
 
-      cy.get(`input[data-test-subj="comboBoxSearchInput"]`).focus().type(POLICY_ID, { parseSpecialCharSequences: false, delay: 1 });
+      cy.get(`input[data-test-subj="comboBoxSearchInput"]`).focus().type(POLICY_ID, {
+        parseSpecialCharSequences: false,
+        delay: 1,
+      });
 
       // Click the policy option
       cy.get(`button[role="option"]`).first().click({ force: true });
