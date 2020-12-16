@@ -26,6 +26,7 @@ export default class IndexService {
     this.esDriver = esDriver;
   }
 
+  // not gonna be used anymore route NODE_API._SEARCH
   search = async (
     context: RequestHandlerContext,
     request: KibanaRequest,

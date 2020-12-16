@@ -19,7 +19,7 @@ import { EuiSpacer, EuiText, EuiRadioGroup, EuiFormRow, EuiSelect, EuiComboBox, 
 import { ContentPanel } from "../../../../components/ContentPanel";
 import { IndexService } from "../../../../services";
 import { Radio } from "../../containers/ChangePolicy/ChangePolicy";
-import { Policy } from "../../../../../models/interfaces";
+import { DocumentPolicy, Policy } from "../../../../../models/interfaces";
 import { PolicyOption } from "../../models/interfaces";
 import { getErrorMessage } from "../../../../utils/helpers";
 import { DOCUMENTATION_URL } from "../../../../utils/constants";
@@ -60,9 +60,9 @@ export default class NewPolicy extends React.Component<NewPolicyProps, NewPolicy
     try {
       const searchPoliciesResponse = await indexService.searchPolicies(searchValue, true);
       if (searchPoliciesResponse.ok) {
-        const policies = searchPoliciesResponse.response.hits.hits.map((hit: { _id: string; _source: { policy: Policy } }) => ({
-          label: hit._id,
-          value: hit._source.policy,
+        const policies = searchPoliciesResponse.response.policies.map((p: DocumentPolicy) => ({
+          label: p.id,
+          value: p.policy,
         }));
         this.setState({ policies });
       } else {

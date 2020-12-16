@@ -35,7 +35,7 @@ describe("<ApplyPolicyModal /> spec", () => {
   });
 
   it("successfully calls search policies on mount", async () => {
-    httpClientMock.post = jest.fn().mockResolvedValue({ ok: true, resp: { hits: { hits: [{ _id: "test_index" }] } } });
+    httpClientMock.get = jest.fn().mockResolvedValue({ ok: true, resp: { hits: { hits: [{ _id: "test_index" }] } } });
     const spy = jest.spyOn(browserServicesMock.indexService, "searchPolicies");
     render(
       <CoreServicesContext.Provider value={coreServicesMock}>
@@ -49,7 +49,7 @@ describe("<ApplyPolicyModal /> spec", () => {
   });
 
   it("adds danger toaster on safe error", async () => {
-    httpClientMock.post = jest.fn().mockResolvedValue({ ok: false, error: "some error" });
+    httpClientMock.get = jest.fn().mockResolvedValue({ ok: false, error: "some error" });
     const spy = jest.spyOn(browserServicesMock.indexService, "searchPolicies");
     render(
       <CoreServicesContext.Provider value={coreServicesMock}>
@@ -67,7 +67,7 @@ describe("<ApplyPolicyModal /> spec", () => {
   });
 
   it("adds danger toaster on unsafe error", async () => {
-    httpClientMock.post = jest.fn().mockRejectedValue(new Error("testing error"));
+    httpClientMock.get = jest.fn().mockRejectedValue(new Error("testing error"));
     const spy = jest.spyOn(browserServicesMock.indexService, "searchPolicies");
     render(
       <CoreServicesContext.Provider value={coreServicesMock}>

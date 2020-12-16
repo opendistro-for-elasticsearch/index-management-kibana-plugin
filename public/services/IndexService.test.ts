@@ -44,6 +44,6 @@ describe("IndexService spec", () => {
     const searchValue = "test";
     await indexService.searchPolicies(searchValue);
 
-    expect(httpClientMock.post).toHaveBeenCalledTimes(1);
+    expect(httpClientMock.get).toHaveBeenCalledTimes(1);
   });
 });

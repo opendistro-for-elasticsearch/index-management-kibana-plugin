@@ -15,7 +15,13 @@
 
 import { HttpSetup } from "kibana/public";
 import { INDEX } from "../../server/utils/constants";
-import { AcknowledgedResponse, ApplyPolicyResponse, GetIndicesResponse, SearchResponse } from "../../server/models/interfaces";
+import {
+  AcknowledgedResponse,
+  ApplyPolicyResponse,
+  GetIndicesResponse,
+  GetPoliciesResponse,
+  SearchResponse,
+} from "../../server/models/interfaces";
 import { ServerResponse } from "../../server/models/types";
 import { NODE_API } from "../../utils/constants";
 
@@ -46,7 +52,7 @@ export default class IndexService {
     return response;
   };
 
-  searchPolicies = async (searchValue: string, source: boolean = false): Promise<ServerResponse<SearchResponse<any>>> => {
+  searchPolicies2 = async (searchValue: string, source: boolean = false): Promise<ServerResponse<SearchResponse<any>>> => {
     const str = searchValue.trim();
     const mustQuery = {
       query_string: {
@@ -62,6 +68,19 @@ export default class IndexService {
     };
     const url = `..${NODE_API._SEARCH}`;
     const response = (await this.httpClient.post(url, { body: JSON.stringify(body) })) as ServerResponse<any>;
+
+    console.log(`search policies response ${JSON.stringify(response)}`);
+    return response;
+  };
+
+  searchPolicies = async (searchValue: string, source: boolean = false): Promise<ServerResponse<GetPoliciesResponse>> => {
+    const str = searchValue.trim();
+    const queryObject = { from: 0, size: 10, search: str, sortDirection: "desc", sortField: "id" };
+
+    const url = `..${NODE_API.POLICIES}`;
+    const response = (await this.httpClient.get(url, { query: queryObject })) as ServerResponse<GetPoliciesResponse>;
+
+    console.log(`search policies response ${JSON.stringify(response)}`);
     return response;
   };
 }

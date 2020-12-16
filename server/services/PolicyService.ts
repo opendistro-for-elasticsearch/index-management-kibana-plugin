@@ -162,7 +162,7 @@ export default class PolicyService {
   /**
    * Performs a fuzzy search request on policy id
    */
-  getPolicies = async (
+  getPolicies2 = async (
     context: RequestHandlerContext,
     request: KibanaRequest,
     response: KibanaResponseFactory
@@ -207,6 +207,83 @@ export default class PolicyService {
         id: hit._id,
         policy: hit._source,
       }));
+
+      console.log(`get response ${JSON.stringify({ policies: policies, totalPolicies })}`);
+
+      return response.custom({
+        statusCode: 200,
+        body: {
+          ok: true,
+          response: { policies: policies, totalPolicies },
+        },
+      });
+    } catch (err) {
+      if (err.statusCode === 404 && err.body.error.type === "index_not_found_exception") {
+        return response.custom({
+          statusCode: 200,
+          body: {
+            ok: true,
+            response: { policies: [], totalPolicies: 0 },
+          },
+        });
+      }
+      console.error("Index Management - PolicyService - getPolicies", err);
+      return response.custom({
+        statusCode: 200,
+        body: {
+          ok: false,
+          error: err.message,
+        },
+      });
+    }
+  };
+
+  getPolicies = async (
+    context: RequestHandlerContext,
+    request: KibanaRequest,
+    response: KibanaResponseFactory
+  ): Promise<IKibanaResponse<ServerResponse<GetPoliciesResponse>>> => {
+    try {
+      console.log(`get policies query ${JSON.stringify(request.query)}`);
+
+      // 默认值
+      const { from = 0, size = 20, search, sortDirection = "desc", sortField = "id" } = request.query as {
+        from: number;
+        size: string;
+        search: string;
+        sortDirection: string;
+        sortField: string;
+      };
+
+      const policySorts: PoliciesSort = {
+        id: "policy.policy_id.keyword",
+        "policy.policy.description": "policy.description.keyword",
+        "policy.policy.last_updated_time": "policy.last_updated_time",
+      };
+
+      const str = search.trim();
+      const params = {
+        size,
+        from,
+        sortOrder: sortDirection,
+        sortField: policySorts[sortField],
+        queryString: str ? `*${str.split(" ").join("* *")}*` : "*",
+      };
+
+      const { callAsCurrentUser: callWithRequest } = this.esDriver.asScoped(request);
+      const getResponse = await callWithRequest("ism.getPolicies", params);
+      console.log(`get response ${JSON.stringify(getResponse)}`);
+
+      const policies: DocumentPolicy[] = getResponse.policies.map((p) => ({
+        seqNo: p._seq_no,
+        primaryTerm: p._primary_term,
+        id: p._id,
+        policy: p.policy,
+      }));
+
+      const totalPolicies: number = getResponse.totalPolicies;
+
+      console.log(`get policy transform ${JSON.stringify(policies)}`);
 
       return response.custom({
         statusCode: 200,
