@@ -160,7 +160,7 @@ export default class PolicyService {
   };
 
   /**
-   * Performs a fuzzy search request on policy id
+   * Calls backend Get Policy API
    */
   getPolicies = async (
     context: RequestHandlerContext,
@@ -168,8 +168,8 @@ export default class PolicyService {
     response: KibanaResponseFactory
   ): Promise<IKibanaResponse<ServerResponse<GetPoliciesResponse>>> => {
     try {
-      const { from, size, search, sortDirection, sortField } = request.query as {
-        from: string;
+      const { from = 0, size = 20, search, sortDirection = "desc", sortField = "id" } = request.query as {
+        from: number;
         size: string;
         search: string;
         sortDirection: string;
@@ -181,32 +181,27 @@ export default class PolicyService {
         "policy.policy.description": "policy.description.keyword",
         "policy.policy.last_updated_time": "policy.last_updated_time",
       };
+
+      const str = search.trim();
       const params = {
-        index: INDEX.OPENDISTRO_ISM_CONFIG,
-        seq_no_primary_term: true,
-        body: {
-          size,
-          from,
-          sort: policySorts[sortField] ? [{ [policySorts[sortField]]: sortDirection }] : [],
-          query: {
-            bool: {
-              filter: [{ exists: { field: "policy" } }],
-              must: getMustQuery("policy.policy_id", search),
-            },
-          },
-        },
+        size,
+        from,
+        sortOrder: sortDirection,
+        sortField: policySorts[sortField],
+        queryString: str ? `*${str.split(" ").join("* *")}*` : "*",
       };
 
       const { callAsCurrentUser: callWithRequest } = this.esDriver.asScoped(request);
-      const searchResponse: SearchResponse<any> = await callWithRequest("search", params);
+      const getResponse = await callWithRequest("ism.getPolicies", params);
 
-      const totalPolicies = searchResponse.hits.total.value;
-      const policies = searchResponse.hits.hits.map((hit) => ({
-        seqNo: hit._seq_no as number,
-        primaryTerm: hit._primary_term as number,
-        id: hit._id,
-        policy: hit._source,
+      const policies: DocumentPolicy[] = getResponse.policies.map((p) => ({
+        seqNo: p._seq_no,
+        primaryTerm: p._primary_term,
+        id: p._id,
+        policy: { policy: p.policy },
       }));
+
+      const totalPolicies: number = getResponse.totalPolicies;
 
       return response.custom({
         statusCode: 200,
