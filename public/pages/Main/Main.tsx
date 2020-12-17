@@ -35,10 +35,18 @@ import RollupDetails from "../RollupDetails/containers/RollupDetails";
 
 enum Navigation {
   IndexManagement = "Index Management",
+  IndexStateManagement = "Index state management",
   IndexPolicies = "Index Policies",
   ManagedIndices = "Managed Indices",
   Indices = "Indices",
   Rollups = "Rollup Jobs",
+  Policies = "Policies",
+  All = "All",
+  HotIndices = "Hot indices",
+  UltraWarmIndices = "UltraWarm indices",
+  ColdIndices = "Cold indices",
+  PolicyManagedIndices = "Policy managed indices",
+  SharedRepositories = "Shared repositories",
 }
 
 enum Pathname {
@@ -84,6 +92,48 @@ export default class Main extends Component<MainProps, object> {
             id: 4,
             href: `#${Pathname.Rollups}`,
             isSelected: pathname === Pathname.Rollups,
+          },
+          /**
+           * The bottom two items are for integration with Leviathan.
+           * Need to look into how to define the items by checking whether Leviathan exists, and how to define the routes.
+           **/
+          {
+            name: Navigation.IndexStateManagement,
+            id: 5,
+            href: `#${Pathname.IndexPolicies}`,
+            forceOpen: true,
+            items: [
+              {
+                name: Navigation.Policies,
+                id: 1,
+                href: `#${Pathname.IndexPolicies}`,
+                isSelected: pathname === Pathname.IndexPolicies,
+              },
+            ],
+          },
+          {
+            name: Navigation.Indices,
+            id: 6,
+            href: `#${Pathname.Indices}`,
+            forceOpen: true,
+            items: [
+              {
+                name: Navigation.All,
+                id: 1,
+                href: `#${Pathname.Indices}`,
+                isSelected: pathname === Pathname.Indices,
+              },
+              {
+                name: Navigation.PolicyManagedIndices,
+                id: 2,
+                href: `#${Pathname.ManagedIndices}`,
+                isSelected: pathname === Pathname.ManagedIndices,
+              },
+            ],
+          },
+          {
+            name: Navigation.SharedRepositories,
+            id: 7,
           },
         ],
       },

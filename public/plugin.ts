@@ -16,9 +16,17 @@
 import { AppMountParameters, CoreSetup, CoreStart, Plugin, PluginInitializerContext } from "../../../src/core/public";
 import { IndexManagementPluginSetup } from ".";
 import { IndexManagementPluginStart } from ".";
+import { createIndexManagementApp, CreateIndexManagementArgs, IndexManagementApp } from "./index_management";
+
+export interface IndexManagementSetup {
+  register: (indexManagement: CreateIndexManagementArgs) => IndexManagementApp;
+}
 
 export class IndexManagementPlugin implements Plugin<IndexManagementPluginSetup, IndexManagementPluginStart> {
-  constructor(private readonly initializerContext: PluginInitializerContext) {
+  constructor(
+    private readonly initializerContext: PluginInitializerContext,
+    private readonly indexManagement: Map<string, IndexManagementApp>
+  ) {
     // can retrieve config from initializerContext
   }
 
@@ -38,7 +46,17 @@ export class IndexManagementPlugin implements Plugin<IndexManagementPluginSetup,
         return renderApp(coreStart, params);
       },
     });
-    return {};
+    return {
+      register: (indexManagementArgs: CreateIndexManagementArgs) => {
+        if (this.indexManagement.has(indexManagementArgs.id)) {
+          throw new Error(`Index management with id [${indexManagementArgs.id}] has already been registered. Use a unique id.`);
+        }
+
+        const indexManagement = createIndexManagementApp(indexManagementArgs);
+        this.indexManagement.set(indexManagement.id, indexManagement);
+        return indexManagement;
+      },
+    };
   }
 
   public start(core: CoreStart): IndexManagementPluginStart {
