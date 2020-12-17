@@ -138,7 +138,7 @@ export default class ApplyPolicyModal extends Component<ApplyPolicyModalProps, A
       if (searchPoliciesResponse.ok) {
         const policies = searchPoliciesResponse.response.policies.map((p: DocumentPolicy) => ({
           label: p.id,
-          value: p.policy,
+          policy: p.policy,
         }));
         this.setState({ policyOptions: policies });
       } else {

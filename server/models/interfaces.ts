@@ -175,7 +175,7 @@ export interface FailedIndex {
 }
 
 export interface ExplainAPIManagedIndexMetaData {
-  "opendistro.index_state_management.policy_id": string | null;
+  "index.opendistro.index_state_management.policy_id": string | null;
   index: string;
   index_uuid: string;
   policy_id: string;

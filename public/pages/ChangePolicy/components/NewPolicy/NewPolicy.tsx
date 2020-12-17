@@ -62,7 +62,7 @@ export default class NewPolicy extends React.Component<NewPolicyProps, NewPolicy
       if (searchPoliciesResponse.ok) {
         const policies = searchPoliciesResponse.response.policies.map((p: DocumentPolicy) => ({
           label: p.id,
-          value: p.policy,
+          policy: p.policy,
         }));
         this.setState({ policies });
       } else {

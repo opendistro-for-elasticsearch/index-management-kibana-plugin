@@ -244,8 +244,6 @@ export default class PolicyService {
     response: KibanaResponseFactory
   ): Promise<IKibanaResponse<ServerResponse<GetPoliciesResponse>>> => {
     try {
-      console.log(`get policies query ${JSON.stringify(request.query)}`);
-
       const { from = 0, size = 20, search, sortDirection = "desc", sortField = "id" } = request.query as {
         from: number;
         size: string;
@@ -271,7 +269,6 @@ export default class PolicyService {
 
       const { callAsCurrentUser: callWithRequest } = this.esDriver.asScoped(request);
       const getResponse = await callWithRequest("ism.getPolicies", params);
-      console.log(`get response ${JSON.stringify(getResponse)}`);
 
       const policies: DocumentPolicy[] = getResponse.policies.map((p) => ({
         seqNo: p._seq_no,
@@ -281,8 +278,6 @@ export default class PolicyService {
       }));
 
       const totalPolicies: number = getResponse.totalPolicies;
-
-      console.log(`get policy transform ${JSON.stringify(policies)}`);
 
       return response.custom({
         statusCode: 200,
