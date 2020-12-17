@@ -246,7 +246,6 @@ export default class PolicyService {
     try {
       console.log(`get policies query ${JSON.stringify(request.query)}`);
 
-      // 默认值
       const { from = 0, size = 20, search, sortDirection = "desc", sortField = "id" } = request.query as {
         from: number;
         size: string;

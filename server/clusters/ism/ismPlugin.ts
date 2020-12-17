@@ -107,6 +107,13 @@ export default function ismPlugin(Client: any, config: any, components: any) {
     method: "GET",
   });
 
+  ism.explainAll = ca({
+    url: {
+      fmt: `${API.EXPLAIN_BASE}`,
+    },
+    method: "GET",
+  });
+
   ism.retry = ca({
     url: {
       fmt: `${API.RETRY_BASE}/<%=index%>`,

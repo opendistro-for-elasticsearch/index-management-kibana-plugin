@@ -20,6 +20,7 @@ import { INDEX } from "../utils/constants";
 import { getMustQuery, transformManagedIndexMetaData } from "../utils/helpers";
 import {
   ChangePolicyResponse,
+  ExplainAllResponse,
   ExplainResponse,
   GetManagedIndicesResponse,
   RemovePolicyResponse,
@@ -30,6 +31,7 @@ import {
   SearchResponse,
 } from "../models/interfaces";
 import { ManagedIndicesSort, ServerResponse } from "../models/types";
+import { ManagedIndexItem } from "../../models/interfaces";
 
 export default class ManagedIndexService {
   esDriver: IClusterClient;
@@ -68,11 +70,12 @@ export default class ManagedIndexService {
     }
   };
 
-  getManagedIndices = async (
+  getManagedIndices2 = async (
     context: RequestHandlerContext,
     request: KibanaRequest,
     response: KibanaResponseFactory
   ): Promise<IKibanaResponse<ServerResponse<GetManagedIndicesResponse>>> => {
+    console.log("backend get managed indices");
     try {
       const { from, size, search, sortDirection, sortField } = request.query as {
         from: string;
@@ -131,11 +134,88 @@ export default class ManagedIndexService {
         };
       });
 
+      console.log("explain response old: " + JSON.stringify(managedIndices));
       return response.custom({
         statusCode: 200,
         body: {
           ok: true,
           response: { managedIndices, totalManagedIndices },
+        },
+      });
+    } catch (err) {
+      if (err.statusCode === 404 && err.body.error.type === "index_not_found_exception") {
+        return response.custom({
+          statusCode: 200,
+          body: {
+            ok: true,
+            response: { managedIndices: [], totalManagedIndices: 0 },
+          },
+        });
+      }
+      console.error("Index Management - ManagedIndexService - getManagedIndices", err);
+      return response.custom({
+        statusCode: 200,
+        body: {
+          ok: false,
+          error: err.message,
+        },
+      });
+    }
+  };
+
+  getManagedIndices = async (
+    context: RequestHandlerContext,
+    request: KibanaRequest,
+    response: KibanaResponseFactory
+  ): Promise<IKibanaResponse<ServerResponse<GetManagedIndicesResponse>>> => {
+    try {
+      const { from, size, search, sortDirection, sortField } = request.query as {
+        from: string;
+        size: string;
+        search: string;
+        sortDirection: string;
+        sortField: string;
+      };
+
+      const managedIndexSorts: ManagedIndicesSort = { index: "managed_index.index", policyId: "managed_index.policy_id" };
+      const explainParams = {
+        size,
+        from,
+        sortField: sortField ? managedIndexSorts[sortField] : null,
+        sortOrder: sortDirection,
+        queryString: search ? `*${search.split(" ").join("* *")}*` : null,
+      };
+
+      const { callAsCurrentUser: callWithRequest } = this.esDriver.asScoped(request);
+      const explainAllResponse: ExplainAllResponse = await callWithRequest("ism.explainAll", explainParams);
+
+      const managedIndices: ManagedIndexItem[] = [];
+      for (const metadata of explainAllResponse.managedIndices) {
+        let policy, seqNo, primaryTerm;
+        const getResponse = await callWithRequest("ism.getPolicy", { policyId: metadata.policy_id });
+        policy = _.get(getResponse, "policy", null);
+        seqNo = _.get(getResponse, "_seq_no");
+        primaryTerm = _.get(getResponse, "_primary_term");
+        managedIndices.push({
+          index: metadata.index,
+          indexUuid: metadata.index_uuid,
+          policyId: metadata.policy_id,
+          policySeqNo: seqNo,
+          policyPrimaryTerm: primaryTerm,
+          policy: policy,
+          enabled: metadata.enabled,
+          managedIndexMetaData: transformManagedIndexMetaData(metadata),
+        });
+      }
+
+      console.log("explain response new: " + JSON.stringify(managedIndices));
+      const totalManagedIndices: number = explainAllResponse.totalManagedIndices;
+
+      return response.custom({
+        statusCode: 200,
+        body: {
+          ok: true,
+          response: { managedIndices: managedIndices, totalManagedIndices: totalManagedIndices },
         },
       });
     } catch (err) {
