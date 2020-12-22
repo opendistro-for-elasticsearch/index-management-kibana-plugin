@@ -18,6 +18,7 @@ import { PutRollupResponse, GetRollupsResponse, GetFieldsResponse } from "../../
 import { ServerResponse } from "../../server/models/types";
 import { NODE_API } from "../../utils/constants";
 import { DocumentRollup, Rollup } from "../../models/interfaces";
+import { RollupQueryParams } from "../pages/Rollups/models/interfaces";
 
 export default class RollupService {
   httpClient: HttpSetup;
@@ -26,9 +27,10 @@ export default class RollupService {
     this.httpClient = httpClient;
   }
 
-  getRollups = async (queryObject: object): Promise<ServerResponse<GetRollupsResponse>> => {
+  getRollups = async (queryObject: RollupQueryParams): Promise<ServerResponse<GetRollupsResponse>> => {
     let url = `..${NODE_API.ROLLUPS}`;
-    const response = (await this.httpClient.get(url, { query: queryObject })) as ServerResponse<GetRollupsResponse>;
+    // const response = (await this.httpClient.get(url, {query :{ rollupID: "test",from: 2, size:20, search: null, sortField: "name", sortDirection: "desc"}})) as ServerResponse<GetRollupsResponse>;
+    const response = (await this.httpClient.get(url)) as ServerResponse<GetRollupsResponse>;
     return response;
   };
 

@@ -193,7 +193,7 @@ export default class RollupService {
       const { id } = request.params as { id: string };
       const params = { rollupId: id };
       const { callAsCurrentUser: callWithRequest } = this.esDriver.asScoped(request);
-      const getResponse = await callWithRequest("ism.getRollup", params);
+      const getResponse = await callWithRequest("ism.getRollups", params);
       const metadata = await callWithRequest("ism.explainRollup", params);
       const rollup = _.get(getResponse, "rollup", null);
       const seqNo = _.get(getResponse, "_seq_no");
@@ -312,55 +312,40 @@ export default class RollupService {
     }
   };
 
-  /**
-   * Performs a fuzzy search request on rollup id
-   */
   getRollups = async (
     context: RequestHandlerContext,
     request: KibanaRequest,
     response: KibanaResponseFactory
   ): Promise<IKibanaResponse<ServerResponse<GetRollupsResponse>>> => {
     try {
-      const { from, size, search, sortDirection, sortField } = request.query as {
-        from: string;
-        size: string;
+      const { from, size, search, sortDirection, sortField } = request.params as {
+        from: number;
+        size: number;
         search: string;
         sortDirection: string;
         sortField: string;
       };
 
-      const rollupSorts: RollupsSort = {
-        id: "rollup.rollup_id.keyword",
-        "rollup.rollup.description": "rollup.description.keyword",
-        "rollup.rollup.last_updated_time": "rollup.last_updated_time",
-      };
       const params = {
-        index: INDEX.OPENDISTRO_ISM_CONFIG,
-        seq_no_primary_term: true,
-        body: {
-          size,
-          from,
-          sort: rollupSorts[sortField] ? [{ [rollupSorts[sortField]]: sortDirection }] : [],
-          query: {
-            bool: {
-              filter: [{ exists: { field: "rollup" } }],
-              must: getMustQuery("rollup.rollup_id", search),
-            },
-          },
-        },
+        rollupID: "test",
+        from,
+        size,
+        search,
+        sortField,
+        sortDirection,
       };
 
       const { callAsCurrentUser: callWithRequest } = this.esDriver.asScoped(request);
-      const searchResponse: SearchResponse<any> = await callWithRequest("search", params);
-      const totalRollups = searchResponse.hits.total.value;
-
-      const rollups = searchResponse.hits.hits.map((hit) => ({
-        _seqNo: hit._seq_no as number,
-        _primaryTerm: hit._primary_term as number,
-        _id: hit._id,
-        rollup: hit._source,
+      const getRollupResponse: GetRollupsResponse = await callWithRequest("ism.getRollup", params);
+      const totalRollups = getRollupResponse.totalRollups;
+      const rollups = getRollupResponse.rollups.map((rollup) => ({
+        _seqNo: rollup._seqNo as number,
+        _primaryTerm: rollup._primaryTerm as number,
+        _id: rollup._id,
+        rollup: rollup,
         metadata: null,
       }));
+
       if (totalRollups) {
         const ids = rollups.map((rollup) => rollup._id).join(",");
         const explainResponse = await this.explainRollup(context, request, response, ids);
