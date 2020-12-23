@@ -25,7 +25,13 @@ export default function (services: NodeServices, router: IRouter) {
     {
       path: NODE_API.ROLLUPS,
       validate: {
-        query: schema.any(),
+        query: schema.object({
+          from: schema.number(),
+          size: schema.number(),
+          search: schema.string(),
+          sortField: schema.string(),
+          sortDirection: schema.string(),
+        }),
       },
     },
     rollupService.getRollups
