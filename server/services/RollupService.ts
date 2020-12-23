@@ -318,7 +318,7 @@ export default class RollupService {
     response: KibanaResponseFactory
   ): Promise<IKibanaResponse<ServerResponse<GetRollupsResponse>>> => {
     try {
-      const { from, size, search, sortDirection, sortField } = request.params as {
+      const { from, size, search, sortDirection, sortField } = request.query as {
         from: number;
         size: number;
         search: string;
@@ -327,7 +327,6 @@ export default class RollupService {
       };
 
       const params = {
-        rollupID: "test",
         from,
         size,
         search,
@@ -336,7 +335,7 @@ export default class RollupService {
       };
 
       const { callAsCurrentUser: callWithRequest } = this.esDriver.asScoped(request);
-      const getRollupResponse: GetRollupsResponse = await callWithRequest("ism.getRollup", params);
+      const getRollupResponse: GetRollupsResponse = await callWithRequest("ism.getRollups", params);
       const totalRollups = getRollupResponse.totalRollups;
       const rollups = getRollupResponse.rollups.map((rollup) => ({
         _seqNo: rollup._seqNo as number,

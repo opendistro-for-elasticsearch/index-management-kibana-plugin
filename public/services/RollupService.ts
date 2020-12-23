@@ -29,8 +29,7 @@ export default class RollupService {
 
   getRollups = async (queryObject: RollupQueryParams): Promise<ServerResponse<GetRollupsResponse>> => {
     let url = `..${NODE_API.ROLLUPS}`;
-    // const response = (await this.httpClient.get(url, {query :{ rollupID: "test",from: 2, size:20, search: null, sortField: "name", sortDirection: "desc"}})) as ServerResponse<GetRollupsResponse>;
-    const response = (await this.httpClient.get(url)) as ServerResponse<GetRollupsResponse>;
+    const response = (await this.httpClient.get(url, { query: queryObject })) as ServerResponse<GetRollupsResponse>;
     return response;
   };
 
