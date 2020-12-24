@@ -58,7 +58,7 @@ export interface DocumentPolicy {
   policy: Policy;
 }
 
-//Data model that contains both rollup item and metadata of rollup job
+// Data model that contains both rollup item and metadata of rollup job
 export interface DocumentRollup {
   _id: string;
   _seqNo: number;

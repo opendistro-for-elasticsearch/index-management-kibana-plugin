@@ -15,17 +15,8 @@
 
 import _ from "lodash";
 import { IClusterClient, KibanaRequest, KibanaResponseFactory, IKibanaResponse, ResponseError, RequestHandlerContext } from "kibana/server";
-import { CLUSTER, INDEX } from "../utils/constants";
-import {
-  DeleteRollupParams,
-  DeleteRollupResponse,
-  GetRollupsResponse,
-  PutRollupParams,
-  PutRollupResponse,
-  SearchResponse,
-} from "../models/interfaces";
-import { getMustQuery } from "../utils/helpers";
-import { RollupsSort, ServerResponse } from "../models/types";
+import { DeleteRollupParams, DeleteRollupResponse, GetRollupsResponse, PutRollupParams, PutRollupResponse } from "../models/interfaces";
+import { ServerResponse } from "../models/types";
 import { DocumentRollup, Rollup, RollupMetadata } from "../../models/interfaces";
 
 export default class RollupService {
@@ -193,7 +184,7 @@ export default class RollupService {
       const { id } = request.params as { id: string };
       const params = { rollupId: id };
       const { callAsCurrentUser: callWithRequest } = this.esDriver.asScoped(request);
-      const getResponse = await callWithRequest("ism.getRollups", params);
+      const getResponse = await callWithRequest("ism.getRollup", params);
       const metadata = await callWithRequest("ism.explainRollup", params);
       const rollup = _.get(getResponse, "rollup", null);
       const seqNo = _.get(getResponse, "_seq_no");
@@ -345,11 +336,13 @@ export default class RollupService {
         metadata: null,
       }));
 
+      // Call getExplain if any rollup job exists
       if (totalRollups) {
-        const ids = rollups.map((rollup) => rollup._id).join(",");
+        // Concat rollup job ids
+        const ids = rollups.map((rollup: DocumentRollup) => rollup._id).join(",");
         const explainResponse = await this.explainRollup(context, request, response, ids);
-        if (explainResponse.payload.ok) {
-          rollups.map((item) => {
+        if (explainResponse.payload !== undefined && explainResponse.payload.ok) {
+          rollups.map((item: DocumentRollup) => {
             item.metadata = explainResponse.payload.response[item._id];
           });
           return response.custom({
@@ -359,7 +352,10 @@ export default class RollupService {
         } else
           return response.custom({
             statusCode: 200,
-            body: { ok: false, error: explainResponse.payload.error },
+            body: {
+              ok: false,
+              error: explainResponse.payload ? explainResponse.payload.error : "An error occurred when calling getExplain API.",
+            },
           });
       }
       return response.custom({
