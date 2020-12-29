@@ -339,24 +339,26 @@ export default class RollupService {
       // Call getExplain if any rollup job exists
       if (totalRollups) {
         // Concat rollup job ids
-        const ids = rollups.map((rollup: DocumentRollup) => rollup._id).join(",");
+        const ids = rollups.map((rollup) => rollup._id).join(",");
+        console.error(ids);
         const explainResponse = await this.explainRollup(context, request, response, ids);
-        if (explainResponse.payload !== undefined && explainResponse.payload.ok) {
-          rollups.map((item: DocumentRollup) => {
-            item.metadata = explainResponse.payload.response[item._id];
-          });
-          return response.custom({
-            statusCode: 200,
-            body: { ok: true, response: { rollups: rollups, totalRollups: totalRollups, metadata: explainResponse } },
-          });
-        } else
-          return response.custom({
-            statusCode: 200,
-            body: {
-              ok: false,
-              error: explainResponse.payload ? explainResponse.payload.error : "An error occurred when calling getExplain API.",
-            },
-          });
+        // if (explainResponse.payload.ok) {
+        console.log(explainResponse);
+        rollups.map((item) => {
+          item.metadata = explainResponse.payload.response[item._id];
+        });
+        return response.custom({
+          statusCode: 200,
+          body: { ok: true, response: { rollups: rollups, totalRollups: totalRollups, metadata: explainResponse } },
+        });
+        // } else
+        //   return response.custom({
+        //     statusCode: 200,
+        //     body: {
+        //       ok: false,
+        //       error: explainResponse.payload ? explainResponse.payload.error : "An error occurred when calling getExplain API.",
+        //     },
+        //   });
       }
       return response.custom({
         statusCode: 200,
