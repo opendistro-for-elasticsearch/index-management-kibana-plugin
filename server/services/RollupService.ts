@@ -17,7 +17,7 @@ import _ from "lodash";
 import { IClusterClient, KibanaRequest, KibanaResponseFactory, IKibanaResponse, ResponseError, RequestHandlerContext } from "kibana/server";
 import { DeleteRollupParams, DeleteRollupResponse, GetRollupsResponse, PutRollupParams, PutRollupResponse } from "../models/interfaces";
 import { ServerResponse } from "../models/types";
-import { DocumentRollup, Rollup, RollupMetadata } from "../../models/interfaces";
+import { DocumentRollup, Rollup } from "../../models/interfaces";
 
 export default class RollupService {
   esDriver: IClusterClient;
@@ -295,7 +295,7 @@ export default class RollupService {
         _seqNo: rollup._seqNo as number,
         _primaryTerm: rollup._primaryTerm as number,
         _id: rollup._id,
-        rollup: rollup,
+        rollup: rollup.rollup,
         metadata: null,
       }));
 
@@ -329,7 +329,7 @@ export default class RollupService {
       if (err.statusCode === 404 && err.body.error.type === "index_not_found_exception") {
         return response.custom({
           statusCode: 200,
-          body: { ok: true, response: { rollups: [], totalRollups: 0, metadata: null } },
+          body: { ok: true, response: { rollups: [], total_rollups: 0, metadata: null } },
         });
       }
       console.error("Index Management - RollupService - getRollups", err);
