@@ -263,46 +263,9 @@ export default class RollupService {
       });
     }
   };
-
-  explainRollup = async (
-    context: RequestHandlerContext,
-    request: KibanaRequest,
-    response: KibanaResponseFactory,
-    idParams: string
-  ): Promise<IKibanaResponse<ServerResponse<RollupMetadata[]>>> => {
-    try {
-      const params = { rollupId: idParams };
-      const { callAsCurrentUser: callWithRequest } = this.esDriver.asScoped(request);
-      const rollupMetadata = await callWithRequest("ism.explainRollup", params);
-      if (rollupMetadata) {
-        return response.custom({
-          statusCode: 200,
-          body: {
-            ok: true,
-            response: rollupMetadata,
-          },
-        });
-      } else {
-        return response.custom({
-          statusCode: 200,
-          body: {
-            ok: false,
-            error: "Failed to load rollup metadata",
-          },
-        });
-      }
-    } catch (err) {
-      console.error("Index Management - RollupService - explainRollup:", err);
-      return response.custom({
-        statusCode: 200,
-        body: {
-          ok: false,
-          error: "Explain rollup: " + err.message,
-        },
-      });
-    }
-  };
-
+  /**
+   * Performs a fuzzy search request on rollup id
+   */
   getRollups = async (
     context: RequestHandlerContext,
     request: KibanaRequest,
@@ -327,7 +290,7 @@ export default class RollupService {
 
       const { callAsCurrentUser: callWithRequest } = this.esDriver.asScoped(request);
       const getRollupResponse: GetRollupsResponse = await callWithRequest("ism.getRollups", params);
-      const totalRollups = getRollupResponse.totalRollups;
+      const totalRollups = getRollupResponse.total_rollups;
       const rollups = getRollupResponse.rollups.map((rollup) => ({
         _seqNo: rollup._seqNo as number,
         _primaryTerm: rollup._primaryTerm as number,
@@ -340,29 +303,27 @@ export default class RollupService {
       if (totalRollups) {
         // Concat rollup job ids
         const ids = rollups.map((rollup) => rollup._id).join(",");
-        console.error(ids);
-        const explainResponse = await this.explainRollup(context, request, response, ids);
-        if (explainResponse.payload.ok) {
-          console.log(explainResponse);
+        const explainResponse = await callWithRequest("ism.explainRollup", { rollupId: ids });
+        if (!explainResponse.error) {
           rollups.map((item) => {
-            item.metadata = explainResponse.payload.response[item._id];
+            item.metadata = explainResponse[item._id];
           });
           return response.custom({
             statusCode: 200,
-            body: { ok: true, response: { rollups: rollups, totalRollups: totalRollups, metadata: explainResponse } },
+            body: { ok: true, response: { rollups: rollups, total_rollups: totalRollups, metadata: explainResponse } },
           });
         } else
           return response.custom({
             statusCode: 200,
             body: {
               ok: false,
-              error: explainResponse.payload ? explainResponse.payload.error : "An error occurred when calling getExplain API.",
+              error: explainResponse ? explainResponse.error : "An error occurred when calling getExplain API.",
             },
           });
       }
       return response.custom({
         statusCode: 200,
-        body: { ok: true, response: { rollups: rollups, totalRollups: totalRollups, metadata: {} } },
+        body: { ok: true, response: { rollups: rollups, total_rollups: totalRollups, metadata: {} } },
       });
     } catch (err) {
       if (err.statusCode === 404 && err.body.error.type === "index_not_found_exception") {
