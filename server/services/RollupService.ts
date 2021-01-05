@@ -289,9 +289,9 @@ export default class RollupService {
       };
 
       const { callAsCurrentUser: callWithRequest } = this.esDriver.asScoped(request);
-      const getRollupResponse: GetRollupsResponse = await callWithRequest("ism.getRollups", params);
+      const getRollupResponse = await callWithRequest("ism.getRollups", params);
       const totalRollups = getRollupResponse.total_rollups;
-      const rollups = getRollupResponse.rollups.map((rollup) => ({
+      const rollups = getRollupResponse.rollups.map((rollup: DocumentRollup) => ({
         _seqNo: rollup._seqNo as number,
         _primaryTerm: rollup._primaryTerm as number,
         _id: rollup._id,
@@ -302,15 +302,15 @@ export default class RollupService {
       // Call getExplain if any rollup job exists
       if (totalRollups) {
         // Concat rollup job ids
-        const ids = rollups.map((rollup) => rollup._id).join(",");
+        const ids = rollups.map((rollup: DocumentRollup) => rollup._id).join(",");
         const explainResponse = await callWithRequest("ism.explainRollup", { rollupId: ids });
         if (!explainResponse.error) {
-          rollups.map((item) => {
-            item.metadata = explainResponse[item._id];
+          rollups.map((rollup: DocumentRollup) => {
+            rollup.metadata = explainResponse[rollup._id];
           });
           return response.custom({
             statusCode: 200,
-            body: { ok: true, response: { rollups: rollups, total_rollups: totalRollups, metadata: explainResponse } },
+            body: { ok: true, response: { rollups: rollups, totalRollups: totalRollups, metadata: explainResponse } },
           });
         } else
           return response.custom({
@@ -323,13 +323,13 @@ export default class RollupService {
       }
       return response.custom({
         statusCode: 200,
-        body: { ok: true, response: { rollups: rollups, total_rollups: totalRollups, metadata: {} } },
+        body: { ok: true, response: { rollups: rollups, totalRollups: totalRollups, metadata: {} } },
       });
     } catch (err) {
       if (err.statusCode === 404 && err.body.error.type === "index_not_found_exception") {
         return response.custom({
           statusCode: 200,
-          body: { ok: true, response: { rollups: [], total_rollups: 0, metadata: null } },
+          body: { ok: true, response: { rollups: [], totalRollups: 0, metadata: null } },
         });
       }
       console.error("Index Management - RollupService - getRollups", err);

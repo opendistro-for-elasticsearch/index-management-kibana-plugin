@@ -72,7 +72,7 @@ export interface GetFieldsResponse {
 
 export interface GetRollupsResponse {
   rollups: DocumentRollup[];
-  total_rollups: number;
+  totalRollups: number;
   metadata: any;
 }
 
