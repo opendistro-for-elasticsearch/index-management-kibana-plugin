@@ -15,8 +15,11 @@
 
 import { PluginInitializerContext } from "kibana/public";
 import { IndexManagementPlugin } from "./plugin";
+import { CreateIndexManagementArgs, IndexManagementApp } from "./index_management";
 
-export interface IndexManagementPluginSetup {}
+export interface IndexManagementPluginSetup {
+  register: (indexManagement: CreateIndexManagementArgs) => IndexManagementApp;
+}
 export interface IndexManagementPluginStart {}
 
 export function plugin(initializerContext: PluginInitializerContext) {

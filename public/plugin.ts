@@ -14,13 +14,8 @@
  */
 
 import { AppMountParameters, CoreSetup, CoreStart, Plugin, PluginInitializerContext } from "../../../src/core/public";
-import { IndexManagementPluginSetup } from ".";
-import { IndexManagementPluginStart } from ".";
+import { IndexManagementPluginSetup, IndexManagementPluginStart } from ".";
 import { createIndexManagementApp, CreateIndexManagementArgs, IndexManagementApp } from "./index_management";
-
-export interface IndexManagementSetup {
-  register: (indexManagement: CreateIndexManagementArgs) => IndexManagementApp;
-}
 
 export class IndexManagementPlugin implements Plugin<IndexManagementPluginSetup, IndexManagementPluginStart> {
   constructor(
@@ -30,7 +25,7 @@ export class IndexManagementPlugin implements Plugin<IndexManagementPluginSetup,
     // can retrieve config from initializerContext
   }
 
-  public setup(core: CoreSetup): IndexManagementPluginSetup {
+  public setup(core: CoreSetup, indexManagement: IndexManagementPlugin): IndexManagementPluginSetup {
     core.application.register({
       id: "opendistro_index_management_kibana",
       title: "Index Management",
