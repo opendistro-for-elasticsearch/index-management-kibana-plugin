@@ -23,7 +23,7 @@ jobs:
         with:
           repository: opendistro-for-elasticsearch/kibana-oss
           ref: ${{ steps.kibana_version.outputs.kibana_version }}
-          token: ${{ secrets.KIBANA_OSS }}
+          token: ${{ secrets.GITHUB_KIBANA_OSS }}
           path: kibana
       - name: Get node and yarn versions
         id: versions
