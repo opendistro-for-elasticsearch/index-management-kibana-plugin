@@ -52,27 +52,6 @@ export default class IndexService {
     return response;
   };
 
-  searchPolicies2 = async (searchValue: string, source: boolean = false): Promise<ServerResponse<SearchResponse<any>>> => {
-    const str = searchValue.trim();
-    const mustQuery = {
-      query_string: {
-        default_field: "policy.policy_id",
-        default_operator: "AND",
-        query: str ? `*${str.split(" ").join("* *")}*` : "*",
-      },
-    };
-    const body = {
-      index: INDEX.OPENDISTRO_ISM_CONFIG,
-      size: 10,
-      query: { _source: source, query: { bool: { must: [mustQuery, { exists: { field: "policy" } }] } } },
-    };
-    const url = `..${NODE_API._SEARCH}`;
-    const response = (await this.httpClient.post(url, { body: JSON.stringify(body) })) as ServerResponse<any>;
-
-    console.log(`search policies response ${JSON.stringify(response)}`);
-    return response;
-  };
-
   searchPolicies = async (searchValue: string, source: boolean = false): Promise<ServerResponse<GetPoliciesResponse>> => {
     const str = searchValue.trim();
     const queryObject = { from: 0, size: 10, search: str, sortDirection: "desc", sortField: "id" };

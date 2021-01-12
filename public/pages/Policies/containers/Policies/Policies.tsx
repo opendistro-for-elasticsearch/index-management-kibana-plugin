@@ -150,10 +150,12 @@ export default class Policies extends Component<PoliciesProps, PoliciesState> {
       const queryParamsString = queryString.stringify(queryObject);
       history.replace({ ...this.props.location, search: queryParamsString });
       const getPoliciesResponse = await policyService.getPolicies(queryObject);
+      console.log(`get policies frontend ${JSON.stringify(getPoliciesResponse)}`);
       if (getPoliciesResponse.ok) {
         const {
           response: { policies, totalPolicies },
         } = getPoliciesResponse;
+        console.log(`policies ${JSON.stringify(policies)}`);
         this.setState({ policies, totalPolicies });
       } else {
         this.context.notifications.toasts.addDanger(getPoliciesResponse.error);

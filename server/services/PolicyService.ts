@@ -274,9 +274,10 @@ export default class PolicyService {
         seqNo: p._seq_no,
         primaryTerm: p._primary_term,
         id: p._id,
-        policy: p.policy,
+        policy: { policy: p.policy },
       }));
 
+      console.log(`get policies backend ${JSON.stringify(policies)}`);
       const totalPolicies: number = getResponse.totalPolicies;
 
       return response.custom({

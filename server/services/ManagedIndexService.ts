@@ -21,6 +21,7 @@ import { getMustQuery, transformManagedIndexMetaData } from "../utils/helpers";
 import {
   ChangePolicyResponse,
   ExplainAllResponse,
+  ExplainAPIManagedIndexMetaData,
   ExplainResponse,
   GetManagedIndicesResponse,
   RemovePolicyResponse,
@@ -70,99 +71,6 @@ export default class ManagedIndexService {
     }
   };
 
-  getManagedIndices2 = async (
-    context: RequestHandlerContext,
-    request: KibanaRequest,
-    response: KibanaResponseFactory
-  ): Promise<IKibanaResponse<ServerResponse<GetManagedIndicesResponse>>> => {
-    console.log("backend get managed indices");
-    try {
-      const { from, size, search, sortDirection, sortField } = request.query as {
-        from: string;
-        size: string;
-        search: string;
-        sortDirection: string;
-        sortField: string;
-      };
-
-      const managedIndexSorts: ManagedIndicesSort = { index: "managed_index.index", policyId: "managed_index.policy_id" };
-      const searchParams: RequestParams.Search = {
-        index: INDEX.OPENDISTRO_ISM_CONFIG,
-        seq_no_primary_term: true,
-        body: {
-          size,
-          from,
-          sort: managedIndexSorts[sortField] ? [{ [managedIndexSorts[sortField]]: sortDirection }] : [],
-          query: {
-            bool: {
-              filter: [{ exists: { field: "managed_index" } }],
-              must: getMustQuery("managed_index.name", search),
-            },
-          },
-        },
-      };
-
-      const { callAsCurrentUser: callWithRequest } = this.esDriver.asScoped(request);
-      const searchResponse: SearchResponse<any> = await callWithRequest("search", searchParams);
-
-      const indices = searchResponse.hits.hits.map((hit) => hit._source.managed_index.index);
-      const totalManagedIndices = _.get(searchResponse, "hits.total.value", 0);
-
-      if (!indices.length) {
-        return response.custom({
-          statusCode: 200,
-          body: {
-            ok: true,
-            response: { managedIndices: [], totalManagedIndices: 0 },
-          },
-        });
-      }
-
-      const explainParams = { index: indices.join(",") };
-      const explainResponse: ExplainResponse = await callWithRequest("ism.explain", explainParams);
-      const managedIndices = searchResponse.hits.hits.map((hit) => {
-        const index = hit._source.managed_index.index;
-        return {
-          index,
-          indexUuid: hit._source.managed_index.index_uuid,
-          policyId: hit._source.managed_index.policy_id,
-          policySeqNo: hit._source.managed_index.policy_seq_no,
-          policyPrimaryTerm: hit._source.managed_index.policy_primary_term,
-          policy: hit._source.managed_index.policy,
-          enabled: hit._source.managed_index.enabled,
-          managedIndexMetaData: transformManagedIndexMetaData(explainResponse[index]), // this will be undefined if we are initializing
-        };
-      });
-
-      console.log("explain response old: " + JSON.stringify(managedIndices));
-      return response.custom({
-        statusCode: 200,
-        body: {
-          ok: true,
-          response: { managedIndices, totalManagedIndices },
-        },
-      });
-    } catch (err) {
-      if (err.statusCode === 404 && err.body.error.type === "index_not_found_exception") {
-        return response.custom({
-          statusCode: 200,
-          body: {
-            ok: true,
-            response: { managedIndices: [], totalManagedIndices: 0 },
-          },
-        });
-      }
-      console.error("Index Management - ManagedIndexService - getManagedIndices", err);
-      return response.custom({
-        statusCode: 200,
-        body: {
-          ok: false,
-          error: err.message,
-        },
-      });
-    }
-  };
-
   getManagedIndices = async (
     context: RequestHandlerContext,
     request: KibanaRequest,
@@ -190,7 +98,9 @@ export default class ManagedIndexService {
       const explainAllResponse: ExplainAllResponse = await callWithRequest("ism.explainAll", explainParams);
 
       const managedIndices: ManagedIndexItem[] = [];
-      for (const metadata of explainAllResponse.managedIndices) {
+      for (const indexName in explainAllResponse) {
+        if (indexName == "totalManagedIndices") continue;
+        const metadata = explainAllResponse[indexName] as ExplainAPIManagedIndexMetaData;
         let policy, seqNo, primaryTerm;
         const getResponse = await callWithRequest("ism.getPolicy", { policyId: metadata.policy_id });
         policy = _.get(getResponse, "policy", null);
@@ -208,7 +118,6 @@ export default class ManagedIndexService {
         });
       }
 
-      console.log("explain response new: " + JSON.stringify(managedIndices));
       const totalManagedIndices: number = explainAllResponse.totalManagedIndices;
 
       return response.custom({

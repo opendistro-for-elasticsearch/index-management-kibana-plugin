@@ -35,36 +35,6 @@ export default class IndexService {
     this.esDriver = esDriver;
   }
 
-  // not gonna be used anymore route NODE_API._SEARCH
-  search = async (
-    context: RequestHandlerContext,
-    request: KibanaRequest,
-    response: KibanaResponseFactory
-  ): Promise<IKibanaResponse<ServerResponse<any>>> => {
-    try {
-      const { query, index, size = 0 } = request.body as { query: object; index: string; size?: number };
-      const params: RequestParams.Search = { index, size, body: query };
-      const { callAsCurrentUser: callWithRequest } = this.esDriver.asScoped(request);
-      const results: SearchResponse<any> = await callWithRequest("search", params);
-      return response.custom({
-        statusCode: 200,
-        body: {
-          ok: true,
-          response: results,
-        },
-      });
-    } catch (err) {
-      console.error("Index Management - IndexService - search", err);
-      return response.custom({
-        statusCode: 200,
-        body: {
-          ok: false,
-          error: err.message,
-        },
-      });
-    }
-  };
-
   getIndices = async (
     context: RequestHandlerContext,
     request: KibanaRequest,
@@ -128,33 +98,6 @@ export default class IndexService {
           error: err.message,
         },
       });
-    }
-  };
-
-  // given a list of indexUuids return the managed status of each (true, false, N/A)
-  _getManagedStatus2 = async (request: KibanaRequest, indexUuids: string[]): Promise<{ [indexUuid: string]: string }> => {
-    try {
-      const searchParams: RequestParams.Search = {
-        index: INDEX.OPENDISTRO_ISM_CONFIG,
-        size: indexUuids.length,
-        body: { _source: "_id", query: { ids: { values: indexUuids } } },
-      };
-      const { callAsCurrentUser: searchCallWithRequest } = this.esDriver.asScoped(request);
-      const results: SearchResponse<any> = await searchCallWithRequest("search", searchParams);
-      const managed: { [indexUuid: string]: string } = results.hits.hits.reduce(
-        (accu: object, hit: { _id: string }) => ({ ...accu, [hit._id]: "Yes" }),
-        {}
-      );
-      return indexUuids.reduce((accu: object, value: string) => ({ ...accu, [value]: managed[value] || "No" }), {});
-    } catch (err) {
-      // If the config index does not exist then nothing is being managed
-      if (err.statusCode === 404 && err.body.error.type === "index_not_found_exception") {
-        return indexUuids.reduce((accu, value) => ({ ...accu, [value]: "No" }), {});
-      }
-      // otherwise it could be an unauthorized access error to config index or some other error
-      // in which case we will return managed status N/A
-      console.error("Index Management - IndexService - _getManagedStatus:", err);
-      return indexUuids.reduce((accu, value) => ({ ...accu, [value]: "N/A" }), {});
     }
   };
 

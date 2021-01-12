@@ -37,7 +37,6 @@ export default class ManagedIndexService {
 
   getManagedIndices = async (queryObject: object): Promise<ServerResponse<GetManagedIndicesResponse>> => {
     let url = `..${NODE_API.MANAGED_INDICES}`;
-    console.log("get managedindices");
     const response = (await this.httpClient.get(url, { query: queryObject })) as ServerResponse<GetManagedIndicesResponse>;
     return response;
   };

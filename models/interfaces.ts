@@ -73,6 +73,7 @@ export interface Policy {
   description: string;
   default_state: string;
   states: State[];
+  ism_template: any;
 }
 
 export interface State {
