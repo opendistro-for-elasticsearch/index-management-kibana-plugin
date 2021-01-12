@@ -1,12 +1,9 @@
 name: Release workflow
 # This workflow is triggered on creating tags to master or an opendistro release branch
 on:
-  # push:
-  #   tags:
-  #     - 'v*'
   push:
-    branches:
-      - "release-workflow-patch"
+    tags:
+      - 'v*'
 
 jobs:
   build:
@@ -73,27 +70,27 @@ jobs:
 
           echo "Copying ${zip} to ${s3_prefix}${zip_outfile}"
           aws s3 cp --quiet $zip ${s3_prefix}${zip_outfile}
-      # - name: Create Github Draft Release
-      #   id: create_release
-      #   uses: actions/create-release@v1.0.0
-      #   env:
-      #     GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      #   with:
-      #     tag_name: ${{ github.ref }}
-      #     release_name: Release ${{ github.ref }}
-      #     draft: true
-      #     prerelease: false
-      # - name: Upload Release Asset
-      #   uses: actions/upload-release-asset@v1.0.1
-      #   env:
-      #     GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      #   with:
-      #     upload_url: ${{ steps.create_release.outputs.upload_url }}
-      #     asset_name: opendistro_index_management_kibana.zip
-      #     asset_path: ${{ steps.build_zip.outputs.zip_path }}
-      #     asset_content_type: application/zip
-      # - name: Upload Workflow Artifacts
-      #   uses: actions/upload-artifact@v1
-      #   with:
-      #     name: index-management-plugin
-      #     path: ${{ steps.build_zip.outputs.zip_path }}
+      - name: Create Github Draft Release
+        id: create_release
+        uses: actions/create-release@v1.0.0
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          tag_name: ${{ github.ref }}
+          release_name: Release ${{ github.ref }}
+          draft: true
+          prerelease: false
+      - name: Upload Release Asset
+        uses: actions/upload-release-asset@v1.0.1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          upload_url: ${{ steps.create_release.outputs.upload_url }}
+          asset_name: opendistro_index_management_kibana.zip
+          asset_path: ${{ steps.build_zip.outputs.zip_path }}
+          asset_content_type: application/zip
+      - name: Upload Workflow Artifacts
+        uses: actions/upload-artifact@v1
+        with:
+          name: index-management-plugin
+          path: ${{ steps.build_zip.outputs.zip_path }}
