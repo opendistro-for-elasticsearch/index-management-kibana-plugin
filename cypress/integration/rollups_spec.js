@@ -16,7 +16,7 @@
 import { PLUGIN_NAME } from "../support/constants";
 import samplePolicy from "../fixtures/sample_policy";
 
-const ROLLUPS_ID = "test_rollup_id";
+const ROLLUP_ID = "test_rollup_id";
 
 describe("Rollups", () => {
   beforeEach(() => {
@@ -62,17 +62,29 @@ describe("Rollups", () => {
       cy.contains("Create rollup").click({ force: true });
 
       // Wait for input to load and then type in the rollup ID
-      cy.get(`input[placeholder="my-rollupjob1"]`).type(ROLLUPS_ID, { force: true });
+      cy.get(`input[placeholder="my-rollupjob1"]`).type(ROLLUP_ID, { force: true });
 
       // Get description input box
       cy.get(`textarea[data-test-subj="description"]`).focus().type("some description");
 
-      // // Click the create button
-      // cy.get("button").contains("Create").click({ force: true });
-      //
-      // // Confirm we got created toaster
-      // cy.contains(`Created policy: ${ROLLUP_ID}`);
-      //
+      // Enter source index
+      cy.get(`div[data-test-subj="sourceIndexCombobox"]`)
+        .find(`input[data-test-subj="comboBoxSearchInput"]`)
+        .focus()
+        .type("kibana_sample_data_ecommerce{enter}");
+
+      // Enter target index
+      cy.get(`div[data-test-subj="targetIndexCombobox"]`)
+        .find(`input[data-test-subj="comboBoxSearchInput"]`)
+        .focus()
+        .type("target_index{enter}");
+
+      // Click the next button
+      cy.get("button").contains("Next").click({ force: true });
+
+      // // Confirm we got to step 2 of creation page
+      cy.contains("Time aggregation");
+
       // // Confirm we can see the created policy's description in table
       // cy.contains("some description");
     });
