@@ -82,8 +82,27 @@ describe("Rollups", () => {
       // Click the next button
       cy.get("button").contains("Next").click({ force: true });
 
-      // // Confirm we got to step 2 of creation page
+      // Confirm we got to step 2 of creation page
       cy.contains("Time aggregation");
+
+      // Enter timestamp field
+      cy.get(`input[data-test-subj="comboBoxSearchInput"]`).focus().type("order_date{enter}");
+
+      // Add aggregation
+      cy.get(`button[data-test-subj="addFieldsAggregationEmpty"]`).click({ force: true });
+
+      // Select a few fields
+      cy.get(`input[data-test-subj="checkboxSelectRow-customer_gender"]`).click({ force: true });
+      cy.get(`input[data-test-subj="checkboxSelectRow-day_of_week_i"]`).click({ force: true });
+      cy.get(`input[data-test-subj="checkboxSelectRow-geoip.city_name"]`).click({ force: true });
+
+      // Click the Add button from add fields modal
+      cy.get(`button[data-test-subj="addFieldsAggregationAdd"]`).click({ force: true });
+
+      // Confirm fields are added
+      cy.contains("customer_gender");
+      cy.contains("day_of_week_i");
+      cy.contains("geoip.city_name");
 
       // // Confirm we can see the created policy's description in table
       // cy.contains("some description");
