@@ -149,38 +149,78 @@ describe("Rollups", () => {
       cy.createRollup(ROLLUP_ID, sampleRollup);
     });
 
-    // it("successfully", () => {
-    //
-    //   // Confirm we have our initial policy
-    //   cy.contains("A simple description");
-    //
-    //   // Select checkbox for our policy
-    //   cy.get(`#_selection_column_${ROLLUP_ID}-checkbox`).check({ force: true });
-    //
-    //   // Click Edit button
-    //   cy.get(`[data-test-subj="EditButton"]`).click({ force: true });
-    //
-    //   // Wait for initial policy JSON to load
-    //   cy.contains("A simple description");
-    //
-    //   // Focus JSON input area, clear old policy and type in new policy
-    //   // eslint-disable-next-line cypress/no-unnecessary-waiting
-    //   cy.get(".ace_text-input")
-    //     .first()
-    //     .focus()
-    //     .clear()
-    //     .type(JSON.stringify(newPolicy), { parseSpecialCharSequences: false, delay: 5, timeout: 20000 });
-    //
-    //   // Click Update button
-    //   cy.get(`[data-test-subj="createPolicyCreateButton"]`).click({ force: true });
-    //
-    //   // Confirm we get toaster saying updated
-    //   cy.contains(`Updated policy: ${ROLLUP_ID}`);
-    //
-    //   // Confirm new description shows in table
-    //   cy.contains("A new description");
-    // });
+    it("successfully", () => {
+      // Confirm we have our initial rollup
+      cy.contains(ROLLUP_ID);
+
+      // Select checkbox for our rollup job
+      cy.get(`#_selection_column_${ROLLUP_ID}-checkbox`).check({ force: true });
+
+      // Click on Actions popover menu
+      cy.get(`[data-test-subj="actionButton"]`).click({ force: true });
+
+      // Click Edit button
+      cy.get(`[data-test-subj="editButton"]`).click({ force: true });
+
+      // Wait for initial rollup job to load
+      cy.contains("An example rollup job that rolls up the sample ecommerce data");
+
+      // Focus JSON input area, clear old policy and type in new policy
+      // eslint-disable-next-line cypress/no-unnecessary-waiting
+      cy.get(`textArea[data-test-subj="description"]`).focus().clear().type("A new description");
+
+      // Click Save changes button
+      cy.get(`[data-test-subj="editRollupSaveChangesButton"]`).click({ force: true });
+
+      // Confirm we get toaster saying changes saved
+      cy.contains(`Changes to "${ROLLUP_ID}" saved!`);
+
+      // Click into rollup job details page
+      cy.get(`[data-test-subj="rollupLink_${ROLLUP_ID}"]`).click({ force: true });
+
+      // Confirm new description shows in details page
+      cy.contains("A new description");
+    });
   });
+
+  // describe("can be disabled", () => {
+  //   before(() => {
+  //     cy.deleteAllIndices();
+  //     cy.createRollup(ROLLUP_ID, sampleRollup);
+  //   });
+  //
+  //   it("successfully", () => {
+  //
+  //     // Confirm we have our initial rollup
+  //     cy.contains(ROLLUP_ID);
+  //
+  //     // Select checkbox for our policy
+  //     cy.get(`#_selection_column_${ROLLUP_ID}-checkbox`).check({ force: true });
+  //
+  //     // Click Edit button
+  //     cy.get(`[data-test-subj="EditButton"]`).click({ force: true });
+  //
+  //     // Wait for initial policy JSON to load
+  //     cy.contains("A simple description");
+  //
+  //     // Focus JSON input area, clear old policy and type in new policy
+  //     // eslint-disable-next-line cypress/no-unnecessary-waiting
+  //     cy.get(".ace_text-input")
+  //       .first()
+  //       .focus()
+  //       .clear()
+  //       .type(JSON.stringify(newPolicy), { parseSpecialCharSequences: false, delay: 5, timeout: 20000 });
+  //
+  //     // Click Update button
+  //     cy.get(`[data-test-subj="createPolicyCreateButton"]`).click({ force: true });
+  //
+  //     // Confirm we get toaster saying updated
+  //     cy.contains(`Updated policy: ${ROLLUP_ID}`);
+  //
+  //     // Confirm new description shows in table
+  //     cy.contains("A new description");
+  //   });
+  // });
 
   // describe("can be deleted", () => {
   //   before(() => {
