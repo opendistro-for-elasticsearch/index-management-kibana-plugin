@@ -160,84 +160,8 @@ export default class PolicyService {
   };
 
   /**
-   * Performs a fuzzy search request on policy id
+   * Calls backend Get Policy API
    */
-  getPolicies2 = async (
-    context: RequestHandlerContext,
-    request: KibanaRequest,
-    response: KibanaResponseFactory
-  ): Promise<IKibanaResponse<ServerResponse<GetPoliciesResponse>>> => {
-    try {
-      const { from, size, search, sortDirection, sortField } = request.query as {
-        from: string;
-        size: string;
-        search: string;
-        sortDirection: string;
-        sortField: string;
-      };
-
-      const policySorts: PoliciesSort = {
-        id: "policy.policy_id.keyword",
-        "policy.policy.description": "policy.description.keyword",
-        "policy.policy.last_updated_time": "policy.last_updated_time",
-      };
-      const params = {
-        index: INDEX.OPENDISTRO_ISM_CONFIG,
-        seq_no_primary_term: true,
-        body: {
-          size,
-          from,
-          sort: policySorts[sortField] ? [{ [policySorts[sortField]]: sortDirection }] : [],
-          query: {
-            bool: {
-              filter: [{ exists: { field: "policy" } }],
-              must: getMustQuery("policy.policy_id", search),
-            },
-          },
-        },
-      };
-
-      const { callAsCurrentUser: callWithRequest } = this.esDriver.asScoped(request);
-      const searchResponse: SearchResponse<any> = await callWithRequest("search", params);
-
-      const totalPolicies = searchResponse.hits.total.value;
-      const policies = searchResponse.hits.hits.map((hit) => ({
-        seqNo: hit._seq_no as number,
-        primaryTerm: hit._primary_term as number,
-        id: hit._id,
-        policy: hit._source,
-      }));
-
-      console.log(`get response ${JSON.stringify({ policies: policies, totalPolicies })}`);
-
-      return response.custom({
-        statusCode: 200,
-        body: {
-          ok: true,
-          response: { policies: policies, totalPolicies },
-        },
-      });
-    } catch (err) {
-      if (err.statusCode === 404 && err.body.error.type === "index_not_found_exception") {
-        return response.custom({
-          statusCode: 200,
-          body: {
-            ok: true,
-            response: { policies: [], totalPolicies: 0 },
-          },
-        });
-      }
-      console.error("Index Management - PolicyService - getPolicies", err);
-      return response.custom({
-        statusCode: 200,
-        body: {
-          ok: false,
-          error: err.message,
-        },
-      });
-    }
-  };
-
   getPolicies = async (
     context: RequestHandlerContext,
     request: KibanaRequest,
@@ -277,7 +201,6 @@ export default class PolicyService {
         policy: { policy: p.policy },
       }));
 
-      console.log(`get policies backend ${JSON.stringify(policies)}`);
       const totalPolicies: number = getResponse.totalPolicies;
 
       return response.custom({

@@ -55,11 +55,8 @@ export default class IndexService {
   searchPolicies = async (searchValue: string, source: boolean = false): Promise<ServerResponse<GetPoliciesResponse>> => {
     const str = searchValue.trim();
     const queryObject = { from: 0, size: 10, search: str, sortDirection: "desc", sortField: "id" };
-
     const url = `..${NODE_API.POLICIES}`;
     const response = (await this.httpClient.get(url, { query: queryObject })) as ServerResponse<GetPoliciesResponse>;
-
-    console.log(`search policies response ${JSON.stringify(response)}`);
     return response;
   };
 }

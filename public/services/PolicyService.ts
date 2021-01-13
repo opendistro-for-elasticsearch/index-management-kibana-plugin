@@ -29,7 +29,6 @@ export default class PolicyService {
   getPolicies = async (queryObject: object): Promise<ServerResponse<GetPoliciesResponse>> => {
     let url = `..${NODE_API.POLICIES}`;
     const response = (await this.httpClient.get(url, { query: queryObject })) as ServerResponse<GetPoliciesResponse>;
-    console.log(`get policies frontend service ${JSON.stringify(response)}`);
     return response;
   };
 
