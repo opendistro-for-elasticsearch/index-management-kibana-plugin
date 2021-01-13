@@ -61,7 +61,7 @@ describe("Rollups", () => {
       // Route us to create rollup page
       cy.contains("Create rollup").click({ force: true });
 
-      // Wait for input to load and then type in the rollup ID
+      // Type in the rollup ID
       cy.get(`input[placeholder="my-rollupjob1"]`).type(ROLLUP_ID, { force: true });
 
       // Get description input box
@@ -181,32 +181,40 @@ describe("Rollups", () => {
     });
   });
 
-  // describe("can be deleted", () => {
-  //   before(() => {
-  //     cy.deleteAllIndices();
-  //     cy.createPolicy(ROLLUP_ID, samplePolicy);
-  //   });
-  //
-  //   it("successfully", () => {
-  //     // Confirm we have our initial policy
-  //     cy.contains("A simple description");
-  //
-  //     // Select checkbox for our policy
-  //     cy.get(`#_selection_column_${ROLLUP_ID}-checkbox`).check({ force: true });
-  //
-  //     // Click Delete button
-  //     cy.get(`[data-test-subj="DeleteButton"]`).click({ force: true });
-  //
-  //     // Click the delete confirmation button in modal
-  //     cy.get(`[data-test-subj="confirmationModalActionButton"]`).click();
-  //
-  //     // Confirm we got deleted toaster
-  //     cy.contains(`Deleted the policy: ${ROLLUP_ID}`);
-  //
-  //     // Confirm showing empty loading state
-  //     cy.contains("There are no existing policies.");
-  //   });
-  // });
+  describe("can be deleted", () => {
+    before(() => {
+      cy.deleteAllIndices();
+      cy.createRollup(ROLLUP_ID, sampleRollup);
+    });
+
+    it("successfully", () => {
+      // Confirm we have our initial rollup
+      cy.contains(ROLLUP_ID);
+
+      // Select checkbox for our rollup job
+      cy.get(`#_selection_column_${ROLLUP_ID}-checkbox`).check({ force: true });
+
+      // Click on Actions popover menu
+      cy.get(`[data-test-subj="actionButton"]`).click({ force: true });
+
+      // Click Delete button
+      cy.get(`[data-test-subj="deleteButton"]`).click({ force: true });
+
+      // Type "delete" to confirm deletion
+      cy.get(`input[placeholder="delete"]`).type("delete", { force: true });
+
+      // Click the delete confirmation button in modal
+      cy.get(`[data-test-subj="confirmModalConfirmButton"]`).click();
+
+      // Confirm we got deleted toaster
+      cy.contains(`"${ROLLUP_ID}" successfully deleted!`);
+
+      // Confirm showing empty loading state
+      cy.contains(
+        "Rollup jobs help you conserve storage space for historical time series data while preserving the specific information you need"
+      );
+    });
+  });
 
   describe("can be enabled and disabled", () => {
     before(() => {
@@ -234,35 +242,4 @@ describe("Rollups", () => {
       cy.contains(`${ROLLUP_ID} is enabled`);
     });
   });
-
-  // describe("can be searched", () => {
-  //   before(() => {
-  //     cy.deleteAllIndices();
-  //     // Create 20+ policies that can be easily sorted alphabetically using letters a-z
-  //     for (let i = 97; i < 123; i++) {
-  //       const char = String.fromCharCode(i);
-  //       cy.createPolicy(`${ROLLUP_ID}_${char}`, samplePolicy);
-  //     }
-  //   });
-  //
-  //   it("successfully", () => {
-  //     // Confirm we have our initial policy
-  //     cy.contains("A simple description");
-  //
-  //     // Sort the table by policy name
-  //     cy.get("thead > tr > th").contains("Policy").click({ force: true });
-  //
-  //     // Confirm the last "_z" policy does not exist
-  //     cy.contains(`${ROLLUP_ID}_z`).should("not.exist");
-  //
-  //     // Type in policy name in search box
-  //     cy.get(`input[type="search"]`).focus().type(`${ROLLUP_ID}_z`);
-  //
-  //     // Confirm we filtered down to our one and only policy
-  //     cy.get("tbody > tr").should(($tr) => {
-  //       expect($tr, "1 row").to.have.length(1);
-  //       expect($tr, "item").to.contain(`${ROLLUP_ID}_z`);
-  //     });
-  //   });
-  // });
 });
