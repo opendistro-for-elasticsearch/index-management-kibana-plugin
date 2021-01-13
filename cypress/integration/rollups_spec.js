@@ -165,8 +165,6 @@ describe("Rollups", () => {
       // Wait for initial rollup job to load
       cy.contains("An example rollup job that rolls up the sample ecommerce data");
 
-      // Focus JSON input area, clear old policy and type in new policy
-      // eslint-disable-next-line cypress/no-unnecessary-waiting
       cy.get(`textArea[data-test-subj="description"]`).focus().clear().type("A new description");
 
       // Click Save changes button
@@ -182,45 +180,6 @@ describe("Rollups", () => {
       cy.contains("A new description");
     });
   });
-
-  // describe("can be disabled", () => {
-  //   before(() => {
-  //     cy.deleteAllIndices();
-  //     cy.createRollup(ROLLUP_ID, sampleRollup);
-  //   });
-  //
-  //   it("successfully", () => {
-  //
-  //     // Confirm we have our initial rollup
-  //     cy.contains(ROLLUP_ID);
-  //
-  //     // Select checkbox for our policy
-  //     cy.get(`#_selection_column_${ROLLUP_ID}-checkbox`).check({ force: true });
-  //
-  //     // Click Edit button
-  //     cy.get(`[data-test-subj="EditButton"]`).click({ force: true });
-  //
-  //     // Wait for initial policy JSON to load
-  //     cy.contains("A simple description");
-  //
-  //     // Focus JSON input area, clear old policy and type in new policy
-  //     // eslint-disable-next-line cypress/no-unnecessary-waiting
-  //     cy.get(".ace_text-input")
-  //       .first()
-  //       .focus()
-  //       .clear()
-  //       .type(JSON.stringify(newPolicy), { parseSpecialCharSequences: false, delay: 5, timeout: 20000 });
-  //
-  //     // Click Update button
-  //     cy.get(`[data-test-subj="createPolicyCreateButton"]`).click({ force: true });
-  //
-  //     // Confirm we get toaster saying updated
-  //     cy.contains(`Updated policy: ${ROLLUP_ID}`);
-  //
-  //     // Confirm new description shows in table
-  //     cy.contains("A new description");
-  //   });
-  // });
 
   // describe("can be deleted", () => {
   //   before(() => {
@@ -248,6 +207,33 @@ describe("Rollups", () => {
   //     cy.contains("There are no existing policies.");
   //   });
   // });
+
+  describe("can be enabled and disabled", () => {
+    before(() => {
+      cy.deleteAllIndices();
+      cy.createRollup(ROLLUP_ID, sampleRollup);
+    });
+
+    it("successfully", () => {
+      // Confirm we have our initial rollup
+      cy.contains(ROLLUP_ID);
+
+      // Click into rollup job details page
+      cy.get(`[data-test-subj="rollupLink_${ROLLUP_ID}"]`).click({ force: true });
+
+      // Click Disable button
+      cy.get(`[data-test-subj="disableButton"]`).click({ force: true });
+
+      // Confirm we get toaster saying rollup job is disabled
+      cy.contains(`${ROLLUP_ID} is disabled`);
+
+      // Click Disable button
+      cy.get(`[data-test-subj="enableButton"]`).click({ force: true });
+
+      // Confirm we get toaster saying rollup job is enabled
+      cy.contains(`${ROLLUP_ID} is enabled`);
+    });
+  });
 
   // describe("can be searched", () => {
   //   before(() => {
