@@ -75,3 +75,7 @@ Cypress.Commands.add("updateManagedIndexConfigStartTime", (index) => {
 Cypress.Commands.add("createIndex", (index, settings = {}) => {
   cy.request("PUT", `${Cypress.env("elasticsearch")}/${index}`, settings);
 });
+
+Cypress.Commands.add("createRollup", (rollupId, rollupJSON) => {
+  cy.request("PUT", `${Cypress.env("elasticsearch")}${API.ROLLUP_JOBS_BASE}/${rollupId}`, rollupJSON);
+});

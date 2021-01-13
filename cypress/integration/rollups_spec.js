@@ -14,6 +14,7 @@
  */
 
 import { PLUGIN_NAME } from "../support/constants";
+import sampleRollup from "../fixtures/sample_rollup";
 
 const ROLLUP_ID = "test_rollup_id";
 
@@ -142,46 +143,44 @@ describe("Rollups", () => {
     });
   });
 
-  // describe("can be edited", () => {
-  //   before(() => {
-  //     cy.deleteAllIndices();
-  //     cy.createPolicy(ROLLUP_ID, samplePolicy);
-  //   });
-  //
-  //   it("successfully", () => {
-  //     // Make changes to policy JSON for editing confirmation
-  //     const newPolicy = { policy: { ...samplePolicy.policy, description: "A new description" } };
-  //
-  //     // Confirm we have our initial policy
-  //     cy.contains("A simple description");
-  //
-  //     // Select checkbox for our policy
-  //     cy.get(`#_selection_column_${ROLLUP_ID}-checkbox`).check({ force: true });
-  //
-  //     // Click Edit button
-  //     cy.get(`[data-test-subj="EditButton"]`).click({ force: true });
-  //
-  //     // Wait for initial policy JSON to load
-  //     cy.contains("A simple description");
-  //
-  //     // Focus JSON input area, clear old policy and type in new policy
-  //     // eslint-disable-next-line cypress/no-unnecessary-waiting
-  //     cy.get(".ace_text-input")
-  //       .first()
-  //       .focus()
-  //       .clear()
-  //       .type(JSON.stringify(newPolicy), { parseSpecialCharSequences: false, delay: 5, timeout: 20000 });
-  //
-  //     // Click Update button
-  //     cy.get(`[data-test-subj="createPolicyCreateButton"]`).click({ force: true });
-  //
-  //     // Confirm we get toaster saying updated
-  //     cy.contains(`Updated policy: ${ROLLUP_ID}`);
-  //
-  //     // Confirm new description shows in table
-  //     cy.contains("A new description");
-  //   });
-  // });
+  describe("can be edited", () => {
+    before(() => {
+      cy.deleteAllIndices();
+      cy.createRollup(ROLLUP_ID, sampleRollup);
+    });
+
+    // it("successfully", () => {
+    //
+    //   // Confirm we have our initial policy
+    //   cy.contains("A simple description");
+    //
+    //   // Select checkbox for our policy
+    //   cy.get(`#_selection_column_${ROLLUP_ID}-checkbox`).check({ force: true });
+    //
+    //   // Click Edit button
+    //   cy.get(`[data-test-subj="EditButton"]`).click({ force: true });
+    //
+    //   // Wait for initial policy JSON to load
+    //   cy.contains("A simple description");
+    //
+    //   // Focus JSON input area, clear old policy and type in new policy
+    //   // eslint-disable-next-line cypress/no-unnecessary-waiting
+    //   cy.get(".ace_text-input")
+    //     .first()
+    //     .focus()
+    //     .clear()
+    //     .type(JSON.stringify(newPolicy), { parseSpecialCharSequences: false, delay: 5, timeout: 20000 });
+    //
+    //   // Click Update button
+    //   cy.get(`[data-test-subj="createPolicyCreateButton"]`).click({ force: true });
+    //
+    //   // Confirm we get toaster saying updated
+    //   cy.contains(`Updated policy: ${ROLLUP_ID}`);
+    //
+    //   // Confirm new description shows in table
+    //   cy.contains("A new description");
+    // });
+  });
 
   // describe("can be deleted", () => {
   //   before(() => {
