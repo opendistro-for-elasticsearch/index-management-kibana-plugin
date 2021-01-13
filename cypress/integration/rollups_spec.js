@@ -104,6 +104,31 @@ describe("Rollups", () => {
       cy.contains("day_of_week_i");
       cy.contains("geoip.city_name");
 
+      // Add metrics
+      cy.get(`button[data-test-subj="addFieldsMetricEmpty"]`).click({ force: true });
+
+      // Select a few fields
+      cy.get(`input[data-test-subj="checkboxSelectRow-products.taxless_price"]`).click({ force: true });
+      cy.get(`input[data-test-subj="checkboxSelectRow-total_quantity"]`).click({ force: true });
+
+      // Click the Add button from add fields modal
+      cy.get(`button[data-test-subj="addFieldsMetricAdd"]`).click({ force: true });
+
+      // Confirm fields are added
+      cy.contains("products.taxless_price");
+      cy.contains("total_quantity");
+
+      cy.get(`input[data-test-subj="min-total_quantity"]`).click({ force: true });
+      cy.get(`input[data-test-subj="max-total_quantity"]`).click({ force: true });
+      cy.get(`input[data-test-subj="sum-total_quantity"]`).click({ force: true });
+      cy.get(`input[data-test-subj="all-products.taxless_price"]`).click({ force: true });
+
+      // Click the next button
+      cy.get("button").contains("Next").click({ force: true });
+
+      // Confirm we got to step 3 of creation page
+      cy.contains("Enable job by default");
+
       // // Confirm we can see the created policy's description in table
       // cy.contains("some description");
     });
