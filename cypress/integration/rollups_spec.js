@@ -14,7 +14,6 @@
  */
 
 import { PLUGIN_NAME } from "../support/constants";
-import samplePolicy from "../fixtures/sample_policy";
 
 const ROLLUP_ID = "test_rollup_id";
 
@@ -82,7 +81,7 @@ describe("Rollups", () => {
       // Click the next button
       cy.get("button").contains("Next").click({ force: true });
 
-      // Confirm we got to step 2 of creation page
+      // Confirm that we got to step 2 of creation page
       cy.contains("Time aggregation");
 
       // Enter timestamp field
@@ -126,11 +125,20 @@ describe("Rollups", () => {
       // Click the next button
       cy.get("button").contains("Next").click({ force: true });
 
-      // Confirm we got to step 3 of creation page
+      // Confirm that we got to step 3 of creation page
       cy.contains("Enable job by default");
 
-      // // Confirm we can see the created policy's description in table
-      // cy.contains("some description");
+      // Click the next button
+      cy.get("button").contains("Next").click({ force: true });
+
+      // Confirm that we got to step 4 of creation page
+      cy.contains("Job name and indices");
+
+      // Click the create button
+      cy.get("button").contains("Create").click({ force: true });
+
+      // Verify that sample data is add by checking toast notification
+      cy.contains(`Created rollup: ${ROLLUP_ID}`);
     });
   });
 
