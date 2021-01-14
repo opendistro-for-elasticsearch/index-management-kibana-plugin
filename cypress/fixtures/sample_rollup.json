@@ -1,0 +1,58 @@
+{
+  "rollup": {
+    "enabled": true,
+    "schedule": {
+      "interval": {
+        "period": 1,
+        "unit": "Minutes",
+        "start_time": 1602100553
+      }
+    },
+    "last_updated_time": 1602100553,
+    "description": "An example rollup job that rolls up the sample ecommerce data",
+    "source_index": "kibana_sample_data_ecommerce",
+    "target_index": "test_rollup_target",
+    "page_size": 1000,
+    "delay": 0,
+    "continuous": false,
+    "dimensions": [
+      {
+        "date_histogram": {
+          "source_field": "order_date",
+          "fixed_interval": "90m",
+          "timezone": "America/Los_Angeles"
+        }
+      },
+      {
+        "terms": {
+          "source_field": "customer_gender"
+        }
+      },
+      {
+        "terms": {
+          "source_field": "geoip.city_name"
+        }
+      },
+      {
+        "terms": {
+          "source_field": "geoip.region_name"
+        }
+      },
+      {
+        "terms": {
+          "source_field": "day_of_week"
+        }
+      }
+    ],
+    "metrics": [
+      {
+        "source_field": "taxless_total_price",
+        "metrics": [{ "avg": {} }, { "sum": {} }, { "max": {} }, { "min": {} }, { "value_count": {} }]
+      },
+      {
+        "source_field": "total_quantity",
+        "metrics": [{ "avg": {} }, { "max": {} }]
+      }
+    ]
+  }
+}

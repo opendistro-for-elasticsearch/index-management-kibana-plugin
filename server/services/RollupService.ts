@@ -15,18 +15,9 @@
 
 import _ from "lodash";
 import { IClusterClient, KibanaRequest, KibanaResponseFactory, IKibanaResponse, ResponseError, RequestHandlerContext } from "kibana/server";
-import { CLUSTER, INDEX } from "../utils/constants";
-import {
-  DeleteRollupParams,
-  DeleteRollupResponse,
-  GetRollupsResponse,
-  PutRollupParams,
-  PutRollupResponse,
-  SearchResponse,
-} from "../models/interfaces";
-import { getMustQuery } from "../utils/helpers";
-import { RollupsSort, ServerResponse } from "../models/types";
-import { DocumentRollup, Rollup, RollupMetadata } from "../../models/interfaces";
+import { DeleteRollupParams, DeleteRollupResponse, GetRollupsResponse, PutRollupParams, PutRollupResponse } from "../models/interfaces";
+import { ServerResponse } from "../models/types";
+import { DocumentRollup, Rollup } from "../../models/interfaces";
 
 export default class RollupService {
   esDriver: IClusterClient;
@@ -272,46 +263,6 @@ export default class RollupService {
       });
     }
   };
-
-  explainRollup = async (
-    context: RequestHandlerContext,
-    request: KibanaRequest,
-    response: KibanaResponseFactory,
-    idParams: string
-  ): Promise<IKibanaResponse<ServerResponse<RollupMetadata[]>>> => {
-    try {
-      const params = { rollupId: idParams };
-      const { callAsCurrentUser: callWithRequest } = this.esDriver.asScoped(request);
-      const rollupMetadata = await callWithRequest("ism.explainRollup", params);
-      if (rollupMetadata) {
-        return response.custom({
-          statusCode: 200,
-          body: {
-            ok: true,
-            response: rollupMetadata,
-          },
-        });
-      } else {
-        return response.custom({
-          statusCode: 200,
-          body: {
-            ok: false,
-            error: "Failed to load rollup metadata",
-          },
-        });
-      }
-    } catch (err) {
-      console.error("Index Management - RollupService - explainRollup:", err);
-      return response.custom({
-        statusCode: 200,
-        body: {
-          ok: false,
-          error: "Explain rollup: " + err.message,
-        },
-      });
-    }
-  };
-
   /**
    * Performs a fuzzy search request on rollup id
    */
@@ -322,51 +273,40 @@ export default class RollupService {
   ): Promise<IKibanaResponse<ServerResponse<GetRollupsResponse>>> => {
     try {
       const { from, size, search, sortDirection, sortField } = request.query as {
-        from: string;
-        size: string;
+        from: number;
+        size: number;
         search: string;
         sortDirection: string;
         sortField: string;
       };
 
-      const rollupSorts: RollupsSort = {
-        id: "rollup.rollup_id.keyword",
-        "rollup.rollup.description": "rollup.description.keyword",
-        "rollup.rollup.last_updated_time": "rollup.last_updated_time",
-      };
       const params = {
-        index: INDEX.OPENDISTRO_ISM_CONFIG,
-        seq_no_primary_term: true,
-        body: {
-          size,
-          from,
-          sort: rollupSorts[sortField] ? [{ [rollupSorts[sortField]]: sortDirection }] : [],
-          query: {
-            bool: {
-              filter: [{ exists: { field: "rollup" } }],
-              must: getMustQuery("rollup.rollup_id", search),
-            },
-          },
-        },
+        from,
+        size,
+        search,
+        sortField,
+        sortDirection,
       };
 
       const { callAsCurrentUser: callWithRequest } = this.esDriver.asScoped(request);
-      const searchResponse: SearchResponse<any> = await callWithRequest("search", params);
-      const totalRollups = searchResponse.hits.total.value;
-
-      const rollups = searchResponse.hits.hits.map((hit) => ({
-        _seqNo: hit._seq_no as number,
-        _primaryTerm: hit._primary_term as number,
-        _id: hit._id,
-        rollup: hit._source,
+      const getRollupResponse = await callWithRequest("ism.getRollups", params);
+      const totalRollups = getRollupResponse.total_rollups;
+      const rollups = getRollupResponse.rollups.map((rollup: DocumentRollup) => ({
+        _seqNo: rollup._seqNo as number,
+        _primaryTerm: rollup._primaryTerm as number,
+        _id: rollup._id,
+        rollup: rollup.rollup,
         metadata: null,
       }));
+
+      // Call getExplain if any rollup job exists
       if (totalRollups) {
-        const ids = rollups.map((rollup) => rollup._id).join(",");
-        const explainResponse = await this.explainRollup(context, request, response, ids);
-        if (explainResponse.payload.ok) {
-          rollups.map((item) => {
-            item.metadata = explainResponse.payload.response[item._id];
+        // Concat rollup job ids
+        const ids = rollups.map((rollup: DocumentRollup) => rollup._id).join(",");
+        const explainResponse = await callWithRequest("ism.explainRollup", { rollupId: ids });
+        if (!explainResponse.error) {
+          rollups.map((rollup: DocumentRollup) => {
+            rollup.metadata = explainResponse[rollup._id];
           });
           return response.custom({
             statusCode: 200,
@@ -375,7 +315,10 @@ export default class RollupService {
         } else
           return response.custom({
             statusCode: 200,
-            body: { ok: false, error: explainResponse.payload.error },
+            body: {
+              ok: false,
+              error: explainResponse ? explainResponse.error : "An error occurred when calling getExplain API.",
+            },
           });
       }
       return response.custom({

@@ -80,7 +80,7 @@ export interface PutRollupResponse {
   _id: string;
   _primary_term: number;
   _seq_no: number;
-  rollup: { rollup: RollupItem };
+  rollup: { rollup: Rollup };
 }
 
 export interface IndexUpdateResponse {
