@@ -48,5 +48,11 @@ declare namespace Cypress {
      * cy.createIndex("some_index", "some_policy")
      */
     createIndex(index: string, settings?: object): Chainable<any>;
+    /**
+     * Creates a rollup
+     * @example
+     * cy.createRollup("some_rollup", { "rollup": { ... } })
+     */
+    createRollup(policyId: string, policyJSON: object): Chainable<any>;
   }
 }

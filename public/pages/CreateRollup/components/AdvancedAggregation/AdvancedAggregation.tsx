@@ -484,6 +484,7 @@ export default class AdvancedAggregation extends Component<AdvancedAggregationPr
                       this.closeModal();
                       this.onClickAdd();
                     }}
+                    data-test-subj="addFieldsAggregationAdd"
                   >
                     Add
                   </EuiButton>
