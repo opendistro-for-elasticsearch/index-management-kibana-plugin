@@ -273,18 +273,25 @@ export default class RollupService {
   ): Promise<IKibanaResponse<ServerResponse<GetRollupsResponse>>> => {
     try {
       const { from, size, search, sortDirection, sortField } = request.query as {
-        from: number;
-        size: number;
+        from: string;
+        size: string;
         search: string;
         sortDirection: string;
         sortField: string;
       };
 
+      const rollupSortMap: { [key: string]: string } = {
+        _id: "rollup.rollup_id.keyword",
+        "rollup.source_index": "rollup.source_index.keyword",
+        "rollup.target_index": "rollup.target_index.keyword",
+        "rollup.rollup.enabled": "rollup.enabled",
+      };
+
       const params = {
-        from,
-        size,
+        from: parseInt(from, 10),
+        size: parseInt(size, 10),
         search,
-        sortField,
+        sortField: rollupSortMap[sortField] || rollupSortMap._id,
         sortDirection,
       };
 

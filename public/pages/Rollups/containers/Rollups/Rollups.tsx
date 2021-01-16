@@ -342,14 +342,14 @@ export default class Rollups extends Component<RollupsProps, RollupsState> {
         render: (_id) => <EuiLink onClick={() => this.props.history.push(`${ROUTES.ROLLUP_DETAILS}?id=${_id}`)}>{_id}</EuiLink>,
       },
       {
-        field: "rollup.rollup.source_index",
+        field: "rollup.source_index",
         name: "Source index",
         sortable: true,
         textOnly: true,
         truncateText: true,
       },
       {
-        field: "rollup.rollup.target_index",
+        field: "rollup.target_index",
         name: "Target index",
         sortable: true,
         textOnly: true,
@@ -374,7 +374,7 @@ export default class Rollups extends Component<RollupsProps, RollupsState> {
       {
         field: "metadata.rollup_metadata.continuous",
         name: "Next rollup window",
-        sortable: true,
+        sortable: false,
         textOnly: true,
         render: (metadata) =>
           metadata == null ? "-" : renderTime(metadata.next_window_start_time) + " - " + renderTime(metadata.next_window_end_time),
@@ -382,7 +382,7 @@ export default class Rollups extends Component<RollupsProps, RollupsState> {
       {
         field: "metadata",
         name: "Rollup job status",
-        sortable: true,
+        sortable: false,
         textOnly: true,
         render: (metadata) => renderStatus(metadata),
       },
