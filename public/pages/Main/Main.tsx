@@ -46,7 +46,7 @@ enum Navigation {
   UltraWarmIndices = "UltraWarm indices",
   ColdIndices = "Cold indices",
   PolicyManagedIndices = "Policy managed indices",
-  SharedRepositories = "Shared repositories",
+  Console = "Console",
 }
 
 enum Pathname {
@@ -54,6 +54,7 @@ enum Pathname {
   ManagedIndices = "/managed-indices",
   Indices = "/indices",
   Rollups = "/rollups",
+  Console = "/console",
 }
 
 interface MainProps extends RouteComponentProps {}
@@ -132,8 +133,10 @@ export default class Main extends Component<MainProps, object> {
             ],
           },
           {
-            name: Navigation.SharedRepositories,
+            name: Navigation.Console,
             id: 7,
+            href: `#${Pathname.Console}`,
+            isSelected: pathname === Pathname.Console,
           },
         ],
       },
@@ -233,6 +236,10 @@ export default class Main extends Component<MainProps, object> {
                                 <RollupDetails {...props} rollupService={services.rollupService} />
                               </div>
                             )}
+                          />
+                          <Route
+                            path={ROUTES.CONSOLE}
+                            render={(props: RouteComponentProps) => <div style={{ padding: "25px 25px" }}></div>}
                           />
                           <Redirect from="/" to={ROUTES.INDEX_POLICIES} />
                         </Switch>

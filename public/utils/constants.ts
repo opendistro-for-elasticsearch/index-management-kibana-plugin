@@ -30,6 +30,7 @@ export const ROUTES = Object.freeze({
   CREATE_ROLLUP: "/create-rollup",
   EDIT_ROLLUP: "/edit-rollup",
   ROLLUP_DETAILS: "/rollup-details",
+  CONSOLE: "/console",
 });
 
 export const BREADCRUMBS = Object.freeze({
