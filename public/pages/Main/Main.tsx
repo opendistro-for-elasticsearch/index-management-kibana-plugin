@@ -13,10 +13,10 @@
  * permissions and limitations under the License.
  */
 
-import React, { Component, useRef } from "react";
+import React, { Component, useEffect, useRef } from "react";
 import { Switch, Route, Redirect, RouteComponentProps } from "react-router-dom";
 // @ts-ignore
-import { EuiSideNav, EuiPage, EuiPageBody, EuiPageSideBar } from "@elastic/eui";
+import { EuiSideNav, EuiPage, EuiPageBody, EuiPageSideBar, EuiTabs, EuiToolTip, EuiTab } from "@elastic/eui";
 import { CoreStart } from "kibana/public";
 import Policies from "../Policies";
 import ManagedIndices from "../ManagedIndices";
@@ -34,6 +34,7 @@ import EditRollup from "../EditRollup/containers";
 import RollupDetails from "../RollupDetails/containers/RollupDetails";
 import { IndexManagementPlugin } from "../../plugin";
 import { IndexManagementApp } from "../../index_management";
+import { DevToolApp } from "../../../../../src/plugins/dev_tools/public/dev_tool";
 
 enum Navigation {
   IndexManagement = "Index Management",
@@ -61,6 +62,70 @@ enum Pathname {
 
 interface MainProps extends RouteComponentProps {
   indexManagementApps: readonly IndexManagementApp[];
+}
+
+interface IndexManagementAppsWrapperProps {
+  indexManagementApps: readonly IndexManagementApp[];
+  activeIndexManagement: IndexManagementApp;
+  updateRoute: (newRoute: string) => void;
+}
+
+interface MountedIndexManagementDescriptor {
+  indexManagement: IndexManagementApp;
+  mountpoint: HTMLElement;
+  unmountHandler: () => void;
+}
+
+function IndexManagementAppsWrapper({ indexManagementApps, activeIndexManagement, updateRoute }: IndexManagementAppsWrapperProps) {
+  const mountedTool = useRef<MountedIndexManagementDescriptor | null>(null);
+
+  useEffect(
+    () => () => {
+      if (mountedTool.current) {
+        mountedTool.current.unmountHandler();
+      }
+    },
+    []
+  );
+
+  return (
+    <main className="ismApp">
+      <div
+        className="ismApp__container"
+        role="tabpanel"
+        // data-test-subj={activeDevTool.id}
+        ref={async (element) => {
+          if (
+            element &&
+            (mountedTool.current === null ||
+              mountedTool.current.indexManagement !== activeIndexManagement ||
+              mountedTool.current.mountpoint !== element)
+          ) {
+            if (mountedTool.current) {
+              mountedTool.current.unmountHandler();
+            }
+
+            const params = {
+              element,
+              appBasePath: "",
+              onAppLeave: () => undefined,
+              setHeaderActionMenu: () => undefined,
+              // TODO: adapt to use Core's ScopedHistory
+              history: {} as any,
+            };
+
+            const unmountHandler = await activeIndexManagement.mount(params);
+
+            mountedTool.current = {
+              indexManagement: activeIndexManagement,
+              mountpoint: element,
+              unmountHandler,
+            };
+          }
+        }}
+      />
+    </main>
+  );
 }
 
 export default class Main extends Component<MainProps, object> {
@@ -251,8 +316,11 @@ export default class Main extends Component<MainProps, object> {
                               path={`/${indexManagement.id}`}
                               render={(props) => (
                                 <div style={{ padding: "25px 25px" }}>
-                                  App console
-                                  {/*{useRef(indexManagement.mount)}*/}
+                                  <IndexManagementAppsWrapper
+                                    updateRoute={props.history.push}
+                                    activeIndexManagement={indexManagement}
+                                    indexManagementApps={indexManagementApps}
+                                  />
                                 </div>
                               )}
                             />
