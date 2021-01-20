@@ -16,14 +16,14 @@
 import { CoreStart, AppMountParameters } from "kibana/public";
 import React from "react";
 import ReactDOM from "react-dom";
-import { render, unmountComponentAtNode } from "react-dom";
 import { HashRouter as Router, Route } from "react-router-dom";
 import { IndexService, ManagedIndexService, PolicyService, RollupService, ServicesContext } from "./services";
 import { DarkModeContext } from "./components/DarkMode";
 import Main from "./pages/Main";
 import { CoreServicesContext } from "./components/core_services";
+import { IndexManagementApp } from "./index_management";
 
-export function renderApp(coreStart: CoreStart, params: AppMountParameters) {
+export function renderApp(coreStart: CoreStart, params: AppMountParameters, indexManagementApps: readonly IndexManagementApp[]) {
   const http = coreStart.http;
 
   const indexService = new IndexService(http);
@@ -34,6 +34,9 @@ export function renderApp(coreStart: CoreStart, params: AppMountParameters) {
 
   const isDarkMode = coreStart.uiSettings.get("theme:darkMode") || false;
 
+  //Debug use
+  console.log("The number of apps registered is: " + indexManagementApps.length);
+
   ReactDOM.render(
     <Router>
       <Route
@@ -41,7 +44,7 @@ export function renderApp(coreStart: CoreStart, params: AppMountParameters) {
           <DarkModeContext.Provider value={isDarkMode}>
             <ServicesContext.Provider value={services}>
               <CoreServicesContext.Provider value={coreStart}>
-                <Main {...props} />
+                <Main {...props} indexManagementApps={indexManagementApps} />
               </CoreServicesContext.Provider>
             </ServicesContext.Provider>
           </DarkModeContext.Provider>

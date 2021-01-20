@@ -13,7 +13,7 @@
  * permissions and limitations under the License.
  */
 
-import React, { Component } from "react";
+import React, { Component, useRef } from "react";
 import { Switch, Route, Redirect, RouteComponentProps } from "react-router-dom";
 // @ts-ignore
 import { EuiSideNav, EuiPage, EuiPageBody, EuiPageSideBar } from "@elastic/eui";
@@ -32,6 +32,8 @@ import { CoreServicesConsumer } from "../../components/core_services";
 import CreateRollupForm from "../CreateRollup/containers/CreateRollupForm";
 import EditRollup from "../EditRollup/containers";
 import RollupDetails from "../RollupDetails/containers/RollupDetails";
+import { IndexManagementPlugin } from "../../plugin";
+import { IndexManagementApp } from "../../index_management";
 
 enum Navigation {
   IndexManagement = "Index Management",
@@ -57,12 +59,15 @@ enum Pathname {
   Console = "/console",
 }
 
-interface MainProps extends RouteComponentProps {}
+interface MainProps extends RouteComponentProps {
+  indexManagementApps: readonly IndexManagementApp[];
+}
 
 export default class Main extends Component<MainProps, object> {
   render() {
     const {
       location: { pathname },
+      indexManagementApps,
     } = this.props;
     const sideNav = [
       {
@@ -141,6 +146,9 @@ export default class Main extends Component<MainProps, object> {
         ],
       },
     ];
+    // Debugging use to check whether the apps are passed in
+    indexManagementApps.map((indexManagement: IndexManagementApp) => console.log(indexManagement.id));
+
     return (
       <CoreServicesConsumer>
         {(core: CoreStart | null) =>
@@ -237,10 +245,24 @@ export default class Main extends Component<MainProps, object> {
                               </div>
                             )}
                           />
-                          <Route
-                            path={ROUTES.CONSOLE}
-                            render={(props: RouteComponentProps) => <div style={{ padding: "25px 25px" }}></div>}
-                          />
+                          {indexManagementApps.map((indexManagement: IndexManagementApp) => (
+                            <Route
+                              key={indexManagement.id}
+                              path={`/${indexManagement.id}`}
+                              render={(props) => (
+                                <div style={{ padding: "25px 25px" }}>
+                                  App console
+                                  {/*{useRef(indexManagement.mount)}*/}
+                                </div>
+                              )}
+                            />
+                          ))}
+                          {/*<Route*/}
+                          {/*  path={ROUTES.CONSOLE}*/}
+                          {/*  render={(props: RouteComponentProps) => <div style={{ padding: "25px 25px" }}>*/}
+                          {/*  </div>}*/}
+                          {/*/>*/}
+
                           <Redirect from="/" to={ROUTES.INDEX_POLICIES} />
                         </Switch>
                       </EuiPageBody>

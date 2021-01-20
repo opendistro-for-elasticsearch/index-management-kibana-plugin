@@ -16,13 +16,20 @@
 import { AppMountParameters, CoreSetup, CoreStart, Plugin, PluginInitializerContext } from "../../../src/core/public";
 import { IndexManagementPluginSetup, IndexManagementPluginStart } from ".";
 import { createIndexManagementApp, CreateIndexManagementArgs, IndexManagementApp } from "./index_management";
+import { sortBy } from "lodash";
 
 export class IndexManagementPlugin implements Plugin<IndexManagementPluginSetup, IndexManagementPluginStart> {
+  //TODO: Utilize initializerContext if needed for plugin registration
+
   constructor(
     private readonly initializerContext: PluginInitializerContext,
     private readonly indexManagement: Map<string, IndexManagementApp>
   ) {
     // can retrieve config from initializerContext
+  }
+
+  private getSortedIndexManagements(): readonly IndexManagementApp[] {
+    return sortBy([...this.indexManagement.values()], "order");
   }
 
   public setup(core: CoreSetup, indexManagement: IndexManagementPlugin): IndexManagementPluginSetup {
@@ -38,9 +45,10 @@ export class IndexManagementPlugin implements Plugin<IndexManagementPluginSetup,
       mount: async (params: AppMountParameters) => {
         const { renderApp } = await import("./index_management_app");
         const [coreStart, depsStart] = await core.getStartServices();
-        return renderApp(coreStart, params);
+        return renderApp(coreStart, params, this.getSortedIndexManagements());
       },
     });
+
     return {
       register: (indexManagementArgs: CreateIndexManagementArgs) => {
         if (this.indexManagement.has(indexManagementArgs.id)) {
@@ -55,6 +63,10 @@ export class IndexManagementPlugin implements Plugin<IndexManagementPluginSetup,
   }
 
   public start(core: CoreStart): IndexManagementPluginStart {
+    // TODO: Hide sections when meeting certain conditions
+    // if (this.getSortedIndexManagements().length === 0) {
+    //   this.appStateUpdater.next(() => ({ navLinkStatus: AppNavLinkStatus.hidden }));
+    // }
     return {};
   }
 }

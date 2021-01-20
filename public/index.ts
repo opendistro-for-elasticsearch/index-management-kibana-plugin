@@ -23,5 +23,5 @@ export interface IndexManagementPluginSetup {
 export interface IndexManagementPluginStart {}
 
 export function plugin(initializerContext: PluginInitializerContext) {
-  return new IndexManagementPlugin(initializerContext);
+  return new IndexManagementPlugin(initializerContext, new Map<string, IndexManagementApp>());
 }
