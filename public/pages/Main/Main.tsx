@@ -16,7 +16,7 @@
 import React, { Component, useEffect, useRef } from "react";
 import { Switch, Route, Redirect, RouteComponentProps } from "react-router-dom";
 // @ts-ignore
-import { EuiSideNav, EuiPage, EuiPageBody, EuiPageSideBar, EuiTabs, EuiToolTip, EuiTab } from "@elastic/eui";
+import { EuiSideNav, EuiPage, EuiPageBody, EuiPageSideBar, EuiTabs, EuiToolTip, EuiTab, EuiPanel } from "@elastic/eui";
 import { CoreStart } from "kibana/public";
 import Policies from "../Policies";
 import ManagedIndices from "../ManagedIndices";
@@ -32,9 +32,7 @@ import { CoreServicesConsumer } from "../../components/core_services";
 import CreateRollupForm from "../CreateRollup/containers/CreateRollupForm";
 import EditRollup from "../EditRollup/containers";
 import RollupDetails from "../RollupDetails/containers/RollupDetails";
-import { IndexManagementPlugin } from "../../plugin";
 import { IndexManagementApp } from "../../index_management";
-import { DevToolApp } from "../../../../../src/plugins/dev_tools/public/dev_tool";
 
 enum Navigation {
   IndexManagement = "Index Management",
@@ -50,6 +48,7 @@ enum Navigation {
   ColdIndices = "Cold indices",
   PolicyManagedIndices = "Policy managed indices",
   Console = "Console",
+  SecurityPOC = "Security POC",
 }
 
 enum Pathname {
@@ -58,6 +57,7 @@ enum Pathname {
   Indices = "/indices",
   Rollups = "/rollups",
   Console = "/console",
+  SecurityPOC = "/security-poc",
 }
 
 interface MainProps extends RouteComponentProps {
@@ -89,11 +89,9 @@ function IndexManagementAppsWrapper({ indexManagementApps, activeIndexManagement
   );
 
   return (
-    <main className="ismApp">
+    <EuiPanel style={{ paddingLeft: "0px", paddingRight: "0px" }}>
       <div
-        className="ismApp__container"
-        role="tabpanel"
-        // data-test-subj={activeDevTool.id}
+        style={{ padding: "25px 25px", height: "100%" }}
         ref={async (element) => {
           if (
             element &&
@@ -124,7 +122,7 @@ function IndexManagementAppsWrapper({ indexManagementApps, activeIndexManagement
           }
         }}
       />
-    </main>
+    </EuiPanel>
   );
 }
 
@@ -208,11 +206,15 @@ export default class Main extends Component<MainProps, object> {
             href: `#${Pathname.Console}`,
             isSelected: pathname === Pathname.Console,
           },
+          {
+            name: Navigation.SecurityPOC,
+            id: 8,
+            href: `#${Pathname.SecurityPOC}`,
+            isSelected: pathname === Pathname.SecurityPOC,
+          },
         ],
       },
     ];
-    // Debugging use to check whether the apps are passed in
-    indexManagementApps.map((indexManagement: IndexManagementApp) => console.log(indexManagement.id));
 
     return (
       <CoreServicesConsumer>
@@ -315,21 +317,15 @@ export default class Main extends Component<MainProps, object> {
                               key={indexManagement.id}
                               path={`/${indexManagement.id}`}
                               render={(props) => (
-                                <div style={{ padding: "25px 25px" }}>
-                                  <IndexManagementAppsWrapper
-                                    updateRoute={props.history.push}
-                                    activeIndexManagement={indexManagement}
-                                    indexManagementApps={indexManagementApps}
-                                  />
-                                </div>
+                                <IndexManagementAppsWrapper
+                                  {...props}
+                                  updateRoute={props.history.push}
+                                  activeIndexManagement={indexManagement}
+                                  indexManagementApps={indexManagementApps}
+                                />
                               )}
                             />
                           ))}
-                          {/*<Route*/}
-                          {/*  path={ROUTES.CONSOLE}*/}
-                          {/*  render={(props: RouteComponentProps) => <div style={{ padding: "25px 25px" }}>*/}
-                          {/*  </div>}*/}
-                          {/*/>*/}
 
                           <Redirect from="/" to={ROUTES.INDEX_POLICIES} />
                         </Switch>
