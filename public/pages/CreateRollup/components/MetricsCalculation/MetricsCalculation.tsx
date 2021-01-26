@@ -647,6 +647,7 @@ export default class MetricsCalculation extends Component<MetricsCalculationProp
                       this.closeModal();
                       this.onClickAdd();
                     }}
+                    data-test-subj="addFieldsMetricAdd"
                   >
                     Add
                   </EuiButton>

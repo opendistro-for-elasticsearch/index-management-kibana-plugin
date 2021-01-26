@@ -14,6 +14,7 @@
  */
 
 export const API_ROUTE_PREFIX = "/_opendistro/_ism";
+export const API_ROUTE_PREFIX_ROLLUP = "/_opendistro/_rollup";
 
 export const INDEX = {
   OPENDISTRO_ISM_CONFIG: ".opendistro-ism-config",
@@ -26,6 +27,7 @@ export const API = {
   ADD_POLICY_BASE: `${API_ROUTE_PREFIX}/add`,
   REMOVE_POLICY_BASE: `${API_ROUTE_PREFIX}/remove`,
   CHANGE_POLICY_BASE: `${API_ROUTE_PREFIX}/change_policy`,
+  ROLLUP_JOBS_BASE: `${API_ROUTE_PREFIX_ROLLUP}/jobs`,
 };
 
 export const PLUGIN_NAME = "opendistro_index_management_kibana";

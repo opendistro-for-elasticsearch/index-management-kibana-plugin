@@ -339,7 +339,11 @@ export default class Rollups extends Component<RollupsProps, RollupsState> {
         sortable: true,
         textOnly: true,
         truncateText: true,
-        render: (_id) => <EuiLink onClick={() => this.props.history.push(`${ROUTES.ROLLUP_DETAILS}?id=${_id}`)}>{_id}</EuiLink>,
+        render: (_id) => (
+          <EuiLink onClick={() => this.props.history.push(`${ROUTES.ROLLUP_DETAILS}?id=${_id}`)} data-test-subj={`rollupLink_${_id}`}>
+            {_id}
+          </EuiLink>
+        ),
       },
       {
         field: "rollup.source_index",

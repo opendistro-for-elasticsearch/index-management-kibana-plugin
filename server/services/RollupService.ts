@@ -273,8 +273,8 @@ export default class RollupService {
   ): Promise<IKibanaResponse<ServerResponse<GetRollupsResponse>>> => {
     try {
       const { from, size, search, sortDirection, sortField } = request.query as {
-        from: string;
-        size: string;
+        from: number;
+        size: number;
         search: string;
         sortDirection: string;
         sortField: string;
