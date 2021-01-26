@@ -39,14 +39,7 @@ import GeneralInformation from "../../components/GeneralInformation/GeneralInfor
 import RollupStatus from "../../components/RollupStatus/RollupStatus";
 import AggregationAndMetricsSettings from "../../components/AggregationAndMetricsSettings/AggregationAndMetricsSettings";
 import { parseTimeunit } from "../../../CreateRollup/utils/helpers";
-import {
-  DimensionItem,
-  MetricItem,
-  RollupDimensionItem,
-  RollupMetadata,
-  RollupMetricItem,
-  DateHistogramItem,
-} from "../../../../../models/interfaces";
+import { DimensionItem, MetricItem, RollupDimensionItem, RollupMetadata, RollupMetricItem } from "../../../../../models/interfaces";
 import { renderTime } from "../../../Rollups/utils/helpers";
 import DeleteModal from "../../../Rollups/components/DeleteModal";
 import { CoreServicesContext } from "../../../../components/core_services";
