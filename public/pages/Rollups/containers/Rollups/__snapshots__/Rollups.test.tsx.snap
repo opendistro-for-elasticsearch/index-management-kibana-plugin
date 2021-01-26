@@ -261,14 +261,14 @@ exports[`<Rollups /> spec renders the component 1`] = `
                 </th>
                 <th
                   aria-live="polite"
-                  aria-sort="none"
+                  aria-sort="descending"
                   class="euiTableHeaderCell"
                   data-test-subj="tableHeaderCell__id_0"
                   role="columnheader"
                   scope="col"
                 >
                   <button
-                    class="euiTableHeaderButton"
+                    class="euiTableHeaderButton euiTableHeaderButton-isSorted"
                     data-test-subj="tableHeaderSortButton"
                     type="button"
                   >
@@ -277,10 +277,11 @@ exports[`<Rollups /> spec renders the component 1`] = `
                     >
                       <span
                         class="euiTableCellContent__text"
-                        title="Name"
+                        title="Name; Sorted in descending order"
                       >
                         Name
                       </span>
+                      EuiIconMock
                       <span
                         class="euiScreenReaderOnly"
                       >
@@ -293,7 +294,7 @@ exports[`<Rollups /> spec renders the component 1`] = `
                   aria-live="polite"
                   aria-sort="none"
                   class="euiTableHeaderCell"
-                  data-test-subj="tableHeaderCell_rollup.rollup.source_index_1"
+                  data-test-subj="tableHeaderCell_rollup.source_index_1"
                   role="columnheader"
                   scope="col"
                 >
@@ -323,7 +324,7 @@ exports[`<Rollups /> spec renders the component 1`] = `
                   aria-live="polite"
                   aria-sort="none"
                   class="euiTableHeaderCell"
-                  data-test-subj="tableHeaderCell_rollup.rollup.target_index_2"
+                  data-test-subj="tableHeaderCell_rollup.target_index_2"
                   role="columnheader"
                   scope="col"
                 >
@@ -410,64 +411,38 @@ exports[`<Rollups /> spec renders the component 1`] = `
                   </button>
                 </th>
                 <th
-                  aria-live="polite"
-                  aria-sort="none"
                   class="euiTableHeaderCell"
                   data-test-subj="tableHeaderCell_metadata.rollup_metadata.continuous_5"
                   role="columnheader"
                   scope="col"
                 >
-                  <button
-                    class="euiTableHeaderButton"
-                    data-test-subj="tableHeaderSortButton"
-                    type="button"
+                  <div
+                    class="euiTableCellContent"
                   >
                     <span
-                      class="euiTableCellContent"
+                      class="euiTableCellContent__text"
+                      title="Next rollup window"
                     >
-                      <span
-                        class="euiTableCellContent__text"
-                        title="Next rollup window"
-                      >
-                        Next rollup window
-                      </span>
-                      <span
-                        class="euiScreenReaderOnly"
-                      >
-                        Click to sort in ascending order
-                      </span>
+                      Next rollup window
                     </span>
-                  </button>
+                  </div>
                 </th>
                 <th
-                  aria-live="polite"
-                  aria-sort="none"
                   class="euiTableHeaderCell"
                   data-test-subj="tableHeaderCell_metadata_6"
                   role="columnheader"
                   scope="col"
                 >
-                  <button
-                    class="euiTableHeaderButton"
-                    data-test-subj="tableHeaderSortButton"
-                    type="button"
+                  <div
+                    class="euiTableCellContent"
                   >
                     <span
-                      class="euiTableCellContent"
+                      class="euiTableCellContent__text"
+                      title="Rollup job status"
                     >
-                      <span
-                        class="euiTableCellContent__text"
-                        title="Rollup job status"
-                      >
-                        Rollup job status
-                      </span>
-                      <span
-                        class="euiScreenReaderOnly"
-                      >
-                        Click to sort in ascending order
-                      </span>
+                      Rollup job status
                     </span>
-                  </button>
+                  </div>
                 </th>
               </tr>
             </thead>
