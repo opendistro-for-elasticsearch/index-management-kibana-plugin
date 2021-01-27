@@ -169,7 +169,7 @@ export default class PolicyService {
   ): Promise<IKibanaResponse<ServerResponse<GetPoliciesResponse>>> => {
     try {
       const { from = 0, size = 20, search, sortDirection = "desc", sortField = "id" } = request.query as {
-        from: number;
+        from: string;
         size: string;
         search: string;
         sortDirection: string;
@@ -182,13 +182,12 @@ export default class PolicyService {
         "policy.policy.last_updated_time": "policy.last_updated_time",
       };
 
-      const str = search.trim();
       const params = {
-        size,
         from,
+        size,
         sortOrder: sortDirection,
-        sortField: policySorts[sortField],
-        queryString: str ? `*${str.split(" ").join("* *")}*` : "*",
+        sortField: policySorts[sortField] || policySorts.id,
+        queryString: search.trim() ? `*${search.trim().split(" ").join("* *")}*` : "*",
       };
 
       const { callAsCurrentUser: callWithRequest } = this.esDriver.asScoped(request);
@@ -198,10 +197,10 @@ export default class PolicyService {
         seqNo: p._seq_no,
         primaryTerm: p._primary_term,
         id: p._id,
-        policy: { policy: p.policy },
+        policy: p.policy,
       }));
 
-      const totalPolicies: number = getResponse.totalPolicies;
+      const totalPolicies: number = getResponse.total_policies;
 
       return response.custom({
         statusCode: 200,

@@ -99,7 +99,7 @@ export default class ManagedIndexService {
 
       const managedIndices: ManagedIndexItem[] = [];
       for (const indexName in explainAllResponse) {
-        if (indexName == "totalManagedIndices") continue;
+        if (indexName == "total_managed_indices") continue;
         const metadata = explainAllResponse[indexName] as ExplainAPIManagedIndexMetaData;
         let policy, seqNo, primaryTerm;
         const getResponse = await callWithRequest("ism.getPolicy", { policyId: metadata.policy_id });
@@ -118,7 +118,7 @@ export default class ManagedIndexService {
         });
       }
 
-      const totalManagedIndices: number = explainAllResponse.totalManagedIndices;
+      const totalManagedIndices: number = explainAllResponse.total_managed_indices;
 
       return response.custom({
         statusCode: 200,

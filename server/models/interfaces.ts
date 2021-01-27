@@ -36,7 +36,7 @@ export interface ExplainResponse {
 
 export interface ExplainAllResponse {
   [index: string]: ExplainAPIManagedIndexMetaData | number;
-  totalManagedIndices: number;
+  total_managed_indices: number;
 }
 
 export interface GetManagedIndicesResponse {

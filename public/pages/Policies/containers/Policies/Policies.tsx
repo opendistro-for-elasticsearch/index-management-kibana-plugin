@@ -106,7 +106,7 @@ export default class Policies extends Component<PoliciesProps, PoliciesState> {
         ),
       },
       {
-        field: "policy.policy.description",
+        field: "policy.description",
         name: "Description",
         sortable: true,
         truncateText: true,
@@ -114,7 +114,7 @@ export default class Policies extends Component<PoliciesProps, PoliciesState> {
         width: "150px",
       },
       {
-        field: "policy.policy.last_updated_time",
+        field: "policy.last_updated_time",
         name: "Last updated time",
         sortable: true,
         truncateText: false,
