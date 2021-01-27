@@ -101,11 +101,19 @@ export default class ManagedIndexService {
       for (const indexName in explainAllResponse) {
         if (indexName == "total_managed_indices") continue;
         const metadata = explainAllResponse[indexName] as ExplainAPIManagedIndexMetaData;
-        let policy, seqNo, primaryTerm;
-        const getResponse = await callWithRequest("ism.getPolicy", { policyId: metadata.policy_id });
+        let policy, seqNo, primaryTerm, getResponse;
+        try {
+          getResponse = await callWithRequest("ism.getPolicy", { policyId: metadata.policy_id });
+        } catch (err) {
+          if (err.statusCode === 404 && err.body.error.reason === "Policy not found") {
+            console.log("managed index with not existing policy");
+          } else {
+            throw err;
+          }
+        }
         policy = _.get(getResponse, "policy", null);
-        seqNo = _.get(getResponse, "_seq_no");
-        primaryTerm = _.get(getResponse, "_primary_term");
+        seqNo = _.get(getResponse, "_seq_no", null);
+        primaryTerm = _.get(getResponse, "_primary_term", null);
         managedIndices.push({
           index: metadata.index,
           indexUuid: metadata.index_uuid,
