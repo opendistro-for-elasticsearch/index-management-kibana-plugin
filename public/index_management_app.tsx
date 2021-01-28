@@ -34,9 +34,6 @@ export function renderApp(coreStart: CoreStart, params: AppMountParameters, inde
 
   const isDarkMode = coreStart.uiSettings.get("theme:darkMode") || false;
 
-  //Debug use
-  console.log("The number of apps registered is: " + indexManagementApps.length);
-
   ReactDOM.render(
     <Router>
       <Route
