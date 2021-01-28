@@ -18,47 +18,22 @@ import { Switch, Route, Redirect, RouteComponentProps } from "react-router-dom";
 // @ts-ignore
 import { EuiSideNav, EuiPage, EuiPageBody, EuiPageSideBar, EuiTabs, EuiToolTip, EuiTab, EuiPanel } from "@elastic/eui";
 import { CoreStart } from "kibana/public";
-import Policies from "../Policies";
-import ManagedIndices from "../ManagedIndices";
-import Indices from "../Indices";
-import CreatePolicy from "../CreatePolicy";
-import ChangePolicy from "../ChangePolicy";
-import Rollups from "../Rollups";
-import { ModalProvider, ModalRoot } from "../../components/Modal";
-import { ServicesConsumer } from "../../services";
-import { BrowserServices } from "../../models/interfaces";
-import { ROUTES } from "../../utils/constants";
-import { CoreServicesConsumer } from "../../components/core_services";
-import CreateRollupForm from "../CreateRollup/containers/CreateRollupForm";
-import EditRollup from "../EditRollup/containers";
-import RollupDetails from "../RollupDetails/containers/RollupDetails";
-import { IndexManagementApp } from "../../index_management";
-
-enum Navigation {
-  IndexManagement = "Index Management",
-  IndexStateManagement = "Index state management",
-  IndexPolicies = "Index Policies",
-  ManagedIndices = "Managed Indices",
-  Indices = "Indices",
-  Rollups = "Rollup Jobs",
-  Policies = "Policies",
-  All = "All",
-  HotIndices = "Hot indices",
-  UltraWarmIndices = "UltraWarm indices",
-  ColdIndices = "Cold indices",
-  PolicyManagedIndices = "Policy managed indices",
-  Console = "Console",
-  SecurityPOC = "Security POC",
-}
-
-enum Pathname {
-  IndexPolicies = "/index-policies",
-  ManagedIndices = "/managed-indices",
-  Indices = "/indices",
-  Rollups = "/rollups",
-  Console = "/console",
-  SecurityPOC = "/security-poc",
-}
+import Policies from "../../Policies";
+import ManagedIndices from "../../ManagedIndices";
+import Indices from "../../Indices";
+import CreatePolicy from "../../CreatePolicy";
+import ChangePolicy from "../../ChangePolicy";
+import Rollups from "../../Rollups";
+import { ModalProvider, ModalRoot } from "../../../components/Modal";
+import { ServicesConsumer } from "../../../services";
+import { BrowserServices } from "../../../models/interfaces";
+import { ROUTES } from "../../../utils/constants";
+import { CoreServicesConsumer } from "../../../components/core_services";
+import CreateRollupForm from "../../CreateRollup/containers/CreateRollupForm";
+import EditRollup from "../../EditRollup/containers";
+import RollupDetails from "../../RollupDetails/containers/RollupDetails";
+import { IndexManagementApp } from "../../../index_management";
+import { Navigation, Pathname } from "../utils/constants";
 
 interface MainProps extends RouteComponentProps {
   indexManagementApps: readonly IndexManagementApp[];
