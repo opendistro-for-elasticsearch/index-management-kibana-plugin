@@ -15,13 +15,10 @@
 
 export enum Navigation {
   IndexManagement = "Index Management",
-  IndexStateManagement = "Index state management",
-  IndexPolicies = "Index Policies",
-  ManagedIndices = "Managed Indices",
+  RollupJobs = "Rollup Jobs",
+  TransformJobs = "Transform jobs",
+  StateManagementPolicies = "State management policies",
   Indices = "Indices",
-  Rollups = "Rollup Jobs",
-  Policies = "Policies",
-  All = "All",
   HotIndices = "Hot indices",
   UltraWarmIndices = "UltraWarm indices",
   ColdIndices = "Cold indices",
@@ -31,10 +28,14 @@ export enum Navigation {
 }
 
 export enum Pathname {
-  IndexPolicies = "/index-policies",
-  ManagedIndices = "/managed-indices",
+  RollupJobs = "/rollup-jobs",
+  TransformJobs = "/transform-jobs",
+  StateManagementPolicies = "state-management-policies",
   Indices = "/indices",
-  Rollups = "/rollups",
+  HotIndices = "hot-indices",
+  UltraWarmIndices = "ultrawarm-indices",
+  ColdIndices = "cold-indices",
+  PolicyManagedIndices = "policy-managed-indices",
   Console = "/console",
   SecurityPOC = "/security-poc",
 }

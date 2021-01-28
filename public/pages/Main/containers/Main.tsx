@@ -114,64 +114,58 @@ export default class Main extends Component<MainProps, object> {
         href: `#${Pathname.IndexPolicies}`,
         items: [
           {
-            name: Navigation.IndexPolicies,
-            id: 1,
-            href: `#${Pathname.IndexPolicies}`,
-            isSelected: pathname === Pathname.IndexPolicies,
-          },
-          {
-            name: Navigation.ManagedIndices,
-            id: 2,
-            href: `#${Pathname.ManagedIndices}`,
-            isSelected: pathname === Pathname.ManagedIndices,
-          },
-          {
-            name: Navigation.Indices,
-            id: 3,
-            href: `#${Pathname.Indices}`,
-            isSelected: pathname === Pathname.Indices,
-          },
-          {
             name: Navigation.Rollups,
-            id: 4,
+            id: 1,
             href: `#${Pathname.Rollups}`,
             isSelected: pathname === Pathname.Rollups,
           },
-          /**
-           * The bottom two items are for integration with Leviathan.
-           * Need to look into how to define the items by checking whether Leviathan exists, and how to define the routes.
-           **/
+          // Saving a space for transform jobs
+          // {
+          //   name: Navigation.TransformJobs,
+          //   id: 2,
+          //   href: `#${Pathname.TransformJobs}`,
+          //   isSelected: pathname === Pathname.TransformJobs,
+          // },
           {
-            name: Navigation.IndexStateManagement,
-            id: 5,
-            href: `#${Pathname.IndexPolicies}`,
-            forceOpen: true,
-            items: [
-              {
-                name: Navigation.Policies,
-                id: 1,
-                href: `#${Pathname.IndexPolicies}`,
-                isSelected: pathname === Pathname.IndexPolicies,
-              },
-            ],
+            name: Navigation.StateManagementPolicies,
+            id: 3,
+            href: `#${Pathname.StateManagementPolicies}`,
+            isSelected: pathname === Pathname.StateManagementPolicies,
           },
           {
             name: Navigation.Indices,
-            id: 6,
+            id: 4,
             href: `#${Pathname.Indices}`,
+            isSelected: pathname === Pathname.Indices,
             forceOpen: true,
+            /**
+             * The bottom items are for integration with Leviathan.
+             * Need to look into how to define the items by checking whether Leviathan exists, and how to define the routes.
+             **/
             items: [
               {
-                name: Navigation.All,
+                name: Navigation.HotIndices,
                 id: 1,
-                href: `#${Pathname.Indices}`,
-                isSelected: pathname === Pathname.Indices,
+                href: `#${Pathname.HotIndices}`,
+                isSelected: pathname === Pathname.HotIndices,
+              },
+              {
+                name: Navigation.UltraWarmIndices,
+                id: 2,
+                href: `#${Pathname.UltraWarmIndices}`,
+                isSelected: pathname === Pathname.UltraWarmIndices,
+              },
+              {
+                name: Navigation.ColdIndices,
+                id: 3,
+                href: `#${Pathname.ColdIndices}`,
+                isSelected: pathname === Pathname.ColdIndices,
               },
               {
                 name: Navigation.PolicyManagedIndices,
-                id: 2,
-                href: `#${Pathname.ManagedIndices}`,
-                isSelected: pathname === Pathname.ManagedIndices,
+                id: 4,
+                href: `#${Pathname.PolicyManagedIndices}`,
+                isSelected: pathname === Pathname.PolicyManagedIndices,
               },
             ],
           },
