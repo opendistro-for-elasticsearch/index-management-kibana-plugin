@@ -15,7 +15,7 @@
 
 export enum Navigation {
   IndexManagement = "Index Management",
-  RollupJobs = "Rollup Jobs",
+  RollupJobs = "Rollup jobs",
   TransformJobs = "Transform jobs",
   StateManagementPolicies = "State management policies",
   Indices = "Indices",

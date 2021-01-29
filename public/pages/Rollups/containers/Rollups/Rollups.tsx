@@ -99,7 +99,7 @@ export default class Rollups extends Component<RollupsProps, RollupsState> {
   }
 
   async componentDidMount() {
-    this.context.chrome.setBreadcrumbs([BREADCRUMBS.INDEX_MANAGEMENT, BREADCRUMBS.ROLLUPS]);
+    this.context.chrome.setBreadcrumbs([BREADCRUMBS.INDEX_MANAGEMENT, BREADCRUMBS.ROLLUP_JOBS]);
     await this.getRollups();
   }
 

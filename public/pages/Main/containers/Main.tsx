@@ -111,13 +111,13 @@ export default class Main extends Component<MainProps, object> {
       {
         name: Navigation.IndexManagement,
         id: 0,
-        href: `#${Pathname.IndexPolicies}`,
+        href: `#${Pathname.StateManagementPolicies}`,
         items: [
           {
-            name: Navigation.Rollups,
+            name: Navigation.RollupJobs,
             id: 1,
-            href: `#${Pathname.Rollups}`,
-            isSelected: pathname === Pathname.Rollups,
+            href: `#${Pathname.RollupJobs}`,
+            isSelected: pathname === Pathname.RollupJobs,
           },
           // Saving a space for transform jobs
           // {
@@ -250,7 +250,7 @@ export default class Main extends Component<MainProps, object> {
                             )}
                           />
                           <Route
-                            path={ROUTES.ROLLUPS}
+                            path={ROUTES.ROLLUP_JOBS}
                             render={(props: RouteComponentProps) => (
                               <div style={{ padding: "25px 25px" }}>
                                 <Rollups {...props} rollupService={services.rollupService} />
@@ -281,20 +281,23 @@ export default class Main extends Component<MainProps, object> {
                               </div>
                             )}
                           />
-                          {indexManagementApps.map((indexManagement: IndexManagementApp) => (
-                            <Route
-                              key={indexManagement.id}
-                              path={`/${indexManagement.id}`}
-                              render={(props) => (
-                                <IndexManagementAppsWrapper
-                                  {...props}
-                                  updateRoute={props.history.push}
-                                  activeIndexManagement={indexManagement}
-                                  indexManagementApps={indexManagementApps}
-                                />
-                              )}
-                            />
-                          ))}
+                          {/*Routes from external plugins*/}
+                          {indexManagementApps
+                            .filter((indexManagement) => !indexManagement.isDisabled())
+                            .map((indexManagement: IndexManagementApp) => (
+                              <Route
+                                key={indexManagement.id}
+                                path={`/${indexManagement.id}`}
+                                render={(props) => (
+                                  <IndexManagementAppsWrapper
+                                    {...props}
+                                    updateRoute={props.history.push}
+                                    activeIndexManagement={indexManagement}
+                                    indexManagementApps={indexManagementApps}
+                                  />
+                                )}
+                              />
+                            ))}
 
                           <Redirect from="/" to={ROUTES.STATE_MANAGEMENT_POLICIES} />
                         </Switch>
