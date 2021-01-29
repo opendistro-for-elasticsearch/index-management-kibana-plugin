@@ -197,8 +197,8 @@ export default class Main extends Component<MainProps, object> {
                     <EuiPage>
                       {/*Hide side navigation bar when creating or editing rollup job*/}
                       {pathname != ROUTES.CREATE_ROLLUP && pathname != ROUTES.EDIT_ROLLUP && pathname != ROUTES.ROLLUP_DETAILS && (
-                        <EuiPageSideBar style={{ minWidth: 150 }}>
-                          <EuiSideNav style={{ width: 150 }} items={sideNav} />
+                        <EuiPageSideBar style={{ minWidth: 200 }}>
+                          <EuiSideNav style={{ width: 200 }} items={sideNav} />
                         </EuiPageSideBar>
                       )}
                       <EuiPageBody>
@@ -226,7 +226,7 @@ export default class Main extends Component<MainProps, object> {
                             )}
                           />
                           <Route
-                            path={ROUTES.INDEX_POLICIES}
+                            path={ROUTES.STATE_MANAGEMENT_POLICIES}
                             render={(props: RouteComponentProps) => (
                               <div style={{ padding: "25px 25px" }}>
                                 <Policies {...props} policyService={services.policyService} />
@@ -234,7 +234,7 @@ export default class Main extends Component<MainProps, object> {
                             )}
                           />
                           <Route
-                            path={ROUTES.MANAGED_INDICES}
+                            path={ROUTES.POLICY_MANAGED_INDICES}
                             render={(props: RouteComponentProps) => (
                               <div>
                                 <ManagedIndices {...props} managedIndexService={services.managedIndexService} />
@@ -296,7 +296,7 @@ export default class Main extends Component<MainProps, object> {
                             />
                           ))}
 
-                          <Redirect from="/" to={ROUTES.INDEX_POLICIES} />
+                          <Redirect from="/" to={ROUTES.STATE_MANAGEMENT_POLICIES} />
                         </Switch>
                       </EuiPageBody>
                     </EuiPage>
