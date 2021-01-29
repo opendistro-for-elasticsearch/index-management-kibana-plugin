@@ -169,8 +169,8 @@ export default class PolicyService {
   ): Promise<IKibanaResponse<ServerResponse<GetPoliciesResponse>>> => {
     try {
       const { from = 0, size = 20, search, sortDirection = "desc", sortField = "id" } = request.query as {
-        from: string;
-        size: string;
+        from: number;
+        size: number;
         search: string;
         sortDirection: string;
         sortField: string;

@@ -257,6 +257,7 @@ export default class EditRollup extends Component<EditRollupProps, EditRollupSta
         this.context.notifications.toasts.addSuccess(`Changes to "${response.response._id}" saved!`);
         this.props.history.push(ROUTES.ROLLUPS);
       } else {
+        this.context.notifications.toasts.addDanger(response.error);
         this.setState({ submitError: response.error });
       }
     } catch (err) {
