@@ -20,7 +20,6 @@ import ChangeManagedIndices from "./ChangeManagedIndices";
 import { browserServicesMock } from "../../../../../test/mocks";
 import coreServicesMock from "../../../../../test/mocks/coreServicesMock";
 import { CoreServicesContext } from "../../../../components/core_services";
-import RetryModal from "../../../ManagedIndices/components/RetryModal";
 
 describe("<ChangeManagedIndices /> spec", () => {
   it("renders the component", async () => {

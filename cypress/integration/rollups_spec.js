@@ -38,7 +38,7 @@ describe("Rollups", () => {
     cy.get(`button[data-test-subj="addSampleDataSetecommerce"]`).click({ force: true });
 
     // Verify that sample data is add by checking toast notification
-    cy.contains("Sample eCommerce orders installed");
+    cy.contains("Sample eCommerce orders installed", { timeout: 60000 });
 
     // Visit ISM Kibana
     cy.visit(`${Cypress.env("kibana")}/app/${PLUGIN_NAME}#/rollups`);

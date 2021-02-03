@@ -21,6 +21,6 @@ export const DEFAULT_QUERY_PARAMS = {
   from: 0,
   size: 20,
   search: "",
-  sortField: "name",
+  sortField: "_id",
   sortDirection: SortDirection.DESC,
 };
