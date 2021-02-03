@@ -22,8 +22,9 @@ import { DarkModeContext } from "./components/DarkMode";
 import Main from "./pages/Main";
 import { CoreServicesContext } from "./components/core_services";
 import { IndexManagementApp } from "./index_management";
+import { IndexManagementItem } from "./pages/Main/components/IndexManagementItem";
 
-export function renderApp(coreStart: CoreStart, params: AppMountParameters, indexManagementApps: readonly IndexManagementApp[]) {
+export function renderApp(coreStart: CoreStart, params: AppMountParameters, indexManagementApps: readonly IndexManagementItem[]) {
   const http = coreStart.http;
 
   const indexService = new IndexService(http);

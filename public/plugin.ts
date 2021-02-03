@@ -15,20 +15,20 @@
 
 import { AppMountParameters, CoreSetup, CoreStart, Plugin, PluginInitializerContext } from "../../../src/core/public";
 import { IndexManagementPluginSetup, IndexManagementPluginStart } from ".";
-import { createIndexManagementApp, CreateIndexManagementArgs, IndexManagementApp } from "./index_management";
 import { sortBy } from "lodash";
+import { createIndexManagementItem, CreateIndexManagementItemArgs, IndexManagementItem } from "./pages/Main/components/IndexManagementItem";
 
 export class IndexManagementPlugin implements Plugin<IndexManagementPluginSetup, IndexManagementPluginStart> {
   //TODO: Utilize initializerContext if needed for plugin registration
 
   constructor(
     private readonly initializerContext: PluginInitializerContext,
-    private readonly indexManagement: Map<string, IndexManagementApp>
+    private readonly indexManagement: Map<string, IndexManagementItem>
   ) {
     // can retrieve config from initializerContext
   }
 
-  private getSortedIndexManagements(): readonly IndexManagementApp[] {
+  private getSortedIndexManagements(): readonly IndexManagementItem[] {
     return sortBy([...this.indexManagement.values()], "order");
   }
 
@@ -50,12 +50,12 @@ export class IndexManagementPlugin implements Plugin<IndexManagementPluginSetup,
     });
 
     return {
-      register: (indexManagementArgs: CreateIndexManagementArgs) => {
+      register: (indexManagementArgs: CreateIndexManagementItemArgs) => {
         if (this.indexManagement.has(indexManagementArgs.id)) {
           throw new Error(`Index management with id [${indexManagementArgs.id}] has already been registered. Use a unique id.`);
         }
 
-        const indexManagement = createIndexManagementApp(indexManagementArgs);
+        const indexManagement = createIndexManagementItem(indexManagementArgs);
         this.indexManagement.set(indexManagement.id, indexManagement);
         return indexManagement;
       },

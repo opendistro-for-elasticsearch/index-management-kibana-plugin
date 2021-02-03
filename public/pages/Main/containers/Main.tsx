@@ -13,11 +13,11 @@
  * permissions and limitations under the License.
  */
 
-import React, { Component, useEffect, useRef } from "react";
+import React, { Component, useEffect, useRef, useState } from "react";
 import { Switch, Route, Redirect, RouteComponentProps } from "react-router-dom";
 // @ts-ignore
 import { EuiSideNav, EuiPage, EuiPageBody, EuiPageSideBar, EuiTabs, EuiToolTip, EuiTab, EuiPanel } from "@elastic/eui";
-import { CoreStart } from "kibana/public";
+import { AppMountParameters, ChromeBreadcrumb, CoreStart } from "kibana/public";
 import Policies from "../../Policies";
 import ManagedIndices from "../../ManagedIndices";
 import Indices from "../../Indices";
@@ -32,21 +32,31 @@ import { CoreServicesConsumer } from "../../../components/core_services";
 import CreateRollupForm from "../../CreateRollup/containers/CreateRollupForm";
 import EditRollup from "../../EditRollup/containers";
 import RollupDetails from "../../RollupDetails/containers/RollupDetails";
-import { IndexManagementApp } from "../../../index_management";
-import { Navigation, Pathname } from "../utils/constants";
+import { MainSectionsServiceStart, Navigation, Pathname } from "../utils/constants";
+import { IndexManagementSection } from "../components/IndexManagementSection";
+import { IndexManagementItem } from "../components/IndexManagementItem";
 
 interface MainProps extends RouteComponentProps {
-  indexManagementApps: readonly IndexManagementApp[];
+  indexManagementApps: readonly IndexManagementItem[];
+  appBasePath: string;
+  history: AppMountParameters["history"];
+  dependencies: IndexManagementAppDependencies;
+}
+
+export interface IndexManagementAppDependencies {
+  sections: MainSectionsServiceStart;
+  kibanaVersion: string;
+  setBreadcrumbs: (newBreadcrumbs: ChromeBreadcrumb[]) => void;
 }
 
 interface IndexManagementAppsWrapperProps {
-  indexManagementApps: readonly IndexManagementApp[];
-  activeIndexManagement: IndexManagementApp;
+  indexManagementApps: readonly IndexManagementItem[];
+  activeIndexManagement: IndexManagementItem;
   updateRoute: (newRoute: string) => void;
 }
 
 interface MountedIndexManagementDescriptor {
-  indexManagement: IndexManagementApp;
+  indexManagement: IndexManagementItem;
   mountpoint: HTMLElement;
   unmountHandler: () => void;
 }
@@ -106,7 +116,12 @@ export default class Main extends Component<MainProps, object> {
     const {
       location: { pathname },
       indexManagementApps,
+      dependencies,
+      // history,
     } = this.props;
+    // const { setBreadcrumbs } = dependencies;
+    // const [selectedId, setSelectedId] = useState<string>('');
+    // const [sections, setSections] = useState<IndexManagementSection[]>();
     const sideNav = [
       {
         name: Navigation.IndexManagement,
@@ -185,6 +200,29 @@ export default class Main extends Component<MainProps, object> {
       },
     ];
 
+    // const setBreadcrumbsScoped = useCallback(
+    //   (crumbs: ChromeBreadcrumb[] = [], appHistory?: ScopedHistory) => {
+    //     const wrapBreadcrumb = (item: ChromeBreadcrumb, scopedHistory: ScopedHistory) => ({
+    //       ...item,
+    //       ...(item.href ? reactRouterNavigate(scopedHistory, item.href) : {}),
+    //     });
+    //
+    //     // setBreadcrumbs([
+    //     //   wrapBreadcrumb(MANAGEMENT_BREADCRUMB, history),
+    //     //   ...crumbs.map((item) => wrapBreadcrumb(item, appHistory || history)),
+    //     // ]);
+    //   },
+    //   [setBreadcrumbs, history]
+    // );
+
+    // useEffect(() => {
+    //   setSections(dependencies.sections.getSectionsEnabled());
+    // }, [dependencies.sections]);
+
+    // if (!sections) {
+    //   return null;
+    // }
+
     return (
       <CoreServicesConsumer>
         {(core: CoreStart | null) =>
@@ -201,6 +239,7 @@ export default class Main extends Component<MainProps, object> {
                           <EuiSideNav style={{ width: 200 }} items={sideNav} />
                         </EuiPageSideBar>
                       )}
+                      {/*<MainSidebarNav sections={sections} selectedId={selectedId} history={history} />*/}
                       <EuiPageBody>
                         <Switch>
                           <Route
@@ -284,7 +323,7 @@ export default class Main extends Component<MainProps, object> {
                           {/*Routes from external plugins*/}
                           {indexManagementApps
                             .filter((indexManagement) => !indexManagement.isDisabled())
-                            .map((indexManagement: IndexManagementApp) => (
+                            .map((indexManagement: IndexManagementItem) => (
                               <Route
                                 key={indexManagement.id}
                                 path={`/${indexManagement.id}`}

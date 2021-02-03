@@ -13,6 +13,26 @@
  * permissions and limitations under the License.
  */
 
+import { IndexManagementSection, RegisterIndexManagementSectionArgs } from "../components/IndexManagementSection";
+import { Capabilities } from "../../../../../../src/core/types";
+
+export interface MainSectionsStartPrivate {
+  getSectionsEnabled: () => IndexManagementSection[];
+}
+
+export interface MainSectionsServiceStartDeps {
+  capabilities: Capabilities;
+}
+
+export interface MainSectionsServiceSetup {
+  register: (args: Omit<RegisterIndexManagementSectionArgs, "capabilities">) => IndexManagementSection;
+  section: DefinedSections;
+}
+
+export interface MainSectionsServiceStart {
+  getSectionsEnabled: () => IndexManagementSection[];
+}
+
 export enum Navigation {
   IndexManagement = "Index Management",
   RollupJobs = "Rollup jobs",
@@ -39,3 +59,53 @@ export enum Pathname {
   Console = "/console",
   SecurityPOC = "/security-poc",
 }
+
+export enum IndexManagementSectionId {
+  RollupJobs = "rollupJobs",
+  TransformJobs = "transformJobs",
+  StateManagementPolicies = "stateManagementPolicies",
+  Indices = "indices",
+}
+
+export interface DefinedSections {
+  rollupJobs: IndexManagementSection;
+  transformJobs: IndexManagementSection;
+  stateManagementPolicies: IndexManagementSection;
+  indices: IndexManagementSection;
+}
+
+export const RollupJobsSection = {
+  id: IndexManagementSectionId.RollupJobs,
+  title: Navigation.RollupJobs,
+  order: 1,
+  // href: `#${Pathname.RollupJobs}`,
+};
+
+export const TransformJobsSection = {
+  id: IndexManagementSectionId.TransformJobs,
+  title: Navigation.TransformJobs,
+  order: 2,
+  href: `#${Pathname.TransformJobs}`,
+};
+
+export const StateManagementPoliciesSection = {
+  id: IndexManagementSectionId.StateManagementPolicies,
+  title: Navigation.StateManagementPolicies,
+  order: 3,
+  href: `#${Pathname.StateManagementPolicies}`,
+};
+
+export const IndicesSection = {
+  id: IndexManagementSectionId.Indices,
+  title: Navigation.Indices,
+  order: 4,
+};
+
+export const PolicyManagedIndicesSection = {
+  id: "policyManagedIndices",
+  title: Navigation.PolicyManagedIndices,
+  order: 4,
+  href: `#${Pathname.PolicyManagedIndices}`,
+};
+
+export const IndexManagementSections = [RollupJobsSection, TransformJobsSection, StateManagementPoliciesSection, IndicesSection];
