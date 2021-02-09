@@ -1,7 +1,7 @@
 {
   "id": "opendistroIndexManagementKibana",
-  "version": "1.12.0.0",
-  "kibanaVersion": "7.10.0",
+  "version": "1.13.0.0",
+  "kibanaVersion": "7.10.2",
   "configPath": ["opendistro_index_management"],
   "requiredPlugins": ["navigation"],
   "server": true,

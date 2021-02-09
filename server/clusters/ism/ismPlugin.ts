@@ -188,27 +188,6 @@ export default function ismPlugin(Client: any, config: any, components: any) {
   ism.getRollups = ca({
     url: {
       fmt: `${API.ROLLUP_JOBS_BASE}`,
-      req: {
-        from: {
-          type: "number",
-          required: true,
-        },
-        size: {
-          type: "number",
-          required: true,
-        },
-        search: {
-          type: "string",
-        },
-        sortField: {
-          type: "string",
-          required: true,
-        },
-        sortDirection: {
-          type: "string",
-          required: true,
-        },
-      },
     },
     method: "GET",
   });
