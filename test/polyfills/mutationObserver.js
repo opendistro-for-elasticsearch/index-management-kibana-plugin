@@ -15,7 +15,7 @@
 
 /* eslint-disable */
 // transpiled typescript->javascript from
-// https://github.com/aurelia/pal-nodejs/blob/master/src/polyfills/mutation-observer.ts
+// https://github.com/aurelia/pal-nodejs/blob/main/src/polyfills/mutation-observer.ts
 
 /*
  * Based on Shim for MutationObserver interface
@@ -26,17 +26,17 @@ import { EventEmitter } from "events";
 
 var __extends =
   (this && this.__extends) ||
-  (function() {
+  (function () {
     var extendStatics =
       Object.setPrototypeOf ||
       ({ __proto__: [] } instanceof Array &&
-        function(d, b) {
+        function (d, b) {
           d.__proto__ = b;
         }) ||
-      function(d, b) {
+      function (d, b) {
         for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
       };
-    return function(d, b) {
+    return function (d, b) {
       extendStatics(d, b);
       function __() {
         this.constructor = d;
@@ -48,9 +48,9 @@ var __extends =
 module.exports = {};
 
 Object.defineProperty(module.exports, "__esModule", { value: true });
-var Util = /** @class */ (function() {
+var Util = /** @class */ (function () {
   function Util() {}
-  Util.clone = function($target, config) {
+  Util.clone = function ($target, config) {
     var recurse = true; // set true so childList we'll always check the first level
     return (function copy($target) {
       var elestruct = {
@@ -74,7 +74,7 @@ var Util = /** @class */ (function() {
            */
           elestruct.attr = Util.reduce(
             $target.attributes,
-            function(memo, attr) {
+            function (memo, attr) {
               if (!config.afilter || config.afilter[attr.name]) {
                 memo[attr.name] = attr.value;
               }
@@ -101,8 +101,8 @@ var Util = /** @class */ (function() {
    * @param {number} idx : index to start the loop
    * @return {number}
    */
-  Util.indexOfCustomNode = function(set, $node, idx) {
-    var JSCompiler_renameProperty = function(a) {
+  Util.indexOfCustomNode = function (set, $node, idx) {
+    var JSCompiler_renameProperty = function (a) {
       return a;
     };
     return this.indexOf(set, $node, idx, JSCompiler_renameProperty("node"));
@@ -113,7 +113,7 @@ var Util = /** @class */ (function() {
    * @param {Node} $ele
    * @return {(string|number)}
    */
-  Util.getElementId = function($ele) {
+  Util.getElementId = function ($ele) {
     try {
       return $ele.id || ($ele[this.expando] = $ele[this.expando] || this.counter++);
     } catch (e) {
@@ -131,7 +131,7 @@ var Util = /** @class */ (function() {
    * @param {Array|NodeList} set
    * @param {Function} iterator
    */
-  Util.map = function(set, iterator) {
+  Util.map = function (set, iterator) {
     var results = [];
     for (var index = 0; index < set.length; index++) {
       results[index] = iterator(set[index], index, set);
@@ -144,7 +144,7 @@ var Util = /** @class */ (function() {
    * @param {Function} iterator
    * @param {*} [memo] Initial value of the memo.
    */
-  Util.reduce = function(set, iterator, memo) {
+  Util.reduce = function (set, iterator, memo) {
     for (var index = 0; index < set.length; index++) {
       memo = iterator(memo, set[index], index, set);
     }
@@ -157,7 +157,7 @@ var Util = /** @class */ (function() {
    * @param {number} idx
    * @param {string} [prop] Property on set item to compare to item
    */
-  Util.indexOf = function(set, item, idx, prop) {
+  Util.indexOf = function (set, item, idx, prop) {
     for (; /*idx = ~~idx*/ idx < set.length; idx++) {
       // start idx is always given as this is internal
       if ((prop ? set[idx][prop] : set[idx]) === item) return idx;
@@ -169,7 +169,7 @@ var Util = /** @class */ (function() {
    * @param {(string|number)} prop
    * @return {boolean}
    */
-  Util.has = function(obj, prop) {
+  Util.has = function (obj, prop) {
     return obj[prop] !== undefined; // will be nicely inlined by gcc
   };
   Util.counter = 1;
@@ -177,7 +177,7 @@ var Util = /** @class */ (function() {
   return Util;
 })();
 module.exports.Util = Util;
-var MutationObserver = /** @class */ (function() {
+var MutationObserver = /** @class */ (function () {
   function MutationObserver(listener) {
     var _this = this;
     this._watched = [];
@@ -189,11 +189,11 @@ var MutationObserver = /** @class */ (function() {
     this._watched = [];
     this._listener = listener;
     this._period = 30;
-    this._notifyListener = function() {
+    this._notifyListener = function () {
       _this.scheduleMutationCheck(_this);
     };
   }
-  MutationObserver.prototype.observe = function($target, config) {
+  MutationObserver.prototype.observe = function ($target, config) {
     var settings = {
       attr: !!(config.attributes || config.attributeFilter || config.attributeOldValue),
       // some browsers enforce that subtree must be set with childList, attributes or characterData.
@@ -216,7 +216,7 @@ var MutationObserver = /** @class */ (function() {
        */
       settings.afilter = Util.reduce(
         config.attributeFilter,
-        function(a, b) {
+        function (a, b) {
           a[b] = true;
           return a;
         },
@@ -228,7 +228,7 @@ var MutationObserver = /** @class */ (function() {
       fn: this.createMutationSearcher($target, settings),
     });
   };
-  MutationObserver.prototype.takeRecords = function() {
+  MutationObserver.prototype.takeRecords = function () {
     var mutations = [];
     var watched = this._watched;
     for (var i = 0; i < watched.length; i++) {
@@ -236,14 +236,14 @@ var MutationObserver = /** @class */ (function() {
     }
     return mutations;
   };
-  MutationObserver.prototype.disconnect = function() {
+  MutationObserver.prototype.disconnect = function () {
     this._watched = []; // clear the stuff being observed
     MutationNotifier.getInstance().removeListener("changed", this._notifyListener);
     this._disposed = true;
     clearTimeout(this._timeout); // ready for garbage collection
     this._timeout = null;
   };
-  MutationObserver.prototype.createMutationSearcher = function($target, config) {
+  MutationObserver.prototype.createMutationSearcher = function ($target, config) {
     var _this = this;
     /** type {Elestuct} */
     var $oldstate = Util.clone($target, config); // create the cloned datastructure
@@ -252,7 +252,7 @@ var MutationObserver = /** @class */ (function() {
      *
      * @param {Array.<MutationRecord>} mutations
      */
-    return function(mutations) {
+    return function (mutations) {
       var olen = mutations.length;
       var dirty;
       if (config.charData && $target.nodeType === 3 && $target.nodeValue !== $oldstate.charData) {
@@ -279,16 +279,16 @@ var MutationObserver = /** @class */ (function() {
       }
     };
   };
-  MutationObserver.prototype.scheduleMutationCheck = function(observer) {
+  MutationObserver.prototype.scheduleMutationCheck = function (observer) {
     var _this = this;
     // Only schedule if there isn't already a timer.
     if (!observer._timeout) {
-      observer._timeout = setTimeout(function() {
+      observer._timeout = setTimeout(function () {
         return _this.mutationChecker(observer);
       }, this._period);
     }
   };
-  MutationObserver.prototype.mutationChecker = function(observer) {
+  MutationObserver.prototype.mutationChecker = function (observer) {
     // allow scheduling a new timer.
     observer._timeout = null;
     var mutations = observer.takeRecords();
@@ -298,7 +298,7 @@ var MutationObserver = /** @class */ (function() {
       observer._listener(mutations, observer);
     }
   };
-  MutationObserver.prototype.searchSubtree = function(mutations, $target, $oldstate, config) {
+  MutationObserver.prototype.searchSubtree = function (mutations, $target, $oldstate, config) {
     var _this = this;
     // Track if the tree is dirty and has to be recomputed (#14).
     var dirty;
@@ -308,7 +308,7 @@ var MutationObserver = /** @class */ (function() {
      * if the positions have been shuffled.
      * conflicts array will be emptied by end of operation
      */
-    var _resolveConflicts = function(conflicts, node, $kids, $oldkids, numAddedNodes) {
+    var _resolveConflicts = function (conflicts, node, $kids, $oldkids, numAddedNodes) {
       // the distance between the first conflicting node and the last
       var distance = conflicts.length - 1;
       // prevents same conflict being resolved twice consider when two nodes switch places.
@@ -356,7 +356,7 @@ var MutationObserver = /** @class */ (function() {
      * @param {Node} node
      * @param {!Object} old : A cloned data structure using internal clone
      */
-    var _findMutations = function(node, old) {
+    var _findMutations = function (node, old) {
       var $kids = node.childNodes;
       var $oldkids = old.kids;
       var klen = $kids.length;
@@ -481,7 +481,7 @@ var MutationObserver = /** @class */ (function() {
     _findMutations($target, $oldstate);
     return dirty;
   };
-  MutationObserver.prototype.findAttributeMutations = function(mutations, $target, $oldstate, filter) {
+  MutationObserver.prototype.findAttributeMutations = function (mutations, $target, $oldstate, filter) {
     var checked = {};
     var attributes = $target.attributes;
     var attr;
@@ -522,7 +522,7 @@ var MutationObserver = /** @class */ (function() {
   return MutationObserver;
 })();
 module.exports.MutationObserver = MutationObserver;
-var MutationRecord = /** @class */ (function() {
+var MutationRecord = /** @class */ (function () {
   function MutationRecord(data) {
     var settings = {
       type: null,
@@ -543,23 +543,23 @@ var MutationRecord = /** @class */ (function() {
   return MutationRecord;
 })();
 module.exports.MutationRecord = MutationRecord;
-var MutationNotifier = /** @class */ (function(_super) {
+var MutationNotifier = /** @class */ (function (_super) {
   __extends(MutationNotifier, _super);
   function MutationNotifier() {
     var _this = _super.call(this) || this;
     _this.setMaxListeners(100);
     return _this;
   }
-  MutationNotifier.getInstance = function() {
+  MutationNotifier.getInstance = function () {
     if (!MutationNotifier._instance) {
       MutationNotifier._instance = new MutationNotifier();
     }
     return MutationNotifier._instance;
   };
-  MutationNotifier.prototype.destruct = function() {
+  MutationNotifier.prototype.destruct = function () {
     this.removeAllListeners("changed");
   };
-  MutationNotifier.prototype.notifyChanged = function(node) {
+  MutationNotifier.prototype.notifyChanged = function (node) {
     this.emit("changed", node);
   };
   MutationNotifier._instance = null;
