@@ -15,7 +15,7 @@
 
 /* eslint-disable */
 // transpiled typescript->javascript from
-// https://github.com/aurelia/pal-nodejs/blob/main/src/polyfills/mutation-observer.ts
+// https://github.com/aurelia/pal-nodejs/blob/master/src/polyfills/mutation-observer.ts
 
 /*
  * Based on Shim for MutationObserver interface
