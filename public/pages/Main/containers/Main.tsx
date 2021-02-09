@@ -34,6 +34,7 @@ import EditRollup from "../../EditRollup/containers";
 import RollupDetails from "../../RollupDetails/containers/RollupDetails";
 import { MainSectionsServiceStart, Navigation, Pathname } from "../utils/constants";
 import { IndexManagementItem } from "../components/IndexManagementItem";
+import { IndexManagementApp } from "../../../index_management";
 
 interface MainProps extends RouteComponentProps {
   indexManagementApps: readonly IndexManagementItem[];
@@ -319,23 +320,20 @@ export default class Main extends Component<MainProps, object> {
                               </div>
                             )}
                           />
-                          {/*Routes from external plugins*/}
-                          {indexManagementApps
-                            .filter((indexManagement) => !indexManagement.isDisabled())
-                            .map((indexManagement: IndexManagementItem) => (
-                              <Route
-                                key={indexManagement.id}
-                                path={`/${indexManagement.id}`}
-                                render={(props) => (
-                                  <IndexManagementAppsWrapper
-                                    {...props}
-                                    updateRoute={props.history.push}
-                                    activeIndexManagement={indexManagement}
-                                    indexManagementApps={indexManagementApps}
-                                  />
-                                )}
-                              />
-                            ))}
+                          {indexManagementApps.map((indexManagement: IndexManagementApp) => (
+                            <Route
+                              key={indexManagement.id}
+                              path={`/${indexManagement.id}`}
+                              render={(props) => (
+                                <IndexManagementAppsWrapper
+                                  {...props}
+                                  updateRoute={props.history.push}
+                                  activeIndexManagement={indexManagement}
+                                  indexManagementApps={indexManagementApps}
+                                />
+                              )}
+                            />
+                          ))}
 
                           <Redirect from="/" to={ROUTES.STATE_MANAGEMENT_POLICIES} />
                         </Switch>
