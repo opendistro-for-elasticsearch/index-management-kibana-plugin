@@ -12,7 +12,7 @@ Please see our [documentation](https://opendistro.github.io/for-elasticsearch-do
 1. Download and install the appropriate [Open Distro for Elasticsearch Index Management plugin](https://github.com/opendistro-for-elasticsearch/index-management).
 1. Download the Kibana source code for the [version specified in package.json](./package.json#L9) you want to set up.
 
-   See the [Kibana contributing guide](https://github.com/elastic/kibana/blob/main/CONTRIBUTING.md#setting-up-your-development-environment) for more instructions on setting up your development environment.
+   See the [Kibana contributing guide](https://github.com/elastic/kibana/blob/master/CONTRIBUTING.md#setting-up-your-development-environment) for more instructions on setting up your development environment.
    
 1. Change your node version to the version specified in `.node-version` inside the Kibana root directory.
 1. cd into the `plugins` directory of the Kibana source code directory.
@@ -67,7 +67,7 @@ If you are running cypress tests with Kibana development server use the `--no-ba
 ## Contributing to Open Distro for Elasticsearch Index Management Kibana
 
 - Refer to [CONTRIBUTING.md](./CONTRIBUTING.md).
-- Since this is a Kibana plugin, it can be useful to review the [Kibana contributing guide](https://github.com/elastic/kibana/blob/main/CONTRIBUTING.md) alongside the documentation around [Kibana plugins](https://www.elastic.co/guide/en/kibana/master/kibana-plugins.html) and [plugin development](https://www.elastic.co/guide/en/kibana/master/external-plugin-development.html).
+- Since this is a Kibana plugin, it can be useful to review the [Kibana contributing guide](https://github.com/elastic/kibana/blob/master/CONTRIBUTING.md) alongside the documentation around [Kibana plugins](https://www.elastic.co/guide/en/kibana/master/kibana-plugins.html) and [plugin development](https://www.elastic.co/guide/en/kibana/master/external-plugin-development.html).
 
 ## Get Started and Contribute!
 
