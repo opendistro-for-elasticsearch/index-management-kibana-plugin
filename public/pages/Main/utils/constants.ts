@@ -35,7 +35,7 @@ export interface MainSectionsServiceStart {
 
 export enum Navigation {
   IndexManagement = "Index Management",
-  RollupJobs = "Rollup jobs",
+  RollupJobs = "Rollup Jobs",
   TransformJobs = "Transform jobs",
   StateManagementPolicies = "State management policies",
   Indices = "Indices",

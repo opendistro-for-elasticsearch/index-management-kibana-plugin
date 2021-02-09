@@ -33,7 +33,6 @@ import CreateRollupForm from "../../CreateRollup/containers/CreateRollupForm";
 import EditRollup from "../../EditRollup/containers";
 import RollupDetails from "../../RollupDetails/containers/RollupDetails";
 import { MainSectionsServiceStart, Navigation, Pathname } from "../utils/constants";
-import { IndexManagementSection } from "../components/IndexManagementSection";
 import { IndexManagementItem } from "../components/IndexManagementItem";
 
 interface MainProps extends RouteComponentProps {
@@ -126,13 +125,13 @@ export default class Main extends Component<MainProps, object> {
       {
         name: Navigation.IndexManagement,
         id: 0,
-        href: `#${Pathname.StateManagementPolicies}`,
+        href: `#${Pathname.IndexPolicies}`,
         items: [
           {
-            name: Navigation.RollupJobs,
+            name: Navigation.Rollups,
             id: 1,
-            href: `#${Pathname.RollupJobs}`,
-            isSelected: pathname === Pathname.RollupJobs,
+            href: `#${Pathname.Rollups}`,
+            isSelected: pathname === Pathname.Rollups,
           },
           // Saving a space for transform jobs
           // {
@@ -289,7 +288,7 @@ export default class Main extends Component<MainProps, object> {
                             )}
                           />
                           <Route
-                            path={ROUTES.ROLLUP_JOBS}
+                            path={ROUTES.ROLLUPS}
                             render={(props: RouteComponentProps) => (
                               <div style={{ padding: "25px 25px" }}>
                                 <Rollups {...props} rollupService={services.rollupService} />
