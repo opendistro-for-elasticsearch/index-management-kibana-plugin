@@ -64,40 +64,38 @@ function IndexManagementAppsWrapper({ indexManagementApps, activeIndexManagement
   );
 
   return (
-    <EuiPanel style={{ paddingLeft: "0px", paddingRight: "0px" }}>
-      <div
-        style={{ padding: "25px 25px", height: "100%" }}
-        ref={async (element) => {
-          if (
-            element &&
-            (mountedTool.current === null ||
-              mountedTool.current.indexManagement !== activeIndexManagement ||
-              mountedTool.current.mountpoint !== element)
-          ) {
-            if (mountedTool.current) {
-              mountedTool.current.unmountHandler();
-            }
-
-            const params = {
-              element,
-              appBasePath: "",
-              onAppLeave: () => undefined,
-              setHeaderActionMenu: () => undefined,
-              // TODO: adapt to use Core's ScopedHistory
-              history: {} as any,
-            };
-
-            const unmountHandler = await activeIndexManagement.mount(params);
-
-            mountedTool.current = {
-              indexManagement: activeIndexManagement,
-              mountpoint: element,
-              unmountHandler,
-            };
+    <div
+      style={{ padding: "25px 25px", height: "100%" }}
+      ref={async (element) => {
+        if (
+          element &&
+          (mountedTool.current === null ||
+            mountedTool.current.indexManagement !== activeIndexManagement ||
+            mountedTool.current.mountpoint !== element)
+        ) {
+          if (mountedTool.current) {
+            mountedTool.current.unmountHandler();
           }
-        }}
-      />
-    </EuiPanel>
+
+          const params = {
+            element,
+            appBasePath: "",
+            onAppLeave: () => undefined,
+            setHeaderActionMenu: () => undefined,
+            // TODO: adapt to use Core's ScopedHistory
+            history: {} as any,
+          };
+
+          const unmountHandler = await activeIndexManagement.mount(params);
+
+          mountedTool.current = {
+            indexManagement: activeIndexManagement,
+            mountpoint: element,
+            unmountHandler,
+          };
+        }
+      }}
+    />
   );
 }
 
