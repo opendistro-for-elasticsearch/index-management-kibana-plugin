@@ -148,10 +148,10 @@ export default class Main extends Component<MainProps, object> {
                 isSelected: pathname === Pathname.HotIndices,
               },
               {
-                name: Navigation.UltraWarmIndices,
+                name: Navigation.WarmIndices,
                 id: 2,
-                href: `#${Pathname.UltraWarmIndices}`,
-                isSelected: pathname === Pathname.UltraWarmIndices,
+                href: `#${Pathname.WarmIndices}`,
+                isSelected: pathname === Pathname.WarmIndices,
               },
               {
                 name: Navigation.ColdIndices,
