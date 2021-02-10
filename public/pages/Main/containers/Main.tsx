@@ -167,18 +167,6 @@ export default class Main extends Component<MainProps, object> {
               },
             ],
           },
-          {
-            name: Navigation.Console,
-            id: 7,
-            href: `#${Pathname.Console}`,
-            isSelected: pathname === Pathname.Console,
-          },
-          {
-            name: Navigation.SecurityPOC,
-            id: 8,
-            href: `#${Pathname.SecurityPOC}`,
-            isSelected: pathname === Pathname.SecurityPOC,
-          },
         ],
       },
     ];
