@@ -181,10 +181,8 @@ export default class ManagedIndices extends Component<ManagedIndicesProps, Manag
 
   renderPolicyId = (policyId: string, item: ManagedIndexItem) => {
     let errorMessage: string | undefined = undefined;
-    if (!item.policy) {
-      if (!item.managedIndexMetaData) errorMessage = `Still initializing, please wait a moment`;
-      else errorMessage = `Failed to load the policy: ${item.policyId}`;
-    }
+    if (item.managedIndexMetaData?.policySeqNo == null) errorMessage = `Still initializing, please wait a moment`;
+    if (!item.policy) errorMessage = `Failed to load the policy: ${item.policyId}`;
 
     return (
       <ModalConsumer>
