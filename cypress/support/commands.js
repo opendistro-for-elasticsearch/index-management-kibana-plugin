@@ -72,8 +72,12 @@ Cypress.Commands.add("updateManagedIndexConfigStartTime", (index) => {
   });
 });
 
-Cypress.Commands.add("createIndex", (index, settings = {}) => {
+Cypress.Commands.add("createIndex", (index, policyID = null, settings = {}) => {
   cy.request("PUT", `${Cypress.env("elasticsearch")}/${index}`, settings);
+  if (policyID != null) {
+    const body = { policy_id: policyID };
+    cy.request("POST", `${Cypress.env("elasticsearch")}${API.ADD_POLICY_BASE}/${index}`, body);
+  }
 });
 
 Cypress.Commands.add("createRollup", (rollupId, rollupJSON) => {
