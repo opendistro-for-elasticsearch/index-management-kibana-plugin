@@ -285,7 +285,7 @@ describe("<IndexPolicies /> spec", () => {
     expect(queryByText("some_policy_id_0")).toBeNull();
 
     // @ts-ignore
-    userEvent.click(getByTestId("tableHeaderCell_policy.policy.last_updated_time_2").firstChild);
+    userEvent.click(getByTestId("tableHeaderCell_policy.last_updated_time_2").firstChild);
 
     // should load policies 0-19  after clicking sort (defaults to asc) on last_updated_time
     await wait(() => getByText("some_policy_id_0"));
