@@ -36,7 +36,7 @@ describe("Managed indices", () => {
     before(() => {
       cy.deleteAllIndices();
       cy.createPolicy(POLICY_ID, samplePolicy);
-      cy.createIndex(SAMPLE_INDEX, { settings: { "opendistro.index_state_management.policy_id": POLICY_ID } });
+      cy.createIndex(SAMPLE_INDEX, POLICY_ID);
     });
 
     it("successfully", () => {
@@ -67,7 +67,7 @@ describe("Managed indices", () => {
     before(() => {
       cy.deleteAllIndices();
       // Add a non-existent policy to the index
-      cy.createIndex(SAMPLE_INDEX, { settings: { "opendistro.index_state_management.policy_id": POLICY_ID } });
+      cy.createIndex(SAMPLE_INDEX, POLICY_ID);
       // Speed up execution time to happen in a few seconds
       cy.updateManagedIndexConfigStartTime(SAMPLE_INDEX);
     });
@@ -102,7 +102,7 @@ describe("Managed indices", () => {
       cy.reload();
 
       // Confirm we see managed index attempting to retry, give 20 seconds for Kibana load
-      cy.contains("Attempting to retry", { timeout: 20000 });
+      cy.contains("Pending retry of failed managed index", { timeout: 20000 });
 
       // Speed up next execution of managed index
       cy.updateManagedIndexConfigStartTime(SAMPLE_INDEX);
@@ -124,8 +124,8 @@ describe("Managed indices", () => {
       cy.deleteAllIndices();
       cy.createPolicy(POLICY_ID, samplePolicy);
       // Create index with rollover_alias
-      cy.createIndex(SAMPLE_INDEX, {
-        settings: { opendistro: { index_state_management: { policy_id: POLICY_ID, rollover_alias: FIRST_ALIAS } } },
+      cy.createIndex(SAMPLE_INDEX, POLICY_ID, {
+        settings: { opendistro: { index_state_management: { rollover_alias: FIRST_ALIAS } } },
       });
     });
 
@@ -173,7 +173,7 @@ describe("Managed indices", () => {
       cy.deleteAllIndices();
       cy.createPolicy(POLICY_ID, samplePolicy);
       cy.createPolicy(POLICY_ID_2, samplePolicy);
-      cy.createIndex(SAMPLE_INDEX, { settings: { "opendistro.index_state_management.policy_id": POLICY_ID } });
+      cy.createIndex(SAMPLE_INDEX, POLICY_ID);
     });
 
     it("successfully", () => {
