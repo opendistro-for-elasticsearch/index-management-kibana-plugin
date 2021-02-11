@@ -15,7 +15,16 @@
 
 import { RequestParams } from "@elastic/elasticsearch";
 import { INDEX, Setting } from "../utils/constants";
-import { AcknowledgedResponse, ApplyPolicyResponse, AddResponse, CatIndex, GetIndicesResponse, SearchResponse } from "../models/interfaces";
+import {
+  AcknowledgedResponse,
+  ApplyPolicyResponse,
+  AddResponse,
+  CatIndex,
+  GetIndicesResponse,
+  SearchResponse,
+  ExplainResponse,
+  ExplainAPIManagedIndexMetaData,
+} from "../models/interfaces";
 import { ServerResponse } from "../models/types";
 import { KibanaRequest, KibanaResponseFactory, IClusterClient, IKibanaResponse, RequestHandlerContext } from "../../../../src/core/server";
 
@@ -25,35 +34,6 @@ export default class IndexService {
   constructor(esDriver: IClusterClient) {
     this.esDriver = esDriver;
   }
-
-  search = async (
-    context: RequestHandlerContext,
-    request: KibanaRequest,
-    response: KibanaResponseFactory
-  ): Promise<IKibanaResponse<ServerResponse<any>>> => {
-    try {
-      const { query, index, size = 0 } = request.body as { query: object; index: string; size?: number };
-      const params: RequestParams.Search = { index, size, body: query };
-      const { callAsCurrentUser: callWithRequest } = this.esDriver.asScoped(request);
-      const results: SearchResponse<any> = await callWithRequest("search", params);
-      return response.custom({
-        statusCode: 200,
-        body: {
-          ok: true,
-          response: results,
-        },
-      });
-    } catch (err) {
-      console.error("Index Management - IndexService - search", err);
-      return response.custom({
-        statusCode: 200,
-        body: {
-          ok: false,
-          error: err.message,
-        },
-      });
-    }
-  };
 
   getIndices = async (
     context: RequestHandlerContext,
@@ -81,9 +61,9 @@ export default class IndexService {
       const fromNumber = parseInt(from, 10);
       const sizeNumber = parseInt(size, 10);
       const paginatedIndices = indicesResponse.slice(fromNumber, fromNumber + sizeNumber);
-      const indexUuids = paginatedIndices.map((value: CatIndex) => value.uuid);
+      const indexNames = paginatedIndices.map((value: CatIndex) => value.index);
 
-      const managedStatus = await this._getManagedStatus(request, indexUuids);
+      const managedStatus = await this._getManagedStatus(request, indexNames);
 
       // NOTE: Cannot use response.ok due to typescript type checking
       return response.custom({
@@ -91,7 +71,7 @@ export default class IndexService {
         body: {
           ok: true,
           response: {
-            indices: paginatedIndices.map((catIndex: CatIndex) => ({ ...catIndex, managed: managedStatus[catIndex.uuid] || "N/A" })),
+            indices: paginatedIndices.map((catIndex: CatIndex) => ({ ...catIndex, managed: managedStatus[catIndex.index] || "N/A" })),
             totalIndices: indicesResponse.length,
           },
         },
@@ -121,30 +101,25 @@ export default class IndexService {
     }
   };
 
-  // given a list of indexUuids return the managed status of each (true, false, N/A)
-  _getManagedStatus = async (request: KibanaRequest, indexUuids: string[]): Promise<{ [indexUuid: string]: string }> => {
+  _getManagedStatus = async (request: KibanaRequest, indexNames: string[]): Promise<{ [indexName: string]: string }> => {
     try {
-      const searchParams: RequestParams.Search = {
-        index: INDEX.OPENDISTRO_ISM_CONFIG,
-        size: indexUuids.length,
-        body: { _source: "_id", query: { ids: { values: indexUuids } } },
-      };
-      const { callAsCurrentUser: searchCallWithRequest } = this.esDriver.asScoped(request);
-      const results: SearchResponse<any> = await searchCallWithRequest("search", searchParams);
-      const managed: { [indexUuid: string]: string } = results.hits.hits.reduce(
-        (accu: object, hit: { _id: string }) => ({ ...accu, [hit._id]: "Yes" }),
-        {}
-      );
-      return indexUuids.reduce((accu: object, value: string) => ({ ...accu, [value]: managed[value] || "No" }), {});
-    } catch (err) {
-      // If the config index does not exist then nothing is being managed
-      if (err.statusCode === 404 && err.body.error.type === "index_not_found_exception") {
-        return indexUuids.reduce((accu, value) => ({ ...accu, [value]: "No" }), {});
+      const explainParamas = { index: indexNames.toString() };
+      const { callAsCurrentUser: callWithRequest } = this.esDriver.asScoped(request);
+      const explainResponse: ExplainResponse = await callWithRequest("ism.explain", explainParamas);
+
+      const managed: { [indexName: string]: string } = {};
+      for (const indexName in explainResponse) {
+        if (indexName === "total_managed_indices") continue;
+        const explain = explainResponse[indexName] as ExplainAPIManagedIndexMetaData;
+        managed[indexName] = explain["index.opendistro.index_state_management.policy_id"] === null ? "No" : "Yes";
       }
+
+      return managed;
+    } catch (err) {
       // otherwise it could be an unauthorized access error to config index or some other error
       // in which case we will return managed status N/A
       console.error("Index Management - IndexService - _getManagedStatus:", err);
-      return indexUuids.reduce((accu, value) => ({ ...accu, [value]: "N/A" }), {});
+      return indexNames.reduce((accu, value) => ({ ...accu, [value]: "N/A" }), {});
     }
   };
 

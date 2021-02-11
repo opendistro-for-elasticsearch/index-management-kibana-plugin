@@ -36,7 +36,7 @@ import {
 } from "@elastic/eui";
 import { BrowserServices } from "../../../../models/interfaces";
 import { PolicyOption } from "../../models/interfaces";
-import { Policy, State } from "../../../../../models/interfaces";
+import { DocumentPolicy, Policy, State } from "../../../../../models/interfaces";
 import { getErrorMessage } from "../../../../utils/helpers";
 import { DOCUMENTATION_URL } from "../../../../utils/constants";
 import { CoreServicesContext } from "../../../../components/core_services";
@@ -136,9 +136,9 @@ export default class ApplyPolicyModal extends Component<ApplyPolicyModalProps, A
     try {
       const searchPoliciesResponse = await indexService.searchPolicies(searchValue, true);
       if (searchPoliciesResponse.ok) {
-        const policies = searchPoliciesResponse.response.hits.hits.map((hit: { _id: string; _source: { policy: Policy } }) => ({
-          label: hit._id,
-          policy: hit._source.policy,
+        const policies = searchPoliciesResponse.response.policies.map((p: DocumentPolicy) => ({
+          label: p.id,
+          policy: p.policy,
         }));
         this.setState({ policyOptions: policies });
       } else {

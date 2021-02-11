@@ -34,6 +34,11 @@ export interface ExplainResponse {
   [index: string]: ExplainAPIManagedIndexMetaData | undefined;
 }
 
+export interface ExplainAllResponse {
+  [index: string]: ExplainAPIManagedIndexMetaData | number;
+  total_managed_indices: number;
+}
+
 export interface GetManagedIndicesResponse {
   totalManagedIndices: number;
   managedIndices: ManagedIndexItem[];
@@ -170,10 +175,10 @@ export interface FailedIndex {
 }
 
 export interface ExplainAPIManagedIndexMetaData {
-  "opendistro.index_state_management.policy_id": string | null;
-  index?: string;
-  index_uuid?: string;
-  policy_id?: string;
+  "index.opendistro.index_state_management.policy_id": string | null;
+  index: string;
+  index_uuid: string;
+  policy_id: string;
   policy_seq_no?: number;
   policy_primary_term?: number;
   policy_completed?: boolean;
@@ -183,6 +188,7 @@ export interface ExplainAPIManagedIndexMetaData {
   action?: { name: string; start_time: number; index: number; failed: boolean; consumed_retries: number };
   retry_info?: { failed: boolean; consumed_retries: number };
   info?: object;
+  enabled: boolean;
 }
 
 export interface IndexManagementApi {

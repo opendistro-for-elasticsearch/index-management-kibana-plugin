@@ -15,7 +15,13 @@
 
 import { HttpSetup } from "kibana/public";
 import { INDEX } from "../../server/utils/constants";
-import { AcknowledgedResponse, ApplyPolicyResponse, GetIndicesResponse, SearchResponse } from "../../server/models/interfaces";
+import {
+  AcknowledgedResponse,
+  ApplyPolicyResponse,
+  GetIndicesResponse,
+  GetPoliciesResponse,
+  SearchResponse,
+} from "../../server/models/interfaces";
 import { ServerResponse } from "../../server/models/types";
 import { NODE_API } from "../../utils/constants";
 
@@ -46,22 +52,11 @@ export default class IndexService {
     return response;
   };
 
-  searchPolicies = async (searchValue: string, source: boolean = false): Promise<ServerResponse<SearchResponse<any>>> => {
+  searchPolicies = async (searchValue: string, source: boolean = false): Promise<ServerResponse<GetPoliciesResponse>> => {
     const str = searchValue.trim();
-    const mustQuery = {
-      query_string: {
-        default_field: "policy.policy_id",
-        default_operator: "AND",
-        query: str ? `*${str.split(" ").join("* *")}*` : "*",
-      },
-    };
-    const body = {
-      index: INDEX.OPENDISTRO_ISM_CONFIG,
-      size: 10,
-      query: { _source: source, query: { bool: { must: [mustQuery, { exists: { field: "policy" } }] } } },
-    };
-    const url = `..${NODE_API._SEARCH}`;
-    const response = (await this.httpClient.post(url, { body: JSON.stringify(body) })) as ServerResponse<any>;
+    const queryObject = { from: 0, size: 10, search: str, sortDirection: "desc", sortField: "id" };
+    const url = `..${NODE_API.POLICIES}`;
+    const response = (await this.httpClient.get(url, { query: queryObject })) as ServerResponse<GetPoliciesResponse>;
     return response;
   };
 }

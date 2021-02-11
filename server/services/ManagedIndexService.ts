@@ -20,6 +20,8 @@ import { INDEX } from "../utils/constants";
 import { getMustQuery, transformManagedIndexMetaData } from "../utils/helpers";
 import {
   ChangePolicyResponse,
+  ExplainAllResponse,
+  ExplainAPIManagedIndexMetaData,
   ExplainResponse,
   GetManagedIndicesResponse,
   RemovePolicyResponse,
@@ -30,6 +32,7 @@ import {
   SearchResponse,
 } from "../models/interfaces";
 import { ManagedIndicesSort, ServerResponse } from "../models/types";
+import { ManagedIndexItem } from "../../models/interfaces";
 
 export default class ManagedIndexService {
   esDriver: IClusterClient;
@@ -83,59 +86,53 @@ export default class ManagedIndexService {
       };
 
       const managedIndexSorts: ManagedIndicesSort = { index: "managed_index.index", policyId: "managed_index.policy_id" };
-      const searchParams: RequestParams.Search = {
-        index: INDEX.OPENDISTRO_ISM_CONFIG,
-        seq_no_primary_term: true,
-        body: {
-          size,
-          from,
-          sort: managedIndexSorts[sortField] ? [{ [managedIndexSorts[sortField]]: sortDirection }] : [],
-          query: {
-            bool: {
-              filter: [{ exists: { field: "managed_index" } }],
-              must: getMustQuery("managed_index.name", search),
-            },
-          },
-        },
+      const explainParams = {
+        size,
+        from,
+        sortField: sortField ? managedIndexSorts[sortField] : null,
+        sortOrder: sortDirection,
+        queryString: search ? `*${search.split(" ").join("* *")}*` : null,
       };
 
       const { callAsCurrentUser: callWithRequest } = this.esDriver.asScoped(request);
-      const searchResponse: SearchResponse<any> = await callWithRequest("search", searchParams);
+      const explainAllResponse: ExplainAllResponse = await callWithRequest("ism.explainAll", explainParams);
 
-      const indices = searchResponse.hits.hits.map((hit) => hit._source.managed_index.index);
-      const totalManagedIndices = _.get(searchResponse, "hits.total.value", 0);
-
-      if (!indices.length) {
-        return response.custom({
-          statusCode: 200,
-          body: {
-            ok: true,
-            response: { managedIndices: [], totalManagedIndices: 0 },
-          },
+      const managedIndices: ManagedIndexItem[] = [];
+      for (const indexName in explainAllResponse) {
+        if (indexName == "total_managed_indices") continue;
+        const metadata = explainAllResponse[indexName] as ExplainAPIManagedIndexMetaData;
+        let policy, seqNo, primaryTerm, getResponse;
+        try {
+          getResponse = await callWithRequest("ism.getPolicy", { policyId: metadata.policy_id });
+        } catch (err) {
+          if (err.statusCode === 404 && err.body.error.reason === "Policy not found") {
+            console.log("managed index with not existing policy");
+          } else {
+            throw err;
+          }
+        }
+        policy = _.get(getResponse, "policy", null);
+        seqNo = _.get(getResponse, "_seq_no", null);
+        primaryTerm = _.get(getResponse, "_primary_term", null);
+        managedIndices.push({
+          index: metadata.index,
+          indexUuid: metadata.index_uuid,
+          policyId: metadata.policy_id,
+          policySeqNo: seqNo,
+          policyPrimaryTerm: primaryTerm,
+          policy: policy,
+          enabled: metadata.enabled,
+          managedIndexMetaData: transformManagedIndexMetaData(metadata),
         });
       }
 
-      const explainParams = { index: indices.join(",") };
-      const explainResponse: ExplainResponse = await callWithRequest("ism.explain", explainParams);
-      const managedIndices = searchResponse.hits.hits.map((hit) => {
-        const index = hit._source.managed_index.index;
-        return {
-          index,
-          indexUuid: hit._source.managed_index.index_uuid,
-          policyId: hit._source.managed_index.policy_id,
-          policySeqNo: hit._source.managed_index.policy_seq_no,
-          policyPrimaryTerm: hit._source.managed_index.policy_primary_term,
-          policy: hit._source.managed_index.policy,
-          enabled: hit._source.managed_index.enabled,
-          managedIndexMetaData: transformManagedIndexMetaData(explainResponse[index]), // this will be undefined if we are initializing
-        };
-      });
+      const totalManagedIndices: number = explainAllResponse.total_managed_indices;
 
       return response.custom({
         statusCode: 200,
         body: {
           ok: true,
-          response: { managedIndices, totalManagedIndices },
+          response: { managedIndices: managedIndices, totalManagedIndices: totalManagedIndices },
         },
       });
     } catch (err) {

@@ -38,6 +38,13 @@ export default function ismPlugin(Client: any, config: any, components: any) {
     method: "GET",
   });
 
+  ism.getPolicies = ca({
+    url: {
+      fmt: `${API.POLICY_BASE}`,
+    },
+    method: "GET",
+  });
+
   ism.createPolicy = ca({
     url: {
       fmt: `${API.POLICY_BASE}/<%=policyId%>?refresh=wait_for`,
@@ -96,6 +103,13 @@ export default function ismPlugin(Client: any, config: any, components: any) {
           required: true,
         },
       },
+    },
+    method: "GET",
+  });
+
+  ism.explainAll = ca({
+    url: {
+      fmt: `${API.EXPLAIN_BASE}`,
     },
     method: "GET",
   });
