@@ -170,7 +170,6 @@ export default class Main extends Component<MainProps, object> {
         ],
       },
     ];
-
     return (
       <CoreServicesConsumer>
         {(core: CoreStart | null) =>
@@ -284,7 +283,6 @@ export default class Main extends Component<MainProps, object> {
                                 )}
                               />
                             ))}
-
                           <Redirect from="/" to={ROUTES.STATE_MANAGEMENT_POLICIES} />
                         </Switch>
                       </EuiPageBody>
