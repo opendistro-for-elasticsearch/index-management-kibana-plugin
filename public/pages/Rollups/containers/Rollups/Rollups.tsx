@@ -360,7 +360,7 @@ export default class Rollups extends Component<RollupsProps, RollupsState> {
         truncateText: true,
       },
       {
-        field: "rollup.rollup.enabled",
+        field: "rollup.enabled",
         name: "Job state",
         sortable: true,
         textOnly: true,
@@ -368,7 +368,7 @@ export default class Rollups extends Component<RollupsProps, RollupsState> {
         render: renderEnabled,
       },
       {
-        field: "rollup.rollup.continuous",
+        field: "rollup.continuous",
         name: "Continuous",
         sortable: true,
         textOnly: true,
