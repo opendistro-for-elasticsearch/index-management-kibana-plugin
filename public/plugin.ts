@@ -23,13 +23,13 @@ export class IndexManagementPlugin implements Plugin<IndexManagementPluginSetup,
 
   constructor(
     private readonly initializerContext: PluginInitializerContext,
-    private readonly indexManagement: Map<string, IndexManagementApp>
+    private readonly indexManagementApps: Map<string, IndexManagementApp>
   ) {
     // can retrieve config from initializerContext
   }
 
   private getSortedIndexManagements(): readonly IndexManagementApp[] {
-    return sortBy([...this.indexManagement.values()], "order");
+    return sortBy([...this.indexManagementApps.values()], "order");
   }
 
   public setup(core: CoreSetup, indexManagement: IndexManagementPlugin): IndexManagementPluginSetup {
@@ -51,22 +51,18 @@ export class IndexManagementPlugin implements Plugin<IndexManagementPluginSetup,
 
     return {
       register: (indexManagementArgs: CreateIndexManagementArgs) => {
-        if (this.indexManagement.has(indexManagementArgs.id)) {
+        if (this.indexManagementApps.has(indexManagementArgs.id)) {
           throw new Error(`Index management with id [${indexManagementArgs.id}] has already been registered. Use a unique id.`);
         }
 
         const indexManagement = createIndexManagementApp(indexManagementArgs);
-        this.indexManagement.set(indexManagement.id, indexManagement);
+        this.indexManagementApps.set(indexManagement.id, indexManagement);
         return indexManagement;
       },
     };
   }
 
   public start(core: CoreStart): IndexManagementPluginStart {
-    // TODO: Hide sections when meeting certain conditions
-    // if (this.getSortedIndexManagements().length === 0) {
-    //   this.appStateUpdater.next(() => ({ navLinkStatus: AppNavLinkStatus.hidden }));
-    // }
     return {};
   }
 }
