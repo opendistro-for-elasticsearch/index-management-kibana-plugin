@@ -33,7 +33,7 @@ export const ROUTES = Object.freeze({
   CONSOLE: "/console",
   STATE_MANAGEMENT_POLICIES: "/state-management-policies",
   HOT_INDICES: "/hot-indices",
-  ULTRAWARM_INDICES: "ultrawarm-indices",
+  WARM_INDICES: "warm-indices",
   COLD_INDICES: "/cold-indices",
   POLICY_MANAGED_INDICES: "/policy-managed-indices",
 });
@@ -52,7 +52,7 @@ export const BREADCRUMBS = Object.freeze({
   ROLLUP_DETAILS: { text: "Rollup details" },
   STATE_MANAGEMENT_POLICIES: { text: "State management policies" },
   HOT_INDICES: { text: "Hot indices" },
-  ULTRAWARM_INDICES: { text: "UltraWarm indices" },
+  WARM_INDICES: { text: "Warm indices" },
   COLD_INDICES: { text: "Cold indices" },
   POLICY_MANAGED_INDICES: { text: "Policy managed indices" },
 });

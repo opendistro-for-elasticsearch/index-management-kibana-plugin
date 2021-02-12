@@ -123,16 +123,16 @@ export default class RollupDetails extends Component<RollupDetailsProps, RollupD
   }
 
   componentDidMount = async (): Promise<void> => {
-    this.context.chrome.setBreadcrumbs([BREADCRUMBS.INDEX_MANAGEMENT, BREADCRUMBS.ROLLUPS]);
+    this.context.chrome.setBreadcrumbs([BREADCRUMBS.INDEX_MANAGEMENT, BREADCRUMBS.ROLLUP_JOBS]);
     const { id } = queryString.parse(this.props.location.search);
     if (typeof id === "string") {
-      this.context.chrome.setBreadcrumbs([BREADCRUMBS.INDEX_MANAGEMENT, BREADCRUMBS.ROLLUPS, { text: id }]);
+      this.context.chrome.setBreadcrumbs([BREADCRUMBS.INDEX_MANAGEMENT, BREADCRUMBS.ROLLUP_JOBS, { text: id }]);
       this.props.history.push(`${ROUTES.ROLLUP_DETAILS}?id=${id}`);
       await this.getRollup(id);
       this.forceUpdate();
     } else {
       this.context.notifications.toasts.addDanger(`Invalid rollup id: ${id}`);
-      this.props.history.push(ROUTES.ROLLUPS);
+      this.props.history.push(ROUTES.ROLLUP_JOBS);
     }
   };
 
@@ -178,11 +178,11 @@ export default class RollupDetails extends Component<RollupDetailsProps, RollupD
         }
       } else {
         this.context.notifications.toasts.addDanger(`Could not load the rollup job: ${response.error}`);
-        this.props.history.push(ROUTES.ROLLUPS);
+        this.props.history.push(ROUTES.ROLLUP_JOBS);
       }
     } catch (err) {
       this.context.notifications.toasts.addDanger(getErrorMessage(err, "Could not load the rollup job"));
-      this.props.history.push(ROUTES.ROLLUPS);
+      this.props.history.push(ROUTES.ROLLUP_JOBS);
     }
   };
 

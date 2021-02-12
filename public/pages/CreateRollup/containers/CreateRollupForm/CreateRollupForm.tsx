@@ -143,7 +143,7 @@ export default class CreateRollupForm extends Component<CreateRollupFormProps, C
   }
 
   componentDidMount = async (): Promise<void> => {
-    this.context.chrome.setBreadcrumbs([BREADCRUMBS.INDEX_MANAGEMENT, BREADCRUMBS.ROLLUPS, BREADCRUMBS.CREATE_ROLLUP]);
+    this.context.chrome.setBreadcrumbs([BREADCRUMBS.INDEX_MANAGEMENT, BREADCRUMBS.ROLLUP_JOBS, BREADCRUMBS.CREATE_ROLLUP]);
   };
 
   getMappings = async (srcIndex: string): Promise<void> => {
@@ -502,7 +502,7 @@ export default class CreateRollupForm extends Component<CreateRollupFormProps, C
   };
 
   onCancel = (): void => {
-    this.props.history.push(ROUTES.ROLLUPS);
+    this.props.history.push(ROUTES.ROLLUP_JOBS);
   };
 
   onCreate = async (rollupId: string, rollup: Rollup): Promise<void> => {
@@ -511,7 +511,7 @@ export default class CreateRollupForm extends Component<CreateRollupFormProps, C
       const response = await rollupService.putRollup(rollup, rollupId);
       if (response.ok) {
         this.context.notifications.toasts.addSuccess(`Created rollup: ${response.response._id}`);
-        this.props.history.push(ROUTES.ROLLUPS);
+        this.props.history.push(ROUTES.ROLLUP_JOBS);
       } else {
         this.setState({ submitError: response.error });
         this.context.notifications.toasts.addDanger(`Failed to create rollup: ${response.error}`);
