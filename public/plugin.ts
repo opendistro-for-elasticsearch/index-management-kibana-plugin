@@ -15,12 +15,10 @@
 
 import { AppMountParameters, CoreSetup, CoreStart, Plugin, PluginInitializerContext } from "../../../src/core/public";
 import { IndexManagementPluginSetup, IndexManagementPluginStart } from ".";
-import { createIndexManagementApp, CreateIndexManagementArgs, IndexManagementApp } from "./index_management";
 import { sortBy } from "lodash";
+import { createIndexManagementApp, CreateIndexManagementArgs, IndexManagementApp } from "./index_management";
 
 export class IndexManagementPlugin implements Plugin<IndexManagementPluginSetup, IndexManagementPluginStart> {
-  //TODO: Utilize initializerContext if needed for plugin registration
-
   constructor(
     private readonly initializerContext: PluginInitializerContext,
     private readonly indexManagementApps: Map<string, IndexManagementApp>
