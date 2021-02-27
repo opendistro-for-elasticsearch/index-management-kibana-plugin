@@ -15,7 +15,6 @@
 
 import React, { Component } from "react";
 import { EuiFieldSearch, EuiFlexGroup, EuiFlexItem, EuiPagination } from "@elastic/eui";
-import EuiRefreshPicker from "../../../../temporary/EuiRefreshPicker";
 
 interface IndexControlsProps {
   activePage: number;
@@ -23,39 +22,15 @@ interface IndexControlsProps {
   search: string;
   onSearchChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
   onPageClick: (page: number) => void;
-  onRefresh: () => Promise<void>;
 }
 
-interface IndexControlsState {
-  refreshInterval: number;
-  isPaused: boolean;
-}
-
-export default class IndexControls extends Component<IndexControlsProps, IndexControlsState> {
-  state: IndexControlsState = {
-    refreshInterval: 0,
-    isPaused: true,
-  };
-
-  onRefreshChange = ({ refreshInterval, isPaused }: IndexControlsState): void => {
-    this.setState({ isPaused, refreshInterval });
-  };
-
+export default class IndexControls extends Component<IndexControlsProps> {
   render() {
-    const { activePage, pageCount, search, onSearchChange, onPageClick, onRefresh } = this.props;
-    const { refreshInterval, isPaused } = this.state;
+    const { activePage, pageCount, search, onSearchChange, onPageClick } = this.props;
     return (
       <EuiFlexGroup style={{ padding: "0px 5px" }}>
         <EuiFlexItem>
           <EuiFieldSearch fullWidth={true} value={search} placeholder="Search" onChange={onSearchChange} />
-        </EuiFlexItem>
-        <EuiFlexItem grow={false} style={{ maxWidth: 250 }}>
-          <EuiRefreshPicker
-            isPaused={isPaused}
-            refreshInterval={refreshInterval}
-            onRefreshChange={this.onRefreshChange}
-            onRefresh={onRefresh}
-          />
         </EuiFlexItem>
         {pageCount > 1 && (
           <EuiFlexItem grow={false} style={{ justifyContent: "center" }}>
