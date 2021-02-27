@@ -15,7 +15,6 @@
 
 import React, { Component } from "react";
 import { EuiFieldSearch, EuiFlexGroup, EuiFlexItem, EuiPagination } from "@elastic/eui";
-import EuiRefreshPicker from "../../../../temporary/EuiRefreshPicker";
 
 interface PolicyControlsProps {
   activePage: number;
@@ -31,7 +30,7 @@ export default class PolicyControls extends Component<PolicyControlsProps> {
     return (
       <EuiFlexGroup style={{ padding: "0px 5px" }}>
         <EuiFlexItem>
-          <EuiFieldSearch fullWidth={true} value={search} placeholder="Search" onChange={onSearchChange} />
+          <EuiFieldSearch fullWidth={true} value={search} placeholder="Search policy name" onChange={onSearchChange} />
         </EuiFlexItem>
         {pageCount > 1 && (
           <EuiFlexItem grow={false} style={{ justifyContent: "center" }}>

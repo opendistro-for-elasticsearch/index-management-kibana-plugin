@@ -31,7 +31,7 @@ export default class ManagedIndexControls extends Component<ManagedIndexControls
     return (
       <EuiFlexGroup style={{ padding: "0px 5px" }}>
         <EuiFlexItem>
-          <EuiFieldSearch fullWidth={true} value={search} placeholder="Search" onChange={onSearchChange} />
+          <EuiFieldSearch fullWidth={true} value={search} placeholder="Search index name" onChange={onSearchChange} />
         </EuiFlexItem>
         {pageCount > 1 && (
           <EuiFlexItem grow={false} style={{ justifyContent: "center" }}>
