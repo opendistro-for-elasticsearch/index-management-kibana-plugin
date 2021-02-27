@@ -443,7 +443,7 @@ export default class Rollups extends Component<RollupsProps, RollupsState> {
         <div style={{ padding: "initial" }}>
           <EuiFlexGroup style={{ padding: "0px 5px" }}>
             <EuiFlexItem>
-              <EuiFieldSearch fullWidth={true} value={search} placeholder="Search rollup job" onChange={this.onSearchChange} />
+              <EuiFieldSearch fullWidth={true} value={search} placeholder="Search rollup job name" onChange={this.onSearchChange} />
             </EuiFlexItem>
             {pageCount > 1 && (
               <EuiFlexItem grow={false} style={{ justifyContent: "center" }}>
