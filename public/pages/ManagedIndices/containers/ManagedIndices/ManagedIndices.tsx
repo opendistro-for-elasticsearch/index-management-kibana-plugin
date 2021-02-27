@@ -22,7 +22,6 @@ import {
   EuiFlexGroup,
   EuiFlexItem,
   EuiButton,
-  EuiTitle,
   EuiSpacer,
   EuiTableFieldDataColumnType,
   // @ts-ignore
@@ -100,6 +99,15 @@ export default class ManagedIndices extends Component<ManagedIndicesProps, Manag
         textOnly: true,
         width: "150px",
         render: (index: string) => <span title={index}>{index}</span>,
+      },
+      {
+        field: "indexUuid",
+        name: "IndexID",
+        sortable: true,
+        truncateText: true,
+        textOnly: true,
+        width: "150px",
+        render: (indexUuid: string) => indexUuid || DEFAULT_EMPTY_DATA,
       },
       {
         field: "policyId",
@@ -410,6 +418,7 @@ export default class ManagedIndices extends Component<ManagedIndicesProps, Manag
             pagination={pagination}
             selection={selection}
             sorting={sorting}
+            tableLayout="auto"
           />
         </ContentPanel>
       </div>
