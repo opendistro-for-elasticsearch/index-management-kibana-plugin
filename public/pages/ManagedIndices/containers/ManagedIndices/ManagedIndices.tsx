@@ -163,7 +163,7 @@ export default class ManagedIndices extends Component<ManagedIndicesProps, Manag
   }
 
   async componentDidMount() {
-    this.context.chrome.setBreadcrumbs([BREADCRUMBS.INDEX_MANAGEMENT, BREADCRUMBS.MANAGED_INDICES]);
+    this.context.chrome.setBreadcrumbs([BREADCRUMBS.INDEX_MANAGEMENT, BREADCRUMBS.POLICY_MANAGED_INDICES]);
     await this.getManagedIndices();
   }
 
@@ -368,10 +368,11 @@ export default class ManagedIndices extends Component<ManagedIndicesProps, Manag
     return (
       <div style={{ padding: "0px 25px" }}>
         <EuiFlexGroup alignItems="center">
-          <EuiFlexItem>
-            <EuiTitle size="l">
-              <h1>Managed Indices</h1>
-            </EuiTitle>
+          <EuiFlexItem></EuiFlexItem>
+          <EuiFlexItem grow={false}>
+            <EuiButton iconType="refresh" onClick={this.getManagedIndices} data-test-subj="refreshButton">
+              Refresh
+            </EuiButton>
           </EuiFlexItem>
           <EuiFlexItem grow={false}>
             <EuiButton href={`${PLUGIN_NAME}#/change-policy`} data-test-subj="changePolicyButton">
@@ -382,14 +383,17 @@ export default class ManagedIndices extends Component<ManagedIndicesProps, Manag
 
         <EuiSpacer />
 
-        <ContentPanel actions={<ContentPanelActions actions={actions} />} bodyStyles={{ padding: "initial" }} title="Indices">
+        <ContentPanel
+          actions={<ContentPanelActions actions={actions} />}
+          bodyStyles={{ padding: "initial" }}
+          title="Policy managed indices"
+        >
           <ManagedIndexControls
             activePage={page}
             pageCount={Math.ceil(totalManagedIndices / size) || 1}
             search={search}
             onSearchChange={this.onSearchChange}
             onPageClick={this.onPageClick}
-            onRefresh={this.getManagedIndices}
           />
 
           <EuiHorizontalRule margin="xs" />
