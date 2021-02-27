@@ -49,9 +49,6 @@ export const BREADCRUMBS = Object.freeze({
   EDIT_ROLLUP: { text: "Edit rollup job" },
   ROLLUP_DETAILS: { text: "Rollup details" },
   STATE_MANAGEMENT_POLICIES: { text: "State management policies" },
-  HOT_INDICES: { text: "Hot indices" },
-  WARM_INDICES: { text: "Warm indices" },
-  COLD_INDICES: { text: "Cold indices" },
   POLICY_MANAGED_INDICES: { text: "Policy managed indices" },
 });
 
