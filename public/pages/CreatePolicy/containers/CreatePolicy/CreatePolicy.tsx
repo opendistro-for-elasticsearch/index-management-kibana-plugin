@@ -60,13 +60,13 @@ export default class CreatePolicy extends Component<CreatePolicyProps, CreatePol
   }
 
   componentDidMount = async (): Promise<void> => {
-    this.context.chrome.setBreadcrumbs([BREADCRUMBS.INDEX_MANAGEMENT, BREADCRUMBS.INDEX_POLICIES]);
+    this.context.chrome.setBreadcrumbs([BREADCRUMBS.INDEX_MANAGEMENT, BREADCRUMBS.STATE_MANAGEMENT_POLICIES]);
     if (this.props.isEdit) {
       const { id } = queryString.parse(this.props.location.search);
       if (typeof id === "string" && !!id) {
         this.context.chrome.setBreadcrumbs([
           BREADCRUMBS.INDEX_MANAGEMENT,
-          BREADCRUMBS.INDEX_POLICIES,
+          BREADCRUMBS.STATE_MANAGEMENT_POLICIES,
           BREADCRUMBS.EDIT_POLICY,
           { text: id },
         ]);
@@ -76,7 +76,7 @@ export default class CreatePolicy extends Component<CreatePolicyProps, CreatePol
         this.props.history.push(ROUTES.INDEX_POLICIES);
       }
     } else {
-      this.context.chrome.setBreadcrumbs([BREADCRUMBS.INDEX_MANAGEMENT, BREADCRUMBS.INDEX_POLICIES, BREADCRUMBS.CREATE_POLICY]);
+      this.context.chrome.setBreadcrumbs([BREADCRUMBS.INDEX_MANAGEMENT, BREADCRUMBS.STATE_MANAGEMENT_POLICIES, BREADCRUMBS.CREATE_POLICY]);
       this.setState({ jsonString: DEFAULT_POLICY });
     }
   };

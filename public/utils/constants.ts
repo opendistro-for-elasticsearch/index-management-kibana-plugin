@@ -26,24 +26,30 @@ export const ROUTES = Object.freeze({
   MANAGED_INDICES: "/managed-indices",
   INDEX_POLICIES: "/index-policies",
   INDICES: "/indices",
-  ROLLUPS: "/rollups",
+  ROLLUP_JOBS: "/rollup-jobs",
   CREATE_ROLLUP: "/create-rollup",
   EDIT_ROLLUP: "/edit-rollup",
   ROLLUP_DETAILS: "/rollup-details",
+  CONSOLE: "/console",
+  STATE_MANAGEMENT_POLICIES: "/state-management-policies",
+  HOT_INDICES: "/hot-indices",
+  WARM_INDICES: "warm-indices",
+  COLD_INDICES: "/cold-indices",
+  POLICY_MANAGED_INDICES: "/policy-managed-indices",
 });
 
 export const BREADCRUMBS = Object.freeze({
   INDEX_MANAGEMENT: { text: "Index Management", href: "#/" },
   INDICES: { text: "Indices", href: `#${ROUTES.INDICES}` },
-  INDEX_POLICIES: { text: "Index policies", href: `#${ROUTES.INDEX_POLICIES}` },
-  MANAGED_INDICES: { text: "Managed indices", href: `#${ROUTES.MANAGED_INDICES}` },
   EDIT_POLICY: { text: "Edit policy" },
   CREATE_POLICY: { text: "Create policy" },
   CHANGE_POLICY: { text: "Change policy" },
-  ROLLUPS: { text: "Rollup jobs", href: `#${ROUTES.ROLLUPS}` },
+  ROLLUP_JOBS: { text: "Rollup jobs", href: `#${ROUTES.ROLLUP_JOBS}` },
   CREATE_ROLLUP: { text: "Create rollup job" },
   EDIT_ROLLUP: { text: "Edit rollup job" },
   ROLLUP_DETAILS: { text: "Rollup details" },
+  STATE_MANAGEMENT_POLICIES: { text: "State management policies" },
+  POLICY_MANAGED_INDICES: { text: "Policy managed indices" },
 });
 
 // TODO: Kibana EUI has a SortDirection already

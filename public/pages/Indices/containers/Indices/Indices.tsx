@@ -169,6 +169,13 @@ export default class Indices extends Component<IndicesProps, IndicesState> {
               <ContentPanelActions
                 actions={[
                   {
+                    text: "Refresh",
+                    buttonProps: {
+                      iconType: "refresh",
+                      onClick: this.getIndices,
+                    },
+                  },
+                  {
                     text: "Apply policy",
                     buttonProps: {
                       disabled: !selectedItems.length,
@@ -193,7 +200,6 @@ export default class Indices extends Component<IndicesProps, IndicesState> {
           search={search}
           onSearchChange={this.onSearchChange}
           onPageClick={this.onPageClick}
-          onRefresh={this.getIndices}
         />
 
         <EuiHorizontalRule margin="xs" />

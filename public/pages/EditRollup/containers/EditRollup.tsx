@@ -85,11 +85,11 @@ export default class EditRollup extends Component<EditRollupProps, EditRollupSta
   componentDidMount = async (): Promise<void> => {
     const { id } = queryString.parse(this.props.location.search);
     if (typeof id === "string" && !!id) {
-      this.context.chrome.setBreadcrumbs([BREADCRUMBS.INDEX_MANAGEMENT, BREADCRUMBS.ROLLUPS, BREADCRUMBS.EDIT_ROLLUP, { text: id }]);
+      this.context.chrome.setBreadcrumbs([BREADCRUMBS.INDEX_MANAGEMENT, BREADCRUMBS.ROLLUP_JOBS, BREADCRUMBS.EDIT_ROLLUP, { text: id }]);
       await this.getRollupToEdit(id);
     } else {
       this.context.notifications.toasts.addDanger(`Invalid rollup id: ${id}`);
-      this.props.history.push(ROUTES.ROLLUPS);
+      this.props.history.push(ROUTES.ROLLUP_JOBS);
     }
   };
 
@@ -123,16 +123,16 @@ export default class EditRollup extends Component<EditRollupProps, EditRollupSta
         }
       } else {
         this.context.notifications.toasts.addDanger(`Could not load the rollup job: ${response.error}`);
-        this.props.history.push(ROUTES.ROLLUPS);
+        this.props.history.push(ROUTES.ROLLUP_JOBS);
       }
     } catch (err) {
       this.context.notifications.toasts.addDanger(getErrorMessage(err, "Could not load the rollup job"));
-      this.props.history.push(ROUTES.ROLLUPS);
+      this.props.history.push(ROUTES.ROLLUP_JOBS);
     }
   };
 
   onCancel = (): void => {
-    this.props.history.push(ROUTES.ROLLUPS);
+    this.props.history.push(ROUTES.ROLLUP_JOBS);
   };
 
   onChangeDescription = (e: ChangeEvent<HTMLTextAreaElement>): void => {

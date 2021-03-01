@@ -126,7 +126,7 @@ export default class Policies extends Component<PoliciesProps, PoliciesState> {
   }
 
   async componentDidMount() {
-    this.context.chrome.setBreadcrumbs([BREADCRUMBS.INDEX_MANAGEMENT, BREADCRUMBS.INDEX_POLICIES]);
+    this.context.chrome.setBreadcrumbs([BREADCRUMBS.INDEX_MANAGEMENT, BREADCRUMBS.STATE_MANAGEMENT_POLICIES]);
     await this.getPolicies();
   }
 
@@ -255,6 +255,13 @@ export default class Policies extends Component<PoliciesProps, PoliciesState> {
 
     const actions = [
       {
+        text: "Refresh",
+        buttonProps: {
+          iconType: "refresh",
+          onClick: this.getPolicies,
+        },
+      },
+      {
         text: "Delete",
         buttonProps: { disabled: !selectedItems.length },
         modal: {
@@ -285,14 +292,17 @@ export default class Policies extends Component<PoliciesProps, PoliciesState> {
     ];
 
     return (
-      <ContentPanel actions={<ContentPanelActions actions={actions} />} bodyStyles={{ padding: "initial" }} title="Index policies">
+      <ContentPanel
+        actions={<ContentPanelActions actions={actions} />}
+        bodyStyles={{ padding: "initial" }}
+        title="State management policies"
+      >
         <PolicyControls
           activePage={page}
           pageCount={Math.ceil(totalPolicies / size) || 1}
           search={search}
           onSearchChange={this.onSearchChange}
           onPageClick={this.onPageClick}
-          onRefresh={this.getPolicies}
         />
 
         <EuiHorizontalRule margin="xs" />

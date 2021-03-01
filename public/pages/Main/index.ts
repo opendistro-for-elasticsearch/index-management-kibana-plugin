@@ -13,6 +13,6 @@
  * permissions and limitations under the License.
  */
 
-import Main from "./Main";
+import Main from "./containers/Main";
 
 export default Main;

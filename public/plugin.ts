@@ -14,15 +14,23 @@
  */
 
 import { AppMountParameters, CoreSetup, CoreStart, Plugin, PluginInitializerContext } from "../../../src/core/public";
-import { IndexManagementPluginSetup } from ".";
-import { IndexManagementPluginStart } from ".";
+import { IndexManagementPluginSetup, IndexManagementPluginStart } from ".";
+import { sortBy } from "lodash";
+import { createIndexManagementApp, CreateIndexManagementArgs, IndexManagementApp } from "./index_management";
 
 export class IndexManagementPlugin implements Plugin<IndexManagementPluginSetup, IndexManagementPluginStart> {
-  constructor(private readonly initializerContext: PluginInitializerContext) {
+  constructor(
+    private readonly initializerContext: PluginInitializerContext,
+    private readonly indexManagementApps: Map<string, IndexManagementApp>
+  ) {
     // can retrieve config from initializerContext
   }
 
-  public setup(core: CoreSetup): IndexManagementPluginSetup {
+  private getSortedIndexManagements(): readonly IndexManagementApp[] {
+    return sortBy([...this.indexManagementApps.values()], "order");
+  }
+
+  public setup(core: CoreSetup, indexManagement: IndexManagementPlugin): IndexManagementPluginSetup {
     core.application.register({
       id: "opendistro_index_management_kibana",
       title: "Index Management",
@@ -35,10 +43,21 @@ export class IndexManagementPlugin implements Plugin<IndexManagementPluginSetup,
       mount: async (params: AppMountParameters) => {
         const { renderApp } = await import("./index_management_app");
         const [coreStart, depsStart] = await core.getStartServices();
-        return renderApp(coreStart, params);
+        return renderApp(coreStart, params, this.getSortedIndexManagements());
       },
     });
-    return {};
+
+    return {
+      register: (indexManagementArgs: CreateIndexManagementArgs) => {
+        if (this.indexManagementApps.has(indexManagementArgs.id)) {
+          throw new Error(`Index management with id [${indexManagementArgs.id}] has already been registered. Use a unique id.`);
+        }
+
+        const indexManagement = createIndexManagementApp(indexManagementArgs);
+        this.indexManagementApps.set(indexManagement.id, indexManagement);
+        return indexManagement;
+      },
+    };
   }
 
   public start(core: CoreStart): IndexManagementPluginStart {
