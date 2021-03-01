@@ -56,7 +56,10 @@ function renderCreatePolicyWithRouter(initialEntries = ["/"]) {
                                 <CreatePolicy {...props} isEdit={true} policyService={services.policyService} />
                               )}
                             />
-                            <Route path={ROUTES.INDEX_POLICIES} render={(props: RouteComponentProps) => <div>Testing Policies</div>} />
+                            <Route
+                              path={ROUTES.STATE_MANAGEMENT_POLICIES}
+                              render={(props: RouteComponentProps) => <div>Testing Policies</div>}
+                            />
                             <Redirect from="/" to={ROUTES.CREATE_POLICY} />
                           </Switch>
                         </ModalProvider>

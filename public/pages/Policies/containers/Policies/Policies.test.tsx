@@ -43,7 +43,7 @@ function renderPoliciesWithRouter() {
                     <ModalRoot services={services} />
                     <Switch>
                       <Route
-                        path={ROUTES.INDEX_POLICIES}
+                        path={ROUTES.STATE_MANAGEMENT_POLICIES}
                         render={(props: RouteComponentProps) => (
                           <div style={{ padding: "25px 25px" }}>
                             <Policies {...props} policyService={services.policyService} />
@@ -52,7 +52,7 @@ function renderPoliciesWithRouter() {
                       />
                       <Route path={ROUTES.CREATE_POLICY} render={(props) => <div>Testing create policy</div>} />
                       <Route path={ROUTES.EDIT_POLICY} render={(props) => <div>Testing edit policy: {props.location.search}</div>} />
-                      <Redirect from="/" to={ROUTES.INDEX_POLICIES} />
+                      <Redirect from="/" to={ROUTES.STATE_MANAGEMENT_POLICIES} />
                     </Switch>
                   </ModalProvider>
                 )
@@ -113,7 +113,10 @@ describe("<IndexPolicies /> spec", () => {
     renderPoliciesWithRouter();
 
     expect(coreServicesMock.chrome.setBreadcrumbs).toHaveBeenCalledTimes(1);
-    expect(coreServicesMock.chrome.setBreadcrumbs).toHaveBeenCalledWith([BREADCRUMBS.INDEX_MANAGEMENT, BREADCRUMBS.INDEX_POLICIES]);
+    expect(coreServicesMock.chrome.setBreadcrumbs).toHaveBeenCalledWith([
+      BREADCRUMBS.INDEX_MANAGEMENT,
+      BREADCRUMBS.STATE_MANAGEMENT_POLICIES,
+    ]);
   });
 
   it("loads policies", async () => {
