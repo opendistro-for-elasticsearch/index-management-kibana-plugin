@@ -60,7 +60,7 @@ export default class ChangePolicy extends Component<ChangePolicyProps, ChangePol
   };
 
   async componentDidMount(): Promise<void> {
-    this.context.chrome.setBreadcrumbs([BREADCRUMBS.INDEX_MANAGEMENT, BREADCRUMBS.MANAGED_INDICES, BREADCRUMBS.CHANGE_POLICY]);
+    this.context.chrome.setBreadcrumbs([BREADCRUMBS.INDEX_MANAGEMENT, BREADCRUMBS.POLICY_MANAGED_INDICES, BREADCRUMBS.CHANGE_POLICY]);
   }
 
   onChangeSelectedPolicy = (selectedPolicies: PolicyOption[]): void => {
