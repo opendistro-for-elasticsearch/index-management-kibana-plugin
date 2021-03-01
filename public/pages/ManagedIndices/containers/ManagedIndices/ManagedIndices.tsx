@@ -153,7 +153,7 @@ export default class ManagedIndices extends Component<ManagedIndicesProps, Manag
       },
       {
         field: "index", // we don't care about the field as we're using the whole item in render
-        name: "Job Status",
+        name: "Job status",
         sortable: false,
         truncateText: false,
         width: "150px",
