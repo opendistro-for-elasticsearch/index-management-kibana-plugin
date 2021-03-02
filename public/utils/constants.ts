@@ -31,7 +31,7 @@ export const ROUTES = Object.freeze({
   ROLLUP_DETAILS: "/rollup-details",
   STATE_MANAGEMENT_POLICIES: "/state-management-policies",
   HOT_INDICES: "/hot-indices",
-  WARM_INDICES: "warm-indices",
+  WARM_INDICES: "/warm-indices",
   COLD_INDICES: "/cold-indices",
   POLICY_MANAGED_INDICES: "/policy-managed-indices",
 });
