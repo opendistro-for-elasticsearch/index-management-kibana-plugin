@@ -73,7 +73,7 @@ export default class CreatePolicy extends Component<CreatePolicyProps, CreatePol
         await this.getPolicyToEdit(id);
       } else {
         this.context.notifications.toasts.addDanger(`Invalid policy id: ${id}`);
-        this.props.history.push(ROUTES.INDEX_POLICIES);
+        this.props.history.push(ROUTES.STATE_MANAGEMENT_POLICIES);
       }
     } else {
       this.context.chrome.setBreadcrumbs([BREADCRUMBS.INDEX_MANAGEMENT, BREADCRUMBS.STATE_MANAGEMENT_POLICIES, BREADCRUMBS.CREATE_POLICY]);
@@ -94,11 +94,11 @@ export default class CreatePolicy extends Component<CreatePolicyProps, CreatePol
         });
       } else {
         this.context.notifications.toasts.addDanger(`Could not load the policy: ${response.error}`);
-        this.props.history.push(ROUTES.INDEX_POLICIES);
+        this.props.history.push(ROUTES.STATE_MANAGEMENT_POLICIES);
       }
     } catch (err) {
       this.context.notifications.toasts.addDanger(getErrorMessage(err, "Could not load the policy"));
-      this.props.history.push(ROUTES.INDEX_POLICIES);
+      this.props.history.push(ROUTES.STATE_MANAGEMENT_POLICIES);
     }
   };
 
@@ -108,7 +108,7 @@ export default class CreatePolicy extends Component<CreatePolicyProps, CreatePol
       const response = await policyService.putPolicy(policy, policyId);
       if (response.ok) {
         this.context.notifications.toasts.addSuccess(`Created policy: ${response.response._id}`);
-        this.props.history.push(ROUTES.INDEX_POLICIES);
+        this.props.history.push(ROUTES.STATE_MANAGEMENT_POLICIES);
       } else {
         this.setState({ submitError: response.error });
       }
@@ -128,7 +128,7 @@ export default class CreatePolicy extends Component<CreatePolicyProps, CreatePol
       const response = await policyService.putPolicy(policy, policyId, policySeqNo, policyPrimaryTerm);
       if (response.ok) {
         this.context.notifications.toasts.addSuccess(`Updated policy: ${response.response._id}`);
-        this.props.history.push(ROUTES.INDEX_POLICIES);
+        this.props.history.push(ROUTES.STATE_MANAGEMENT_POLICIES);
       } else {
         this.setState({ submitError: response.error });
       }
@@ -139,7 +139,7 @@ export default class CreatePolicy extends Component<CreatePolicyProps, CreatePol
 
   onCancel = (): void => {
     if (this.props.isEdit) this.props.history.goBack();
-    else this.props.history.push(ROUTES.INDEX_POLICIES);
+    else this.props.history.push(ROUTES.STATE_MANAGEMENT_POLICIES);
   };
 
   onChange = (e: ChangeEvent<HTMLInputElement>): void => {

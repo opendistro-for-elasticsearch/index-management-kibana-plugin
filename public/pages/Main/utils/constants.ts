@@ -30,12 +30,10 @@ export enum Navigation {
 export enum Pathname {
   RollupJobs = "/rollup-jobs",
   TransformJobs = "/transform-jobs",
-  StateManagementPolicies = "state-management-policies",
+  StateManagementPolicies = "/state-management-policies",
   Indices = "/indices",
-  HotIndices = "hot-indices",
-  WarmIndices = "warm-indices",
-  ColdIndices = "cold-indices",
-  PolicyManagedIndices = "policy-managed-indices",
-  Console = "/console",
-  SecurityPOC = "/security-poc",
+  HotIndices = "/hot-indices",
+  WarmIndices = "/warm-indices",
+  ColdIndices = "/cold-indices",
+  PolicyManagedIndices = "/policy-managed-indices",
 }

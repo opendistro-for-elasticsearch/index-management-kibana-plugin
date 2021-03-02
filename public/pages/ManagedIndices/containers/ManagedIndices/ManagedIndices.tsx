@@ -102,7 +102,7 @@ export default class ManagedIndices extends Component<ManagedIndicesProps, Manag
       },
       {
         field: "indexUuid",
-        name: "IndexID",
+        name: "Index ID",
         sortable: true,
         truncateText: true,
         textOnly: true,
@@ -153,7 +153,7 @@ export default class ManagedIndices extends Component<ManagedIndicesProps, Manag
       },
       {
         field: "index", // we don't care about the field as we're using the whole item in render
-        name: "Job Status",
+        name: "Job status",
         sortable: false,
         truncateText: false,
         width: "150px",
@@ -394,7 +394,7 @@ export default class ManagedIndices extends Component<ManagedIndicesProps, Manag
         <ContentPanel
           actions={<ContentPanelActions actions={actions} />}
           bodyStyles={{ padding: "initial" }}
-          title="Policy managed indices"
+          title={"Policy managed indices" + " (" + `${totalManagedIndices}` + ")"}
         >
           <ManagedIndexControls
             activePage={page}
