@@ -133,8 +133,8 @@ export default class Main extends Component<MainProps, object> {
           {
             name: Navigation.Indices,
             id: 4,
-            // href: `#${Pathname.Indices}`,
-            // isSelected: pathname === Pathname.Indices,
+            href: `#${Pathname.Indices}`,
+            isSelected: pathname === Pathname.Indices,
             forceOpen: true,
             /**
              * The bottom items are for integration with Leviathan.
