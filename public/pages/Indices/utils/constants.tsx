@@ -44,7 +44,7 @@ export const indicesColumns: EuiTableFieldDataColumnType<ManagedCatIndex>[] = [
     field: "index",
     name: "Index",
     sortable: true,
-    truncateText: true,
+    truncateText: false,
     textOnly: true,
     width: "250px",
     render: (index: string) => <span title={index}>{index}</span>,
