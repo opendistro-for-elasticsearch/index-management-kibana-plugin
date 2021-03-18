@@ -216,7 +216,7 @@ describe("Rollups", () => {
       cy.createRollup(ROLLUP_ID, sampleRollup);
     });
 
-    it.only("successfully", () => {
+    it("successfully", () => {
       // Confirm we have our initial rollup
       cy.contains(ROLLUP_ID);
 
