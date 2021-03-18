@@ -23,17 +23,11 @@ describe("Rollups", () => {
     // Set welcome screen tracking to true
     localStorage.setItem("home:welcome:show", "true");
 
-    // Go to home page
-    cy.visit(`${Cypress.env("kibana")}/app/home`);
-
-    // Click to add sample data
-    cy.get(`button[class="euiButton euiButton--primary homWelcome__footerAction euiButton--fill"]`)
-      .contains("Add data")
-      .click({ force: true });
+    // Go to sample data page
+    cy.visit(`${Cypress.env("kibana")}/app/home#/tutorial_directory/sampleData`);
 
     // Click on "Sample data" tab
     cy.contains("Sample data").click({ force: true });
-
     // Load sample eCommerce data
     cy.get(`button[data-test-subj="addSampleDataSetecommerce"]`).click({ force: true });
 
@@ -229,13 +223,15 @@ describe("Rollups", () => {
       // Click into rollup job details page
       cy.get(`[data-test-subj="rollupLink_${ROLLUP_ID}"]`).click({ force: true });
 
+      cy.contains(`${ROLLUP_ID}`);
+
       // Click Disable button
       cy.get(`[data-test-subj="disableButton"]`).click({ force: true });
 
       // Confirm we get toaster saying rollup job is disabled
       cy.contains(`${ROLLUP_ID} is disabled`);
 
-      // Click Disable button
+      // Click Enable button
       cy.get(`[data-test-subj="enableButton"]`).click({ force: true });
 
       // Confirm we get toaster saying rollup job is enabled

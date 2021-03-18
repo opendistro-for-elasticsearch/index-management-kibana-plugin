@@ -31,3 +31,8 @@ export const API = {
 };
 
 export const PLUGIN_NAME = "opendistro_index_management_kibana";
+
+export const ADMIN_AUTH = {
+  username: "admin",
+  password: "admin",
+};
