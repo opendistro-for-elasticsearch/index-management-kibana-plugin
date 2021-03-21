@@ -260,7 +260,7 @@ export default class HistogramAndMetrics extends Component<HistogramAndMetricsPr
           </ModalConsumer>
         }
         bodyStyles={{ padding: "initial" }}
-        title="Aggregation and metrics setting"
+        title="Aggregation and metrics settings"
         titleSize="m"
       >
         <div style={{ padding: "15px" }}>
