@@ -22,7 +22,6 @@ import {
   EuiFlexGroup,
   EuiPanel,
   EuiBasicTable,
-  EuiIcon,
   EuiTableFieldDataColumnType,
   //@ts-ignore
   Criteria,
@@ -34,6 +33,11 @@ import { ContentPanel } from "../../../../components/ContentPanel";
 import { DEFAULT_PAGE_SIZE_OPTIONS } from "../../../Rollups/utils/constants";
 import { parseTimeunit } from "../../../CreateRollup/utils/helpers";
 import { DimensionItem, FieldItem, MetricItem } from "../../../../../models/interfaces";
+import {
+  BaseAggregationAndMetricsState,
+  BaseAggregationColumns,
+  BaseMetricsColumns
+} from "../../../Commons/BaseAggregationAndMetricSettings";
 
 interface AggregationAndMetricsSettingsProps {
   timestamp: string;
@@ -47,83 +51,12 @@ interface AggregationAndMetricsSettingsProps {
   onChangeMetricsShown: (from: number, size: number) => void;
 }
 
-interface AggregationAndMetricsSettingsState {
-  from: number;
-  size: number;
-  sortField: string;
-  sortDirection: string;
-  dimensionFrom: number;
-  dimensionSize: number;
-  dimensionSortField: string;
-  dimensionSortDirection: string;
+interface AggregationAndMetricsSettingsState extends BaseAggregationAndMetricsState {
 }
 
-const aggregationColumns: EuiTableFieldDataColumnType<DimensionItem>[] = [
-  {
-    field: "sequence",
-    name: "Sequence",
-    sortable: true,
-    align: "left",
-    dataType: "number",
-  },
-  {
-    field: "field.label",
-    name: "Field name",
-    align: "left",
-  },
-  {
-    field: "aggregationMethod",
-    name: "Aggregation method",
-    align: "left",
-  },
-  {
-    field: "interval",
-    name: "Interval",
-    dataType: "number",
-    align: "left",
-    render: (interval: null | number) => {
-      if (interval == null) return "-";
-      else return `${interval}`;
-    },
-  },
-];
+const aggregationColumns: Readonly<EuiTableFieldDataColumnType<DimensionItem>>[] = BaseAggregationColumns;
 
-const metricsColumns = [
-  {
-    field: "source_field",
-    name: "Field Name",
-  },
-  {
-    field: "min",
-    name: "Min",
-    align: "center",
-    render: (min: boolean) => min && <EuiIcon type="check" />,
-  },
-  {
-    field: "max",
-    name: "Max",
-    align: "center",
-    render: (max: boolean) => max && <EuiIcon type="check" />,
-  },
-  {
-    field: "sum",
-    name: "Sum",
-    align: "center",
-    render: (sum: boolean) => sum && <EuiIcon type="check" />,
-  },
-  {
-    field: "avg",
-    name: "Avg",
-    align: "center",
-    render: (avg: boolean) => avg && <EuiIcon type="check" />,
-  },
-  {
-    field: "value_count",
-    name: "Value count",
-    align: "center",
-    render: (value_count: boolean) => value_count && <EuiIcon type="check" />,
-  },
-];
+const metricsColumns = BaseMetricsColumns;
 
 export default class AggregationAndMetricsSettings extends Component<
   AggregationAndMetricsSettingsProps,

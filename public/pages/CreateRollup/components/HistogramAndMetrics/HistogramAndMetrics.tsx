@@ -36,6 +36,10 @@ import { ModalConsumer } from "../../../../components/Modal";
 import { DEFAULT_PAGE_SIZE_OPTIONS } from "../../../Rollups/utils/constants";
 import { parseTimeunit } from "../../utils/helpers";
 import { DimensionItem, MetricItem } from "../../../../../models/interfaces";
+import {
+  BaseAggregationAndMetricsState,
+  BaseAggregationColumns, BaseMetricsColumns
+} from "../../../Commons/BaseAggregationAndMetricSettings";
 
 interface HistogramAndMetricsProps {
   rollupId: string;
@@ -49,97 +53,35 @@ interface HistogramAndMetricsProps {
   selectedMetrics: MetricItem[];
 }
 
-interface HistogramAndMetricsState {
-  from: number;
-  size: number;
-  sortField: string;
-  sortDirection: string;
+interface HistogramAndMetricsState extends BaseAggregationAndMetricsState {
   metricsShown: MetricItem[];
-  dimensionFrom: number;
-  dimensionSize: number;
-  dimensionSortField: string;
-  dimensionSortDirection: string;
   dimensionsShown: DimensionItem[];
 }
 
-const aggregationColumns: EuiTableFieldDataColumnType<DimensionItem>[] = [
-  {
-    field: "sequence",
-    name: "Sequence",
-    sortable: true,
-    align: "left",
-    dataType: "number",
-  },
-  {
-    field: "field.label",
-    name: "Field name",
-    align: "left",
-  },
+
+const _createFlowAggregateColumns: Readonly<EuiTableFieldDataColumnType<DimensionItem>>[] = [
   {
     field: "field.type",
     name: "Field type",
     align: "left",
     render: (type) => (type == undefined ? "-" : type),
   },
-  {
-    field: "aggregationMethod",
-    name: "Aggregation method",
-    align: "left",
-  },
-  {
-    field: "interval",
-    name: "Interval",
-    dataType: "number",
-    align: "left",
-    render: (interval: null | number) => {
-      if (interval == null) return "-";
-      else return `${interval}`;
-    },
-  },
-];
+]
 
-const metricsColumns: EuiTableFieldDataColumnType<MetricItem>[] = [
-  {
-    field: "source_field.label",
-    name: "Field Name",
-  },
-  {
+const _createFlowMetricsColumn: Readonly<EuiTableFieldDataColumnType<MetricItem>> =  {
     field: "all",
     name: "All",
     align: "center",
     render: (all: boolean) => all && <EuiIcon type="check" />,
-  },
-  {
-    field: "min",
-    name: "Min",
-    align: "center",
-    render: (min: boolean) => min && <EuiIcon type="check" />,
-  },
-  {
-    field: "max",
-    name: "Max",
-    align: "center",
-    render: (max: boolean) => max && <EuiIcon type="check" />,
-  },
-  {
-    field: "sum",
-    name: "Sum",
-    align: "center",
-    render: (sum: boolean) => sum && <EuiIcon type="check" />,
-  },
-  {
-    field: "avg",
-    name: "Avg",
-    align: "center",
-    render: (avg: boolean) => avg && <EuiIcon type="check" />,
-  },
-  {
-    field: "value_count",
-    name: "Value count",
-    align: "center",
-    render: (value_count: boolean) => value_count && <EuiIcon type="check" />,
-  },
-];
+  }
+
+
+const aggregationColumns: Readonly<EuiTableFieldDataColumnType<DimensionItem>>[]
+  = [...BaseAggregationColumns,..._createFlowAggregateColumns];
+
+// Adding 'all' column at 1st index.
+const metricsColumns: EuiTableFieldDataColumnType<MetricItem>[] =
+  [...BaseMetricsColumns].splice(1, 0, _createFlowMetricsColumn);
 
 export default class HistogramAndMetrics extends Component<HistogramAndMetricsProps, HistogramAndMetricsState> {
   constructor(props: HistogramAndMetricsProps) {
