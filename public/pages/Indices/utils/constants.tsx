@@ -14,7 +14,7 @@
  */
 
 import React from "react";
-import { EuiHealth, EuiTableFieldDataColumnType } from "@elastic/eui";
+import { EuiButtonEmpty, EuiCopy, EuiHealth, EuiTableFieldDataColumnType } from "@elastic/eui";
 import { ManagedCatIndex } from "../../../../server/models/interfaces";
 import { SortDirection } from "../../../utils/constants";
 
@@ -47,7 +47,18 @@ export const indicesColumns: EuiTableFieldDataColumnType<ManagedCatIndex>[] = [
     truncateText: false,
     textOnly: true,
     width: "250px",
-    render: (index: string) => <span title={index}>{index}</span>,
+    render: (index: string) => {
+      return (
+        <EuiCopy textToCopy={index}>
+          {(copy) => (
+            <div>
+              <EuiButtonEmpty size="xs" flush="right" iconType="copyClipboard" onClick={copy} color="text"></EuiButtonEmpty>
+              <span title={index}>{index}</span>
+            </div>
+          )}
+        </EuiCopy>
+      );
+    },
   },
   {
     field: "health",
