@@ -13,16 +13,14 @@
  * permissions and limitations under the License.
  */
 
-import React, { Component, Fragment } from "react";
+import React, { Component } from "react";
 import {
   EuiComboBoxOptionOption,
   EuiFlexGrid,
   EuiFlexItem,
   EuiSpacer,
   EuiText,
-  EuiBasicTable,
   EuiTableFieldDataColumnType,
-  EuiPanel,
   EuiFlexGroup,
   // @ts-ignore
   Criteria,
@@ -37,9 +35,10 @@ import { DEFAULT_PAGE_SIZE_OPTIONS } from "../../../Rollups/utils/constants";
 import { parseTimeunit } from "../../utils/helpers";
 import { DimensionItem, MetricItem } from "../../../../../models/interfaces";
 import {
+  additionalMetricsComponent,
   AGGREGATION_AND_METRIC_SETTINGS,
   BaseAggregationAndMetricsState,
-  BaseAggregationColumns, BaseMetricsColumns
+  BaseAggregationColumns, BaseMetricsColumns, sequenceTableComponents, sourceFieldComponents
 } from "../../../Commons/BaseAggregationAndMetricSettings";
 
 interface HistogramAndMetricsProps {
@@ -246,61 +245,22 @@ export default class HistogramAndMetrics extends Component<HistogramAndMetricsPr
             </EuiFlexItem>
           </EuiFlexGroup>
 
-          {selectedDimensionField.length ? (
-            <Fragment>
-              <EuiPanel>
-                <EuiBasicTable
-                  items={dimensionsShown}
-                  rowHeader="sequence"
-                  columns={aggregationColumns}
-                  tableLayout="auto"
-                  noItemsMessage="No fields added for aggregations"
-                  pagination={dimensionPagination}
-                  sorting={dimensionSorting}
-                  onChange={this.onDimensionTableChange}
-                />
-              </EuiPanel>
-            </Fragment>
-          ) : (
-            <EuiText>
-              <dd>No fields added for aggregation</dd>
-            </EuiText>
-          )}
+          {
+            sequenceTableComponents( selectedDimensionField, dimensionsShown, aggregationColumns,
+              dimensionPagination, dimensionSorting, this.onDimensionTableChange )
+          }
+
           <EuiSpacer size="m" />
 
           <EuiSpacer />
-          <EuiFlexGroup gutterSize="xs">
-            <EuiFlexItem grow={false}>
-              <EuiText>
-                <h3>Additional metrics</h3>
-              </EuiText>
-            </EuiFlexItem>
-            <EuiFlexItem grow={false}>
-              <EuiText color="subdued" textAlign="left">
-                <h3>{`(${selectedMetrics.length})`}</h3>
-              </EuiText>
-            </EuiFlexItem>
-          </EuiFlexGroup>
-          {selectedMetrics.length ? (
-            <Fragment>
-              <EuiPanel>
-                <EuiBasicTable
-                  items={metricsShown}
-                  rowHeader="source_field"
-                  columns={metricsColumns}
-                  tableLayout="auto"
-                  pagination={pagination}
-                  sorting={sorting}
-                  onChange={this.onTableChange}
-                  noItemsMessage="No fields added for metrics"
-                />
-              </EuiPanel>
-            </Fragment>
-          ) : (
-            <EuiText>
-              <dd>No fields added for metrics</dd>
-            </EuiText>
-          )}
+          {
+            additionalMetricsComponent(selectedMetrics)
+          }
+
+          {
+            sourceFieldComponents(selectedMetrics, metricsShown, metricsColumns, pagination,
+                                  sorting, this.onTableChange)
+          }
 
           <EuiSpacer size="s" />
         </div>

@@ -1,9 +1,15 @@
-import React  from "react";
+import React, {Fragment} from "react";
 
 import {
+  EuiFlexItem,
+  EuiText,
+  EuiBasicTable,
   EuiTableFieldDataColumnType,
+  EuiPanel,
+  EuiFlexGroup,
   EuiIcon,
 } from "@elastic/eui";
+
 import {DimensionItem, MetricItem} from "../../../models/interfaces";
 
 export const AGGREGATION_AND_METRIC_SETTINGS = 'Aggregation and metrics settings'
@@ -88,3 +94,73 @@ export const BaseMetricsColumns: Readonly<EuiTableFieldDataColumnType<MetricItem
   },
 ];
 
+export function  sequenceTableComponents(selectedDimensionField, items, columns, pagination, sorting, onChange) {
+  if(selectedDimensionField.length == 0) {
+   return (
+     <EuiText>
+       <dd>No fields added for aggregation</dd>
+     </EuiText>
+   )
+  }
+
+  return  (<Fragment>
+      <EuiPanel>
+        <EuiBasicTable
+          items={items}
+          rowHeader="sequence"
+          columns={columns}
+          tableLayout="auto"
+          noItemsMessage="No fields added for aggregations"
+          pagination={pagination}
+          sorting={sorting}
+          onChange={onChange}
+        />
+      </EuiPanel>
+    </Fragment>
+  )
+}
+
+export function additionalMetricsComponent(selectedMetrics) {
+  return (
+    <EuiFlexGroup gutterSize="xs">
+      <EuiFlexItem grow={false}>
+        <EuiText>
+          <h3>Additional metrics</h3>
+        </EuiText>
+      </EuiFlexItem>
+      <EuiFlexItem grow={false}>
+        <EuiText color="subdued" textAlign="left">
+          <h3>{`(${selectedMetrics.length})`}</h3>
+        </EuiText>
+      </EuiFlexItem>
+    </EuiFlexGroup>
+  )
+}
+
+export function sourceFieldComponents(selectedMetrics, items, columns, pagination, sorting, onChange) {
+
+  if(selectedMetrics.length == 0) {
+    return (
+      <EuiText>
+        <dd>No fields added for metrics</dd>
+      </EuiText>
+    )
+  }
+
+   return (
+     <Fragment>
+      <EuiPanel>
+        <EuiBasicTable
+          items={items}
+          rowHeader="source_field"
+          columns={columns}
+          tableLayout="auto"
+          pagination={pagination}
+          sorting={sorting}
+          onChange={onChange}
+          noItemsMessage="No fields added for metrics"
+        />
+      </EuiPanel>
+     </Fragment>
+     )
+}
