@@ -6,6 +6,8 @@ import {
 } from "@elastic/eui";
 import {DimensionItem, MetricItem} from "../../../models/interfaces";
 
+export const AGGREGATION_AND_METRIC_SETTINGS = 'Aggregation and metrics settings'
+
 export interface BaseAggregationAndMetricsState {
   from: number;
   size: number;

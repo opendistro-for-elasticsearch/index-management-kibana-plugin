@@ -37,6 +37,7 @@ import { DEFAULT_PAGE_SIZE_OPTIONS } from "../../../Rollups/utils/constants";
 import { parseTimeunit } from "../../utils/helpers";
 import { DimensionItem, MetricItem } from "../../../../../models/interfaces";
 import {
+  AGGREGATION_AND_METRIC_SETTINGS,
   BaseAggregationAndMetricsState,
   BaseAggregationColumns, BaseMetricsColumns
 } from "../../../Commons/BaseAggregationAndMetricSettings";
@@ -202,7 +203,7 @@ export default class HistogramAndMetrics extends Component<HistogramAndMetricsPr
           </ModalConsumer>
         }
         bodyStyles={{ padding: "initial" }}
-        title="Aggregation and metrics settings"
+        title={AGGREGATION_AND_METRIC_SETTINGS}
         titleSize="m"
       >
         <div style={{ padding: "15px" }}>

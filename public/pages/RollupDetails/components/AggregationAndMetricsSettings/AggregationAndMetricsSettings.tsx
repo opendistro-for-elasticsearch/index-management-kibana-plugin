@@ -34,6 +34,7 @@ import { DEFAULT_PAGE_SIZE_OPTIONS } from "../../../Rollups/utils/constants";
 import { parseTimeunit } from "../../../CreateRollup/utils/helpers";
 import { DimensionItem, FieldItem, MetricItem } from "../../../../../models/interfaces";
 import {
+  AGGREGATION_AND_METRIC_SETTINGS,
   BaseAggregationAndMetricsState,
   BaseAggregationColumns,
   BaseMetricsColumns
@@ -140,7 +141,11 @@ export default class AggregationAndMetricsSettings extends Component<
       interval = intervalValue[0] + " " + parseTimeunit(intervalUnit[0]);
     }
     return (
-      <ContentPanel bodyStyles={{ padding: "initial" }} title="Aggregation and metrics settings" titleSize="m">
+      <ContentPanel
+        bodyStyles={{ padding: "initial" }}
+        title={AGGREGATION_AND_METRIC_SETTINGS}
+        titleSize="m"
+      >
         <div style={{ paddingLeft: "10px" }}>
           <EuiSpacer size="s" />
           <EuiText>
