@@ -13,16 +13,13 @@
  * permissions and limitations under the License.
  */
 
-import React, { Component, Fragment } from "react";
+import React, { Component } from "react";
 import {
   EuiFlexGrid,
   EuiSpacer,
   EuiFlexItem,
   EuiText,
   EuiFlexGroup,
-  EuiPanel,
-  EuiBasicTable,
-  EuiIcon,
   EuiTableFieldDataColumnType,
   //@ts-ignore
   Criteria,
@@ -34,6 +31,13 @@ import { ContentPanel } from "../../../../components/ContentPanel";
 import { DEFAULT_PAGE_SIZE_OPTIONS } from "../../../Rollups/utils/constants";
 import { parseTimeunit } from "../../../CreateRollup/utils/helpers";
 import { DimensionItem, FieldItem, MetricItem } from "../../../../../models/interfaces";
+import {
+  additionalMetricsComponent,
+  AGGREGATION_AND_METRIC_SETTINGS,
+  BaseAggregationAndMetricsState,
+  BaseAggregationColumns,
+  BaseMetricsColumns, sequenceTableComponents, sourceFieldComponents
+} from "../../../Commons/BaseAggregationAndMetricSettings";
 
 interface AggregationAndMetricsSettingsProps {
   timestamp: string;
@@ -47,83 +51,12 @@ interface AggregationAndMetricsSettingsProps {
   onChangeMetricsShown: (from: number, size: number) => void;
 }
 
-interface AggregationAndMetricsSettingsState {
-  from: number;
-  size: number;
-  sortField: string;
-  sortDirection: string;
-  dimensionFrom: number;
-  dimensionSize: number;
-  dimensionSortField: string;
-  dimensionSortDirection: string;
+interface AggregationAndMetricsSettingsState extends BaseAggregationAndMetricsState {
 }
 
-const aggregationColumns: EuiTableFieldDataColumnType<DimensionItem>[] = [
-  {
-    field: "sequence",
-    name: "Sequence",
-    sortable: true,
-    align: "left",
-    dataType: "number",
-  },
-  {
-    field: "field.label",
-    name: "Field name",
-    align: "left",
-  },
-  {
-    field: "aggregationMethod",
-    name: "Aggregation method",
-    align: "left",
-  },
-  {
-    field: "interval",
-    name: "Interval",
-    dataType: "number",
-    align: "left",
-    render: (interval: null | number) => {
-      if (interval == null) return "-";
-      else return `${interval}`;
-    },
-  },
-];
+const aggregationColumns: Readonly<EuiTableFieldDataColumnType<DimensionItem>>[] = BaseAggregationColumns;
 
-const metricsColumns = [
-  {
-    field: "source_field",
-    name: "Field Name",
-  },
-  {
-    field: "min",
-    name: "Min",
-    align: "center",
-    render: (min: boolean) => min && <EuiIcon type="check" />,
-  },
-  {
-    field: "max",
-    name: "Max",
-    align: "center",
-    render: (max: boolean) => max && <EuiIcon type="check" />,
-  },
-  {
-    field: "sum",
-    name: "Sum",
-    align: "center",
-    render: (sum: boolean) => sum && <EuiIcon type="check" />,
-  },
-  {
-    field: "avg",
-    name: "Avg",
-    align: "center",
-    render: (avg: boolean) => avg && <EuiIcon type="check" />,
-  },
-  {
-    field: "value_count",
-    name: "Value count",
-    align: "center",
-    render: (value_count: boolean) => value_count && <EuiIcon type="check" />,
-  },
-];
+const metricsColumns = BaseMetricsColumns;
 
 export default class AggregationAndMetricsSettings extends Component<
   AggregationAndMetricsSettingsProps,
@@ -207,7 +140,11 @@ export default class AggregationAndMetricsSettings extends Component<
       interval = intervalValue[0] + " " + parseTimeunit(intervalUnit[0]);
     }
     return (
-      <ContentPanel bodyStyles={{ padding: "initial" }} title="Aggregation and metrics settings" titleSize="m">
+      <ContentPanel
+        bodyStyles={{ padding: "initial" }}
+        title={AGGREGATION_AND_METRIC_SETTINGS}
+        titleSize="m"
+      >
         <div style={{ paddingLeft: "10px" }}>
           <EuiSpacer size="s" />
           <EuiText>
@@ -247,61 +184,23 @@ export default class AggregationAndMetricsSettings extends Component<
             </EuiFlexItem>
           </EuiFlexGroup>
 
-          {selectedDimensionField.length ? (
-            <Fragment>
-              <EuiPanel>
-                <EuiBasicTable
-                  items={dimensionsShown}
-                  rowHeader="sequence"
-                  columns={aggregationColumns}
-                  tableLayout="auto"
-                  noItemsMessage="No fields added for aggregations"
-                  pagination={dimensionPagination}
-                  sorting={dimensionSorting}
-                  onChange={this.onDimensionTableChange}
-                />
-              </EuiPanel>
-            </Fragment>
-          ) : (
-            <EuiText>
-              <dd>No fields added for aggregation</dd>
-            </EuiText>
-          )}
+          {
+            sequenceTableComponents(selectedDimensionField, dimensionsShown, aggregationColumns,
+              dimensionPagination, dimensionSorting, this.onDimensionTableChange)
+          }
+
           <EuiSpacer size="m" />
 
           <EuiSpacer />
-          <EuiFlexGroup gutterSize="xs">
-            <EuiFlexItem grow={false}>
-              <EuiText>
-                <h3>Additional metrics</h3>
-              </EuiText>
-            </EuiFlexItem>
-            <EuiFlexItem grow={false}>
-              <EuiText color="subdued" textAlign="left">
-                <h3>{`(${selectedMetrics.length})`}</h3>
-              </EuiText>
-            </EuiFlexItem>
-          </EuiFlexGroup>
-          {selectedMetrics.length ? (
-            <Fragment>
-              <EuiPanel>
-                <EuiBasicTable
-                  items={metricsShown}
-                  rowHeader="source_field"
-                  columns={metricsColumns}
-                  tableLayout="auto"
-                  pagination={pagination}
-                  sorting={sorting}
-                  onChange={this.onTableChange}
-                  noItemsMessage="No fields added for metrics"
-                />
-              </EuiPanel>
-            </Fragment>
-          ) : (
-            <EuiText>
-              <dd>No fields added for metrics</dd>
-            </EuiText>
-          )}
+
+          {
+            additionalMetricsComponent(selectedMetrics)
+          }
+
+          {
+            sourceFieldComponents(selectedMetrics, metricsShown, metricsColumns, pagination,
+              sorting, this.onTableChange)
+          }
           <EuiSpacer size="s" />
         </div>
       </ContentPanel>
