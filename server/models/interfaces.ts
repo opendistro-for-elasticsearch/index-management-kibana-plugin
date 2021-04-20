@@ -14,7 +14,14 @@
  */
 
 import { IndexService, ManagedIndexService, PolicyService, RollupService } from "../services";
-import { DocumentPolicy, DocumentRollup, ManagedIndexItem, Rollup } from "../../models/interfaces";
+import {
+  DocumentPolicy,
+  DocumentRollup,
+  DocumentTransform,
+  ManagedIndexItem,
+  Rollup,
+  Transform
+} from "../../models/interfaces";
 
 export interface NodeServices {
   indexService: IndexService;
@@ -88,6 +95,23 @@ export interface PutRollupResponse {
   rollup: { rollup: Rollup };
 }
 
+export interface DeleteTransformResponse {
+  result: string;
+}
+
+export interface GetTransformResponse {
+  transforms: DocumentTransform[];
+  totalTransforms: number;
+  metadata: any;
+}
+
+export interface PutTransformResponse {
+  _id: string;
+  _primary_term: string;
+  _seq_no: string;
+  transform: { transform: Transform };
+}
+
 export interface IndexUpdateResponse {
   updatedIndices: number;
   failures: boolean;
@@ -137,6 +161,17 @@ export interface PutRollupParams {
   if_seq_no?: string;
   if_primary_term?: string;
   body: string;
+}
+
+export interface PutTransformParams {
+  transformId: string;
+  if_seq_no?: string;
+  if_primary_term?: string;
+  body: string;
+}
+
+export interface DeleteTransformParams {
+  transformId: string;
 }
 
 // TODO: remove optional failedIndices after fixing retry API to always array
