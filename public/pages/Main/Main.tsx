@@ -39,6 +39,7 @@ enum Navigation {
   ManagedIndices = "Managed Indices",
   Indices = "Indices",
   Rollups = "Rollup Jobs",
+  Transforms = "Transform Jobs",
 }
 
 enum Pathname {
@@ -46,6 +47,7 @@ enum Pathname {
   ManagedIndices = "/managed-indices",
   Indices = "/indices",
   Rollups = "/rollups",
+  Transforms = "/transforms",
 }
 
 interface MainProps extends RouteComponentProps {}
@@ -84,6 +86,12 @@ export default class Main extends Component<MainProps, object> {
             id: 4,
             href: `#${Pathname.Rollups}`,
             isSelected: pathname === Pathname.Rollups,
+          },
+          {
+            name: Navigation.Transforms,
+            id: 5,
+            href: `#${Pathname.Transforms}`,
+            isSelected: pathname === Pathname.Transforms
           },
         ],
       },
@@ -178,6 +186,38 @@ export default class Main extends Component<MainProps, object> {
                           />
                           <Route
                             path={ROUTES.ROLLUP_DETAILS}
+                            render={(props: RouteComponentProps) => (
+                              <div style={{ padding: "25px 25px" }}>
+                                <RollupDetails {...props} rollupService={services.rollupService} />
+                              </div>
+                            )}
+                          />
+                          <Route
+                            path={ROUTES.TRANSFORMS}
+                            render = {(props: RouteComponentProps) => (
+                              <div>
+                                <Rollups {...props} rollupService={services?.rollupService}/>
+                              </div>
+                            )}
+                          />
+                          <Route
+                            path={ROUTES.CREATE_TRANSFORM}
+                            render={(props: RouteComponentProps) => (
+                              <div style={{ padding: "25px 25px" }}>
+                                <CreateRollupForm {...props} rollupService={services.rollupService} indexService={services.indexService} />
+                              </div>
+                            )}
+                          />
+                          <Route
+                            path={ROUTES.EDIT_TRANSFORM}
+                            render={(props: RouteComponentProps) => (
+                              <div style={{ padding: "25px 25px" }}>
+                                <EditRollup {...props} rollupService={services.rollupService} />
+                              </div>
+                            )}
+                          />
+                          <Route
+                            path={ROUTES.TRANSFORM_DETAILS}
                             render={(props: RouteComponentProps) => (
                               <div style={{ padding: "25px 25px" }}>
                                 <RollupDetails {...props} rollupService={services.rollupService} />
