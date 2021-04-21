@@ -32,6 +32,7 @@ import { CoreServicesConsumer } from "../../components/core_services";
 import CreateRollupForm from "../CreateRollup/containers/CreateRollupForm";
 import EditRollup from "../EditRollup/containers";
 import RollupDetails from "../RollupDetails/containers/RollupDetails";
+import Transforms from "../Transforms/containers/Transforms/Transforms";
 
 enum Navigation {
   IndexManagement = "Index Management",
@@ -196,7 +197,7 @@ export default class Main extends Component<MainProps, object> {
                             path={ROUTES.TRANSFORMS}
                             render = {(props: RouteComponentProps) => (
                               <div>
-                                <Rollups {...props} rollupService={services?.rollupService}/>
+                                <Transforms {...props} transformService={services.transformService}/>
                               </div>
                             )}
                           />
