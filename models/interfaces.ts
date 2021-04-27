@@ -69,7 +69,7 @@ export interface DocumentRollup {
 
 export interface DocumentTransform {
   _id: string;
-  _seqNo: string;
+  _seqNo: number;
   _primaryTerm: number;
   transform: Transform;
   metadata: any;

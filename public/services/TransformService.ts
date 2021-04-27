@@ -62,6 +62,6 @@ export default class TransformService {
     const url = `..${NODE_API.TRANSFORMS}/${transformId}/_stop`;
     return (await this.httpClient.post(url)) as ServerResponse<boolean>;
   }
-  
+
   // TODO: implement preview transform
 }

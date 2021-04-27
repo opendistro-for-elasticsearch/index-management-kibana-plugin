@@ -44,7 +44,7 @@ import { CoreServicesContext } from "../../../../components/core_services";
 import {getURLQueryParams} from "../../utils/helpers";
 import {TransformQueryParams} from "../../models/interfaces";
 import {getErrorMessage} from "../../../../utils/helpers";
-import {ROUTES} from "../../../../utils/constants";
+import {BREADCRUMBS, ROUTES} from "../../../../utils/constants";
 import DeleteModal from "../../components/DeleteModal";
 import TransformEmptyPrompt from "../../components/TransformEmptyPrompt";
 import {renderEnabled, renderStatus} from "../../utils/metadataHelper";
@@ -94,6 +94,11 @@ export default class Transforms extends Component<TransformProps, TransformState
 
     this.getTransforms = _.debounce(this.getTransforms, 500, { leading: true });
   };
+
+  async componentDidMount() {
+    this.context.chrome.setBreadcrumbs([BREADCRUMBS.INDEX_MANAGEMENT, BREADCRUMBS.TRANSFORMS]);
+    await this.getTransforms();
+  }
 
   render() {
     const {

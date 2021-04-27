@@ -13,7 +13,7 @@
  * permissions and limitations under the License.
  */
 
-import { IndexService, ManagedIndexService, PolicyService, RollupService } from "../services";
+import { IndexService, ManagedIndexService, PolicyService, RollupService, TransformService } from "../services";
 import {
   DocumentPolicy,
   DocumentRollup,
@@ -28,6 +28,7 @@ export interface NodeServices {
   managedIndexService: ManagedIndexService;
   policyService: PolicyService;
   rollupService: RollupService;
+  transformService: TransformService;
 }
 
 export interface SearchResponse<T> {
@@ -236,6 +237,7 @@ export interface IndexManagementApi {
   readonly REMOVE_POLICY_BASE: string;
   readonly CHANGE_POLICY_BASE: string;
   readonly ROLLUP_JOBS_BASE: string;
+  readonly TRANSFORM_BASE: string;
 }
 
 export interface DefaultHeaders {
