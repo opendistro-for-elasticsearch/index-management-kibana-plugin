@@ -26,7 +26,7 @@ const setOfSteps = (step: number) => {
       children: null,
     },
     {
-      title: "Define aggregations and metrics",
+      title: "Define transforms",
       children: null,
       status: step < 2 ? "disabled" : null,
     },
