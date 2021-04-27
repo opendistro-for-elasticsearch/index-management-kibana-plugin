@@ -14,7 +14,7 @@
  */
 
 import React, { Component } from "react";
-import { ContentPanel } from "../../../../components/ContentPanel";
+import { ContentPanel, ContentPanelActions } from "../../../../components/ContentPanel";
 
 interface DefineTransformsProps {
   transformId: string;
@@ -30,6 +30,31 @@ export default class DefineTransforms extends Component<DefineTransformsProps, D
   }
 
   render() {
-    return <ContentPanel bodyStyles={{ padding: "initial" }} title="Select fields to transform" titleSize="m"></ContentPanel>;
+    return (
+      <ContentPanel
+        actions={
+          <ContentPanelActions
+            actions={[
+              {
+                text: "Full screen view",
+                buttonProps: {
+                  iconType: "fullScreen",
+                  //TODO: Add action to enter full screen view
+
+                  // onClick: () =>
+                  //   onShow(ApplyPolicyModal, {
+                  //     indices: selectedItems.map((item: ManagedCatIndex) => item.index),
+                  //     core: this.context,
+                  //   }),
+                },
+              },
+            ]}
+          />
+        }
+        bodyStyles={{ padding: "initial" }}
+        title="Select fields to transform"
+        titleSize="m"
+      ></ContentPanel>
+    );
   }
 }
