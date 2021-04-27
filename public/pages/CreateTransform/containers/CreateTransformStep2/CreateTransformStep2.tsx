@@ -13,17 +13,18 @@
  * permissions and limitations under the License.
  */
 
-import React, { ChangeEvent, Component } from "react";
-import { EuiSpacer, EuiTitle, EuiFlexGroup, EuiFlexItem, EuiCallOut, EuiComboBoxOptionOption } from "@elastic/eui";
+import React, { Component } from "react";
+import { EuiSpacer, EuiTitle, EuiFlexGroup, EuiFlexItem } from "@elastic/eui";
 import { RouteComponentProps } from "react-router-dom";
 import { TransformService } from "../../../../services";
 import { BREADCRUMBS, ROUTES } from "../../../../utils/constants";
 import CreateTransformSteps from "../../components/CreateTransformSteps";
-import { DimensionItem, FieldItem, MetricItem } from "../../../../../models/interfaces";
 import { CoreServicesContext } from "../../../../components/core_services";
+import DefineTransforms from "../../components/DefineTransforms";
 
 interface CreateTransformStep2Props extends RouteComponentProps {
   transformService: TransformService;
+  transformId: string;
   currentStep: number;
 }
 
@@ -42,8 +43,8 @@ export default class CreateTransformStep2 extends Component<CreateTransformStep2
   };
 
   render() {
-    if (this.props.currentStep !== 2) return null;
-    const { fields, timestamp } = this.props;
+    const { transformService, transformId, currentStep } = this.props;
+    if (currentStep !== 2) return null;
 
     return (
       <div style={{ padding: "5px 50px" }}>
@@ -53,9 +54,10 @@ export default class CreateTransformStep2 extends Component<CreateTransformStep2
           </EuiFlexItem>
           <EuiFlexItem>
             <EuiTitle size="l">
-              <h1>Definition Placeholder</h1>
+              <h1>Define transform</h1>
             </EuiTitle>
             <EuiSpacer />
+            <DefineTransforms transformId={transformId} />
           </EuiFlexItem>
         </EuiFlexGroup>
         <EuiSpacer />

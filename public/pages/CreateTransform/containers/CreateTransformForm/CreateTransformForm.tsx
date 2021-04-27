@@ -193,7 +193,7 @@ export default class CreateTransformForm extends Component<CreateTransformFormPr
   }
 
   _prev() {
-    let currentStep = this.state.currentStep  ;
+    let currentStep = this.state.currentStep;
     // If the current step is 2 or 3, then subtract one on "previous" button click
     currentStep = currentStep <= 1 ? 1 : currentStep - 1;
     this.setState({
@@ -353,10 +353,7 @@ export default class CreateTransformForm extends Component<CreateTransformFormPr
           onChangeTargetIndex={this.onChangeTargetIndex}
           currentStep={this.state.currentStep}
         />
-        <CreateTransformStep2
-          {...this.props}
-          currentStep={this.state.currentStep}
-        />
+        <CreateTransformStep2 {...this.props} transformId={transformId} currentStep={this.state.currentStep} />
         <CreateTransformStep3
           {...this.props}
           currentStep={this.state.currentStep}
