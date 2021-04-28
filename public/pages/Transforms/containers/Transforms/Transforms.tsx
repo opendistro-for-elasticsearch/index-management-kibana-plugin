@@ -14,6 +14,8 @@
  */
 
 import {
+  // @ts-ignore
+  Criteria,
   Direction,
   EuiPanel,
   EuiFlexGroup,
@@ -38,18 +40,19 @@ import {
 import queryString from "query-string";
 import { RouteComponentProps } from "react-router-dom";
 import TransformService from "../../../../services/TransformService";
-import {DocumentTransform} from "../../../../../models/interfaces";
+import { DocumentTransform } from "../../../../../models/interfaces";
 import React, { Component } from "react";
 import { CoreServicesContext } from "../../../../components/core_services";
-import {getURLQueryParams} from "../../utils/helpers";
-import {TransformQueryParams} from "../../models/interfaces";
-import {getErrorMessage} from "../../../../utils/helpers";
-import {BREADCRUMBS, ROUTES} from "../../../../utils/constants";
+import { getURLQueryParams } from "../../utils/helpers";
+import { TransformQueryParams } from "../../models/interfaces";
+import { getErrorMessage } from "../../../../utils/helpers";
+import { BREADCRUMBS, ROUTES } from "../../../../utils/constants";
 import DeleteModal from "../../components/DeleteModal";
 import TransformEmptyPrompt from "../../components/TransformEmptyPrompt";
-import {renderEnabled, renderStatus} from "../../utils/metadataHelper";
-import {DEFAULT_PAGE_SIZE_OPTIONS} from "../../../Indices/utils/constants";
+import { renderEnabled, renderStatus } from "../../utils/metadataHelper";
+import {DEFAULT_PAGE_SIZE_OPTIONS, DEFAULT_QUERY_PARAMS} from "../../../Indices/utils/constants";
 import _ from "lodash";
+import { ManagedCatIndex } from "../../../../../server/models/interfaces";
 
 interface TransformProps extends RouteComponentProps {
   transformService: TransformService
@@ -86,7 +89,7 @@ export default class Transforms extends Component<TransformProps, TransformState
       sortDirection,
       selectedItems: [],
       transforms: [],
-      fetchingTransforms: false,
+      fetchingTransforms: true,
       transformMetadata: {},
       isPopOverOpen: false,
       isDeleteModalVisible: false,
@@ -98,6 +101,14 @@ export default class Transforms extends Component<TransformProps, TransformState
   async componentDidMount() {
     this.context.chrome.setBreadcrumbs([BREADCRUMBS.INDEX_MANAGEMENT, BREADCRUMBS.TRANSFORMS]);
     await this.getTransforms();
+  }
+
+  async componentDidUpdate(prevProps: TransformProps, prevState: TransformState) {
+    const prevQuery = Transforms.getQueryObjectFromState(prevState);
+    const currQuery = Transforms.getQueryObjectFromState(this.state);
+    if (!_.isEqual(prevQuery, currQuery)) {
+      await this.getTransforms();
+    }
   }
 
   render() {
@@ -313,7 +324,7 @@ export default class Transforms extends Component<TransformProps, TransformState
     );
   }
 
-  getTransforms = async(): Promise<void> => {
+  getTransforms = async() => {
     this.setState( { fetchingTransforms: true });
     try {
       const { transformService, history } = this.props;
@@ -333,25 +344,125 @@ export default class Transforms extends Component<TransformProps, TransformState
     this.setState({ fetchingTransforms: false });
   };
 
-  getSelectedTransformIds() { return "asd" };
-  onSelectionChange() {};
-  closeDeleteModal() {};
-  onClickCreate() {};
-  onClickDelete() {};
-  onPageClick() {};
-  onTableChange() {};
-  onEnable() {};
-  onDisable() {};
-  closePopover() {};
-  resetFilters() {};
-  onSearchChange() {};
-  onActionButtonClick() {};
-  onClickEdit() {};
-  showDeleteModal() {};
+  getSelectedTransformIds = () => {
+    this.state.selectedItems.map((item: DocumentTransform) => { return item._id }).join(", ");
+  };
 
+  onSelectionChange = (selectedItems: DocumentTransform[]): void => {
+    this.setState({ selectedItems });
+  };
 
-  static getQueryObjectFromState(transformState : TransformState) : TransformQueryParams {
-    return transformState;
+  showDeleteModal = () => {
+    this.setState({ isDeleteModalVisible: true });
+  };
+
+  closeDeleteModal = () => {
+    this.setState({ isDeleteModalVisible: false });
+  };
+
+  onClickCreate = () => {
+    this.props.history.push(ROUTES.CREATE_TRANSFORM);
+  };
+
+  onClickEdit = () => {
+    const { selectedItems: [{_id}] } = this.state;
+    if (_id) this.props.history.push(`${ROUTES.EDIT_TRANSFORM}?id=${_id}`);
+  };
+
+  onClickDelete = async() => {
+    const { transformService } = this.props;
+    const { selectedItems } = this.state;
+    for (let item of selectedItems) {
+      const transformId = item._id;
+      try {
+        const response = await transformService.deleteTransform(transformId);
+
+        if (response.ok) {
+          this.closeDeleteModal();
+          this.context.notification.toasts.addSuccess(`"${transformId}" successfully deleted!`);
+        } else {
+          this.context.notifications.toasts.addDanger(`could not delete transform job "${transformId}" :  ${response.error}`);
+        }
+      } catch (err) {
+        this.context.notification.toasts.addDanger(getErrorMessage(err, "Could not delete the transform job"));
+      }
+    }
+
+    await this.getTransforms();
+  };
+
+  onPageClick = (page: number) => {
+    this.setState({from: page * this.state.size });
+  };
+
+  onTableChange = ({ page: tablePage, sort }: Criteria<ManagedCatIndex>) => {
+    const { index: page, size } = tablePage;
+    const { field: sortField, direction: sortDirection } = sort;
+    this.setState({ from: page * size, size, sortField, sortDirection });
+  };
+
+  closePopover = () => {
+    this.setState({ isPopOverOpen: false });
+  };
+
+  resetFilters = () => {
+    this.setState({ search: DEFAULT_QUERY_PARAMS.search });
+  };
+
+  onEnable = async() => {
+    const { transformService } = this.props;
+    const { selectedItems } = this.state;
+
+    for (const item of selectedItems) {
+      const transformId = item._id;
+      try {
+        const response = await transformService.startTransform(transformId);
+
+        if (response.ok) {
+          this.context.notifications.toasts.addSuccess(`${transformId} is enabled`);
+        } else {
+          this.context.notifications.toasts.addDanger(`Could not start transform job "${transformId}": ${response.error}`);
+        }
+      } catch (err) {
+        this.context.notifications.toasts.addDanger(getErrorMessage(err, `Could not start transform job ${transformId}`))
+      }
+    }
+
+    await this.getTransforms();
+  };
+
+  onDisable = async() => {
+    const { transformService } = this.props;
+    const { selectedItems } = this.state;
+
+    for (const item of selectedItems) {
+      const transformId = item._id;
+      try {
+        const response = await transformService.stopTransform(transformId);
+
+        if (response.ok) {
+          this.context.notifications.toasts.addSuccess(`${transformId} is disabled`);
+        } else {
+          this.context.notifications.toasts.addDanger(`Could not stop transform job "${transformId}": ${response.error}`);
+        }
+      } catch (err) {
+        this.context.notifications.toasts.addDanger(getErrorMessage(err, `Could not stop transform job ${transformId}`))
+      }
+    }
+
+    await this.getTransforms();
+  };
+
+  onSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    this.setState({ from: 0, search: e.target.value });
+  };
+
+  onActionButtonClick = () => {
+    this.setState({ isPopOverOpen: !this.state.isPopOverOpen });
+  };
+
+  static getQueryObjectFromState({ from, size, search, sortField, sortDirection} : TransformState) : TransformQueryParams {
+    return { from, size, search, sortField, sortDirection };
   }
 }
 

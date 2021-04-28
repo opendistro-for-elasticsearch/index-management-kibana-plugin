@@ -100,7 +100,7 @@ export interface DeleteTransformResponse {
   result: string;
 }
 
-export interface GetTransformResponse {
+export interface GetTransformsResponse {
   transforms: DocumentTransform[];
   totalTransforms: number;
   metadata: any;

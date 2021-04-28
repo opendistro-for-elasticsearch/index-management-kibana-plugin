@@ -36,4 +36,52 @@ export default function (services: NodeServices, router: IRouter) {
     },
     transformService.getTransforms
   );
+
+  router.get(
+    {
+      path: `${NODE_API.TRANSFORMS}/{id}`,
+      validate: {
+        params: schema.object({
+          id: schema.string(),
+        }),
+      },
+    },
+    transformService.getTransform
+  );
+
+  router.post(
+    {
+      path: `${NODE_API.TRANSFORMS}/{id}/_stop`,
+      validate: {
+        params: schema.object({
+          id: schema.string(),
+        }),
+      },
+    },
+    transformService.stopTransform
+  );
+
+  router.post(
+    {
+      path: `${NODE_API.TRANSFORMS}/{id}/_start`,
+      validate: {
+        params: schema.object({
+          id: schema.string(),
+        }),
+      },
+    },
+    transformService.startTransform
+  );
+
+  router.delete(
+    {
+      path: `${NODE_API.TRANSFORMS}/{id}`,
+      validate: {
+        params: schema.object({
+          id: schema.string(),
+        }),
+      },
+    },
+    transformService.deleteTransform
+  )
 }

@@ -21,8 +21,9 @@ import {
   RequestHandlerContext
 } from "kibana/server";
 import {ServerResponse} from "../models/types";
-import {GetTransformResponse} from "../models/interfaces";
-import {DocumentTransform} from "../../models/interfaces";
+import {GetTransformsResponse} from "../models/interfaces";
+import {DocumentTransform, Transform} from "../../models/interfaces";
+import _ from "lodash";
 
 export default class TransformService {
   esDriver: IClusterClient;
@@ -35,7 +36,7 @@ export default class TransformService {
     context: RequestHandlerContext,
     request: KibanaRequest,
     response: KibanaResponseFactory
-  ): Promise<IKibanaResponse<ServerResponse<GetTransformResponse>>> => {
+  ): Promise<IKibanaResponse<ServerResponse<GetTransformsResponse>>> => {
     try {
       const { from, size, search, sortDirection, sortField } = request.query as {
         from: number;
@@ -52,31 +53,59 @@ export default class TransformService {
         "transform.transform.enabled": "transform.enabled",
       };
 
-      // TODO: Correct the parsing
       const params = {
-        // from: parseInt(from, 10),
-        // size: parseInt(size, 10),
-        // search,
-        // sortField: transformSortMap[sortField] || transformSortMap._id,
-        // sortDirection,
+        from: parseInt(from, 10),
+        size: parseInt(size, 10),
+        search,
+        sortField: transformSortMap[sortField] || transformSortMap._id,
+        sortDirection,
       };
 
       const { callAsCurrentUser: callWithRequest } = this.esDriver.asScoped(request);
       const getTransformsResponse = await callWithRequest("ism.getTransforms", params);
       const totalTransforms = getTransformsResponse.total_transforms;
       const transforms = getTransformsResponse.transforms.map((transform: DocumentTransform) => ({
-        seqNo: transform._seqNo as number,
-        primaryTerm: transform._primaryTerm as number,
-        id: transform._id,
+        _seqNo: transform._seqNo as number,
+        _primaryTerm: transform._primaryTerm as number,
+        _id: transform._id,
         transform: transform.transform,
         metadata: null
       }));
+      if (totalTransforms) {
+        const ids = transforms.map((transform: DocumentTransform) => transform._id).join(",");
+        const explainResponse = await callWithRequest("ism.explainTransform", { transformId: ids });
+        if (!explainResponse.error) {
+          transforms.map((transform: DocumentTransform) => {
+            transform.metadata = explainResponse[transform._id];
+          });
+
+          return response.custom({
+            statusCode: 200,
+            body: { ok: true, response: {transforms: transforms, totalTransforms: totalTransforms, metadata: explainResponse} },
+          });
+        } else {
+          return response.custom({
+            statusCode: 200,
+            body: {
+              ok: false,
+              error: explainResponse ? explainResponse.error : "An error occurred when calling getExplain API.",
+            }
+          });
+        }
+      }
 
       return response.custom({
         statusCode: 200,
         body: {ok: true, response: {transforms: transforms, totalTransforms: totalTransforms, metadata: {}}},
       });
     } catch (err) {
+      if (err.statusCode === 404 && err.body.error.type === "index_not_found_exception") {
+        return response.custom({
+          statusCode: 200,
+          body: { ok: true, response: { transforms: [], totalTransforms: 0, metadata: null } },
+        });
+      }
+      console.error("Index Management - TransformService - getTransforms", err);
       return response.custom({
         statusCode: 200,
         body: {
@@ -86,4 +115,158 @@ export default class TransformService {
       })
     }
   };
+
+  getTransform = async(
+    context: RequestHandlerContext,
+    request: KibanaRequest,
+    response: KibanaResponseFactory
+  ): Promise<IKibanaResponse<ServerResponse<DocumentTransform>>> => {
+    try {
+      const { id } = request.params as { id: string };
+      const params = { transformId: id };
+      const { callAsCurrentUser: callWithRequest } = this.esDriver.asScoped(request);
+      const getResponse = await callWithRequest("ism.getTransform", params);
+      const metadata = await callWithRequest("ism.explainTransform", params);
+      const transform = _.get(getResponse, "transform", null);
+      const seqNo = _.get(getResponse, "_seg_no", null);
+      const primaryTerm = _.get(getResponse, "_primary_term", null);
+
+      if (transform) {
+        if (metadata) {
+          return response.custom({
+            statusCode: 200,
+            body: {
+              ok: true,
+              response: {
+                _id: id,
+                _seqNo: seqNo as number,
+                _primaryTerm: primaryTerm as number,
+                transform: transform as Transform,
+                metadata: metadata,
+              }
+            }
+          });
+        } else {
+          return response.custom({
+            statusCode: 200,
+            body: {
+              ok: false,
+              error: "Failed to load metadata for transform",
+            }
+          });
+        }
+      } else {
+        return response.custom({
+          statusCode: 200,
+          body: {
+            ok: false,
+            error: "Failed to load transform",
+          }
+        });
+      }
+    } catch (err) {
+      console.error("Index Management - TransformService - getTransform:", err);
+      return response.custom({
+        statusCode: 200,
+        body: {
+          ok: false,
+          error: err.message,
+        },
+      });
+    }
+  };
+
+  startTransform = async(
+    context: RequestHandlerContext,
+    request: KibanaRequest,
+    response: KibanaResponseFactory
+  ): Promise<IKibanaResponse<ServerResponse<boolean>>> => {
+    try {
+      const { id } = request.params as { id: string };
+      console.log("received "+ JSON.stringify(request.params));
+      const params = { transformId: id };
+      const { callAsCurrentUser: callWithRequest } = this.esDriver.asScoped(request);
+      const startResponse = await callWithRequest("ism.startTransform", params);
+      const acknowledged = _.get(startResponse, "acknowledged");
+      if (acknowledged) {
+        return response.custom({
+          statusCode: 200,
+          body: { ok: true, response: true },
+        });
+      } else {
+        return response.custom({
+          statusCode: 200,
+          body: { ok: false, error: "Failed to start transform" },
+        });
+      }
+    } catch (err) {
+      console.error("Index Management - TransformService - startTransform", err);
+      return response.custom({
+        statusCode: 200,
+        body: { ok: false, error: err.message },
+      });
+    }
+  };
+
+  stopTransform = async(
+    context: RequestHandlerContext,
+    request: KibanaRequest,
+    response: KibanaResponseFactory
+  ): Promise<IKibanaResponse<ServerResponse<boolean>>> => {
+    try {
+      const { id } = request.params as { id: string };
+      const params = { transformId: id };
+      const { callAsCurrentUser: callWithRequest } = this.esDriver.asScoped(request);
+      const stopResponse = await callWithRequest("ism.stopTransform", params);
+      const acknowledged = _.get(stopResponse, "acknowledged");
+      if (acknowledged) {
+        return response.custom({
+          statusCode: 200,
+          body: { ok: true, response: true },
+        });
+      } else {
+        return response.custom({
+          statusCode: 200,
+          body: { ok: false, error: "Failed to stop transform" },
+        });
+      }
+    } catch (err) {
+      console.error("Index Management - TransformService - stopTransform", err);
+      return response.custom({
+        statusCode: 200,
+        body: { ok: false, error: err.message },
+      });
+    }
+  };
+
+  deleteTransform = async(
+    context: RequestHandlerContext,
+    request: KibanaRequest,
+    response: KibanaResponseFactory
+  ): Promise<IKibanaResponse<ServerResponse<boolean>>> => {
+    try {
+      const { id } = request.params as { id: string };
+      const params = { transformId: id };
+      const { callAsCurrentUser: callWithRequest } = this.esDriver.asScoped(request);
+      const deleteResponse = await callWithRequest("ism.deleteTransform", params);
+      const acknowledged = _.get(deleteResponse, "acknowledged");
+      if (acknowledged) {
+        return response.custom({
+          statusCode: 200,
+          body: { ok: true, response: true },
+        });
+      } else {
+        return response.custom({
+          statusCode: 200,
+          body: { ok: false, error: "Failed to delete transform" },
+        });
+      }
+    } catch (err) {
+      console.error("Index Management - TransformService - deleteTransform", err);
+      return response.custom({
+        statusCode: 200,
+        body: { ok: false, error: err.message },
+      })
+    }
+  }
 }

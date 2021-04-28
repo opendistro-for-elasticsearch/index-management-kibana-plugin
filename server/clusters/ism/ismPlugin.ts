@@ -287,9 +287,61 @@ export default function ismPlugin(Client: any, config: any, components: any) {
   });
 
   ism.getTransforms = ca({
-      url: {
-        fmt: `${API.TRANSFORM_BASE}/`,
-      },
-      method: "GET",
+    url: {
+      fmt: `${API.TRANSFORM_BASE}/`,
+    },
+    method: "GET",
+  });
+
+  ism.explainTransform = ca({
+    url: {
+      fmt: `${API.TRANSFORM_BASE}/<%=transformId%>/_explain`,
+      req: {
+        transformId: {
+          type: "string",
+          required: true,
+        }
+      }
+    },
+    method: "GET",
+  });
+
+  ism.startTransform = ca({
+    url: {
+      fmt: `${API.TRANSFORM_BASE}/<%=transformId%>/_start`,
+      req: {
+        transformId: {
+          type: "string",
+          required: true,
+        }
+      }
+    },
+    method: "POST",
+  });
+
+  ism.stopTransform = ca({
+    url: {
+      fmt: `${API.TRANSFORM_BASE}/<%=transformId%>/_stop`,
+      req: {
+        transformId: {
+          type: "string",
+          required: true,
+        }
+      }
+    },
+    method: "POST",
+  });
+
+  ism.deleteTransform = ca({
+    url: {
+      fmt: `${API.TRANSFORM_BASE}/<%=transformId%>`,
+      req: {
+        transformId: {
+          type: "string",
+          required: true,
+        }
+      }
+    },
+    method: "DELETE"
   });
 }

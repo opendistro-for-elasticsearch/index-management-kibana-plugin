@@ -15,7 +15,7 @@
 
 import {HttpSetup} from "kibana/public";
 import {ServerResponse} from "../../server/models/types";
-import {GetTransformResponse, PutTransformResponse} from "../../server/models/interfaces";
+import {GetTransformsResponse, PutTransformResponse} from "../../server/models/interfaces";
 import {NODE_API} from "../../utils/constants";
 import {DocumentTransform, Transform} from "../../models/interfaces";
 
@@ -26,10 +26,10 @@ export default class TransformService {
     this.httpClient = httpClient
   }
 
-  getTransforms = async (queryObject: object): Promise<ServerResponse<GetTransformResponse>> => {
+  getTransforms = async (queryObject: object): Promise<ServerResponse<GetTransformsResponse>> => {
     const url = `..${NODE_API.TRANSFORMS}`
     // @ts-ignore
-    return (await this.httpClient.get(url, { query: queryObject })) as ServerResponse<GetTransformResponse>;
+    return (await this.httpClient.get(url, { query: queryObject })) as ServerResponse<GetTransformsResponse>;
   };
 
   putTransform = async (
