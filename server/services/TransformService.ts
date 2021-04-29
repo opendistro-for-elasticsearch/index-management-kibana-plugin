@@ -269,4 +269,47 @@ export default class TransformService {
       })
     }
   }
+
+  /**
+   * Calls backend Put Transform API
+   */
+  putTransform = async (
+    context: RequestHandlerContext,
+    request: KibanaRequest,
+    response: KibanaResponseFactory
+  ): Promise<IKibanaResponse<ServerResponse<PutTransformResponse> | ResponseError>> => {
+    try {
+      const { id } = request.params as { id: string };
+      const { seqNo, primaryTerm } = request.query as { seqNo?: string; primaryTerm?: string };
+      let method = "ism.putTransform";
+      let params: PutTransformParams = {
+        transformId: id,
+        if_seq_no: seqNo,
+        if_primary_term: primaryTerm,
+        body: JSON.stringify(request.body),
+      };
+      if (seqNo === undefined || primaryTerm === undefined) {
+        method = "ism.createTransform";
+        params = { transformId: id, body: JSON.stringify(request.body) };
+      }
+      const { callAsCurrentUser: callWithRequest } = this.esDriver.asScoped(request);
+      const putTransformResponse: PutTransformResponse = await callWithRequest(method, params);
+      return response.custom({
+        statusCode: 200,
+        body: {
+          ok: true,
+          response: putTransformResponse,
+        },
+      });
+    } catch (err) {
+      console.error("Index Management - TransformService - putTransform", err);
+      return response.custom({
+        statusCode: 200,
+        body: {
+          ok: false,
+          error: err.message,
+        },
+      });
+    }
+  };
 }

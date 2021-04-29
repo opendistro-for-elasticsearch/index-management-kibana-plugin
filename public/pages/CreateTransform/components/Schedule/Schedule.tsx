@@ -27,6 +27,8 @@ import {
   EuiTextArea,
   EuiFormHelpText,
   EuiText,
+  EuiAccordion,
+  EuiHorizontalRule,
 } from "@elastic/eui";
 import { DelayTimeunitOptions, ScheduleIntervalTimeunitOptions } from "../../utils/constants";
 import { ContentPanel } from "../../../../components/ContentPanel";
@@ -36,8 +38,13 @@ interface ScheduleProps {
   transformId: string;
   transformIdError: string;
   jobEnabledByDefault: boolean;
+  interval: number;
+  intervalTimeunit: string;
+  intervalError: string;
   pageSize: number;
   onChangeJobEnabledByDefault: () => void;
+  onChangeIntervalTime: (e: ChangeEvent<HTMLInputElement>) => void;
+  onChangeIntervalTimeunit: (e: ChangeEvent<HTMLSelectElement>) => void;
   onChangePage: (e: ChangeEvent<HTMLInputElement>) => void;
 }
 
@@ -52,6 +59,35 @@ const radios = [
   },
 ];
 
+const selectInterval = (
+  interval: number,
+  intervalTimeunit: string,
+  intervalError: string,
+  onChangeInterval: (e: ChangeEvent<HTMLInputElement>) => void,
+  onChangeTimeunit: (value: ChangeEvent<HTMLSelectElement>) => void
+) => (
+  <React.Fragment>
+    <EuiFlexGroup style={{ maxWidth: 400 }}>
+      <EuiFlexItem grow={false} style={{ width: 200 }}>
+        <EuiFormRow label="Transform interval" error={intervalError} isInvalid={intervalError != ""}>
+          <EuiFieldNumber value={interval} onChange={onChangeInterval} isInvalid={intervalError != ""} />
+        </EuiFormRow>
+      </EuiFlexItem>
+      <EuiFlexItem>
+        <EuiFormRow hasEmptyLabelSpace={true}>
+          <EuiSelect
+            id="selectIntervalTimeunit"
+            options={ScheduleIntervalTimeunitOptions}
+            value={intervalTimeunit}
+            onChange={onChangeTimeunit}
+            isInvalid={interval == undefined || interval <= 0}
+          />
+        </EuiFormRow>
+      </EuiFlexItem>
+    </EuiFlexGroup>
+  </React.Fragment>
+);
+
 const timezones = moment.tz.names().map((tz) => ({ label: tz, text: tz }));
 
 export default class Schedule extends Component<ScheduleProps> {
@@ -63,8 +99,13 @@ export default class Schedule extends Component<ScheduleProps> {
     const {
       isEdit,
       jobEnabledByDefault,
+      interval,
+      intervalTimeunit,
+      intervalError,
       pageSize,
       onChangeJobEnabledByDefault,
+      onChangeIntervalTime,
+      onChangeIntervalTimeunit,
       onChangePage,
     } = this.props;
     return (
@@ -73,7 +114,7 @@ export default class Schedule extends Component<ScheduleProps> {
           {!isEdit && (
             <EuiCheckbox
               id="jobEnabledByDefault"
-              label="Enable job by default"
+              label="Job enabled by default"
               checked={jobEnabledByDefault}
               onChange={onChangeJobEnabledByDefault}
               data-test-subj="jobEnabledByDefault"
@@ -81,12 +122,29 @@ export default class Schedule extends Component<ScheduleProps> {
           )}
           <EuiSpacer size="m" />
 
-          <EuiFormRow
-            label="Page per execution"
-            helpText="The number of pages every execution processes. A larger number means faster execution and higher costs on memory."
-          >
-            <EuiFieldNumber min={1} placeholder="1000" value={pageSize} onChange={onChangePage} />
+          {!isEdit}
+
+          <EuiFormRow label="Transform execution frequency">
+            <EuiSelect
+              id="continuousDefinition"
+              options={[
+                { value: "fixed", text: "Define by fixed interval" },
+              ]}
+            />
           </EuiFormRow>
+          <EuiSpacer size="m" />
+
+          {selectInterval(interval, intervalTimeunit, intervalError, onChangeIntervalTime, onChangeIntervalTimeunit)}
+          
+          <EuiHorizontalRule />
+          <EuiAccordion id="pagePerExecution" buttonContent="Advanced">
+            <EuiFormRow
+              label="Page per execution"
+              helpText="The number of pages every execution processes. A larger number means faster execution and higher costs on memory."
+            >
+              <EuiFieldNumber min={1} placeholder="1000" value={pageSize} onChange={onChangePage} />
+            </EuiFormRow>
+          </EuiAccordion>
           <EuiSpacer size="m" />
         </div>
       </ContentPanel>

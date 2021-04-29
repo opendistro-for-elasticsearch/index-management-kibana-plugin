@@ -1,5 +1,5 @@
 /*
- * Copyright 2020 Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ * Copyright 2021 Amazon.com, Inc. or its affiliates. All Rights Reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License").
  * You may not use this file except in compliance with the License.
@@ -28,9 +28,14 @@ interface CreateTransformProps extends RouteComponentProps {
   transformService: TransformService;
   currentStep: number;
   jobEnabledByDefault: boolean;
+  interval: number;
+  intervalTimeunit: string;
+  intervalError: string;
   pageSize: number;
   onChangeJobEnabledByDefault: () => void;
+  onChangeIntervalTime: (e: ChangeEvent<HTMLInputElement>) => void;
   onChangePage: (e: ChangeEvent<HTMLInputElement>) => void;
+  onChangeIntervalTimeunit: (e: ChangeEvent<HTMLSelectElement>) => void;
 }
 
 interface CreateTransformState {
@@ -113,8 +118,13 @@ export default class CreateTransformStep3 extends Component<CreateTransformProps
     if (this.props.currentStep != 3) return null;
     const {
       jobEnabledByDefault,
+      interval,
+      intervalTimeunit,
       pageSize,
+      onChangeJobEnabledByDefault,
+      onChangeIntervalTime,
       onChangePage,
+      onChangeIntervalTimeunit,
     } = this.props;
     const { transformId, transformIdError } = this.state;
     return (
@@ -125,7 +135,7 @@ export default class CreateTransformStep3 extends Component<CreateTransformProps
           </EuiFlexItem>
           <EuiFlexItem>
             <EuiTitle size="l">
-              <h1>Specify schedule</h1>
+              <h1>Specify Schedule</h1>
             </EuiTitle>
             <EuiSpacer />
             <Schedule
@@ -134,7 +144,12 @@ export default class CreateTransformStep3 extends Component<CreateTransformProps
               transformId={transformId}
               transformIdError={transformIdError}
               jobEnabledByDefault={jobEnabledByDefault}
+              interval={interval}
+              intervalTimeunit={intervalTimeunit}
               pageSize={pageSize}
+              onChangeJobEnabledByDefault={onChangeJobEnabledByDefault}
+              onChangeIntervalTime={onChangeIntervalTime}
+              onChangeIntervalTimeunit={onChangeIntervalTimeunit}
               onChangePage={onChangePage}
             />
           </EuiFlexItem>

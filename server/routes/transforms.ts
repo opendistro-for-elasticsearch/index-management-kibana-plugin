@@ -84,4 +84,21 @@ export default function (services: NodeServices, router: IRouter) {
     },
     transformService.deleteTransform
   )
+
+  router.put(
+    {
+      path: `${NODE_API.TRANSFORMS}/{id}`,
+      validate: {
+        params: schema.object({
+          id: schema.string(),
+        }),
+        query: schema.object({
+          seqNo: schema.maybe(schema.number()),
+          primaryTerm: schema.maybe(schema.number()),
+        }),
+        body: schema.any(),
+      },
+    },
+    transformService.putTransform
+  );
 }
