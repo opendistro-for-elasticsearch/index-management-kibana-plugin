@@ -13,8 +13,8 @@
  * permissions and limitations under the License.
  */
 
-import { EuiDataGrid, EuiSpacer, EuiText } from "@elastic/eui";
-import React, { Component } from "react";
+import { EuiDataGrid, EuiDataGridColumn, EuiSpacer, EuiText } from "@elastic/eui";
+import React, { Component, createContext, useMemo, useState, useEffect, useContext } from "react";
 import { ContentPanel, ContentPanelActions } from "../../../../components/ContentPanel";
 
 interface DefineTransformsProps {
@@ -22,18 +22,23 @@ interface DefineTransformsProps {
   sourceIndex: string;
 }
 
-interface DefineTransformsState {}
+interface DefineTransformsState {
+  columns: EuiDataGridColumn[];
+  visibleColumns: string[];
+}
 
-export default class DefineTransforms extends Component<DefineTransformsProps, DefineTransformsState> {
-  constructor(props: DefineTransformsProps) {
-    super(props);
-    const { transfromId } = this.props;
-    this.state = {};
-  }
+export default function DefineTransforms({ transfromId, sourceIndex }: DefineTransformsProps) {
+  const columns = [
+    {
+      id: "name",
+      displayAsText: "Name",
+    },
+  ];
 
-  render() {
-    const { transfromId, sourceIndex } = this.props;
-    return (
+  const [visibleColumns, setVisibleColumns] = useState(() => columns.map(({ id }) => id));
+
+  return (
+    <>
       <ContentPanel
         actions={
           <ContentPanelActions
@@ -66,10 +71,15 @@ export default class DefineTransforms extends Component<DefineTransformsProps, D
         <EuiText color="subdued" size="xs">
           <p>{`Viewing sample data from index ${sourceIndex}, filtered by order.type:sales_order, order.success:true`}</p>
         </EuiText>
-        {/*<EuiDataGrid*/}
-        {/*  columns={[]}*/}
-        {/*/>*/}
+        <EuiDataGrid
+          columns={columns}
+          columnVisibility={{ visibleColumns, setVisibleColumns }}
+          rowCount={5}
+          renderCellValue={() => {
+            return null;
+          }}
+        />
       </ContentPanel>
-    );
-  }
+    </>
+  );
 }
