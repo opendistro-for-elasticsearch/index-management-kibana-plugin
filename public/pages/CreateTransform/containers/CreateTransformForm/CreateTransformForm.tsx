@@ -330,6 +330,8 @@ export default class CreateTransformForm extends Component<CreateTransformFormPr
       targetIndexError,
       currentStep,
 
+      fields,
+
       jobEnabledByDefault,
       pageSize,
     } = this.state;
@@ -353,7 +355,13 @@ export default class CreateTransformForm extends Component<CreateTransformFormPr
           onChangeTargetIndex={this.onChangeTargetIndex}
           currentStep={this.state.currentStep}
         />
-        <CreateTransformStep2 {...this.props} transformId={transformId} currentStep={this.state.currentStep} />
+        <CreateTransformStep2
+          {...this.props}
+          transformId={transformId}
+          sourceIndex={sourceIndex[0] ? sourceIndex[0].label : ""}
+          fields={fields}
+          currentStep={this.state.currentStep}
+        />
         <CreateTransformStep3
           {...this.props}
           currentStep={this.state.currentStep}

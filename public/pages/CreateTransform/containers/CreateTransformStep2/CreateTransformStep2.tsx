@@ -21,11 +21,14 @@ import { BREADCRUMBS, ROUTES } from "../../../../utils/constants";
 import CreateTransformSteps from "../../components/CreateTransformSteps";
 import { CoreServicesContext } from "../../../../components/core_services";
 import DefineTransforms from "../../components/DefineTransforms";
+import { FieldItem } from "../../../../../models/interfaces";
 
 interface CreateTransformStep2Props extends RouteComponentProps {
   transformService: TransformService;
   transformId: string;
   currentStep: number;
+  sourceIndex: string;
+  fields: FieldItem[];
 }
 
 export default class CreateTransformStep2 extends Component<CreateTransformStep2Props> {
@@ -43,7 +46,7 @@ export default class CreateTransformStep2 extends Component<CreateTransformStep2
   };
 
   render() {
-    const { transformService, transformId, currentStep } = this.props;
+    const { transformService, transformId, currentStep, sourceIndex, fields } = this.props;
     if (currentStep !== 2) return null;
 
     return (
@@ -57,7 +60,7 @@ export default class CreateTransformStep2 extends Component<CreateTransformStep2
               <h1>Define transform</h1>
             </EuiTitle>
             <EuiSpacer />
-            <DefineTransforms transformId={transformId} />
+            <DefineTransforms transformId={transformId} sourceIndex={sourceIndex} />
           </EuiFlexItem>
         </EuiFlexGroup>
         <EuiSpacer />

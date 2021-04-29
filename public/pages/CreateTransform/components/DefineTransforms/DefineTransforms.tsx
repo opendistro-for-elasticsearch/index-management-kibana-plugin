@@ -13,7 +13,7 @@
  * permissions and limitations under the License.
  */
 
-import { EuiSpacer, EuiText } from "@elastic/eui";
+import { EuiDataGrid, EuiSpacer, EuiText } from "@elastic/eui";
 import React, { Component } from "react";
 import { ContentPanel, ContentPanelActions } from "../../../../components/ContentPanel";
 
@@ -66,6 +66,9 @@ export default class DefineTransforms extends Component<DefineTransformsProps, D
         <EuiText color="subdued" size="xs">
           <p>{`Viewing sample data from index ${sourceIndex}, filtered by order.type:sales_order, order.success:true`}</p>
         </EuiText>
+        {/*<EuiDataGrid*/}
+        {/*  columns={}*/}
+        {/*/>*/}
       </ContentPanel>
     );
   }
