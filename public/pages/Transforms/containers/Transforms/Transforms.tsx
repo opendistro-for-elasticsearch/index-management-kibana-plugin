@@ -50,12 +50,12 @@ import { BREADCRUMBS, ROUTES } from "../../../../utils/constants";
 import DeleteModal from "../../components/DeleteModal";
 import TransformEmptyPrompt from "../../components/TransformEmptyPrompt";
 import { renderEnabled, renderStatus } from "../../utils/metadataHelper";
-import {DEFAULT_PAGE_SIZE_OPTIONS, DEFAULT_QUERY_PARAMS} from "../../../Indices/utils/constants";
+import { DEFAULT_PAGE_SIZE_OPTIONS, DEFAULT_QUERY_PARAMS } from "../../../Indices/utils/constants";
 import _ from "lodash";
 import { ManagedCatIndex } from "../../../../../server/models/interfaces";
 
 interface TransformProps extends RouteComponentProps {
-  transformService: TransformService
+  transformService: TransformService;
 }
 
 interface TransformState {
@@ -96,7 +96,7 @@ export default class Transforms extends Component<TransformProps, TransformState
     };
 
     this.getTransforms = _.debounce(this.getTransforms, 500, { leading: true });
-  };
+  }
 
   async componentDidMount() {
     this.context.chrome.setBreadcrumbs([BREADCRUMBS.INDEX_MANAGEMENT, BREADCRUMBS.TRANSFORMS]);
@@ -230,7 +230,6 @@ export default class Transforms extends Component<TransformProps, TransformState
       },
     };
 
-
     return (
       <EuiPanel style={{ paddingLeft: "0px", paddingRight: "0px" }}>
         <EuiFlexGroup style={{ padding: "0px 10px" }} justifyContent="spaceBetween" alignItems="center">
@@ -324,8 +323,8 @@ export default class Transforms extends Component<TransformProps, TransformState
     );
   }
 
-  getTransforms = async() => {
-    this.setState( { fetchingTransforms: true });
+  getTransforms = async () => {
+    this.setState({ fetchingTransforms: true });
     try {
       const { transformService, history } = this.props;
       const queryObject = Transforms.getQueryObjectFromState(this.state);
@@ -334,7 +333,7 @@ export default class Transforms extends Component<TransformProps, TransformState
       const response = await transformService.getTransforms(queryObject);
       if (response.ok) {
         const { transforms, totalTransforms, metadata } = response.response;
-        this.setState({transforms, totalTransforms, transformMetadata: metadata});
+        this.setState({ transforms, totalTransforms, transformMetadata: metadata });
       } else {
         this.context.notifications.toasts.addDanger(response.error);
       }
@@ -345,7 +344,8 @@ export default class Transforms extends Component<TransformProps, TransformState
   };
 
   getSelectedTransformIds = () => {
-    this.state.selectedItems.map((item: DocumentTransform) => { return item._id }).join(", ");
+    return "asd";
+    // this.state.selectedItems.map((item: DocumentTransform) => { return item._id }).join(", ");
   };
 
   onSelectionChange = (selectedItems: DocumentTransform[]): void => {
@@ -365,11 +365,13 @@ export default class Transforms extends Component<TransformProps, TransformState
   };
 
   onClickEdit = () => {
-    const { selectedItems: [{_id}] } = this.state;
+    const {
+      selectedItems: [{ _id }],
+    } = this.state;
     if (_id) this.props.history.push(`${ROUTES.EDIT_TRANSFORM}?id=${_id}`);
   };
 
-  onClickDelete = async() => {
+  onClickDelete = async () => {
     const { transformService } = this.props;
     const { selectedItems } = this.state;
     for (let item of selectedItems) {
@@ -392,7 +394,7 @@ export default class Transforms extends Component<TransformProps, TransformState
   };
 
   onPageClick = (page: number) => {
-    this.setState({from: page * this.state.size });
+    this.setState({ from: page * this.state.size });
   };
 
   onTableChange = ({ page: tablePage, sort }: Criteria<ManagedCatIndex>) => {
@@ -409,7 +411,7 @@ export default class Transforms extends Component<TransformProps, TransformState
     this.setState({ search: DEFAULT_QUERY_PARAMS.search });
   };
 
-  onEnable = async() => {
+  onEnable = async () => {
     const { transformService } = this.props;
     const { selectedItems } = this.state;
 
@@ -424,14 +426,14 @@ export default class Transforms extends Component<TransformProps, TransformState
           this.context.notifications.toasts.addDanger(`Could not start transform job "${transformId}": ${response.error}`);
         }
       } catch (err) {
-        this.context.notifications.toasts.addDanger(getErrorMessage(err, `Could not start transform job ${transformId}`))
+        this.context.notifications.toasts.addDanger(getErrorMessage(err, `Could not start transform job ${transformId}`));
       }
     }
 
     await this.getTransforms();
   };
 
-  onDisable = async() => {
+  onDisable = async () => {
     const { transformService } = this.props;
     const { selectedItems } = this.state;
 
@@ -446,7 +448,7 @@ export default class Transforms extends Component<TransformProps, TransformState
           this.context.notifications.toasts.addDanger(`Could not stop transform job "${transformId}": ${response.error}`);
         }
       } catch (err) {
-        this.context.notifications.toasts.addDanger(getErrorMessage(err, `Could not stop transform job ${transformId}`))
+        this.context.notifications.toasts.addDanger(getErrorMessage(err, `Could not stop transform job ${transformId}`));
       }
     }
 
@@ -461,8 +463,7 @@ export default class Transforms extends Component<TransformProps, TransformState
     this.setState({ isPopOverOpen: !this.state.isPopOverOpen });
   };
 
-  static getQueryObjectFromState({ from, size, search, sortField, sortDirection} : TransformState) : TransformQueryParams {
+  static getQueryObjectFromState({ from, size, search, sortField, sortDirection }: TransformState): TransformQueryParams {
     return { from, size, search, sortField, sortDirection };
   }
 }
-
