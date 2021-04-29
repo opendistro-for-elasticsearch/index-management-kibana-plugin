@@ -13,11 +13,13 @@
  * permissions and limitations under the License.
  */
 
+import { EuiSpacer, EuiText } from "@elastic/eui";
 import React, { Component } from "react";
 import { ContentPanel, ContentPanelActions } from "../../../../components/ContentPanel";
 
 interface DefineTransformsProps {
   transformId: string;
+  sourceIndex: string;
 }
 
 interface DefineTransformsState {}
@@ -25,11 +27,12 @@ interface DefineTransformsState {}
 export default class DefineTransforms extends Component<DefineTransformsProps, DefineTransformsState> {
   constructor(props: DefineTransformsProps) {
     super(props);
-    const { transfromId } = this.props;
+    const { transfromId, sourceIndex } = this.props;
     this.state = {};
   }
 
   render() {
+    const { transfromId, sourceIndex } = this.props;
     return (
       <ContentPanel
         actions={
@@ -51,10 +54,19 @@ export default class DefineTransforms extends Component<DefineTransformsProps, D
             ]}
           />
         }
-        bodyStyles={{ padding: "initial" }}
+        bodyStyles={{ padding: "10px 10px" }}
         title="Select fields to transform"
         titleSize="m"
-      ></ContentPanel>
+      >
+        <EuiText>
+          <h4>Original fields with sample data</h4>
+        </EuiText>
+        <EuiSpacer size="s" />
+        {/*TODO: Substitute "source index", and "filtered by" fields with actual values*/}
+        <EuiText color="subdued" size="xs">
+          <p>{`Viewing sample data from index ${sourceIndex}, filtered by order.type:sales_order, order.success:true`}</p>
+        </EuiText>
+      </ContentPanel>
     );
   }
 }
