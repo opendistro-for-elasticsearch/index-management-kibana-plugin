@@ -14,17 +14,12 @@
  */
 
 import { EuiDataGrid, EuiDataGridColumn, EuiSpacer, EuiText } from "@elastic/eui";
-import React, { Component, createContext, useMemo, useState, useEffect, useContext } from "react";
+import React, { useState } from "react";
 import { ContentPanel, ContentPanelActions } from "../../../../components/ContentPanel";
 
 interface DefineTransformsProps {
   transformId: string;
   sourceIndex: string;
-}
-
-interface DefineTransformsState {
-  columns: EuiDataGridColumn[];
-  visibleColumns: string[];
 }
 
 export default function DefineTransforms({ transfromId, sourceIndex }: DefineTransformsProps) {
