@@ -15,19 +15,8 @@
 
 export const EMPTY_TRANSFORM = JSON.stringify({
   transform: {
-    continuous: false,
     description: "",
-    dimensions: [
-      {
-        date_histogram: {
-          source_field: "",
-          fixed_interval: "1h",
-          timezone: "UTC",
-        },
-      },
-    ],
     enabled: true,
-    metrics: [],
     page_size: 1000,
     roles: [],
     schedule: {

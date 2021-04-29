@@ -33,7 +33,8 @@ import CreateRollupForm from "../CreateRollup/containers/CreateRollupForm";
 import CreateTransformForm from "../CreateTransform/containers/CreateTransformForm";
 import EditRollup from "../EditRollup/containers";
 import RollupDetails from "../RollupDetails/containers/RollupDetails";
-import Transforms from "../Transforms/containers/Transforms/Transforms";
+import { EditTransform, Transforms } from "../Transforms";
+import TransformDetails from "../Transforms/containers/Transforms/TransformDetails";
 
 enum Navigation {
   IndexManagement = "Index Management",
@@ -109,11 +110,15 @@ export default class Main extends Component<MainProps, object> {
                     <ModalRoot services={services} />
                     <EuiPage>
                       {/*Hide side navigation bar when creating or editing rollup job*/}
-                      {pathname != ROUTES.CREATE_ROLLUP && pathname != ROUTES.EDIT_ROLLUP && pathname != ROUTES.ROLLUP_DETAILS && (
-                        <EuiPageSideBar style={{ minWidth: 150 }}>
-                          <EuiSideNav style={{ width: 150 }} items={sideNav} />
-                        </EuiPageSideBar>
-                      )}
+                      {pathname != ROUTES.CREATE_ROLLUP &&
+                        pathname != ROUTES.EDIT_ROLLUP &&
+                        pathname != ROUTES.ROLLUP_DETAILS &&
+                        pathname != ROUTES.EDIT_TRANSFORM &&
+                        pathname != ROUTES.TRANSFORM_DETAILS && (
+                          <EuiPageSideBar style={{ minWidth: 150 }}>
+                            <EuiSideNav style={{ width: 150 }} items={sideNav} />
+                          </EuiPageSideBar>
+                        )}
                       <EuiPageBody>
                         <Switch>
                           <Route
@@ -219,7 +224,7 @@ export default class Main extends Component<MainProps, object> {
                             path={ROUTES.EDIT_TRANSFORM}
                             render={(props: RouteComponentProps) => (
                               <div style={{ padding: "25px 25px" }}>
-                                <EditRollup {...props} rollupService={services.rollupService} />
+                                <EditTransform {...props} transformService={services.transformService} />
                               </div>
                             )}
                           />
@@ -227,7 +232,7 @@ export default class Main extends Component<MainProps, object> {
                             path={ROUTES.TRANSFORM_DETAILS}
                             render={(props: RouteComponentProps) => (
                               <div style={{ padding: "25px 25px" }}>
-                                <RollupDetails {...props} rollupService={services.rollupService} />
+                                <TransformDetails {...props} transformService={services.transformService} />
                               </div>
                             )}
                           />

@@ -59,28 +59,17 @@ interface CreateTransformFormState {
   allMappings: FieldItem[][];
   fields: FieldItem[];
   selectedTerms: FieldItem[];
-  selectedDimensionField: DimensionItem[];
-  selectedMetrics: MetricItem[];
-  metricError: string;
-  timestamp: EuiComboBoxOptionOption<String>[];
-  timestampError: string;
-  intervalType: string;
-  intervalValue: number;
-  timezone: string;
-  timeunit: string;
+
+  selectedGroupField: DimensionItem[];
+  selectedAggregations: MetricItem[]; // Needs to be Map<String, any>
+  aggregationsError: string;
   selectedFields: FieldItem[];
   jobEnabledByDefault: boolean;
 
-  continuousJob: string;
-  continuousDefinition: string;
   interval: number;
   intervalError: string;
   intervalTimeunit: string;
-  cronExpression: string;
-  cronTimezone: string;
   pageSize: number;
-  delayTime: number | undefined;
-  delayTimeunit: string;
   transformJSON: any;
 }
 
@@ -106,6 +95,11 @@ export default class CreateTransformForm extends Component<CreateTransformFormPr
       mappings: "",
       allMappings: [],
       fields: [],
+      selectedFields: [],
+      selectedTerms: [],
+      selectedGroupField: [],
+      selectedAggregations: [],
+      aggregationsError: "",
       description: "",
 
       sourceIndex: [],
@@ -113,7 +107,11 @@ export default class CreateTransformForm extends Component<CreateTransformFormPr
       targetIndex: [],
       targetIndexError: "",
 
+      intervalError: "",
+
       jobEnabledByDefault: true,
+      interval: 1,
+      intervalTimeunit: "MINUTES",
       pageSize: 1000,
       transformJSON: JSON.parse(EMPTY_TRANSFORM),
     };
@@ -170,16 +168,34 @@ export default class CreateTransformForm extends Component<CreateTransformFormPr
         error = true;
       }
     } else if (currentStep == 2) {
+      const { selectedAggregations } = this.state;
+      if (selectedAggregations.length != 0) {
+        //Check if there's any aggregation item with no method selected.
+        //TODO: Could Probably store all invalid fields in an array and highlight them in table.
+        let invalidAggregation = false;
+        selectedAggregations.map((aggregation) => {
+          if (
+            !(
+              aggregation.min ||
+              aggregation.max ||
+              aggregation.sum ||
+              aggregation.avg ||
+              aggregation.value_count ||
+              aggregation.percentiles
+            )
+          ) {
+            const errorMsg = "Must specify at least one aggregation for: " + aggregation.source_field.label;
+            this.setState({ submitError: errorMsg, aggregationsError: errorMsg });
+            invalidAggregation = true;
+            error = true;
+          }
+        });
+        //If nothing invalid found, clear error.
+        if (!invalidAggregation) this.setState({ aggregationsError: "" });
+      }
     } else if (currentStep == 3) {
       //Check if interval is a valid value and is specified.
-      const { intervalError, continuousDefinition } = this.state;
-      if (continuousDefinition == "fixed") {
-        if (intervalError != "") {
-          const intervalErrorMsg = "Interval value is required.";
-          this.setState({ submitError: intervalErrorMsg, intervalError: intervalErrorMsg });
-          error = true;
-        }
-      }
+      const { intervalError } = this.state;
     }
 
     if (error) return;
@@ -230,8 +246,8 @@ export default class CreateTransformForm extends Component<CreateTransformFormPr
     newJSON.transform.source_index = srcIndexText;
     this.setState({ sourceIndex: options, transformJSON: newJSON, sourceIndexError: sourceIndexError });
     this.setState({
-      selectedDimensionField: [],
-      selectedMetrics: [],
+      selectedGroupField: [],
+      selectedAggregations: [],
     });
     await this.getMappings(srcIndexText);
   };
@@ -249,17 +265,12 @@ export default class CreateTransformForm extends Component<CreateTransformFormPr
     this.setState({ targetIndex: options, transformJSON: newJSON, targetIndexError: targetIndexError });
   };
 
-  setDateHistogram = (): void => {
-    const { intervalType, intervalValue, timeunit } = this.state;
-    let newJSON = this.state.transformJSON;
-    if (intervalType == "calendar") {
-      newJSON.transform.dimensions[0].date_histogram.calendar_interval = `1${timeunit}`;
-      delete newJSON.transform.dimensions[0].date_histogram["fixed_interval"];
-    } else {
-      newJSON.transform.dimensions[0].date_histogram.fixed_interval = `${intervalValue}${timeunit}`;
-      delete newJSON.transform.dimensions[0].date_histogram["calendar_interval"];
-    }
-    this.setState({ transformJSON: newJSON });
+  onGroupSelectionChange = (selectedFields: DimensionItem[]): void => {
+    this.setState({ selectedGroupField: selectedFields });
+  };
+
+  onAggregationSelectionChange = (selectedFields: MetricItem[]): void => {
+    this.setState({ selectedAggregations: selectedFields });
   };
 
   onChangeJobEnabledByDefault = (): void => {
@@ -269,10 +280,97 @@ export default class CreateTransformForm extends Component<CreateTransformFormPr
     this.setState({ jobEnabledByDefault: !checked, transformJSON: newJSON });
   };
 
+  onChangeIntervalTime = (e: ChangeEvent<HTMLInputElement>): void => {
+    this.setState({ interval: e.target.valueAsNumber });
+    if (e.target.value == "") {
+      const intervalErrorMsg = "Interval value is required.";
+      this.setState({ submitError: intervalErrorMsg, intervalError: intervalErrorMsg });
+    } else {
+      this.setState({ intervalError: "" });
+    }
+  };
+
   onChangePage = (e: ChangeEvent<HTMLInputElement>): void => {
     let newJSON = this.state.transformJSON;
     newJSON.transform.page_size = e.target.valueAsNumber;
     this.setState({ pageSize: e.target.valueAsNumber, transformJSON: newJSON });
+  };
+
+  updateSchedule = (): void => {
+    const { interval, intervalTimeunit } = this.state;
+    let newJSON = this.state.transformJSON;
+
+    newJSON.transform.schedule.interval = {
+      start_time: moment().unix(),
+      unit: `${intervalTimeunit}`,
+      period: `${interval}`,
+    };
+    delete newJSON.transform.schedule["cron"];
+
+    this.setState({ transformJSON: newJSON });
+  };
+
+  onChangeIntervalTimeunit = (e: ChangeEvent<HTMLSelectElement>): void => {
+    this.setState({ intervalTimeunit: e.target.value });
+  };
+
+  updateGroup = (): void => {
+    const { transformJSON, selectedGroupField } = this.state;
+    let newJSON = transformJSON;
+
+    // Clear the groups fields
+    newJSON.transform.groups = {};
+
+    // Push rest of groups
+    selectedGroupField.map((group) => {
+      if (group.aggregationMethod == "terms") {
+        newJSON.transform.groups.push({
+          terms: {
+            source_field: group.field.label,
+            target_field: "", // needs target_field source, null target_field test
+          },
+        });
+      } else if (group.aggregationMethod == "histogram") {
+        newJSON.transform.groups.push({
+          histogram: {
+            source_field: group.field.label,
+            interval: group.interval,
+          },
+        });
+      } else {
+        newJSON.transform.groups.push({
+          date_histogram: {
+            source_field: group.field.label,
+            // need to fill out other date histogram data
+          },
+        });
+      }
+    });
+    this.setState({ transformJSON: newJSON });
+  };
+
+  updateAggregation = (): void => {
+    const { transformJSON, selectedAggregations } = this.state;
+    let newJSON = transformJSON;
+
+    //Clear the aggregations array before pushing
+    newJSON.transform.aggregations = [];
+
+    //Push all aggregations
+    selectedAggregations.map((aggregation) => {
+      const aggregations = [];
+      if (aggregation.min) aggregations.push({ min: {} });
+      if (aggregation.max) aggregations.push({ max: {} });
+      if (aggregation.sum) aggregations.push({ sum: {} });
+      if (aggregation.avg) aggregations.push({ avg: {} });
+      if (aggregation.value_count) aggregations.push({ value_count: {} });
+      if (aggregation.percentiles) aggregations.push({ percentiles: {} });
+      newJSON.transform.aggregations.push({
+        source_field: aggregation.source_field.label,
+        aggregations: aggregations,
+      });
+    });
+    this.setState({ transformJSON: newJSON });
   };
 
   onSubmit = async (): Promise<void> => {
@@ -282,7 +380,9 @@ export default class CreateTransformForm extends Component<CreateTransformFormPr
       if (!transformId) {
         this.setState({ transformIdError: "Required" });
       } else {
-        this.setDateHistogram();
+        this.updateGroup();
+        this.updateAggregation();
+        this.updateSchedule();
         await this.onCreate(transformId, transformJSON);
       }
     } catch (err) {
@@ -331,8 +431,15 @@ export default class CreateTransformForm extends Component<CreateTransformFormPr
       currentStep,
 
       fields,
+      selectedTerms,
+      selectedGroupField,
+      selectedAggregations,
+      aggregationsError,
 
       jobEnabledByDefault,
+      interval,
+      intervalTimeunit,
+      intervalError,
       pageSize,
     } = this.state;
     return (
@@ -354,21 +461,32 @@ export default class CreateTransformForm extends Component<CreateTransformFormPr
           onChangeSourceIndex={this.onChangeSourceIndex}
           onChangeTargetIndex={this.onChangeTargetIndex}
           currentStep={this.state.currentStep}
+          hasAggregation={selectedGroupField.length != 0 || selectedAggregations.length != 0}
         />
         <CreateTransformStep2
           {...this.props}
-          transformId={transformId}
+          currentStep={this.state.currentStep}
           sourceIndex={sourceIndex[0] ? sourceIndex[0].label : ""}
           fields={fields}
-          currentStep={this.state.currentStep}
+          selectedTerms={selectedTerms}
+          selectedGroupField={selectedGroupField}
+          selectedAggregations={selectedAggregations}
+          aggregationsError={aggregationsError}
+          onGroupSelectionChange={this.onGroupSelectionChange}
+          onAggregationSelectionChange={this.onAggregationSelectionChange}
         />
         <CreateTransformStep3
           {...this.props}
           currentStep={this.state.currentStep}
           jobEnabledByDefault={jobEnabledByDefault}
+          interval={interval}
+          intervalTimeunit={intervalTimeunit}
+          intervalError={intervalError}
           pageSize={pageSize}
           onChangeJobEnabledByDefault={this.onChangeJobEnabledByDefault}
+          onChangeIntervalTime={this.onChangeIntervalTime}
           onChangePage={this.onChangePage}
+          onChangeIntervalTimeunit={this.onChangeIntervalTimeunit}
         />
         <CreateTransformStep4
           {...this.props}
@@ -376,7 +494,11 @@ export default class CreateTransformForm extends Component<CreateTransformFormPr
           description={description}
           sourceIndex={sourceIndex}
           targetIndex={targetIndex}
+          selectedGroupField={selectedGroupField}
+          selectedAggregations={selectedAggregations}
           jobEnabledByDefault={jobEnabledByDefault}
+          interval={interval}
+          intervalTimeunit={intervalTimeunit}
           pageSize={pageSize}
           currentStep={this.state.currentStep}
           onChangeStep={this.onChangeStep}

@@ -1,5 +1,5 @@
 /*
- * Copyright 2020 Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ * Copyright 2021 Amazon.com, Inc. or its affiliates. All Rights Reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License").
  * You may not use this file except in compliance with the License.
@@ -13,17 +13,17 @@
  * permissions and limitations under the License.
  */
 
-import { IRouter } from "kibana/server";
-import { schema } from "@kbn/config-schema";
 import { NodeServices } from "../models/interfaces";
+import { IRouter } from "kibana/server";
 import { NODE_API } from "../../utils/constants";
+import { schema } from "@kbn/config-schema";
 
 export default function (services: NodeServices, router: IRouter) {
-  const { rollupService, transformService } = services;
+  const { transformService } = services;
 
   router.get(
     {
-      path: NODE_API.ROLLUPS,
+      path: NODE_API.TRANSFORMS,
       validate: {
         query: schema.object({
           from: schema.number(),
@@ -34,12 +34,60 @@ export default function (services: NodeServices, router: IRouter) {
         }),
       },
     },
-    rollupService.getRollups
+    transformService.getTransforms
+  );
+
+  router.get(
+    {
+      path: `${NODE_API.TRANSFORMS}/{id}`,
+      validate: {
+        params: schema.object({
+          id: schema.string(),
+        }),
+      },
+    },
+    transformService.getTransform
+  );
+
+  router.post(
+    {
+      path: `${NODE_API.TRANSFORMS}/{id}/_stop`,
+      validate: {
+        params: schema.object({
+          id: schema.string(),
+        }),
+      },
+    },
+    transformService.stopTransform
+  );
+
+  router.post(
+    {
+      path: `${NODE_API.TRANSFORMS}/{id}/_start`,
+      validate: {
+        params: schema.object({
+          id: schema.string(),
+        }),
+      },
+    },
+    transformService.startTransform
+  );
+
+  router.delete(
+    {
+      path: `${NODE_API.TRANSFORMS}/{id}`,
+      validate: {
+        params: schema.object({
+          id: schema.string(),
+        }),
+      },
+    },
+    transformService.deleteTransform
   );
 
   router.put(
     {
-      path: `${NODE_API.ROLLUPS}/{id}`,
+      path: `${NODE_API.TRANSFORMS}/{id}`,
       validate: {
         params: schema.object({
           id: schema.string(),
@@ -51,64 +99,6 @@ export default function (services: NodeServices, router: IRouter) {
         body: schema.any(),
       },
     },
-    rollupService.putRollup
-  );
-
-  router.get(
-    {
-      path: `${NODE_API.ROLLUPS}/{id}`,
-      validate: {
-        params: schema.object({
-          id: schema.string(),
-        }),
-      },
-    },
-    rollupService.getRollup
-  );
-
-  router.delete(
-    {
-      path: `${NODE_API.ROLLUPS}/{id}`,
-      validate: {
-        params: schema.object({
-          id: schema.string(),
-        }),
-      },
-    },
-    rollupService.deleteRollup
-  );
-
-  router.post(
-    {
-      path: `${NODE_API.ROLLUPS}/{id}/_start`,
-      validate: {
-        params: schema.object({
-          id: schema.string(),
-        }),
-      },
-    },
-    rollupService.startRollup
-  );
-
-  router.post(
-    {
-      path: `${NODE_API.ROLLUPS}/{id}/_stop`,
-      validate: {
-        params: schema.object({
-          id: schema.string(),
-        }),
-      },
-    },
-    rollupService.stopRollup
-  );
-
-  router.post(
-    {
-      path: NODE_API._MAPPINGS,
-      validate: {
-        body: schema.any(),
-      },
-    },
-    rollupService.getMappings
+    transformService.putTransform
   );
 }

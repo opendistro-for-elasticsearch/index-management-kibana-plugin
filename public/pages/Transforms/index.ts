@@ -13,33 +13,6 @@
  * permissions and limitations under the License.
  */
 
-import { SortDirection } from "../../../utils/constants";
+import { EditTransform, Transforms } from "./containers/Transforms";
 
-// TODO: Consolidate with Rollup
-export const DEFAULT_QUERY_PARAMS = {
-  from: 0,
-  size: 20,
-  search: "",
-  sortField: "_id",
-  sortDirection: SortDirection.DESC,
-};
-
-export const EMPTY_TRANSFORM = JSON.stringify({
-  transform: {
-    description: "",
-    groups: [],
-    enabled: true,
-    aggregations: {},
-    data_selection_query: {},
-    roles: [],
-    schedule: {
-      interval: {
-        start_time: 234802,
-        period: 1,
-        unit: "MINUTES",
-      },
-    },
-    source_index: "",
-    target_index: "",
-  },
-});
+export { Transforms, EditTransform };

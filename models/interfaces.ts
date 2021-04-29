@@ -69,7 +69,7 @@ export interface DocumentRollup {
 
 export interface DocumentTransform {
   _id: string;
-  _seqNo: string;
+  _seqNo: number;
   _primaryTerm: number;
   transform: Transform;
   metadata: any;
@@ -167,8 +167,8 @@ export interface TransformMetadata {
       documents_indexed: number | null;
       index_time_in_millis: number | null;
       search_time_in_millis: number | null;
-    }
-  }
+    };
+  };
 }
 
 export interface IntervalSchedule {

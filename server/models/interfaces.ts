@@ -13,21 +13,15 @@
  * permissions and limitations under the License.
  */
 
-import { IndexService, ManagedIndexService, PolicyService, RollupService } from "../services";
-import {
-  DocumentPolicy,
-  DocumentRollup,
-  DocumentTransform,
-  ManagedIndexItem,
-  Rollup,
-  Transform
-} from "../../models/interfaces";
+import { IndexService, ManagedIndexService, PolicyService, RollupService, TransformService } from "../services";
+import { DocumentPolicy, DocumentRollup, DocumentTransform, ManagedIndexItem, Rollup, Transform } from "../../models/interfaces";
 
 export interface NodeServices {
   indexService: IndexService;
   managedIndexService: ManagedIndexService;
   policyService: PolicyService;
   rollupService: RollupService;
+  transformService: TransformService;
 }
 
 export interface SearchResponse<T> {
@@ -99,7 +93,7 @@ export interface DeleteTransformResponse {
   result: string;
 }
 
-export interface GetTransformResponse {
+export interface GetTransformsResponse {
   transforms: DocumentTransform[];
   totalTransforms: number;
   metadata: any;
@@ -236,6 +230,7 @@ export interface IndexManagementApi {
   readonly REMOVE_POLICY_BASE: string;
   readonly CHANGE_POLICY_BASE: string;
   readonly ROLLUP_JOBS_BASE: string;
+  readonly TRANSFORM_BASE: string;
 }
 
 export interface DefaultHeaders {
