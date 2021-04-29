@@ -16,19 +16,17 @@
 import { EuiDataGrid, EuiDataGridColumn, EuiSpacer, EuiText } from "@elastic/eui";
 import React, { useState } from "react";
 import { ContentPanel, ContentPanelActions } from "../../../../components/ContentPanel";
+import { FieldItem } from "../../../../../models/interfaces";
 
 interface DefineTransformsProps {
   transformId: string;
   sourceIndex: string;
+  fields: FieldItem[];
 }
 
-export default function DefineTransforms({ transfromId, sourceIndex }: DefineTransformsProps) {
-  const columns = [
-    {
-      id: "name",
-      displayAsText: "Name",
-    },
-  ];
+export default function DefineTransforms({ transfromId, sourceIndex, fields }: DefineTransformsProps) {
+  let columns: EuiDataGridColumn[] = [];
+  fields.map((field: FieldItem) => columns.push({ id: field.label }));
 
   const [visibleColumns, setVisibleColumns] = useState(() => columns.map(({ id }) => id));
 
@@ -66,6 +64,7 @@ export default function DefineTransforms({ transfromId, sourceIndex }: DefineTra
         <EuiText color="subdued" size="xs">
           <p>{`Viewing sample data from index ${sourceIndex}, filtered by order.type:sales_order, order.success:true`}</p>
         </EuiText>
+        <EuiSpacer size="s" />
         <EuiDataGrid
           columns={columns}
           columnVisibility={{ visibleColumns, setVisibleColumns }}
