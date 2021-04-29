@@ -27,7 +27,7 @@ interface DefineTransformsState {}
 export default class DefineTransforms extends Component<DefineTransformsProps, DefineTransformsState> {
   constructor(props: DefineTransformsProps) {
     super(props);
-    const { transfromId, sourceIndex } = this.props;
+    const { transfromId } = this.props;
     this.state = {};
   }
 
@@ -67,7 +67,7 @@ export default class DefineTransforms extends Component<DefineTransformsProps, D
           <p>{`Viewing sample data from index ${sourceIndex}, filtered by order.type:sales_order, order.success:true`}</p>
         </EuiText>
         {/*<EuiDataGrid*/}
-        {/*  columns={}*/}
+        {/*  columns={[]}*/}
         {/*/>*/}
       </ContentPanel>
     );

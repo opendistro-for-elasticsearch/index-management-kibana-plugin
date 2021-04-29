@@ -48,6 +48,8 @@ export default class CreateTransformStep2 extends Component<CreateTransformStep2
   render() {
     const { transformService, transformId, currentStep, sourceIndex, fields } = this.props;
     if (currentStep !== 2) return null;
+    //Debug use
+    console.log(JSON.stringify(fields));
 
     return (
       <div style={{ padding: "5px 50px" }}>

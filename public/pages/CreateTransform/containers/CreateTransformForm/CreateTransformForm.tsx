@@ -16,8 +16,7 @@
 import React, { ChangeEvent, Component } from "react";
 import { EuiButton, EuiButtonEmpty, EuiComboBoxOptionOption, EuiFlexGroup, EuiFlexItem } from "@elastic/eui";
 import { RouteComponentProps } from "react-router-dom";
-import moment from "moment";
-import { TransformService } from "../../../../services";
+import { RollupService, TransformService } from "../../../../services";
 import { BREADCRUMBS, ROUTES } from "../../../../utils/constants";
 import IndexService from "../../../../services/IndexService";
 import { ManagedCatIndex } from "../../../../../server/models/interfaces";
@@ -32,6 +31,7 @@ import { compareFieldItem, parseFieldOptions } from "../../utils/helpers";
 import { CoreServicesContext } from "../../../../components/core_services";
 
 interface CreateTransformFormProps extends RouteComponentProps {
+  rollupService: RollupService;
   transformService: TransformService;
   indexService: IndexService;
 }
@@ -128,8 +128,8 @@ export default class CreateTransformForm extends Component<CreateTransformFormPr
   getMappings = async (srcIndex: string): Promise<void> => {
     if (!srcIndex.length) return;
     try {
-      const { transformService } = this.props;
-      const response = await transformService.getMappings(srcIndex);
+      const { rollupService } = this.props;
+      const response = await rollupService.getMappings(srcIndex);
       if (response.ok) {
         let allMappings: FieldItem[][] = [];
         const mappings = response.response;

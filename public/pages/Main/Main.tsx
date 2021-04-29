@@ -93,7 +93,7 @@ export default class Main extends Component<MainProps, object> {
             name: Navigation.Transforms,
             id: 5,
             href: `#${Pathname.Transforms}`,
-            isSelected: pathname === Pathname.Transforms
+            isSelected: pathname === Pathname.Transforms,
           },
         ],
       },
@@ -196,9 +196,9 @@ export default class Main extends Component<MainProps, object> {
                           />
                           <Route
                             path={ROUTES.TRANSFORMS}
-                            render = {(props: RouteComponentProps) => (
+                            render={(props: RouteComponentProps) => (
                               <div>
-                                <Transforms {...props} transformService={services.transformService}/>
+                                <Transforms {...props} transformService={services.transformService} />
                               </div>
                             )}
                           />
@@ -206,7 +206,12 @@ export default class Main extends Component<MainProps, object> {
                             path={ROUTES.CREATE_TRANSFORM}
                             render={(props: RouteComponentProps) => (
                               <div style={{ padding: "25px 25px" }}>
-                                <CreateTransformForm {...props} transformService={services.transformService} indexService={services.indexService} />
+                                <CreateTransformForm
+                                  {...props}
+                                  rollupService={services.rollupService}
+                                  transformService={services.transformService}
+                                  indexService={services.indexService}
+                                />
                               </div>
                             )}
                           />
