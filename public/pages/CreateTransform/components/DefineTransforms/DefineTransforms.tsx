@@ -51,7 +51,7 @@ export default function DefineTransforms({ transformService, notifications, tran
         //Debug use
         console.log("Successfully searched sample data: " + JSON.stringify(response));
         setData(response.response.data);
-        setDataCount(response.response.total);
+        setDataCount(response.response.total.value);
       }
     } catch (err) {
       notifications.toasts.addDanger(getErrorMessage(err, "There was a problem loading the rollups"));
@@ -151,7 +151,8 @@ export default function DefineTransforms({ transformService, notifications, tran
         columns={columns}
         columnVisibility={{ visibleColumns, setVisibleColumns }}
         rowCount={dataCount}
-        renderCellValue={({ rowIndex, columnId }) => data[rowIndex][columnId]}
+        // renderCellValue={({ rowIndex, columnId }) => data[rowIndex][columnId]}
+        renderCellValue={({}) => null}
         sorting={{ columns: sortingColumns, onSort }}
         pagination={{
           ...pagination,
