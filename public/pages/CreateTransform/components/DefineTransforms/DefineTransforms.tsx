@@ -142,7 +142,6 @@ export default function DefineTransforms({ transformService, transfromId, source
         sorting={{ columns: sortingColumns, onSort }}
         pagination={{
           ...pagination,
-          pageSizeOptions: [5, 10, 50, 100],
           pageSizeOptions: [5, 10, 20, 50],
           onChangeItemsPerPage: onChangeItemsPerPage,
           onChangePage: onChangePage,
