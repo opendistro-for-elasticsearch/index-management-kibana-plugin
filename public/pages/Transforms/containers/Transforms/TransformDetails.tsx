@@ -41,6 +41,7 @@ import DeleteModal from "../../components/DeleteModal";
 import GenerationInformation from "../../components/GeneralInformation";
 import TransformStatus from "../../components/TransformStatus";
 import { EMPTY_TRANSFORM } from "../../utils/constants";
+import TransformSettings from "./TransformSettings";
 
 interface TransformDetailsProps extends RouteComponentProps {
   transformService: TransformService;
@@ -255,6 +256,8 @@ export default class TransformDetails extends Component<TransformDetailsProps, T
         <TransformStatus metadata={metadata} />
         <EuiSpacer />
         <EuiSpacer />
+
+        <TransformSettings transformService={this.props.transformService} transformJson={transformJson} />
 
         {isModalOpen && (
           <EuiOverlayMask>

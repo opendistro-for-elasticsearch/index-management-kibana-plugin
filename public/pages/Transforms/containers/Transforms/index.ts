@@ -15,5 +15,6 @@
 
 import EditTransform from "./EditTransform";
 import Transforms from "./Transforms";
+import TransformSettings from "./TransformSettings";
 
-export { Transforms, EditTransform };
+export { Transforms, EditTransform, TransformSettings };
