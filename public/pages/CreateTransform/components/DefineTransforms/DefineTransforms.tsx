@@ -15,11 +15,13 @@
 
 import { EuiDataGrid, EuiDataGridColumn, EuiSpacer, EuiText } from "@elastic/eui";
 import { CoreStart } from "kibana/public";
-import React, { useState, useCallback } from "react";
+import React, { useState, useCallback, useEffect } from "react";
 import { ContentPanel, ContentPanelActions } from "../../../../components/ContentPanel";
 import { FieldItem } from "../../../../../models/interfaces";
 import { TransformService } from "../../../../services";
 import { getErrorMessage } from "../../../../utils/helpers";
+import { useMemo } from "react";
+import * as repl from "repl";
 
 interface DefineTransformsProps {
   transformService: TransformService;
@@ -52,6 +54,7 @@ export default function DefineTransforms({ transformService, notifications, tran
         console.log("Successfully searched sample data: " + JSON.stringify(response));
         setData(response.response.data);
         setDataCount(response.response.total.value);
+        console.log("First item: " + JSON.stringify(response.response.data[0]));
       }
     } catch (err) {
       notifications.toasts.addDanger(getErrorMessage(err, "There was a problem loading the rollups"));
@@ -80,36 +83,19 @@ export default function DefineTransforms({ transformService, notifications, tran
     [setSortingColumns]
   );
 
-  // const renderCellValue = useMemo(() => {
-  //   return ({ rowIndex, columnId, setCellProps }) => {
-  //     // const data = useContext(DataContext);
-  //     useEffect(() => {
-  //       if (columnId === 'amount') {
-  //         if (data.hasOwnProperty(rowIndex)) {
-  //           const numeric = parseFloat(
-  //             data[rowIndex][columnId].match(/\d+\.\d+/)[0],
-  //             10
-  //           );
-  //           setCellProps({
-  //             style: {
-  //               backgroundColor: `rgba(0, 255, 0, ${numeric * 0.0002})`,
-  //             },
-  //           });
-  //         }
-  //       }
-  //     }, [rowIndex, columnId, setCellProps, data]);
-  //
-  //     function getFormatted() {
-  //       return data[rowIndex][columnId].formatted
-  //         ? data[rowIndex][columnId].formatted
-  //         : data[rowIndex][columnId];
-  //     }
-  //
-  //     return data.hasOwnProperty(rowIndex)
-  //       ? getFormatted(rowIndex, columnId)
-  //       : null;
-  //   };
-  // }, []);
+  const renderCellValue = useMemo(() => {
+    return ({ rowIndex, columnId }) => {
+      // const data = useContext(DataContext);
+      useEffect(() => {
+        {
+          //Debug use
+          console.log("rowIndex: " + rowIndex + " columnId: " + columnId + " data: " + JSON.stringify(data[rowIndex]._source[columnId]));
+          return data[rowIndex]._source[columnId] ? data[rowIndex]._source[columnId] : null;
+          // return null;
+        }
+      }, [rowIndex, columnId, setCellProps, data]);
+    };
+  }, []);
 
   return (
     <ContentPanel
@@ -151,8 +137,13 @@ export default function DefineTransforms({ transformService, notifications, tran
         columns={columns}
         columnVisibility={{ visibleColumns, setVisibleColumns }}
         rowCount={dataCount}
-        // renderCellValue={({ rowIndex, columnId }) => data[rowIndex][columnId]}
-        renderCellValue={({}) => null}
+        renderCellValue={({ rowIndex, columnId }) => {
+          //Debug use
+          console.log("rowIndex: " + rowIndex + " columnId: " + columnId + " data: " + JSON.stringify(data[rowIndex]._source[columnId]));
+          // return data[rowIndex]._source[columnId] ? data[rowIndex]._source[columnId] : null
+          return null;
+        }}
+        // renderCellValue={({}) => null}
         sorting={{ columns: sortingColumns, onSort }}
         pagination={{
           ...pagination,
