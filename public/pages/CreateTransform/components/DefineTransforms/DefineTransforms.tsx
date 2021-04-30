@@ -132,7 +132,7 @@ export default function DefineTransforms({ transformService, transfromId, source
       <EuiSpacer size="s" />
       {/*TODO: add rowCount*/}
       <EuiDataGrid
-        aria-label="Define transfroms"
+        aria-label="Define transforms"
         columns={columns}
         columnVisibility={{ visibleColumns, setVisibleColumns }}
         rowCount={200}
