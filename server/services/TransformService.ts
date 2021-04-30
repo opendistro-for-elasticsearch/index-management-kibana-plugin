@@ -15,7 +15,13 @@
 
 import { IClusterClient, IKibanaResponse, KibanaRequest, KibanaResponseFactory, RequestHandlerContext, ResponseError } from "kibana/server";
 import { ServerResponse } from "../models/types";
-import { GetTransformsResponse, PutTransformParams, PutTransformResponse, SearchResponse } from "../models/interfaces";
+import {
+  GetTransformsResponse,
+  PutTransformParams,
+  PutTransformResponse,
+  SearchResponse,
+  SearchSampleDataResponse,
+} from "../models/interfaces";
 import { DocumentTransform, Transform } from "../../models/interfaces";
 import _ from "lodash";
 
@@ -313,17 +319,19 @@ export default class TransformService {
     response: KibanaResponseFactory
   ): Promise<IKibanaResponse<ServerResponse<any>>> => {
     try {
-      const { index } = request.body as { index: string };
+      // Debug use
+      console.log("Entering server side service...");
+      // const { from, size, search, sortField, sortDirection } = request.query as {
+      //   from: string;
+      //   size: string;
+      //   search: string;
+      //   sortField: string;
+      //   sortDirection: string;
+      // };
+      const { index } = request.params as { index: string };
       const params = { index: index };
-      const { from, size, search, sortField, sortDirection } = request.query as {
-        from: string;
-        size: string;
-        search: string;
-        sortField: string;
-        sortDirection: string;
-      };
       const { callAsCurrentUser: callWithRequest } = this.esDriver.asScoped(request);
-      const searchResponse: SearchResponse<any> = await callWithRequest(request, "search", params);
+      const searchResponse: SearchResponse<any> = await callWithRequest("search", params);
 
       //Debug use
       console.log(JSON.stringify(searchResponse));
@@ -332,7 +340,10 @@ export default class TransformService {
         statusCode: 200,
         body: {
           ok: true,
-          response: {},
+          response: {
+            total: searchResponse.hits.total,
+            data: searchResponse.hits.hits,
+          },
         },
       });
     } catch (err) {
@@ -341,7 +352,10 @@ export default class TransformService {
           statusCode: 200,
           body: {
             ok: true,
-            response: {},
+            response: {
+              total: 0,
+              data: [],
+            },
           },
         });
       }

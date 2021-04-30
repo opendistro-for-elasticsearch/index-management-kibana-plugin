@@ -102,11 +102,13 @@ export default function (services: NodeServices, router: IRouter) {
     transformService.putTransform
   );
 
-  router.post(
+  router.get(
     {
-      path: NODE_API._SEARCH_SAMPLE_DATA,
+      path: `${NODE_API._SEARCH_SAMPLE_DATA}/{index}`,
       validate: {
-        body: schema.any(),
+        params: schema.object({
+          index: schema.string(),
+        }),
       },
     },
     transformService.searchSampleData

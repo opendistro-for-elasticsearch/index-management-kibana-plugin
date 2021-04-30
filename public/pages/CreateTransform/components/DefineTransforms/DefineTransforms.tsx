@@ -14,20 +14,22 @@
  */
 
 import { EuiDataGrid, EuiDataGridColumn, EuiSpacer, EuiText } from "@elastic/eui";
-import React, { useContext, useEffect, useState } from "react";
+import { CoreStart } from "kibana/public";
+import React, { useState, useCallback } from "react";
 import { ContentPanel, ContentPanelActions } from "../../../../components/ContentPanel";
 import { FieldItem } from "../../../../../models/interfaces";
-import { useCallback } from "react";
 import { TransformService } from "../../../../services";
+import { getErrorMessage } from "../../../../utils/helpers";
 
 interface DefineTransformsProps {
   transformService: TransformService;
+  notifications: CoreStart["notifications"];
   transformId: string;
   sourceIndex: string;
   fields: FieldItem[];
 }
 
-export default function DefineTransforms({ transformService, transfromId, sourceIndex, fields }: DefineTransformsProps) {
+export default function DefineTransforms({ transformService, notifications, transfromId, sourceIndex, fields }: DefineTransformsProps) {
   let columns: EuiDataGridColumn[] = [];
 
   fields.map((field: FieldItem) => columns.push({ id: field.label, displayAsText: field.label + " type: " + field.type }));
@@ -37,15 +39,28 @@ export default function DefineTransforms({ transformService, transfromId, source
   const [pagination, setPagination] = useState({ pageIndex: 0, pageSize: 10 });
   const [sortingColumns, setSortingColumns] = useState([]);
   const [visibleColumns, setVisibleColumns] = useState(() => columns.map(({ id }) => id));
+  const [data, setData] = useState([]);
+  const [dataCount, setDataCount] = useState(0);
 
   const fetchData = useCallback(async () => {
-    const response = await transformService.searchSampleData(sourceIndex);
-    if (response.ok) console.log("Successfully searched sample data: " + JSON.stringify(response));
-  }, []);
+    console.log("Entering fetchData...");
+    try {
+      const response = await transformService.searchSampleData(sourceIndex);
 
-  // React.useEffect(() => {
-  //   fetchData();
-  // }, [ fetchData]);
+      if (response.ok) {
+        //Debug use
+        console.log("Successfully searched sample data: " + JSON.stringify(response));
+        setData(response.response.data);
+        setDataCount(response.response.total);
+      }
+    } catch (err) {
+      notifications.toasts.addDanger(getErrorMessage(err, "There was a problem loading the rollups"));
+    }
+  }, [sourceIndex]);
+
+  React.useEffect(() => {
+    fetchData();
+  }, [fetchData]);
 
   const onChangeItemsPerPage = useCallback(
     (pageSize) =>
@@ -135,10 +150,8 @@ export default function DefineTransforms({ transformService, transfromId, source
         aria-label="Define transforms"
         columns={columns}
         columnVisibility={{ visibleColumns, setVisibleColumns }}
-        rowCount={200}
-        renderCellValue={() => {
-          return null;
-        }}
+        rowCount={dataCount}
+        renderCellValue={({ rowIndex, columnId }) => data[rowIndex][columnId]}
         sorting={{ columns: sortingColumns, onSort }}
         pagination={{
           ...pagination,

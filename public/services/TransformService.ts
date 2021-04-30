@@ -15,7 +15,7 @@
 
 import { HttpSetup } from "kibana/public";
 import { ServerResponse } from "../../server/models/types";
-import { GetTransformsResponse, PutTransformResponse } from "../../server/models/interfaces";
+import { GetFieldsResponse, GetTransformsResponse, PutTransformResponse, SearchSampleDataResponse } from "../../server/models/interfaces";
 import { NODE_API } from "../../utils/constants";
 import { DocumentTransform, Transform } from "../../models/interfaces";
 
@@ -75,9 +75,10 @@ export default class TransformService {
   };
 
   searchSampleData = async (index: string): Promise<ServerResponse<any>> => {
-    const url = `..${NODE_API._SEARCH_SAMPLE_DATA}`;
-    const body = { index: index };
-    const response = (await this.httpClient.get(url, { body: JSON.stringify(body) })) as ServerResponse<any>;
+    //Debug use
+    console.log("Entering browser side service...");
+    const url = `..${NODE_API._SEARCH_SAMPLE_DATA}/${index}`;
+    const response = (await this.httpClient.get(url)) as ServerResponse<any>;
     //Debug use
     console.log("response: " + JSON.stringify(response));
     return response;
