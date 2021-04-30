@@ -60,7 +60,7 @@ export default class CreateTransformStep2 extends Component<CreateTransformStep2
               <h1>Define transform</h1>
             </EuiTitle>
             <EuiSpacer />
-            <DefineTransforms transformId={transformId} sourceIndex={sourceIndex} fields={fields} />
+            <DefineTransforms transformService={transformService} transformId={transformId} sourceIndex={sourceIndex} fields={fields} />
           </EuiFlexItem>
         </EuiFlexGroup>
         <EuiSpacer />

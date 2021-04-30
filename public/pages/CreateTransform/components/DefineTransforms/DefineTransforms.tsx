@@ -18,19 +18,34 @@ import React, { useContext, useEffect, useState } from "react";
 import { ContentPanel, ContentPanelActions } from "../../../../components/ContentPanel";
 import { FieldItem } from "../../../../../models/interfaces";
 import { useCallback } from "react";
-import { useMemo } from "react";
+import { TransformService } from "../../../../services";
 
 interface DefineTransformsProps {
+  transformService: TransformService;
   transformId: string;
   sourceIndex: string;
   fields: FieldItem[];
 }
 
-export default function DefineTransforms({ transfromId, sourceIndex, fields }: DefineTransformsProps) {
+export default function DefineTransforms({ transformService, transfromId, sourceIndex, fields }: DefineTransformsProps) {
   let columns: EuiDataGridColumn[] = [];
+
   fields.map((field: FieldItem) => columns.push({ id: field.label, displayAsText: field.label + " type: " + field.type }));
 
+  const [loading, setLoading] = useState(true);
+
   const [pagination, setPagination] = useState({ pageIndex: 0, pageSize: 10 });
+  const [sortingColumns, setSortingColumns] = useState([]);
+  const [visibleColumns, setVisibleColumns] = useState(() => columns.map(({ id }) => id));
+
+  const fetchData = useCallback(async () => {
+    const response = await transformService.searchSampleData(sourceIndex);
+    if (response.ok) console.log("Successfully searched sample data: " + JSON.stringify(response));
+  }, []);
+
+  // React.useEffect(() => {
+  //   fetchData();
+  // }, [ fetchData]);
 
   const onChangeItemsPerPage = useCallback(
     (pageSize) =>
@@ -41,18 +56,14 @@ export default function DefineTransforms({ transfromId, sourceIndex, fields }: D
       })),
     [setPagination]
   );
-
   const onChangePage = useCallback((pageIndex) => setPagination((pagination) => ({ ...pagination, pageIndex })), [setPagination]);
 
-  const [sortingColumns, setSortingColumns] = useState([]);
   const onSort = useCallback(
     (sortingColumns) => {
       setSortingColumns(sortingColumns);
     },
     [setSortingColumns]
   );
-
-  const [visibleColumns, setVisibleColumns] = useState(() => columns.map(({ id }) => id));
 
   // const renderCellValue = useMemo(() => {
   //   return ({ rowIndex, columnId, setCellProps }) => {
