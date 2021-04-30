@@ -14,7 +14,7 @@
  */
 
 import { NodeServices } from "../models/interfaces";
-import {IRouter} from "kibana/server";
+import { IRouter } from "kibana/server";
 import { NODE_API } from "../../utils/constants";
 import { schema } from "@kbn/config-schema";
 
@@ -32,7 +32,7 @@ export default function (services: NodeServices, router: IRouter) {
           sortField: schema.string(),
           sortDirection: schema.string(),
         }),
-      }
+      },
     },
     transformService.getTransforms
   );
@@ -83,5 +83,22 @@ export default function (services: NodeServices, router: IRouter) {
       },
     },
     transformService.deleteTransform
-  )
+  );
+
+  router.put(
+    {
+      path: `${NODE_API.TRANSFORMS}/{id}`,
+      validate: {
+        params: schema.object({
+          id: schema.string(),
+        }),
+        query: schema.object({
+          seqNo: schema.maybe(schema.number()),
+          primaryTerm: schema.maybe(schema.number()),
+        }),
+        body: schema.any(),
+      },
+    },
+    transformService.putTransform
+  );
 }

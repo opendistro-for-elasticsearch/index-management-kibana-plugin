@@ -271,8 +271,6 @@ export default function ismPlugin(Client: any, config: any, components: any) {
     method: "GET",
   });
 
-  // TODO: Add other transform APIs
-
   ism.getTransform = ca({
     url: {
       fmt: `${API.TRANSFORM_BASE}/<%=transformId%>`,
@@ -280,8 +278,8 @@ export default function ismPlugin(Client: any, config: any, components: any) {
         transformId: {
           type: "string",
           required: true,
-        }
-      }
+        },
+      },
     },
     method: "GET",
   });
@@ -300,8 +298,8 @@ export default function ismPlugin(Client: any, config: any, components: any) {
         transformId: {
           type: "string",
           required: true,
-        }
-      }
+        },
+      },
     },
     method: "GET",
   });
@@ -313,8 +311,8 @@ export default function ismPlugin(Client: any, config: any, components: any) {
         transformId: {
           type: "string",
           required: true,
-        }
-      }
+        },
+      },
     },
     method: "POST",
   });
@@ -326,8 +324,8 @@ export default function ismPlugin(Client: any, config: any, components: any) {
         transformId: {
           type: "string",
           required: true,
-        }
-      }
+        },
+      },
     },
     method: "POST",
   });
@@ -339,9 +337,22 @@ export default function ismPlugin(Client: any, config: any, components: any) {
         transformId: {
           type: "string",
           required: true,
-        }
-      }
+        },
+      },
     },
-    method: "DELETE"
+    method: "DELETE",
+  });
+
+  ism.putTransform = ca({
+    url: {
+      fmt: `${API.TRANSFORM_BASE}/<%=transformId%>`,
+      req: {
+        transformId: {
+          type: "string",
+          required: true,
+        },
+      },
+    },
+    method: "PUT",
   });
 }

@@ -19,19 +19,19 @@ import { ContentPanel } from "../../../../components/ContentPanel";
 
 interface ConfigureTransformProps {
   inEdit: boolean;
-  id: string;
+  transformId: string;
   error: string;
   onChangeName: (value: ChangeEvent<HTMLInputElement>) => void;
   onChangeDescription: (value: ChangeEvent<HTMLTextAreaElement>) => void;
   description: string;
 }
 
-const ConfigureTransform = ({ inEdit, id, error, onChangeName, onChangeDescription, description }: ConfigureTransformProps) => (
+const ConfigureTransform = ({ inEdit, transformId, error, onChangeName, onChangeDescription, description }: ConfigureTransformProps) => (
   <ContentPanel bodyStyles={{ padding: "initial" }} title="Job name and description" titleSize="m">
     <div style={{ paddingLeft: "10px" }}>
       <EuiSpacer size="s" />
       <EuiFormRow label="Name" helpText="Specify a unique, descriptive name." isInvalid={!!error} error={error}>
-        <EuiFieldText isInvalid={!!error} placeholder="transform-id" value={id} onChange={onChangeName} disabled={inEdit} />
+        <EuiFieldText isInvalid={!!error} placeholder="transform-id" value={transformId} onChange={onChangeName} disabled={inEdit} />
       </EuiFormRow>
       <EuiSpacer />
       <EuiFlexGroup gutterSize="xs">
