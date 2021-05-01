@@ -13,15 +13,14 @@
  * permissions and limitations under the License.
  */
 
-import { EuiDataGrid, EuiDataGridColumn, EuiSpacer, EuiText } from "@elastic/eui";
+import { EuiDataGrid, EuiDataGridCellValueElementProps, EuiDataGridColumn, EuiSpacer, EuiText } from "@elastic/eui";
 import { CoreStart } from "kibana/public";
-import React, { useState, useCallback, useEffect } from "react";
+import React, { useState, useCallback, useEffect, Component } from "react";
 import { ContentPanel, ContentPanelActions } from "../../../../components/ContentPanel";
 import { FieldItem } from "../../../../../models/interfaces";
 import { TransformService } from "../../../../services";
 import { getErrorMessage } from "../../../../utils/helpers";
 import { useMemo } from "react";
-import * as repl from "repl";
 
 interface DefineTransformsProps {
   transformService: TransformService;
@@ -46,6 +45,7 @@ export default function DefineTransforms({ transformService, notifications, tran
 
   const fetchData = useCallback(async () => {
     console.log("Entering fetchData...");
+    setLoading(true);
     try {
       const response = await transformService.searchSampleData(sourceIndex);
 
@@ -54,11 +54,12 @@ export default function DefineTransforms({ transformService, notifications, tran
         console.log("Successfully searched sample data: " + JSON.stringify(response));
         setData(response.response.data);
         setDataCount(response.response.total.value);
-        console.log("First item: " + JSON.stringify(response.response.data[0]));
+        // console.log("First item: " + JSON.stringify(response.response.data[0]));
       }
     } catch (err) {
       notifications.toasts.addDanger(getErrorMessage(err, "There was a problem loading the rollups"));
     }
+    setLoading(false);
   }, [sourceIndex]);
 
   React.useEffect(() => {
@@ -84,16 +85,16 @@ export default function DefineTransforms({ transformService, notifications, tran
   );
 
   const renderCellValue = useMemo(() => {
-    return ({ rowIndex, columnId }) => {
+    return ({ rowIndex, columnId }: EuiDataGridCellValueElementProps) => {
       // const data = useContext(DataContext);
       useEffect(() => {
         {
           //Debug use
           console.log("rowIndex: " + rowIndex + " columnId: " + columnId + " data: " + JSON.stringify(data[rowIndex]._source[columnId]));
-          return data[rowIndex]._source[columnId] ? data[rowIndex]._source[columnId] : null;
-          // return null;
+          if (!loading && data.hasOwnProperty(rowIndex)) return data[rowIndex]._source[columnId] ? data[rowIndex]._source[columnId] : null;
+          return null;
         }
-      }, [rowIndex, columnId, setCellProps, data]);
+      }, [rowIndex, columnId, data]);
     };
   }, []);
 
@@ -137,12 +138,20 @@ export default function DefineTransforms({ transformService, notifications, tran
         columns={columns}
         columnVisibility={{ visibleColumns, setVisibleColumns }}
         rowCount={dataCount}
-        renderCellValue={({ rowIndex, columnId }) => {
-          //Debug use
-          console.log("rowIndex: " + rowIndex + " columnId: " + columnId + " data: " + JSON.stringify(data[rowIndex]._source[columnId]));
-          // return data[rowIndex]._source[columnId] ? data[rowIndex]._source[columnId] : null
-          return null;
-        }}
+        renderCellValue={
+          ({ rowIndex, columnId }) => {
+            //Debug use
+            console.log("rowIndex: " + rowIndex + " columnId: " + columnId + " data: " + JSON.stringify(data[rowIndex]._source[columnId]));
+            // return data[rowIndex];
+            if (!loading && data.hasOwnProperty(rowIndex))
+              return data[rowIndex]._source[columnId] ? data[rowIndex]._source[columnId] : null;
+            return null;
+          }
+
+          //   ({ rowIndex, columnId }) =>
+          //   `${rowIndex}, ${columnId}`
+          //   renderCellValue
+        }
         // renderCellValue={({}) => null}
         sorting={{ columns: sortingColumns, onSort }}
         pagination={{
