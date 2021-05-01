@@ -21,6 +21,7 @@ import { FieldItem } from "../../../../../models/interfaces";
 import { TransformService } from "../../../../services";
 import { getErrorMessage } from "../../../../utils/helpers";
 import { useMemo } from "react";
+import { RollupQueryParams } from "../../../Rollups/models/interfaces";
 
 interface DefineTransformsProps {
   transformService: TransformService;
@@ -38,6 +39,8 @@ export default function DefineTransforms({ transformService, notifications, tran
   const [loading, setLoading] = useState(true);
 
   const [pagination, setPagination] = useState({ pageIndex: 0, pageSize: 10 });
+  const [from, setFrom] = useState(0);
+  const [size, setSize] = useState(10);
   const [sortingColumns, setSortingColumns] = useState([]);
   const [visibleColumns, setVisibleColumns] = useState(() => columns.map(({ id }) => id));
   const [data, setData] = useState([]);
@@ -47,7 +50,7 @@ export default function DefineTransforms({ transformService, notifications, tran
     console.log("Entering fetchData...");
     setLoading(true);
     try {
-      const response = await transformService.searchSampleData(sourceIndex);
+      const response = await transformService.searchSampleData(sourceIndex, { from, size });
 
       if (response.ok) {
         //Debug use
@@ -67,15 +70,26 @@ export default function DefineTransforms({ transformService, notifications, tran
   }, [fetchData]);
 
   const onChangeItemsPerPage = useCallback(
-    (pageSize) =>
+    (pageSize) => {
       setPagination((pagination) => ({
         ...pagination,
         pageSize,
         pageIndex: 0,
-      })),
+      }));
+      setFrom(0);
+      setSize(pageSize);
+    },
     [setPagination]
   );
-  const onChangePage = useCallback((pageIndex) => setPagination((pagination) => ({ ...pagination, pageIndex })), [setPagination]);
+  const onChangePage = useCallback(
+    (pageIndex) => {
+      setPagination((pagination) => ({ ...pagination, pageIndex }));
+      setFrom(pageIndex * size);
+      //debug use
+      console.log("From: " + pageIndex * size);
+    },
+    [setPagination]
+  );
 
   const onSort = useCallback(
     (sortingColumns) => {
@@ -84,19 +98,12 @@ export default function DefineTransforms({ transformService, notifications, tran
     [setSortingColumns]
   );
 
-  const renderCellValue = useMemo(() => {
-    return ({ rowIndex, columnId }: EuiDataGridCellValueElementProps) => {
-      // const data = useContext(DataContext);
-      useEffect(() => {
-        {
-          //Debug use
-          console.log("rowIndex: " + rowIndex + " columnId: " + columnId + " data: " + JSON.stringify(data[rowIndex]._source[columnId]));
-          if (!loading && data.hasOwnProperty(rowIndex)) return data[rowIndex]._source[columnId] ? data[rowIndex]._source[columnId] : null;
-          return null;
-        }
-      }, [rowIndex, columnId, data]);
-    };
-  }, []);
+  const renderCellValue = ({ rowIndex, columnId }) => {
+    //Debug use
+    console.log("rowIndex: " + rowIndex + " columnId: " + columnId + " data: " + JSON.stringify(data[rowIndex]._source[columnId]));
+    if (!loading && data.hasOwnProperty(rowIndex)) return data[rowIndex]._source[columnId] ? data[rowIndex]._source[columnId] : null;
+    return null;
+  };
 
   return (
     <ContentPanel
@@ -139,18 +146,18 @@ export default function DefineTransforms({ transformService, notifications, tran
         columnVisibility={{ visibleColumns, setVisibleColumns }}
         rowCount={dataCount}
         renderCellValue={
-          ({ rowIndex, columnId }) => {
-            //Debug use
-            console.log("rowIndex: " + rowIndex + " columnId: " + columnId + " data: " + JSON.stringify(data[rowIndex]._source[columnId]));
-            // return data[rowIndex];
-            if (!loading && data.hasOwnProperty(rowIndex))
-              return data[rowIndex]._source[columnId] ? data[rowIndex]._source[columnId] : null;
-            return null;
-          }
+          // ({ rowIndex, columnId }) => {
+          //   //Debug use
+          //   console.log("rowIndex: " + rowIndex + " columnId: " + columnId + " data: " + JSON.stringify(data[rowIndex]._source[columnId]));
+          //   // return data[rowIndex];
+          //   if (!loading && data.hasOwnProperty(rowIndex))
+          //     return data[rowIndex]._source[columnId] ? data[rowIndex]._source[columnId] : null;
+          //   return null;
+          // }
 
           //   ({ rowIndex, columnId }) =>
           //   `${rowIndex}, ${columnId}`
-          //   renderCellValue
+          renderCellValue
         }
         // renderCellValue={({}) => null}
         sorting={{ columns: sortingColumns, onSort }}
