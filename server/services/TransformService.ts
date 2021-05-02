@@ -321,15 +321,16 @@ export default class TransformService {
     try {
       // Debug use
       console.log("Entering server side service...");
-      // const { from, size, search, sortField, sortDirection } = request.query as {
-      //   from: string;
-      //   size: string;
-      //   search: string;
-      //   sortField: string;
-      //   sortDirection: string;
-      // };
+      const { from, size } = request.query as {
+        from: string;
+        size: string;
+      };
       const { index } = request.params as { index: string };
-      const params = { index: index };
+      const params = {
+        index: index,
+        from: from,
+        size: size,
+      };
       const { callAsCurrentUser: callWithRequest } = this.esDriver.asScoped(request);
       const searchResponse: SearchResponse<any> = await callWithRequest("search", params);
 

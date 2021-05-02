@@ -15,9 +15,9 @@
 
 import { EuiDataGrid, EuiDataGridColumn, EuiSpacer, EuiText } from "@elastic/eui";
 import { CoreStart } from "kibana/public";
-import React, { useState, useCallback } from "react";
-import { ContentPanel, ContentPanelActions } from "../../../../components/ContentPanel";
-import { FieldItem } from "../../../../../models/interfaces";
+import React, { useCallback, useState } from "react";
+import { ContentPanel } from "../../../../components/ContentPanel";
+import { FieldItem, GROUP_TYPES, GroupItem } from "../../../../../models/interfaces";
 import { TransformService } from "../../../../services";
 import { getErrorMessage } from "../../../../utils/helpers";
 import { isNumericMapping } from "../../utils/helpers";
@@ -28,7 +28,7 @@ interface DefineTransformsProps {
   transformId: string;
   sourceIndex: string;
   fields: FieldItem[];
-  onGroupSelectionChange: void;
+  onGroupSelectionChange: (selectedFields: GroupItem[]) => void;
   onAggregationSelectionChange: void;
 }
 
@@ -46,6 +46,7 @@ export default function DefineTransforms({
   fields.map((field: FieldItem) => {
     const isNumeric = isNumericMapping(field.type);
     const isDate = field.type == "date";
+    // TODO: Handle the available options according to column types
     columns.push({
       id: field.label,
       displayAsText: field.label + " type: " + field.type,
@@ -58,19 +59,40 @@ export default function DefineTransforms({
         additional: [
           {
             label: "Group by histogram ",
-            onClick: () => {},
+            onClick: () => {
+              groupSelection.push({
+                sourceField: field,
+                targetField: `${field.label}_${GROUP_TYPES.histogram}`,
+                aggregationMethod: GROUP_TYPES.histogram,
+              });
+              onGroupSelectionChange(groupSelection);
+            },
             size: "xs",
             color: isNumeric ? "text" : "subdued",
           },
           {
             label: "Group by date histogram ",
-            onClick: () => {},
+            onClick: () => {
+              groupSelection.push({
+                sourceField: field,
+                targetField: `${field.label}_${GROUP_TYPES.dateHistogram}`,
+                aggregationMethod: GROUP_TYPES.dateHistogram,
+              });
+              onGroupSelectionChange(groupSelection);
+            },
             size: "xs",
             color: isDate ? "text" : "subdued",
           },
           {
             label: "Group by terms ",
-            onClick: () => {},
+            onClick: () => {
+              groupSelection.push({
+                sourceField: field,
+                targetField: `${field.label}_${GROUP_TYPES.terms}`,
+                aggregationMethod: GROUP_TYPES.terms,
+              });
+              onGroupSelectionChange(groupSelection);
+            },
             size: "xs",
             color: "text",
           },
@@ -121,15 +143,16 @@ export default function DefineTransforms({
     });
   });
 
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState<boolean>(true);
 
   const [pagination, setPagination] = useState({ pageIndex: 0, pageSize: 10 });
-  const [from, setFrom] = useState(0);
-  const [size, setSize] = useState(10);
+  const [from, setFrom] = useState<number>(0);
+  const [size, setSize] = useState<number>(10);
   const [sortingColumns, setSortingColumns] = useState([]);
   const [visibleColumns, setVisibleColumns] = useState(() => columns.map(({ id }) => id));
   const [data, setData] = useState([]);
-  const [dataCount, setDataCount] = useState(0);
+  const [dataCount, setDataCount] = useState<number>(0);
+  const [groupSelection, setGroupSelection] = useState<GroupItem[]>([]);
 
   const fetchData = useCallback(async () => {
     console.log("Entering fetchData...");
@@ -252,6 +275,9 @@ export default function DefineTransforms({
           onChangePage: onChangePage,
         }}
       />
+      <EuiSpacer />
+      {/*Debug use*/}
+      {JSON.stringify(groupSelection)}
     </ContentPanel>
   );
 }

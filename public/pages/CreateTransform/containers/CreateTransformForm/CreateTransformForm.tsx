@@ -16,13 +16,14 @@
 import React, { ChangeEvent, Component } from "react";
 import { EuiButton, EuiButtonEmpty, EuiComboBoxOptionOption, EuiFlexGroup, EuiFlexItem } from "@elastic/eui";
 import { RouteComponentProps } from "react-router-dom";
+import moment from "moment";
 import { RollupService, TransformService } from "../../../../services";
 import { BREADCRUMBS, ROUTES } from "../../../../utils/constants";
 import IndexService from "../../../../services/IndexService";
 import { ManagedCatIndex } from "../../../../../server/models/interfaces";
 import CreateTransform from "../CreateTransform";
 import CreateTransformStep2 from "../CreateTransformStep2";
-import { DimensionItem, FieldItem, IndexItem, MetricItem, Transform } from "../../../../../models/interfaces";
+import { DimensionItem, FieldItem, GroupItem, IndexItem, MetricItem, Transform } from "../../../../../models/interfaces";
 import { getErrorMessage } from "../../../../utils/helpers";
 import { EMPTY_TRANSFORM } from "../../utils/constants";
 import CreateTransformStep3 from "../CreateTransformStep3";
@@ -60,7 +61,7 @@ interface CreateTransformFormState {
   fields: FieldItem[];
   selectedTerms: FieldItem[];
 
-  selectedGroupField: DimensionItem[];
+  selectedGroupField: GroupItem[];
   selectedAggregations: MetricItem[]; // Needs to be Map<String, any>
   aggregationsError: string;
   selectedFields: FieldItem[];
@@ -265,7 +266,7 @@ export default class CreateTransformForm extends Component<CreateTransformFormPr
     this.setState({ targetIndex: options, transformJSON: newJSON, targetIndexError: targetIndexError });
   };
 
-  onGroupSelectionChange = (selectedFields: DimensionItem[]): void => {
+  onGroupSelectionChange = (selectedFields: GroupItem[]): void => {
     this.setState({ selectedGroupField: selectedFields });
   };
 
@@ -319,28 +320,29 @@ export default class CreateTransformForm extends Component<CreateTransformFormPr
     let newJSON = transformJSON;
 
     // Clear the groups fields
-    newJSON.transform.groups = {};
+    newJSON.transform.groups = [];
 
     // Push rest of groups
     selectedGroupField.map((group) => {
       if (group.aggregationMethod == "terms") {
         newJSON.transform.groups.push({
           terms: {
-            source_field: group.field.label,
-            target_field: "", // needs target_field source, null target_field test
+            source_field: group.sourceField.label,
+            target_field: group.targetField, // needs target_field source, null target_field test
           },
         });
       } else if (group.aggregationMethod == "histogram") {
         newJSON.transform.groups.push({
           histogram: {
-            source_field: group.field.label,
-            interval: group.interval,
+            source_field: group.sourceField.label,
+            //TODO: Remove the if else condition after implementing define interval
+            interval: group.interval ? group.interval : 5,
           },
         });
       } else {
         newJSON.transform.groups.push({
           date_histogram: {
-            source_field: group.field.label,
+            source_field: group.sourceField.label,
             // need to fill out other date histogram data
           },
         });
@@ -354,22 +356,22 @@ export default class CreateTransformForm extends Component<CreateTransformFormPr
     let newJSON = transformJSON;
 
     //Clear the aggregations array before pushing
-    newJSON.transform.aggregations = [];
+    newJSON.transform.aggregations = {};
 
     //Push all aggregations
-    selectedAggregations.map((aggregation) => {
-      const aggregations = [];
-      if (aggregation.min) aggregations.push({ min: {} });
-      if (aggregation.max) aggregations.push({ max: {} });
-      if (aggregation.sum) aggregations.push({ sum: {} });
-      if (aggregation.avg) aggregations.push({ avg: {} });
-      if (aggregation.value_count) aggregations.push({ value_count: {} });
-      if (aggregation.percentiles) aggregations.push({ percentiles: {} });
-      newJSON.transform.aggregations.push({
-        source_field: aggregation.source_field.label,
-        aggregations: aggregations,
-      });
-    });
+    // selectedAggregations.map((aggregation) => {
+    //   const aggregations = [];
+    //   if (aggregation.min) aggregations.push({ min: {} });
+    //   if (aggregation.max) aggregations.push({ max: {} });
+    //   if (aggregation.sum) aggregations.push({ sum: {} });
+    //   if (aggregation.avg) aggregations.push({ avg: {} });
+    //   if (aggregation.value_count) aggregations.push({ value_count: {} });
+    //   if (aggregation.percentiles) aggregations.push({ percentiles: {} });
+    //   newJSON.transform.aggregations.push({
+    //     source_field: aggregation.source_field.label,
+    //     aggregations: aggregations,
+    //   });
+    // });
     this.setState({ transformJSON: newJSON });
   };
 

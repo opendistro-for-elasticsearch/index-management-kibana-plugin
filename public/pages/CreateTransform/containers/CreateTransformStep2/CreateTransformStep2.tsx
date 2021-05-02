@@ -21,7 +21,7 @@ import { BREADCRUMBS, ROUTES } from "../../../../utils/constants";
 import CreateTransformSteps from "../../components/CreateTransformSteps";
 import { CoreServicesContext } from "../../../../components/core_services";
 import DefineTransforms from "../../components/DefineTransforms";
-import { FieldItem } from "../../../../../models/interfaces";
+import { FieldItem, GroupItem } from "../../../../../models/interfaces";
 
 interface CreateTransformStep2Props extends RouteComponentProps {
   transformService: TransformService;
@@ -29,7 +29,7 @@ interface CreateTransformStep2Props extends RouteComponentProps {
   currentStep: number;
   sourceIndex: string;
   fields: FieldItem[];
-  onGroupSelectionChange: void;
+  onGroupSelectionChange: (selectedFields: GroupItem[]) => void;
   onAggregationSelectionChange: void;
 }
 

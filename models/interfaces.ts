@@ -250,3 +250,15 @@ export interface RollupMetricItem {
     }
   ];
 }
+export interface GroupItem {
+  sourceField: FieldItem;
+  targetField: string;
+  interval?: number;
+  aggregationMethod: GROUP_TYPES;
+}
+
+export enum GROUP_TYPES {
+  histogram = "histogram",
+  dateHistogram = "date_histogram",
+  terms = "terms",
+}

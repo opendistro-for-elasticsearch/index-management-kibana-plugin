@@ -220,6 +220,17 @@ export interface ExplainAPIManagedIndexMetaData {
   enabled: boolean;
 }
 
+export interface SearchSampleDataResponse {
+  total: number;
+  data: {
+    _index: string;
+    _type: string;
+    _id: string;
+    _score: number;
+    _source: object;
+  }[];
+}
+
 export interface IndexManagementApi {
   [API_ROUTE: string]: string;
 
