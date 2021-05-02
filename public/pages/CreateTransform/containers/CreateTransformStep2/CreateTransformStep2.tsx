@@ -29,6 +29,8 @@ interface CreateTransformStep2Props extends RouteComponentProps {
   currentStep: number;
   sourceIndex: string;
   fields: FieldItem[];
+  onGroupSelectionChange: void;
+  onAggregationSelectionChange: void;
 }
 
 export default class CreateTransformStep2 extends Component<CreateTransformStep2Props> {
@@ -46,7 +48,15 @@ export default class CreateTransformStep2 extends Component<CreateTransformStep2
   };
 
   render() {
-    const { transformService, transformId, currentStep, sourceIndex, fields } = this.props;
+    const {
+      transformService,
+      transformId,
+      currentStep,
+      sourceIndex,
+      fields,
+      onGroupSelectionChange,
+      onAggregationSelectionChange,
+    } = this.props;
     if (currentStep !== 2) return null;
 
     return (
@@ -66,6 +76,8 @@ export default class CreateTransformStep2 extends Component<CreateTransformStep2
               transformId={transformId}
               sourceIndex={sourceIndex}
               fields={fields}
+              onGroupSelectionChange={onGroupSelectionChange}
+              onAggregationSelectionChange={onAggregationSelectionChange}
             />
           </EuiFlexItem>
         </EuiFlexGroup>

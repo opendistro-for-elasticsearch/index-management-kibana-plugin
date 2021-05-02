@@ -13,15 +13,14 @@
  * permissions and limitations under the License.
  */
 
-import { EuiDataGrid, EuiDataGridCellValueElementProps, EuiDataGridColumn, EuiSpacer, EuiText } from "@elastic/eui";
+import { EuiDataGrid, EuiDataGridColumn, EuiSpacer, EuiText } from "@elastic/eui";
 import { CoreStart } from "kibana/public";
-import React, { useState, useCallback, useEffect, Component } from "react";
+import React, { useState, useCallback } from "react";
 import { ContentPanel, ContentPanelActions } from "../../../../components/ContentPanel";
 import { FieldItem } from "../../../../../models/interfaces";
 import { TransformService } from "../../../../services";
 import { getErrorMessage } from "../../../../utils/helpers";
-import { useMemo } from "react";
-import { RollupQueryParams } from "../../../Rollups/models/interfaces";
+import { isNumericMapping } from "../../utils/helpers";
 
 interface DefineTransformsProps {
   transformService: TransformService;
@@ -29,12 +28,98 @@ interface DefineTransformsProps {
   transformId: string;
   sourceIndex: string;
   fields: FieldItem[];
+  onGroupSelectionChange: void;
+  onAggregationSelectionChange: void;
 }
 
-export default function DefineTransforms({ transformService, notifications, transfromId, sourceIndex, fields }: DefineTransformsProps) {
+export default function DefineTransforms({
+  transformService,
+  notifications,
+  transfromId,
+  sourceIndex,
+  fields,
+  onGroupSelectionChange,
+  onAggregationSelectionChange,
+}: DefineTransformsProps) {
   let columns: EuiDataGridColumn[] = [];
 
-  fields.map((field: FieldItem) => columns.push({ id: field.label, displayAsText: field.label + " type: " + field.type }));
+  fields.map((field: FieldItem) => {
+    const isNumeric = isNumericMapping(field.type);
+    const isDate = field.type == "date";
+    columns.push({
+      id: field.label,
+      displayAsText: field.label + " type: " + field.type,
+      actions: {
+        showHide: false,
+        showMoveLeft: false,
+        showMoveRight: false,
+        showSortAsc: false,
+        showSortDesc: false,
+        additional: [
+          {
+            label: "Group by histogram ",
+            onClick: () => {},
+            size: "xs",
+            color: isNumeric ? "text" : "subdued",
+          },
+          {
+            label: "Group by date histogram ",
+            onClick: () => {},
+            size: "xs",
+            color: isDate ? "text" : "subdued",
+          },
+          {
+            label: "Group by terms ",
+            onClick: () => {},
+            size: "xs",
+            color: "text",
+          },
+          {
+            label: "Aggregate by sum ",
+            onClick: () => {},
+            size: "xs",
+            color: "text",
+          },
+          {
+            label: "Aggregate by max ",
+            onClick: () => {},
+            size: "xs",
+            color: "text",
+          },
+          {
+            label: "Aggregate by min ",
+            onClick: () => {},
+            size: "xs",
+            color: "text",
+          },
+          {
+            label: "Aggregate by avg ",
+            onClick: () => {},
+            size: "xs",
+            color: "text",
+          },
+          {
+            label: "Aggregate by count ",
+            onClick: () => {},
+            size: "xs",
+            color: "text",
+          },
+          {
+            label: "Aggregate by percentile ",
+            onClick: () => {},
+            size: "xs",
+            color: "text",
+          },
+          {
+            label: "Aggregate by scripted metrics ",
+            onClick: () => {},
+            size: "xs",
+            color: "text",
+          },
+        ],
+      },
+    });
+  });
 
   const [loading, setLoading] = useState(true);
 
@@ -107,25 +192,24 @@ export default function DefineTransforms({ transformService, notifications, tran
 
   return (
     <ContentPanel
-      actions={
-        <ContentPanelActions
-          actions={[
-            {
-              text: "Full screen view",
-              buttonProps: {
-                iconType: "fullScreen",
-                //TODO: Add action to enter full screen view
-
-                // onClick: () =>
-                //   onShow(ApplyPolicyModal, {
-                //     indices: selectedItems.map((item: ManagedCatIndex) => item.index),
-                //     core: this.context,
-                //   }),
-              },
-            },
-          ]}
-        />
-      }
+      //TODO: Add action to enter full screen view
+      // actions={
+      //   <ContentPanelActions
+      //     actions={[
+      //       {
+      //         text: "Full screen view",
+      //         buttonProps: {
+      //           iconType: "fullScreen",
+      //           // onClick: () =>
+      //           //   onShow(ApplyPolicyModal, {
+      //           //     indices: selectedItems.map((item: ManagedCatIndex) => item.index),
+      //           //     core: this.context,
+      //           //   }),
+      //         },
+      //       },
+      //     ]}
+      //   />
+      // }
       bodyStyles={{ padding: "10px 10px" }}
       title="Select fields to transform"
       titleSize="m"
