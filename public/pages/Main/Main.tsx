@@ -32,6 +32,8 @@ import { CoreServicesConsumer } from "../../components/core_services";
 import CreateRollupForm from "../CreateRollup/containers/CreateRollupForm";
 import EditRollup from "../EditRollup/containers";
 import RollupDetails from "../RollupDetails/containers/RollupDetails";
+import { EditTransform, Transforms } from "../Transforms";
+import TransformDetails from "../Transforms/containers/Transforms/TransformDetails";
 
 enum Navigation {
   IndexManagement = "Index Management",
@@ -39,6 +41,7 @@ enum Navigation {
   ManagedIndices = "Managed Indices",
   Indices = "Indices",
   Rollups = "Rollup Jobs",
+  Transforms = "Transform Jobs",
 }
 
 enum Pathname {
@@ -46,6 +49,7 @@ enum Pathname {
   ManagedIndices = "/managed-indices",
   Indices = "/indices",
   Rollups = "/rollups",
+  Transforms = "/transforms",
 }
 
 interface MainProps extends RouteComponentProps {}
@@ -85,6 +89,12 @@ export default class Main extends Component<MainProps, object> {
             href: `#${Pathname.Rollups}`,
             isSelected: pathname === Pathname.Rollups,
           },
+          {
+            name: Navigation.Transforms,
+            id: 5,
+            href: `#${Pathname.Transforms}`,
+            isSelected: pathname === Pathname.Transforms,
+          },
         ],
       },
     ];
@@ -99,11 +109,15 @@ export default class Main extends Component<MainProps, object> {
                     <ModalRoot services={services} />
                     <EuiPage>
                       {/*Hide side navigation bar when creating or editing rollup job*/}
-                      {pathname != ROUTES.CREATE_ROLLUP && pathname != ROUTES.EDIT_ROLLUP && pathname != ROUTES.ROLLUP_DETAILS && (
-                        <EuiPageSideBar style={{ minWidth: 150 }}>
-                          <EuiSideNav style={{ width: 150 }} items={sideNav} />
-                        </EuiPageSideBar>
-                      )}
+                      {pathname != ROUTES.CREATE_ROLLUP &&
+                        pathname != ROUTES.EDIT_ROLLUP &&
+                        pathname != ROUTES.ROLLUP_DETAILS &&
+                        pathname != ROUTES.EDIT_TRANSFORM &&
+                        pathname != ROUTES.TRANSFORM_DETAILS && (
+                          <EuiPageSideBar style={{ minWidth: 150 }}>
+                            <EuiSideNav style={{ width: 150 }} items={sideNav} />
+                          </EuiPageSideBar>
+                        )}
                       <EuiPageBody>
                         <Switch>
                           <Route
@@ -181,6 +195,38 @@ export default class Main extends Component<MainProps, object> {
                             render={(props: RouteComponentProps) => (
                               <div style={{ padding: "25px 25px" }}>
                                 <RollupDetails {...props} rollupService={services.rollupService} />
+                              </div>
+                            )}
+                          />
+                          <Route
+                            path={ROUTES.TRANSFORMS}
+                            render={(props: RouteComponentProps) => (
+                              <div>
+                                <Transforms {...props} transformService={services.transformService} />
+                              </div>
+                            )}
+                          />
+                          <Route
+                            path={ROUTES.CREATE_TRANSFORM}
+                            render={(props: RouteComponentProps) => (
+                              <div style={{ padding: "25px 25px" }}>
+                                <CreateRollupForm {...props} rollupService={services.rollupService} indexService={services.indexService} />
+                              </div>
+                            )}
+                          />
+                          <Route
+                            path={ROUTES.EDIT_TRANSFORM}
+                            render={(props: RouteComponentProps) => (
+                              <div style={{ padding: "25px 25px" }}>
+                                <EditTransform {...props} transformService={services.transformService} />
+                              </div>
+                            )}
+                          />
+                          <Route
+                            path={ROUTES.TRANSFORM_DETAILS}
+                            render={(props: RouteComponentProps) => (
+                              <div style={{ padding: "25px 25px" }}>
+                                <TransformDetails {...props} transformService={services.transformService} />
                               </div>
                             )}
                           />

@@ -67,6 +67,14 @@ export interface DocumentRollup {
   metadata: any;
 }
 
+export interface DocumentTransform {
+  _id: string;
+  _seqNo: number;
+  _primaryTerm: number;
+  transform: Transform;
+  metadata: any;
+}
+
 // TODO: Fill out when needed
 // TODO: separate a frontend Policy from backendPolicy
 export interface Policy {
@@ -123,6 +131,44 @@ export interface RollupMetadata {
       search_time_in_millis: number | null;
     };
   };
+}
+
+export interface Transform {
+  description: string;
+  groups: RollupDimensionItem[];
+  enabled: boolean;
+  enabled_at: number | null;
+  updated_at: number;
+  metadata_id: string | null;
+  aggregations: Map<String, any>;
+  page_size: number;
+  schedule: IntervalSchedule | CronSchedule;
+  schema_version: number;
+  source_index: string;
+  target_index: string;
+  roles: String[];
+  data_selection_query: Map<String, any>;
+}
+
+export interface TransformMetadata {
+  metadata_id: string;
+  transform_metadata: {
+    id: string;
+    seq_no: number;
+    primary_term: number;
+    transform_id: string;
+    after_key: Map<string, any> | null;
+    last_updated_at: number;
+    status: string;
+    failure_reason: string | null;
+    stats: {
+      pages_processed: number | null;
+      documents_processed: number | null;
+      documents_indexed: number | null;
+      index_time_in_millis: number | null;
+      search_time_in_millis: number | null;
+    }
+  }
 }
 
 export interface IntervalSchedule {

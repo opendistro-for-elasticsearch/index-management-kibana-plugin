@@ -13,14 +13,22 @@
  * permissions and limitations under the License.
  */
 
-import { IndexService, ManagedIndexService, PolicyService, RollupService } from "../services";
-import { DocumentPolicy, DocumentRollup, ManagedIndexItem, Rollup } from "../../models/interfaces";
+import { IndexService, ManagedIndexService, PolicyService, RollupService, TransformService } from "../services";
+import {
+  DocumentPolicy,
+  DocumentRollup,
+  DocumentTransform,
+  ManagedIndexItem,
+  Rollup,
+  Transform
+} from "../../models/interfaces";
 
 export interface NodeServices {
   indexService: IndexService;
   managedIndexService: ManagedIndexService;
   policyService: PolicyService;
   rollupService: RollupService;
+  transformService: TransformService;
 }
 
 export interface SearchResponse<T> {
@@ -88,6 +96,23 @@ export interface PutRollupResponse {
   rollup: { rollup: Rollup };
 }
 
+export interface DeleteTransformResponse {
+  result: string;
+}
+
+export interface GetTransformsResponse {
+  transforms: DocumentTransform[];
+  totalTransforms: number;
+  metadata: any;
+}
+
+export interface PutTransformResponse {
+  _id: string;
+  _primary_term: string;
+  _seq_no: string;
+  transform: { transform: Transform };
+}
+
 export interface IndexUpdateResponse {
   updatedIndices: number;
   failures: boolean;
@@ -137,6 +162,17 @@ export interface PutRollupParams {
   if_seq_no?: string;
   if_primary_term?: string;
   body: string;
+}
+
+export interface PutTransformParams {
+  transformId: string;
+  if_seq_no?: string;
+  if_primary_term?: string;
+  body: string;
+}
+
+export interface DeleteTransformParams {
+  transformId: string;
 }
 
 // TODO: remove optional failedIndices after fixing retry API to always array
@@ -201,6 +237,7 @@ export interface IndexManagementApi {
   readonly REMOVE_POLICY_BASE: string;
   readonly CHANGE_POLICY_BASE: string;
   readonly ROLLUP_JOBS_BASE: string;
+  readonly TRANSFORM_BASE: string;
 }
 
 export interface DefaultHeaders {
