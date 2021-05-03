@@ -31,7 +31,7 @@ export default class TransformStatus extends Component<TransformStatusProps> {
   render() {
     const { metadata } = this.props;
     return (
-      <ContentPanel bodyStyles={{ padding: "initial" }} title={"Job status"} titleSize="m">
+      <ContentPanel bodyStyles={{ padding: "initial" }} title="Transform status" titleSize="m">
         <div style={{ paddingLeft: "10px" }}>
           <EuiSpacer size="s" />
           <EuiFlexGrid columns={4}>

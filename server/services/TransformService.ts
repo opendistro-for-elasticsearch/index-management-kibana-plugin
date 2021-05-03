@@ -15,7 +15,7 @@
 
 import { IClusterClient, IKibanaResponse, KibanaRequest, KibanaResponseFactory, RequestHandlerContext } from "kibana/server";
 import { ServerResponse } from "../models/types";
-import { GetTransformsResponse, PutTransformResponse, PutTransformParams } from "../models/interfaces";
+import { GetTransformsResponse, PutTransformParams, PutTransformResponse, SearchResponse } from "../models/interfaces";
 import { DocumentTransform, Transform } from "../../models/interfaces";
 import _ from "lodash";
 
@@ -294,6 +294,64 @@ export default class TransformService {
       });
     } catch (err) {
       console.error("Index Management - TransformService - putTransform", err);
+      return response.custom({
+        statusCode: 200,
+        body: {
+          ok: false,
+          error: err.message,
+        },
+      });
+    }
+  };
+
+  searchSampleData = async (
+    context: RequestHandlerContext,
+    request: KibanaRequest,
+    response: KibanaResponseFactory
+  ): Promise<IKibanaResponse<ServerResponse<any>>> => {
+    try {
+      // Debug use
+      console.log("Entering server side service...");
+      const { from, size } = request.query as {
+        from: string;
+        size: string;
+      };
+      const { index } = request.params as { index: string };
+      const params = {
+        index: index,
+        from: from,
+        size: size,
+      };
+      const { callAsCurrentUser: callWithRequest } = this.esDriver.asScoped(request);
+      const searchResponse: SearchResponse<any> = await callWithRequest("search", params);
+
+      //Debug use
+      console.log(JSON.stringify(searchResponse));
+
+      return response.custom({
+        statusCode: 200,
+        body: {
+          ok: true,
+          response: {
+            total: searchResponse.hits.total,
+            data: searchResponse.hits.hits,
+          },
+        },
+      });
+    } catch (err) {
+      if (err.statusCode === 404 && err.body.error.type === "index_not_found_exception") {
+        return response.custom({
+          statusCode: 200,
+          body: {
+            ok: true,
+            response: {
+              total: 0,
+              data: [],
+            },
+          },
+        });
+      }
+      console.error("Index Management - TransformService - searchSampleData", err);
       return response.custom({
         statusCode: 200,
         body: {

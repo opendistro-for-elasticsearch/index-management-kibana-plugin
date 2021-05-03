@@ -68,4 +68,22 @@ export default class TransformService {
     const url = `..${NODE_API.TRANSFORMS}/_preview`;
     return (await this.httpClient.post(url, { body: JSON.stringify(transform) })) as ServerResponse<Map<String, []>>;
   };
+
+  //Function to search for fields from a source index using GET /${source_index}/_mapping
+  getMappings = async (index: string): Promise<ServerResponse<any>> => {
+    const url = `..${NODE_API._MAPPINGS}`;
+    const body = { index: index };
+    const response = (await this.httpClient.post(url, { body: JSON.stringify(body) })) as ServerResponse<GetFieldsResponse>;
+    return response;
+  };
+
+  searchSampleData = async (index: string, queryObject: object): Promise<ServerResponse<any>> => {
+    //Debug use
+    console.log("Entering browser side service...");
+    const url = `..${NODE_API._SEARCH_SAMPLE_DATA}/${index}`;
+    const response = (await this.httpClient.get(url, { query: queryObject })) as ServerResponse<any>;
+    //Debug use
+    console.log("response: " + JSON.stringify(response));
+    return response;
+  };
 }

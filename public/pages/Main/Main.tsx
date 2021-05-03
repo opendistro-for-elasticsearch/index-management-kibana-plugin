@@ -30,6 +30,7 @@ import { BrowserServices } from "../../models/interfaces";
 import { ROUTES } from "../../utils/constants";
 import { CoreServicesConsumer } from "../../components/core_services";
 import CreateRollupForm from "../CreateRollup/containers/CreateRollupForm";
+import CreateTransformForm from "../CreateTransform/containers/CreateTransformForm";
 import EditRollup from "../EditRollup/containers";
 import RollupDetails from "../RollupDetails/containers/RollupDetails";
 import { EditTransform, Transforms } from "../Transforms";
@@ -210,7 +211,12 @@ export default class Main extends Component<MainProps, object> {
                             path={ROUTES.CREATE_TRANSFORM}
                             render={(props: RouteComponentProps) => (
                               <div style={{ padding: "25px 25px" }}>
-                                <CreateRollupForm {...props} rollupService={services.rollupService} indexService={services.indexService} />
+                                <CreateTransformForm
+                                  {...props}
+                                  rollupService={services.rollupService}
+                                  transformService={services.transformService}
+                                  indexService={services.indexService}
+                                />
                               </div>
                             )}
                           />

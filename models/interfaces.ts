@@ -167,8 +167,8 @@ export interface TransformMetadata {
       documents_indexed: number | null;
       index_time_in_millis: number | null;
       search_time_in_millis: number | null;
-    }
-  }
+    };
+  };
 }
 
 export interface IntervalSchedule {
@@ -249,4 +249,22 @@ export interface RollupMetricItem {
       value_count?: Object;
     }
   ];
+}
+
+export type TransformGroupItem = DateHistogramItem | TermsItem | HistogramItem;
+
+export enum GROUP_TYPES {
+  histogram = "histogram",
+  dateHistogram = "date_histogram",
+  terms = "terms",
+}
+
+export interface TransformAggItem {
+  sum?: { field: string };
+  max?: { field: string };
+  min?: { field: string };
+  avg?: { field: string };
+  count?: { field: string };
+  percentiles?: { field: string; percents: number[] };
+  scripted_metric?: object;
 }

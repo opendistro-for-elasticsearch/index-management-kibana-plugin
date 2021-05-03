@@ -14,14 +14,7 @@
  */
 
 import { IndexService, ManagedIndexService, PolicyService, RollupService, TransformService } from "../services";
-import {
-  DocumentPolicy,
-  DocumentRollup,
-  DocumentTransform,
-  ManagedIndexItem,
-  Rollup,
-  Transform
-} from "../../models/interfaces";
+import { DocumentPolicy, DocumentRollup, DocumentTransform, ManagedIndexItem, Rollup, Transform } from "../../models/interfaces";
 
 export interface NodeServices {
   indexService: IndexService;
@@ -225,6 +218,17 @@ export interface ExplainAPIManagedIndexMetaData {
   retry_info?: { failed: boolean; consumed_retries: number };
   info?: object;
   enabled: boolean;
+}
+
+export interface SearchSampleDataResponse {
+  total: number;
+  data: {
+    _index: string;
+    _type: string;
+    _id: string;
+    _score: number;
+    _source: object;
+  }[];
 }
 
 export interface IndexManagementApi {

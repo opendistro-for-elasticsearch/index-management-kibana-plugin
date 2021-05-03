@@ -343,6 +343,20 @@ export default function ismPlugin(Client: any, config: any, components: any) {
     method: "DELETE",
   });
 
+  ism.createTransform = ca({
+    url: {
+      fmt: `${API.TRANSFORM_BASE}/<%=transformId%>?refresh=wait_for`,
+      req: {
+        transformId: {
+          type: "string",
+          required: true,
+        },
+      },
+    },
+    needBody: true,
+    method: "PUT",
+  });
+
   ism.putTransform = ca({
     url: {
       fmt: `${API.TRANSFORM_BASE}/<%=transformId%>`,
