@@ -43,7 +43,7 @@ import TransformService from "../../../../services/TransformService";
 import { DocumentTransform } from "../../../../../models/interfaces";
 import React, { Component } from "react";
 import { CoreServicesContext } from "../../../../components/core_services";
-import { getURLQueryParams } from "../../utils/helpers";
+import { getURLQueryParams, renderTime } from "../../utils/helpers";
 import { TransformQueryParams } from "../../models/interfaces";
 import { getErrorMessage } from "../../../../utils/helpers";
 import { BREADCRUMBS, ROUTES } from "../../../../utils/constants";
@@ -170,6 +170,13 @@ export default class Transforms extends Component<TransformProps, TransformState
         textOnly: true,
         truncateText: true,
         render: renderEnabled,
+      },
+      {
+        field: "transform.updated_at",
+        name: "Last updated time",
+        sortable: true,
+        textOnly: true,
+        render: (updated_at) => renderTime(updated_at),
       },
       {
         field: "metadata",

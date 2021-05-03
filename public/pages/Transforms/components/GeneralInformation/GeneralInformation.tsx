@@ -65,7 +65,7 @@ export default class GenerationInformation extends Component<GeneralInformationP
           </ModalConsumer>
         }
         bodyStyles={{ padding: "initial" }}
-        title="General Information"
+        title="General information"
         titleSize="m"
       >
         <div style={{ paddingLeft: "10px" }}>

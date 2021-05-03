@@ -188,7 +188,7 @@ export default class EditTransform extends Component<EditTransformProps, EditTra
     this.props.history.push(ROUTES.TRANSFORMS);
   };
 
-  onSubmit = async () => {
+  onSubmit = async (): Promise<void> => {
     const { id, transformJSON } = this.state;
     this.setState({ submitError: "", isSubmitting: true, hasSubmitted: true });
     try {
@@ -218,7 +218,7 @@ export default class EditTransform extends Component<EditTransformProps, EditTra
     this.setState({ transformJSON: json });
   };
 
-  update = async (transformId: string, transform: Transform) => {
+  update = async (transformId: string, transform: Transform): Promise<void> => {
     try {
       const { transformService } = this.props;
       const { primaryTerm, seqNo } = this.state;
@@ -228,10 +228,10 @@ export default class EditTransform extends Component<EditTransformProps, EditTra
       }
       const response = await transformService.putTransform(transform, transformId, seqNo, primaryTerm);
       if (response.ok) {
-        this.context.notification.toasts.addSuccess(`Changes to transform ${transformId} saved`);
+        this.context.notifications.toasts.addSuccess(`Changes to transform saved`);
         this.props.history.push(ROUTES.TRANSFORMS);
       } else {
-        this.context.notification.toasts.addDanger(`Couldn't update transform ${transformId}: ${response.error}`);
+        this.context.notifications.toasts.addDanger(`Couldn't update transform ${transformId}: ${response.error}`);
         this.setState({ submitError: response.error });
       }
     } catch (err) {
@@ -240,7 +240,7 @@ export default class EditTransform extends Component<EditTransformProps, EditTra
   };
 
   onNameChange = (e: ChangeEvent<HTMLInputElement>) => {
-    // DO NOTHING SINCE edit is disabled for id
+    // DO NOTHING SINCE edit is disabled for this page
   };
 
   onDescriptionChange = (e: ChangeEvent<HTMLTextAreaElement>) => {

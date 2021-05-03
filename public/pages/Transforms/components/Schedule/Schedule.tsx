@@ -107,7 +107,7 @@ export default class Schedule extends Component<ScheduleProps> {
       onCronTimeZoneChange,
     } = this.props;
     return (
-      <ContentPanel bodyStyles={{ padding: "initial" }} title="Schedule" titleSize="s">
+      <ContentPanel bodyStyles={{ padding: "initial" }} title="Schedule" titleSize="m">
         <div style={{ paddingLeft: "10px" }}>
           <EuiCheckbox
             id="jobEnabled"

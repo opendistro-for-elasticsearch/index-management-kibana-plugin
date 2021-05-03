@@ -35,7 +35,7 @@ export default class TransformSettings extends Component<TransformSettingsProps,
 
   render() {
     return (
-      <ContentPanel bodyStyles={{ padding: "initial" }} title="Transform Settings" titleSize="m">
+      <ContentPanel bodyStyles={{ padding: "initial" }} title="Transform settings" titleSize="m">
         <div style={{ paddingLeft: "10px" }}>
           <EuiSpacer size="s" />
           <EuiText>
