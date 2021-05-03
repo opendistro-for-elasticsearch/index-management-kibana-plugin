@@ -29,8 +29,8 @@ interface DefineTransformsProps {
   sourceIndex: string;
   fields: FieldItem[];
   onGroupSelectionChange: (selectedFields: TransformGroupItem[]) => void;
-  selectedAggregations: Map<string, TransformAggItem>;
-  onAggregationSelectionChange: (selectedFields: Map<string, TransformAggItem>) => void;
+  selectedAggregations: any;
+  onAggregationSelectionChange: (selectedFields: any) => void;
 }
 
 export default function DefineTransforms({
@@ -106,9 +106,9 @@ export default function DefineTransforms({
           {
             label: "Aggregate by sum ",
             onClick: () => {
-              aggSelection.set(`sum_${field.label}`, {
+              aggSelection[`sum_${field.label}`] = {
                 sum: { field: field.label },
-              });
+              };
               onAggregationSelectionChange(aggSelection);
             },
             size: "xs",
@@ -117,9 +117,9 @@ export default function DefineTransforms({
           {
             label: "Aggregate by max ",
             onClick: () => {
-              aggSelection.set(`max_${field.label}`, {
+              aggSelection[`max_${field.label}`] = {
                 max: { field: field.label },
-              });
+              };
               onAggregationSelectionChange(aggSelection);
             },
             size: "xs",
@@ -128,9 +128,9 @@ export default function DefineTransforms({
           {
             label: "Aggregate by min ",
             onClick: () => {
-              aggSelection.set(`min_${field.label}`, {
+              aggSelection[`min_${field.label}`] = {
                 min: { field: field.label },
-              });
+              };
               onAggregationSelectionChange(aggSelection);
             },
             size: "xs",
@@ -140,10 +140,10 @@ export default function DefineTransforms({
             label: "Aggregate by avg ",
             onClick: () => {
               console.log("Before set: " + JSON.stringify(aggSelection));
-              aggSelection.set("AVG", {
+              aggSelection[`avg_${field.label}`] = {
                 avg: { field: field.label },
-              });
-              console.log("After set: " + JSON.stringify(aggSelection.get("AVG")));
+              };
+              console.log("After set: " + JSON.stringify(aggSelection));
               onAggregationSelectionChange(aggSelection);
             },
             size: "xs",
@@ -152,9 +152,9 @@ export default function DefineTransforms({
           {
             label: "Aggregate by count ",
             onClick: () => {
-              aggSelection.set(`count_${field.label}`, {
+              aggSelection[`count_${field.label}`] = {
                 count: { field: field.label },
-              });
+              };
               onAggregationSelectionChange(aggSelection);
             },
             size: "xs",
@@ -163,9 +163,9 @@ export default function DefineTransforms({
           {
             label: "Aggregate by percentile",
             onClick: () => {
-              aggSelection.set(`percentiles_${field.label}`, {
+              aggSelection[`percentiles_${field.label}`] = {
                 percentiles: { field: field.label, percents: [1, 5, 25, 99] },
-              });
+              };
               onAggregationSelectionChange(aggSelection);
             },
             size: "xs",
@@ -174,14 +174,14 @@ export default function DefineTransforms({
           {
             label: "Aggregate by scripted metrics ",
             onClick: () => {
-              aggSelection.set(`scripted_metric_${field.label}`, {
+              aggSelection[`scripted_metric_${field.label}`] = {
                 scripted_metric: {
                   init_script: "",
                   map_script: "",
                   combine_script: "",
                   reduce_script: "",
                 },
-              });
+              };
               onAggregationSelectionChange(aggSelection);
             },
             size: "xs",
@@ -202,10 +202,7 @@ export default function DefineTransforms({
   const [data, setData] = useState([]);
   const [dataCount, setDataCount] = useState<number>(0);
   const [groupSelection, setGroupSelection] = useState<TransformGroupItem[]>([]);
-  let exMap = new Map();
-  exMap.set("EXXX", { sum: { field: "order_date" } });
-  const [aggSelection, setAggSelection] = useState(exMap);
-  console.log(JSON.stringify(exMap.get("EXXX")));
+  const [aggSelection, setAggSelection] = useState(selectedAggregations);
 
   const fetchData = useCallback(async () => {
     console.log("Entering fetchData...");

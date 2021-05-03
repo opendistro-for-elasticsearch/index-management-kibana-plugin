@@ -71,7 +71,7 @@ interface CreateTransformFormState {
   selectedTerms: FieldItem[];
 
   selectedGroupField: TransformGroupItem[];
-  selectedAggregations: Map<string, TransformAggItem>; // Needs to be Map<String, any>
+  selectedAggregations: any; // Needs to be Map<String, any>
   aggregationsError: string;
   selectedFields: FieldItem[];
   jobEnabledByDefault: boolean;
@@ -233,7 +233,7 @@ export default class CreateTransformForm extends Component<CreateTransformFormPr
     this.setState({ sourceIndex: options, transformJSON: newJSON, sourceIndexError: sourceIndexError });
     this.setState({
       selectedGroupField: [],
-      selectedAggregations: new Map<string, TransformAggItem>(),
+      selectedAggregations: {},
     });
     await this.getMappings(srcIndexText);
   };
@@ -255,7 +255,7 @@ export default class CreateTransformForm extends Component<CreateTransformFormPr
     this.setState({ selectedGroupField: selectedFields });
   };
 
-  onAggregationSelectionChange = (selectedFields: Map<string, TransformAggItem>): void => {
+  onAggregationSelectionChange = (selectedFields: any): void => {
     //Debug use
     console.log(JSON.stringify(selectedFields));
     this.setState({ selectedAggregations: selectedFields });
@@ -306,7 +306,6 @@ export default class CreateTransformForm extends Component<CreateTransformFormPr
     const { transformJSON, selectedGroupField } = this.state;
     let newJSON = transformJSON;
 
-    // Clear the groups fields
     if (selectedGroupField.length) newJSON.transform.groups = selectedGroupField;
 
     this.setState({ transformJSON: newJSON });
@@ -316,25 +315,8 @@ export default class CreateTransformForm extends Component<CreateTransformFormPr
     const { transformJSON, selectedAggregations } = this.state;
     let newJSON = transformJSON;
 
-    //Clear the aggregations array before pushing
     newJSON.transform.aggregations = selectedAggregations;
-    //Debug use
-    console.log("newJson after agg: " + JSON.stringify(newJSON));
 
-    //Push all aggregations
-    // selectedAggregations.map((aggregation) => {
-    //   const aggregations = [];
-    //   if (aggregation.min) aggregations.push({ min: {} });
-    //   if (aggregation.max) aggregations.push({ max: {} });
-    //   if (aggregation.sum) aggregations.push({ sum: {} });
-    //   if (aggregation.avg) aggregations.push({ avg: {} });
-    //   if (aggregation.value_count) aggregations.push({ value_count: {} });
-    //   if (aggregation.percentiles) aggregations.push({ percentiles: {} });
-    //   newJSON.transform.aggregations.push({
-    //     source_field: aggregation.source_field.label,
-    //     aggregations: aggregations,
-    //   });
-    // });
     this.setState({ transformJSON: newJSON });
   };
 
