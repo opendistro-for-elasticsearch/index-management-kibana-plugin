@@ -250,12 +250,8 @@ export interface RollupMetricItem {
     }
   ];
 }
-export interface GroupItem {
-  sourceField: FieldItem;
-  targetField: string;
-  interval?: number;
-  aggregationMethod: GROUP_TYPES;
-}
+
+export type TransformGroupItem = DateHistogramItem | TermsItem | HistogramItem;
 
 export enum GROUP_TYPES {
   histogram = "histogram",

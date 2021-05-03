@@ -320,34 +320,34 @@ export default class CreateTransformForm extends Component<CreateTransformFormPr
     let newJSON = transformJSON;
 
     // Clear the groups fields
-    newJSON.transform.groups = [];
+    newJSON.transform.groups = selectedGroupField;
 
     // Push rest of groups
-    selectedGroupField.map((group) => {
-      if (group.aggregationMethod == "terms") {
-        newJSON.transform.groups.push({
-          terms: {
-            source_field: group.sourceField.label,
-            target_field: group.targetField, // needs target_field source, null target_field test
-          },
-        });
-      } else if (group.aggregationMethod == "histogram") {
-        newJSON.transform.groups.push({
-          histogram: {
-            source_field: group.sourceField.label,
-            //TODO: Remove the if else condition after implementing define interval
-            interval: group.interval ? group.interval : 5,
-          },
-        });
-      } else {
-        newJSON.transform.groups.push({
-          date_histogram: {
-            source_field: group.sourceField.label,
-            // need to fill out other date histogram data
-          },
-        });
-      }
-    });
+    // selectedGroupField.map((group) => {
+    //   if (group.aggregationMethod == "terms") {
+    //     newJSON.transform.groups.push({
+    //       terms: {
+    //         source_field: group.sourceField.label,
+    //         target_field: group.targetField, // needs target_field source, null target_field test
+    //       },
+    //     });
+    //   } else if (group.aggregationMethod == "histogram") {
+    //     newJSON.transform.groups.push({
+    //       histogram: {
+    //         source_field: group.sourceField.label,
+    //         //TODO: Remove the if else condition after implementing define interval
+    //         interval: group.interval ? group.interval : 5,
+    //       },
+    //     });
+    //   } else {
+    //     newJSON.transform.groups.push({
+    //       date_histogram: {
+    //         source_field: group.sourceField.label,
+    //         // need to fill out other date histogram data
+    //       },
+    //     });
+    //   }
+    // });
     this.setState({ transformJSON: newJSON });
   };
 

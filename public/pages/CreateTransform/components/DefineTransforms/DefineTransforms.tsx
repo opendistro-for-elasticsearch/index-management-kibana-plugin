@@ -61,9 +61,11 @@ export default function DefineTransforms({
             label: "Group by histogram ",
             onClick: () => {
               groupSelection.push({
-                sourceField: field,
-                targetField: `${field.label}_${GROUP_TYPES.histogram}`,
-                aggregationMethod: GROUP_TYPES.histogram,
+                histogram: {
+                  source_field: field.label,
+                  target_field: `${field.label}_${GROUP_TYPES.histogram}`,
+                  interval: 5,
+                },
               });
               onGroupSelectionChange(groupSelection);
             },
@@ -74,9 +76,10 @@ export default function DefineTransforms({
             label: "Group by date histogram ",
             onClick: () => {
               groupSelection.push({
-                sourceField: field,
-                targetField: `${field.label}_${GROUP_TYPES.dateHistogram}`,
-                aggregationMethod: GROUP_TYPES.dateHistogram,
+                terms: {
+                  source_field: field.label,
+                  target_field: `${field.label}_${GROUP_TYPES.dateHistogram}`,
+                },
               });
               onGroupSelectionChange(groupSelection);
             },
@@ -87,9 +90,11 @@ export default function DefineTransforms({
             label: "Group by terms ",
             onClick: () => {
               groupSelection.push({
-                sourceField: field,
-                targetField: `${field.label}_${GROUP_TYPES.terms}`,
-                aggregationMethod: GROUP_TYPES.terms,
+                date_histogram: {
+                  source_field: field.label,
+                  target_field: `${field.label}_${GROUP_TYPES.terms}`,
+                  calendar_interval: "1d",
+                },
               });
               onGroupSelectionChange(groupSelection);
             },
