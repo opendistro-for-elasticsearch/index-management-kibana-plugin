@@ -17,7 +17,7 @@ import { EuiDataGrid, EuiDataGridColumn, EuiSpacer, EuiText } from "@elastic/eui
 import { CoreStart } from "kibana/public";
 import React, { useCallback, useState } from "react";
 import { ContentPanel } from "../../../../components/ContentPanel";
-import { FieldItem, GROUP_TYPES, GroupItem } from "../../../../../models/interfaces";
+import { FieldItem, GROUP_TYPES, TransformAggItem, TransformGroupItem } from "../../../../../models/interfaces";
 import { TransformService } from "../../../../services";
 import { getErrorMessage } from "../../../../utils/helpers";
 import { isNumericMapping } from "../../utils/helpers";
@@ -28,8 +28,9 @@ interface DefineTransformsProps {
   transformId: string;
   sourceIndex: string;
   fields: FieldItem[];
-  onGroupSelectionChange: (selectedFields: GroupItem[]) => void;
-  onAggregationSelectionChange: void;
+  onGroupSelectionChange: (selectedFields: TransformGroupItem[]) => void;
+  selectedAggregations: Map<string, TransformAggItem>;
+  onAggregationSelectionChange: (selectedFields: Map<string, TransformAggItem>) => void;
 }
 
 export default function DefineTransforms({
@@ -39,6 +40,7 @@ export default function DefineTransforms({
   sourceIndex,
   fields,
   onGroupSelectionChange,
+  selectedAggregations,
   onAggregationSelectionChange,
 }: DefineTransformsProps) {
   let columns: EuiDataGridColumn[] = [];
@@ -76,9 +78,10 @@ export default function DefineTransforms({
             label: "Group by date histogram ",
             onClick: () => {
               groupSelection.push({
-                terms: {
+                date_histogram: {
                   source_field: field.label,
                   target_field: `${field.label}_${GROUP_TYPES.dateHistogram}`,
+                  calendar_interval: "1d",
                 },
               });
               onGroupSelectionChange(groupSelection);
@@ -90,10 +93,9 @@ export default function DefineTransforms({
             label: "Group by terms ",
             onClick: () => {
               groupSelection.push({
-                date_histogram: {
+                terms: {
                   source_field: field.label,
                   target_field: `${field.label}_${GROUP_TYPES.terms}`,
-                  calendar_interval: "1d",
                 },
               });
               onGroupSelectionChange(groupSelection);
@@ -103,43 +105,85 @@ export default function DefineTransforms({
           },
           {
             label: "Aggregate by sum ",
-            onClick: () => {},
+            onClick: () => {
+              aggSelection.set(`sum_${field.label}`, {
+                sum: { field: field.label },
+              });
+              onAggregationSelectionChange(aggSelection);
+            },
             size: "xs",
             color: "text",
           },
           {
             label: "Aggregate by max ",
-            onClick: () => {},
+            onClick: () => {
+              aggSelection.set(`max_${field.label}`, {
+                max: { field: field.label },
+              });
+              onAggregationSelectionChange(aggSelection);
+            },
             size: "xs",
             color: "text",
           },
           {
             label: "Aggregate by min ",
-            onClick: () => {},
+            onClick: () => {
+              aggSelection.set(`min_${field.label}`, {
+                min: { field: field.label },
+              });
+              onAggregationSelectionChange(aggSelection);
+            },
             size: "xs",
             color: "text",
           },
           {
             label: "Aggregate by avg ",
-            onClick: () => {},
+            onClick: () => {
+              console.log("Before set: " + JSON.stringify(aggSelection));
+              aggSelection.set("AVG", {
+                avg: { field: field.label },
+              });
+              console.log("After set: " + JSON.stringify(aggSelection.get("AVG")));
+              onAggregationSelectionChange(aggSelection);
+            },
             size: "xs",
             color: "text",
           },
           {
             label: "Aggregate by count ",
-            onClick: () => {},
+            onClick: () => {
+              aggSelection.set(`count_${field.label}`, {
+                count: { field: field.label },
+              });
+              onAggregationSelectionChange(aggSelection);
+            },
             size: "xs",
             color: "text",
           },
           {
-            label: "Aggregate by percentile ",
-            onClick: () => {},
+            label: "Aggregate by percentile",
+            onClick: () => {
+              aggSelection.set(`percentiles_${field.label}`, {
+                percentiles: { field: field.label, percents: [1, 5, 25, 99] },
+              });
+              onAggregationSelectionChange(aggSelection);
+            },
             size: "xs",
             color: "text",
           },
           {
             label: "Aggregate by scripted metrics ",
-            onClick: () => {},
+            onClick: () => {
+              aggSelection.set(`scripted_metric_${field.label}`, {
+                scripted_metric: {
+                  init_script: "",
+                  map_script: "",
+                  combine_script: "",
+                  reduce_script: "",
+                },
+              });
+              onAggregationSelectionChange(aggSelection);
+            },
             size: "xs",
             color: "text",
           },
@@ -157,7 +201,11 @@ export default function DefineTransforms({
   const [visibleColumns, setVisibleColumns] = useState(() => columns.map(({ id }) => id));
   const [data, setData] = useState([]);
   const [dataCount, setDataCount] = useState<number>(0);
-  const [groupSelection, setGroupSelection] = useState<GroupItem[]>([]);
+  const [groupSelection, setGroupSelection] = useState<TransformGroupItem[]>([]);
+  let exMap = new Map();
+  exMap.set("EXXX", { sum: { field: "order_date" } });
+  const [aggSelection, setAggSelection] = useState(exMap);
+  console.log(JSON.stringify(exMap.get("EXXX")));
 
   const fetchData = useCallback(async () => {
     console.log("Entering fetchData...");
@@ -166,11 +214,8 @@ export default function DefineTransforms({
       const response = await transformService.searchSampleData(sourceIndex, { from, size });
 
       if (response.ok) {
-        //Debug use
-        console.log("Successfully searched sample data: " + JSON.stringify(response));
         setData(response.response.data);
         setDataCount(response.response.total.value);
-        // console.log("First item: " + JSON.stringify(response.response.data[0]));
       }
     } catch (err) {
       notifications.toasts.addDanger(getErrorMessage(err, "There was a problem loading the rollups"));
@@ -213,7 +258,7 @@ export default function DefineTransforms({
 
   const renderCellValue = ({ rowIndex, columnId }) => {
     //Debug use
-    console.log("rowIndex: " + rowIndex + " columnId: " + columnId + " data: " + JSON.stringify(data[rowIndex]._source[columnId]));
+    // console.log("rowIndex: " + rowIndex + " columnId: " + columnId + " data: " + JSON.stringify(data[rowIndex]._source[columnId]));
     if (!loading && data.hasOwnProperty(rowIndex)) return data[rowIndex]._source[columnId] ? data[rowIndex]._source[columnId] : null;
     return null;
   };
@@ -257,21 +302,7 @@ export default function DefineTransforms({
         columns={columns}
         columnVisibility={{ visibleColumns, setVisibleColumns }}
         rowCount={dataCount}
-        renderCellValue={
-          // ({ rowIndex, columnId }) => {
-          //   //Debug use
-          //   console.log("rowIndex: " + rowIndex + " columnId: " + columnId + " data: " + JSON.stringify(data[rowIndex]._source[columnId]));
-          //   // return data[rowIndex];
-          //   if (!loading && data.hasOwnProperty(rowIndex))
-          //     return data[rowIndex]._source[columnId] ? data[rowIndex]._source[columnId] : null;
-          //   return null;
-          // }
-
-          //   ({ rowIndex, columnId }) =>
-          //   `${rowIndex}, ${columnId}`
-          renderCellValue
-        }
-        // renderCellValue={({}) => null}
+        renderCellValue={renderCellValue}
         sorting={{ columns: sortingColumns, onSort }}
         pagination={{
           ...pagination,
@@ -283,6 +314,7 @@ export default function DefineTransforms({
       <EuiSpacer />
       {/*Debug use*/}
       {JSON.stringify(groupSelection)}
+      {JSON.stringify(aggSelection)}
     </ContentPanel>
   );
 }

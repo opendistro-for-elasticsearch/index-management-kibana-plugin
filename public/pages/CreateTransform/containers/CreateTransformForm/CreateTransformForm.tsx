@@ -23,7 +23,16 @@ import IndexService from "../../../../services/IndexService";
 import { ManagedCatIndex } from "../../../../../server/models/interfaces";
 import CreateTransform from "../CreateTransform";
 import CreateTransformStep2 from "../CreateTransformStep2";
-import { DimensionItem, FieldItem, GroupItem, IndexItem, MetricItem, Transform } from "../../../../../models/interfaces";
+import {
+  DimensionItem,
+  FieldItem,
+  GroupItem,
+  IndexItem,
+  MetricItem,
+  Transform,
+  TransformAggItem,
+  TransformGroupItem,
+} from "../../../../../models/interfaces";
 import { getErrorMessage } from "../../../../utils/helpers";
 import { EMPTY_TRANSFORM } from "../../utils/constants";
 import CreateTransformStep3 from "../CreateTransformStep3";
@@ -61,8 +70,8 @@ interface CreateTransformFormState {
   fields: FieldItem[];
   selectedTerms: FieldItem[];
 
-  selectedGroupField: GroupItem[];
-  selectedAggregations: MetricItem[]; // Needs to be Map<String, any>
+  selectedGroupField: TransformGroupItem[];
+  selectedAggregations: Map<string, TransformAggItem>; // Needs to be Map<String, any>
   aggregationsError: string;
   selectedFields: FieldItem[];
   jobEnabledByDefault: boolean;
@@ -99,7 +108,7 @@ export default class CreateTransformForm extends Component<CreateTransformFormPr
       selectedFields: [],
       selectedTerms: [],
       selectedGroupField: [],
-      selectedAggregations: [],
+      selectedAggregations: new Map<string, TransformAggItem>(),
       aggregationsError: "",
       description: "",
 
@@ -169,31 +178,7 @@ export default class CreateTransformForm extends Component<CreateTransformFormPr
         error = true;
       }
     } else if (currentStep == 2) {
-      const { selectedAggregations } = this.state;
-      if (selectedAggregations.length != 0) {
-        //Check if there's any aggregation item with no method selected.
-        //TODO: Could Probably store all invalid fields in an array and highlight them in table.
-        let invalidAggregation = false;
-        selectedAggregations.map((aggregation) => {
-          if (
-            !(
-              aggregation.min ||
-              aggregation.max ||
-              aggregation.sum ||
-              aggregation.avg ||
-              aggregation.value_count ||
-              aggregation.percentiles
-            )
-          ) {
-            const errorMsg = "Must specify at least one aggregation for: " + aggregation.source_field.label;
-            this.setState({ submitError: errorMsg, aggregationsError: errorMsg });
-            invalidAggregation = true;
-            error = true;
-          }
-        });
-        //If nothing invalid found, clear error.
-        if (!invalidAggregation) this.setState({ aggregationsError: "" });
-      }
+      //TODO: Add checking to see if grouping is defined
     } else if (currentStep == 3) {
       //Check if interval is a valid value and is specified.
       const { intervalError } = this.state;
@@ -248,7 +233,7 @@ export default class CreateTransformForm extends Component<CreateTransformFormPr
     this.setState({ sourceIndex: options, transformJSON: newJSON, sourceIndexError: sourceIndexError });
     this.setState({
       selectedGroupField: [],
-      selectedAggregations: [],
+      selectedAggregations: new Map<string, TransformAggItem>(),
     });
     await this.getMappings(srcIndexText);
   };
@@ -270,7 +255,9 @@ export default class CreateTransformForm extends Component<CreateTransformFormPr
     this.setState({ selectedGroupField: selectedFields });
   };
 
-  onAggregationSelectionChange = (selectedFields: MetricItem[]): void => {
+  onAggregationSelectionChange = (selectedFields: Map<string, TransformAggItem>): void => {
+    //Debug use
+    console.log(JSON.stringify(selectedFields));
     this.setState({ selectedAggregations: selectedFields });
   };
 
@@ -320,34 +307,8 @@ export default class CreateTransformForm extends Component<CreateTransformFormPr
     let newJSON = transformJSON;
 
     // Clear the groups fields
-    newJSON.transform.groups = selectedGroupField;
+    if (selectedGroupField.length) newJSON.transform.groups = selectedGroupField;
 
-    // Push rest of groups
-    // selectedGroupField.map((group) => {
-    //   if (group.aggregationMethod == "terms") {
-    //     newJSON.transform.groups.push({
-    //       terms: {
-    //         source_field: group.sourceField.label,
-    //         target_field: group.targetField, // needs target_field source, null target_field test
-    //       },
-    //     });
-    //   } else if (group.aggregationMethod == "histogram") {
-    //     newJSON.transform.groups.push({
-    //       histogram: {
-    //         source_field: group.sourceField.label,
-    //         //TODO: Remove the if else condition after implementing define interval
-    //         interval: group.interval ? group.interval : 5,
-    //       },
-    //     });
-    //   } else {
-    //     newJSON.transform.groups.push({
-    //       date_histogram: {
-    //         source_field: group.sourceField.label,
-    //         // need to fill out other date histogram data
-    //       },
-    //     });
-    //   }
-    // });
     this.setState({ transformJSON: newJSON });
   };
 
@@ -356,7 +317,9 @@ export default class CreateTransformForm extends Component<CreateTransformFormPr
     let newJSON = transformJSON;
 
     //Clear the aggregations array before pushing
-    newJSON.transform.aggregations = {};
+    newJSON.transform.aggregations = selectedAggregations;
+    //Debug use
+    console.log("newJson after agg: " + JSON.stringify(newJSON));
 
     //Push all aggregations
     // selectedAggregations.map((aggregation) => {

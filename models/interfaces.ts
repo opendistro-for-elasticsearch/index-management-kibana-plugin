@@ -258,3 +258,13 @@ export enum GROUP_TYPES {
   dateHistogram = "date_histogram",
   terms = "terms",
 }
+
+export interface TransformAggItem {
+  sum?: { field: string };
+  max?: { field: string };
+  min?: { field: string };
+  avg?: { field: string };
+  count?: { field: string };
+  percentiles?: { field: string; percents: number[] };
+  scripted_metric?: object;
+}
