@@ -190,42 +190,42 @@ export default class TransformIndices extends Component<TransformIndicesProps, T
             />
           </EuiFormRow>
           <EuiSpacer size="m" />
-          <EuiFlexGroup gutterSize="xs">
-            <EuiFlexItem grow={false}>
-              <EuiText size="xs">
-                <h4>Source index filter</h4>
-              </EuiText>
-            </EuiFlexItem>
-            <EuiFlexItem>
-              <EuiText size="xs" color="subdued">
-                <i> - optional</i>
-              </EuiText>
-            </EuiFlexItem>
-          </EuiFlexGroup>
+          {/*<EuiFlexGroup gutterSize="xs">*/}
+          {/*  <EuiFlexItem grow={false}>*/}
+          {/*    <EuiText size="xs">*/}
+          {/*      <h4>Source index filter</h4>*/}
+          {/*    </EuiText>*/}
+          {/*  </EuiFlexItem>*/}
+          {/*  <EuiFlexItem>*/}
+          {/*    <EuiText size="xs" color="subdued">*/}
+          {/*      <i> - optional</i>*/}
+          {/*    </EuiText>*/}
+          {/*  </EuiFlexItem>*/}
+          {/*</EuiFlexGroup>*/}
 
-          <EuiText size="xs" color="subdued" style={{ width: "420px" }}>
-            Choose a subset of source index to focus on to optimize for performance and computing resource. You can’t change filter once the
-            job is created.
-          </EuiText>
+          {/*<EuiText size="xs" color="subdued" style={{ width: "420px" }}>*/}
+          {/*  Choose a subset of source index to focus on to optimize for performance and computing resource. You can’t change filter once the*/}
+          {/*  job is created.*/}
+          {/*</EuiText>*/}
 
-          <EuiPopover
-            button={
-              <EuiButtonEmpty
-                size="xs"
-                onClick={() => this.onButtonClick()}
-                data-test-subj="addFilter"
-                className="globalFilterBar__addButton"
-              >
-                + Add data filter
-              </EuiButtonEmpty>
-            }
-            isOpen={isPopoverOpen}
-            closePopover={this.closePopover}
-          >
-            <IndexFilterPopover {...this.props} />
-          </EuiPopover>
-          <EuiSpacer />
-          <EuiHorizontalRule margin="xs" />
+          {/*<EuiPopover*/}
+          {/*  button={*/}
+          {/*    <EuiButtonEmpty*/}
+          {/*      size="xs"*/}
+          {/*      onClick={() => this.onButtonClick()}*/}
+          {/*      data-test-subj="addFilter"*/}
+          {/*      className="globalFilterBar__addButton"*/}
+          {/*    >*/}
+          {/*      + Add data filter*/}
+          {/*    </EuiButtonEmpty>*/}
+          {/*  }*/}
+          {/*  isOpen={isPopoverOpen}*/}
+          {/*  closePopover={this.closePopover}*/}
+          {/*>*/}
+          {/*  <IndexFilterPopover {...this.props} />*/}
+          {/*</EuiPopover>*/}
+          {/*<EuiSpacer />*/}
+          {/*<EuiHorizontalRule margin="xs" />*/}
           <EuiFormRow
             label="Target index"
             error={targetIndexError}
