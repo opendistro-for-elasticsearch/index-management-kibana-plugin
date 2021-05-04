@@ -68,6 +68,7 @@ interface CreateTransformFormState {
   mappings: any;
   allMappings: FieldItem[][];
   fields: FieldItem[];
+  fieldSelectedOption: string;
   selectedTerms: FieldItem[];
 
   selectedGroupField: TransformGroupItem[];
@@ -405,6 +406,7 @@ export default class CreateTransformForm extends Component<CreateTransformFormPr
           onChangeTargetIndex={this.onChangeTargetIndex}
           currentStep={this.state.currentStep}
           hasAggregation={selectedGroupField.length != 0 || selectedAggregations.length != 0}
+          fields={fields}
         />
         <CreateTransformStep2
           {...this.props}

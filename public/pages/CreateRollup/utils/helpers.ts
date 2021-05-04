@@ -14,6 +14,7 @@
  */
 
 import { FieldItem } from "../../../../models/interfaces";
+import { COMPARISON_OPERATORS } from "./constants";
 
 export const parseTimeunit = (timeunit: string): string => {
   if (timeunit == "ms" || timeunit == "Milliseconds") return "millisecond(s)";
@@ -61,3 +62,10 @@ export const parseFieldOptions = (prefix: string, mappings: any): FieldItem[] =>
   }
   return fieldsOption;
 };
+
+export const getOperators = (fieldType) =>
+  COMPARISON_OPERATORS.reduce(
+    (acc, currentOperator) =>
+      currentOperator.dataTypes.includes(fieldType) ? [...acc, { text: currentOperator.text, value: currentOperator.value }] : acc,
+    []
+  );

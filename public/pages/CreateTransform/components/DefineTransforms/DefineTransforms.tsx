@@ -139,11 +139,9 @@ export default function DefineTransforms({
           {
             label: "Aggregate by avg ",
             onClick: () => {
-              console.log("Before set: " + JSON.stringify(aggSelection));
               aggSelection[`avg_${field.label}`] = {
                 avg: { field: field.label },
               };
-              console.log("After set: " + JSON.stringify(aggSelection));
               onAggregationSelectionChange(aggSelection);
             },
             size: "xs",

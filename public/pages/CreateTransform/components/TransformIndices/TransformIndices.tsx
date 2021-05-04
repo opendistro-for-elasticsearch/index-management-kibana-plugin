@@ -14,7 +14,20 @@
  */
 
 import React, { Component, Fragment } from "react";
-import { EuiSpacer, EuiFormRow, EuiComboBox, EuiCallOut, EuiFacetButton, EuiAvatar, EuiPopover } from "@elastic/eui";
+import {
+  EuiSpacer,
+  EuiFormRow,
+  EuiComboBox,
+  EuiCallOut,
+  EuiFacetButton,
+  EuiAvatar,
+  EuiPopover,
+  EuiFlexGroup,
+  EuiFlexItem,
+  EuiText,
+  EuiButtonEmpty,
+  EuiHorizontalRule,
+} from "@elastic/eui";
 import { ContentPanel } from "../../../../components/ContentPanel";
 import IndexFilterPopover from "../IndexFilterPopover";
 import { EuiComboBoxOptionOption } from "@elastic/eui/src/components/combo_box/types";
@@ -161,7 +174,7 @@ export default class TransformIndices extends Component<TransformIndicesProps, T
             label="Source index"
             error={sourceIndexError}
             isInvalid={sourceIndexError != ""}
-            helpText="The index where this transform job is performed on. Type in * as wildcard for index pattern. \
+            helpText="The index where this transform job is performed on. Type in * as wildcard for index pattern.
             Indices cannot be changed once the job is created. Please ensure that you select the right source index."
           >
             <EuiComboBox
@@ -177,17 +190,42 @@ export default class TransformIndices extends Component<TransformIndicesProps, T
             />
           </EuiFormRow>
           <EuiSpacer size="m" />
-          <EuiFormRow
-            label="Source index filter"
-            error={sourceIndexError}
-            isInvalid={sourceIndexError != ""}
-            helpText="Choose a subset of source index to focus on to optimize for performance and computing resource. You can't change filter once the job is created"
-          >
-            <EuiPopover button={filterButton} isOpen={isPopoverOpen} closePopover={this.closePopover}>
-              <IndexFilterPopover {...this.props} />
-            </EuiPopover>
-          </EuiFormRow>
+          {/*<EuiFlexGroup gutterSize="xs">*/}
+          {/*  <EuiFlexItem grow={false}>*/}
+          {/*    <EuiText size="xs">*/}
+          {/*      <h4>Source index filter</h4>*/}
+          {/*    </EuiText>*/}
+          {/*  </EuiFlexItem>*/}
+          {/*  <EuiFlexItem>*/}
+          {/*    <EuiText size="xs" color="subdued">*/}
+          {/*      <i> - optional</i>*/}
+          {/*    </EuiText>*/}
+          {/*  </EuiFlexItem>*/}
+          {/*</EuiFlexGroup>*/}
 
+          {/*<EuiText size="xs" color="subdued" style={{ width: "420px" }}>*/}
+          {/*  Choose a subset of source index to focus on to optimize for performance and computing resource. You can’t change filter once the*/}
+          {/*  job is created.*/}
+          {/*</EuiText>*/}
+
+          {/*<EuiPopover*/}
+          {/*  button={*/}
+          {/*    <EuiButtonEmpty*/}
+          {/*      size="xs"*/}
+          {/*      onClick={() => this.onButtonClick()}*/}
+          {/*      data-test-subj="addFilter"*/}
+          {/*      className="globalFilterBar__addButton"*/}
+          {/*    >*/}
+          {/*      + Add data filter*/}
+          {/*    </EuiButtonEmpty>*/}
+          {/*  }*/}
+          {/*  isOpen={isPopoverOpen}*/}
+          {/*  closePopover={this.closePopover}*/}
+          {/*>*/}
+          {/*  <IndexFilterPopover {...this.props} />*/}
+          {/*</EuiPopover>*/}
+          {/*<EuiSpacer />*/}
+          {/*<EuiHorizontalRule margin="xs" />*/}
           <EuiFormRow
             label="Target index"
             error={targetIndexError}
