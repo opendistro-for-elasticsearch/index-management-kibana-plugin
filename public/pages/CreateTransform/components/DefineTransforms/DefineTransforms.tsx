@@ -52,6 +52,7 @@ export default function DefineTransforms({
     columns.push({
       id: field.label,
       displayAsText: field.label + " type: " + field.type,
+      schema: field.type,
       actions: {
         showHide: false,
         showMoveLeft: false,
@@ -249,8 +250,16 @@ export default function DefineTransforms({
   );
 
   const renderCellValue = ({ rowIndex, columnId }) => {
-    if (!loading && data.hasOwnProperty(rowIndex)) return data[rowIndex]._source[columnId] ? data[rowIndex]._source[columnId] : null;
-    return null;
+    if (!loading && data.hasOwnProperty(rowIndex)) {
+      // TODO: work on truncating the value to certain length defined by the keyword field
+      if (columns?.find((column) => column.id == columnId).schema == "keyword") {
+        // Strip off the keyword postfix
+        const correspondingTextColumnId = columnId.replace(".keyword", "");
+        return data[rowIndex]._source[correspondingTextColumnId] ? data[rowIndex]._source[correspondingTextColumnId] : "-";
+      }
+      return data[rowIndex]._source[columnId] ? data[rowIndex]._source[columnId] : "-";
+    }
+    return "-";
   };
 
   return (
@@ -283,7 +292,7 @@ export default function DefineTransforms({
       <EuiSpacer size="s" />
       {/*TODO: Substitute "source index", and "filtered by" fields with actual values*/}
       <EuiText color="subdued" size="xs">
-        <p>{`Viewing sample data from index ${sourceIndex}, filtered by order.type:sales_order, order.success:true`}</p>
+        <p>{`Viewing sample data from index ${sourceIndex}`}</p>
       </EuiText>
       <EuiSpacer size="s" />
       {/*TODO: add rowCount*/}
@@ -308,11 +317,15 @@ export default function DefineTransforms({
         }}
       />
       <EuiSpacer />
-      Group selection
+      <EuiText>
+        <h4>Group selection</h4>
+      </EuiText>
       {/*Debug use*/}
       {JSON.stringify(groupSelection)}
       <EuiSpacer />
-      Aggregation
+      <EuiText>
+        <h4>Aggregation</h4>
+      </EuiText>
       {JSON.stringify(aggSelection)}
     </ContentPanel>
   );
