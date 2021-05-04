@@ -310,8 +310,6 @@ export default class TransformService {
     response: KibanaResponseFactory
   ): Promise<IKibanaResponse<ServerResponse<any>>> => {
     try {
-      // Debug use
-      console.log("Entering server side service...");
       const { from, size } = request.query as {
         from: string;
         size: string;
@@ -324,9 +322,6 @@ export default class TransformService {
       };
       const { callAsCurrentUser: callWithRequest } = this.esDriver.asScoped(request);
       const searchResponse: SearchResponse<any> = await callWithRequest("search", params);
-
-      //Debug use
-      console.log(JSON.stringify(searchResponse));
 
       return response.custom({
         statusCode: 200,

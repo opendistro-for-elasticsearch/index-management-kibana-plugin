@@ -108,7 +108,7 @@ export default class CreateTransformForm extends Component<CreateTransformFormPr
       selectedFields: [],
       selectedTerms: [],
       selectedGroupField: [],
-      selectedAggregations: new Map<string, TransformAggItem>(),
+      selectedAggregations: {},
       aggregationsError: "",
       description: "",
 
@@ -256,8 +256,6 @@ export default class CreateTransformForm extends Component<CreateTransformFormPr
   };
 
   onAggregationSelectionChange = (selectedFields: any): void => {
-    //Debug use
-    console.log(JSON.stringify(selectedFields));
     this.setState({ selectedAggregations: selectedFields });
   };
 
@@ -314,9 +312,7 @@ export default class CreateTransformForm extends Component<CreateTransformFormPr
   updateAggregation = (): void => {
     const { transformJSON, selectedAggregations } = this.state;
     let newJSON = transformJSON;
-
     newJSON.transform.aggregations = selectedAggregations;
-
     this.setState({ transformJSON: newJSON });
   };
 
@@ -390,7 +386,7 @@ export default class CreateTransformForm extends Component<CreateTransformFormPr
       pageSize,
     } = this.state;
     return (
-      <form onSubmit={this.onSubmit}>
+      <div>
         <CreateTransform
           {...this.props}
           transformId={transformId}
@@ -479,7 +475,7 @@ export default class CreateTransformForm extends Component<CreateTransformFormPr
             </EuiFlexItem>
           )}
         </EuiFlexGroup>
-      </form>
+      </div>
     );
   }
 }

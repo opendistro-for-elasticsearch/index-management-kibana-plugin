@@ -17,7 +17,7 @@ import { EuiDataGrid, EuiDataGridColumn, EuiSpacer, EuiText } from "@elastic/eui
 import { CoreStart } from "kibana/public";
 import React, { useCallback, useState } from "react";
 import { ContentPanel } from "../../../../components/ContentPanel";
-import { FieldItem, GROUP_TYPES, TransformAggItem, TransformGroupItem } from "../../../../../models/interfaces";
+import { FieldItem, GROUP_TYPES, TransformGroupItem } from "../../../../../models/interfaces";
 import { TransformService } from "../../../../services";
 import { getErrorMessage } from "../../../../utils/helpers";
 import { isNumericMapping } from "../../utils/helpers";
@@ -198,14 +198,13 @@ export default function DefineTransforms({
   const [from, setFrom] = useState<number>(0);
   const [size, setSize] = useState<number>(10);
   const [sortingColumns, setSortingColumns] = useState([]);
-  const [visibleColumns, setVisibleColumns] = useState(() => columns.map(({ id }) => id));
+  const [visibleColumns, setVisibleColumns] = useState(() => columns.map(({ id }) => id).slice(0, 5));
   const [data, setData] = useState([]);
   const [dataCount, setDataCount] = useState<number>(0);
   const [groupSelection, setGroupSelection] = useState<TransformGroupItem[]>([]);
   const [aggSelection, setAggSelection] = useState(selectedAggregations);
 
   const fetchData = useCallback(async () => {
-    console.log("Entering fetchData...");
     setLoading(true);
     try {
       const response = await transformService.searchSampleData(sourceIndex, { from, size });
@@ -240,8 +239,6 @@ export default function DefineTransforms({
     (pageIndex) => {
       setPagination((pagination) => ({ ...pagination, pageIndex }));
       setFrom(pageIndex * size);
-      //debug use
-      console.log("From: " + pageIndex * size);
     },
     [setPagination]
   );
@@ -254,8 +251,6 @@ export default function DefineTransforms({
   );
 
   const renderCellValue = ({ rowIndex, columnId }) => {
-    //Debug use
-    // console.log("rowIndex: " + rowIndex + " columnId: " + columnId + " data: " + JSON.stringify(data[rowIndex]._source[columnId]));
     if (!loading && data.hasOwnProperty(rowIndex)) return data[rowIndex]._source[columnId] ? data[rowIndex]._source[columnId] : null;
     return null;
   };
@@ -307,10 +302,19 @@ export default function DefineTransforms({
           onChangeItemsPerPage: onChangeItemsPerPage,
           onChangePage: onChangePage,
         }}
+        toolbarVisibility={{
+          showColumnSelector: true,
+          showStyleSelector: false,
+          showSortSelector: false,
+          showFullScreenSelector: false,
+        }}
       />
       <EuiSpacer />
+      Group selection
       {/*Debug use*/}
       {JSON.stringify(groupSelection)}
+      <EuiSpacer />
+      Aggregation
       {JSON.stringify(aggSelection)}
     </ContentPanel>
   );

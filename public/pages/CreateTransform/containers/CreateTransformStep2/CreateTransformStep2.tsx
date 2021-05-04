@@ -21,7 +21,7 @@ import { BREADCRUMBS, ROUTES } from "../../../../utils/constants";
 import CreateTransformSteps from "../../components/CreateTransformSteps";
 import { CoreServicesContext } from "../../../../components/core_services";
 import DefineTransforms from "../../components/DefineTransforms";
-import { FieldItem, TransformGroupItem, TransformAggItem } from "../../../../../models/interfaces";
+import { FieldItem, TransformGroupItem } from "../../../../../models/interfaces";
 
 interface CreateTransformStep2Props extends RouteComponentProps {
   transformService: TransformService;
