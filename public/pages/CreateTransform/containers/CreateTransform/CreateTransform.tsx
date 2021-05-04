@@ -21,7 +21,7 @@ import ConfigureTransform from "../../components/ConfigureTransform";
 import TransformIndices from "../../components/TransformIndices";
 import CreateTransformSteps from "../../components/CreateTransformSteps";
 import IndexService from "../../../../services/IndexService";
-import { IndexItem } from "../../../../../models/interfaces";
+import { FieldItem, IndexItem } from "../../../../../models/interfaces";
 
 interface CreateTransformProps extends RouteComponentProps {
   transformService: TransformService;
@@ -42,6 +42,9 @@ interface CreateTransformProps extends RouteComponentProps {
   onChangeTargetIndex: (options: EuiComboBoxOptionOption<IndexItem>[]) => void;
   currentStep: number;
   hasAggregation: boolean;
+  fields: FieldItem[];
+  fieldSelectedOption: string;
+  onFieldChange: () => void;
 }
 
 export default class CreateTransform extends Component<CreateTransformProps> {
