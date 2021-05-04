@@ -108,7 +108,7 @@ export default class CreateTransformForm extends Component<CreateTransformFormPr
       selectedFields: [],
       selectedTerms: [],
       selectedGroupField: [],
-      selectedAggregations: new Map<string, TransformAggItem>(),
+      selectedAggregations: {},
       aggregationsError: "",
       description: "",
 
@@ -386,7 +386,7 @@ export default class CreateTransformForm extends Component<CreateTransformFormPr
       pageSize,
     } = this.state;
     return (
-      <form onSubmit={this.onSubmit}>
+      <div>
         <CreateTransform
           {...this.props}
           transformId={transformId}
@@ -475,7 +475,7 @@ export default class CreateTransformForm extends Component<CreateTransformFormPr
             </EuiFlexItem>
           )}
         </EuiFlexGroup>
-      </form>
+      </div>
     );
   }
 }
