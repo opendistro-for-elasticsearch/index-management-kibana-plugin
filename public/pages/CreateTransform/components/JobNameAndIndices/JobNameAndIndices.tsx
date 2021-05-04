@@ -24,6 +24,7 @@ interface JobNameAndIndicesProps {
   description: string;
   sourceIndex: { label: string; value?: IndexItem }[];
   targetIndex: { label: string; value?: IndexItem }[];
+  sourceIndexFilter: {}[];
   onChangeStep: (step: number) => void;
 }
 
@@ -33,7 +34,12 @@ export default class JobNameAndIndices extends Component<JobNameAndIndicesProps>
   }
 
   render() {
-    const { transformId, description, onChangeStep, sourceIndex, targetIndex } = this.props;
+    const { transformId,
+            description,
+            onChangeStep,
+            sourceIndex,
+            targetIndex,
+            sourceIndexFilter } = this.props;
 
     return (
       <ContentPanel
@@ -54,7 +60,7 @@ export default class JobNameAndIndices extends Component<JobNameAndIndicesProps>
           </ModalConsumer>
         }
         bodyStyles={{ padding: "initial" }}
-        title="Job name and indices"
+        title="Set up indices"
         titleSize="m"
       >
         <div style={{ padding: "15px" }}>
@@ -82,6 +88,12 @@ export default class JobNameAndIndices extends Component<JobNameAndIndicesProps>
               <EuiText size="xs">
                 <dt>Description</dt>
                 <dd>{description == "" ? "-" : description}</dd>
+              </EuiText>
+            </EuiFlexItem>
+            <EuiFlexItem>
+              <EuiText size="xs">
+                <dt>Source index filter</dt>
+                <dd>{sourceIndexFilter}</dd>
               </EuiText>
             </EuiFlexItem>
           </EuiFlexGrid>

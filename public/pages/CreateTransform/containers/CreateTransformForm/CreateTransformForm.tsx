@@ -62,6 +62,7 @@ interface CreateTransformFormState {
   description: string;
   sourceIndex: { label: string; value?: IndexItem }[];
   sourceIndexError: string;
+  sourceIndexFilter: {}[];
   targetIndex: { label: string; value?: IndexItem }[];
   targetIndexError: string;
 
@@ -72,7 +73,7 @@ interface CreateTransformFormState {
   selectedTerms: FieldItem[];
 
   selectedGroupField: TransformGroupItem[];
-  selectedAggregations: any; // Needs to be Map<String, any>
+  selectedAggregations: any;
   aggregationsError: string;
   selectedFields: FieldItem[];
   jobEnabledByDefault: boolean;
@@ -115,6 +116,7 @@ export default class CreateTransformForm extends Component<CreateTransformFormPr
 
       sourceIndex: [],
       sourceIndexError: "",
+      sourceIndexFilter: [],
       targetIndex: [],
       targetIndexError: "",
 
@@ -370,6 +372,7 @@ export default class CreateTransformForm extends Component<CreateTransformFormPr
       description,
       sourceIndex,
       sourceIndexError,
+      sourceIndexFilter,
       targetIndex,
       targetIndexError,
       currentStep,
