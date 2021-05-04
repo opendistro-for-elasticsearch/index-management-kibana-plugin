@@ -289,7 +289,7 @@ export default class TransformService {
         body: JSON.stringify(request.body),
       };
       if (seqNo === undefined || primaryTerm === undefined) {
-        method = "ism.createTransform";
+        method = "ism.putTransform";
         params = { transformId: id, body: JSON.stringify(request.body) };
       }
       const { callAsCurrentUser: callWithRequest } = this.esDriver.asScoped(request);

@@ -302,6 +302,12 @@ export default function DefineTransforms({
           onChangeItemsPerPage: onChangeItemsPerPage,
           onChangePage: onChangePage,
         }}
+        toolbarVisibility={{
+          showColumnSelector: true,
+          showStyleSelector: false,
+          showSortSelector: false,
+          showFullScreenSelector: false,
+        }}
       />
       <EuiSpacer />
       Group selection
