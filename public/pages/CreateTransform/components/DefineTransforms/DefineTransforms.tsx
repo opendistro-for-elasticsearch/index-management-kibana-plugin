@@ -292,7 +292,7 @@ export default function DefineTransforms({
       <EuiSpacer size="s" />
       {/*TODO: Substitute "source index", and "filtered by" fields with actual values*/}
       <EuiText color="subdued" size="xs">
-        <p>{`Viewing sample data from index ${sourceIndex}, filtered by order.type:sales_order, order.success:true`}</p>
+        <p>{`Viewing sample data from index ${sourceIndex}`}</p>
       </EuiText>
       <EuiSpacer size="s" />
       {/*TODO: add rowCount*/}
