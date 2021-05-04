@@ -256,8 +256,6 @@ export default class CreateTransformForm extends Component<CreateTransformFormPr
   };
 
   onAggregationSelectionChange = (selectedFields: any): void => {
-    //Debug use
-    console.log(JSON.stringify(selectedFields));
     this.setState({ selectedAggregations: selectedFields });
   };
 
@@ -314,9 +312,7 @@ export default class CreateTransformForm extends Component<CreateTransformFormPr
   updateAggregation = (): void => {
     const { transformJSON, selectedAggregations } = this.state;
     let newJSON = transformJSON;
-
     newJSON.transform.aggregations = selectedAggregations;
-
     this.setState({ transformJSON: newJSON });
   };
 
