@@ -52,6 +52,7 @@ export default function DefineTransforms({
     columns.push({
       id: field.label,
       displayAsText: field.label + " type: " + field.type,
+      schema: field.type,
       actions: {
         showHide: false,
         showMoveLeft: false,
@@ -249,8 +250,16 @@ export default function DefineTransforms({
   );
 
   const renderCellValue = ({ rowIndex, columnId }) => {
-    if (!loading && data.hasOwnProperty(rowIndex)) return data[rowIndex]._source[columnId] ? data[rowIndex]._source[columnId] : null;
-    return null;
+    if (!loading && data.hasOwnProperty(rowIndex)) {
+      // TODO: work on truncating the value to certain length defined by the keyword field
+      if (columns?.find((column) => column.id == columnId).schema == "keyword") {
+        // Strip off the keyword postfix
+        const correspondingTextColumnId = columnId.replace(".keyword", "");
+        return data[rowIndex]._source[correspondingTextColumnId] ? data[rowIndex]._source[correspondingTextColumnId] : "-";
+      }
+      return data[rowIndex]._source[columnId] ? data[rowIndex]._source[columnId] : "-";
+    }
+    return "-";
   };
 
   return (
