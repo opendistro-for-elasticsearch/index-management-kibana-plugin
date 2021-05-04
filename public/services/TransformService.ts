@@ -75,12 +75,8 @@ export default class TransformService {
   };
 
   searchSampleData = async (index: string, queryObject: object): Promise<ServerResponse<any>> => {
-    //Debug use
-    console.log("Entering browser side service...");
     const url = `..${NODE_API._SEARCH_SAMPLE_DATA}/${index}`;
     const response = (await this.httpClient.get(url, { query: queryObject })) as ServerResponse<any>;
-    //Debug use
-    console.log("response: " + JSON.stringify(response));
     return response;
   };
 }

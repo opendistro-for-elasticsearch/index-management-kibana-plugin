@@ -239,8 +239,6 @@ export default function DefineTransforms({
     (pageIndex) => {
       setPagination((pagination) => ({ ...pagination, pageIndex }));
       setFrom(pageIndex * size);
-      //debug use
-      console.log("From: " + pageIndex * size);
     },
     [setPagination]
   );
