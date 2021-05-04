@@ -13,8 +13,6 @@
  * permissions and limitations under the License.
  */
 
-import EditTransform from "./EditTransform";
-import Transforms from "./Transforms";
-import TransformSettings from "./TransformSettings";
+import IndexFilterPopover from "./IndexFilterPopover";
 
-export { Transforms, EditTransform, TransformSettings };
+export default IndexFilterPopover;

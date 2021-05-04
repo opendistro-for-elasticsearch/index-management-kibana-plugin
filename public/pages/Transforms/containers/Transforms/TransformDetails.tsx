@@ -28,6 +28,10 @@ import {
   EuiModalBody,
   EuiCodeBlock,
   EuiHealth,
+  EuiContextMenuItem,
+  EuiContextMenuPanel,
+  EuiTextColor,
+  EuiPopover,
 } from "@elastic/eui";
 import { TransformService } from "../../../../services";
 import { RouteComponentProps } from "react-router-dom";
@@ -41,6 +45,7 @@ import DeleteModal from "../../components/DeleteModal";
 import GenerationInformation from "../../components/GeneralInformation";
 import TransformStatus from "../../components/TransformStatus";
 import { EMPTY_TRANSFORM } from "../../utils/constants";
+import TransformSettings from "./TransformSettings";
 
 interface TransformDetailsProps extends RouteComponentProps {
   transformService: TransformService;
@@ -64,6 +69,7 @@ interface TransformDetailsState {
   cronExpression: string;
   isModalOpen: boolean;
   isDeleteModalOpen: boolean;
+  isPopOverOpen: boolean;
 }
 
 export default class TransformDetails extends Component<TransformDetailsProps, TransformDetailsState> {
@@ -89,6 +95,7 @@ export default class TransformDetails extends Component<TransformDetailsProps, T
       cronExpression: "",
       isModalOpen: false,
       isDeleteModalOpen: false,
+      isPopOverOpen: false,
     };
   }
 
@@ -101,7 +108,7 @@ export default class TransformDetails extends Component<TransformDetailsProps, T
       await this.getTransform(id);
       this.forceUpdate();
     } else {
-      this.context.notifications.toasts.addDanger(`Invalid rollup id: ${id}`);
+      this.context.notifications.toasts.addDanger(`Invalid transform id: ${id}`);
       this.props.history.push(ROUTES.TRANSFORMS);
     }
   };
@@ -201,9 +208,79 @@ export default class TransformDetails extends Component<TransformDetailsProps, T
       transformJson,
       isDeleteModalOpen,
       isModalOpen,
+      isPopOverOpen,
     } = this.state;
 
     let scheduleText = "At some time";
+    const actionButton = (
+      <EuiButton iconType="arrowDown" iconSide="right" disabled={false} onClick={this.onActionButtonClick} data-test-subj="actionButton">
+        Actions
+      </EuiButton>
+    );
+
+    const actionItems = [
+      <EuiContextMenuItem
+        key="enable"
+        icon="empty"
+        disabled={enabled}
+        data-test-subj="enableButton"
+        onClick={() => {
+          this.closePopover();
+          this.onEnable();
+        }}
+      >
+        Enable job
+      </EuiContextMenuItem>,
+      <EuiContextMenuItem
+        key="disable"
+        icon="empty"
+        disabled={!enabled}
+        data-test-subj="disableButton"
+        onClick={() => {
+          this.closePopover();
+          this.onDisable();
+        }}
+      >
+        Disable job
+      </EuiContextMenuItem>,
+      <EuiContextMenuItem
+        key="view"
+        icon="empty"
+        disabled={false}
+        data-test-subj="viewButton"
+        onClick={() => {
+          this.closePopover();
+          this.showJsonModal();
+        }}
+      >
+        View JSON
+      </EuiContextMenuItem>,
+      <EuiContextMenuItem
+        key="duplicate"
+        icon="empty"
+        disabled={false}
+        data-test-subj="duplicateButton"
+        onClick={() => {
+          this.closePopover();
+          this.showDeleteModal();
+        }}
+      >
+        Duplicate job
+      </EuiContextMenuItem>,
+      <EuiContextMenuItem
+        key="delete"
+        icon="empty"
+        disabled={false}
+        data-test-subj="deleteButton"
+        onClick={() => {
+          this.closePopover();
+          this.showDeleteModal();
+        }}
+      >
+        <EuiTextColor color="danger">Delete</EuiTextColor>
+      </EuiContextMenuItem>,
+    ];
+
     return (
       <div style={{ padding: "5px 50px" }}>
         <EuiFlexGroup style={{ padding: "0px 10px" }} justifyContent="spaceBetween" alignItems="center">
@@ -219,21 +296,21 @@ export default class TransformDetails extends Component<TransformDetailsProps, T
           <EuiFlexItem grow={false}>
             <EuiFlexGroup alignItems="center" gutterSize="s">
               <EuiFlexItem grow={false}>
-                <EuiButton disabled={!enabled} onClick={this.onDisable} data-test-subj="disableButton">
-                  Disable
-                </EuiButton>
+                <EuiPopover
+                  id="action"
+                  button={actionButton}
+                  isOpen={isPopOverOpen}
+                  closePopover={this.closePopover}
+                  panelPaddingSize="none"
+                  anchorPosition="downLeft"
+                  data-test-subj="actionPopover"
+                >
+                  <EuiContextMenuPanel items={actionItems} />
+                </EuiPopover>
               </EuiFlexItem>
               <EuiFlexItem grow={false}>
-                <EuiButton disabled={enabled} onClick={this.onEnable} data-test-subj="enableButton">
-                  Enable
-                </EuiButton>
-              </EuiFlexItem>
-              <EuiFlexItem grow={false}>
-                <EuiButton onClick={this.showModal}>View JSON</EuiButton>
-              </EuiFlexItem>
-              <EuiFlexItem grow={false}>
-                <EuiButton onClick={this.showDeleteModal} color="danger" data-test-subj="deleteButton">
-                  Delete
+                <EuiButton fill={true} onClick={this.showJsonModal}>
+                  View target index in Discover
                 </EuiButton>
               </EuiFlexItem>
             </EuiFlexGroup>
@@ -255,6 +332,8 @@ export default class TransformDetails extends Component<TransformDetailsProps, T
         <TransformStatus metadata={metadata} />
         <EuiSpacer />
         <EuiSpacer />
+
+        <TransformSettings transformService={this.props.transformService} transformJson={transformJson} />
 
         {isModalOpen && (
           <EuiOverlayMask>
@@ -281,12 +360,85 @@ export default class TransformDetails extends Component<TransformDetailsProps, T
     );
   }
 
-  closeModal = () => {};
-  closeDeleteModal = () => {};
-  onClickDelete = () => {};
-  onEdit = () => {};
-  onEnable = () => {};
-  onDisable = () => {};
-  showModal = () => {};
-  showDeleteModal = () => {};
+  onClickDelete = async () => {
+    const { id } = this.state;
+    const { transformService } = this.props;
+    try {
+      const response = await transformService.deleteTransform(id);
+      if (response.ok) {
+        this.closeDeleteModal();
+        this.context.notification.toasts.addSuccess(`"${id}" successfully deleted!`);
+        this.props.history.push(ROUTES.TRANSFORMS);
+      } else {
+        this.context.notifications.toasts.addDanger(`could not delete transform job "${id}" :  ${response.error}`);
+      }
+    } catch (err) {
+      this.context.notification.toasts.addDanger(getErrorMessage(err, "Could not delete the transform job"));
+    }
+  };
+
+  onEdit = () => {
+    const { id } = this.state;
+    this.props.history.push(`${ROUTES.EDIT_TRANSFORM}?id=${id}`);
+  };
+
+  onEnable = async () => {
+    const { id } = this.state;
+    const { transformService } = this.props;
+    try {
+      const response = await transformService.startTransform(id);
+      if (response.ok) {
+        this.setState({ enabled: true });
+        await this.getTransform(id);
+        this.forceUpdate();
+        this.context.notifications.toasts.addSuccess(`${id} is enabled`);
+      } else {
+        this.context.notifications.toasts.addDanger(`Could not enable transform job "${id}": ${response.error}`);
+      }
+    } catch (err) {
+      this.context.notifications.toasts.addDanger(getErrorMessage(err, `Could not enable transform job ${id}`));
+    }
+  };
+
+  onDisable = async () => {
+    const { id } = this.state;
+    const { transformService } = this.props;
+    try {
+      const response = await transformService.stopTransform(id);
+      if (response.ok) {
+        this.setState({ enabled: false });
+        await this.getTransform(id);
+        this.forceUpdate();
+        this.context.notifications.toasts.addSuccess(`${id} is disabled`);
+      } else {
+        this.context.notifications.toasts.addDanger(`Could not disable transform job "${id}": ${response.error}`);
+      }
+    } catch (err) {
+      this.context.notifications.toasts.addDanger(getErrorMessage(err, `Could not disable transform job ${id}`));
+    }
+  };
+
+  showJsonModal = () => {
+    this.setState({ isModalOpen: true });
+  };
+
+  closeModal = () => {
+    this.setState({ isModalOpen: false });
+  };
+
+  showDeleteModal = () => {
+    this.setState({ isDeleteModalOpen: true });
+  };
+
+  closeDeleteModal = () => {
+    this.setState({ isDeleteModalOpen: false });
+  };
+
+  onActionButtonClick = () => {
+    this.setState({ isPopOverOpen: !this.state.isPopOverOpen });
+  };
+
+  closePopover = () => {
+    this.setState({ isPopOverOpen: false });
+  };
 }

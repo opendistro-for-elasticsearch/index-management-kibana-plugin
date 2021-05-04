@@ -64,12 +64,15 @@ export default class GenerationInformation extends Component<GeneralInformationP
             )}
           </ModalConsumer>
         }
+        bodyStyles={{ padding: "initial" }}
+        title="General information"
+        titleSize="m"
       >
         <div style={{ paddingLeft: "10px" }}>
           <EuiSpacer size="s" />
           <EuiFlexGrid columns={4}>
-            {infoItems.map((item) => (
-              <EuiFlexItem>
+            {infoItems.map((item, index) => (
+              <EuiFlexItem key={index}>
                 <EuiText size="xs">
                   <dt>{item.term}</dt>
                   <dd>{item.value}</dd>

@@ -43,3 +43,9 @@ export const EMPTY_TRANSFORM = JSON.stringify({
     target_index: "",
   },
 });
+
+export const ScheduleIntervalTimeunitOptions = [
+  { value: "MINUTES", text: "Minute(s)" },
+  { value: "HOURS", text: "Hour(s)" },
+  { value: "DAYS", text: "Day(s)" },
+];

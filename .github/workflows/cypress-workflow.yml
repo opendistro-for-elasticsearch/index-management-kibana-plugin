@@ -3,6 +3,7 @@ on:
   push:
     branches:
       - main
+      - development-*
 
 jobs:
   tests:

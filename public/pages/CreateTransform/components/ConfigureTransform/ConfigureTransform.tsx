@@ -26,12 +26,25 @@ interface ConfigureTransformProps {
   description: string;
 }
 
-const ConfigureTransform = ({ isEdit, transformId, transformIdError, onChangeName, onChangeDescription, description }: ConfigureTransformProps) => (
+const ConfigureTransform = ({
+  isEdit,
+  transformId,
+  transformIdError,
+  onChangeName,
+  onChangeDescription,
+  description,
+}: ConfigureTransformProps) => (
   <ContentPanel bodyStyles={{ padding: "initial" }} title="Job name and description" titleSize="m">
     <div style={{ paddingLeft: "10px" }}>
       <EuiSpacer size="s" />
       <EuiFormRow label="Name" helpText="Specify a unique, descriptive name." isInvalid={!!transformIdError} error={transformIdError}>
-        <EuiFieldText isInvalid={!!transformIdError} placeholder="my-transformjob1" value={transformId} onChange={onChangeName} disabled={isEdit} />
+        <EuiFieldText
+          isInvalid={!!transformIdError}
+          placeholder="my-transformjob1"
+          value={transformId}
+          onChange={onChangeName}
+          disabled={isEdit}
+        />
       </EuiFormRow>
       <EuiSpacer />
       <EuiFlexGroup gutterSize="xs">

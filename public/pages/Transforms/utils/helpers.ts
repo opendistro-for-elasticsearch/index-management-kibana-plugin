@@ -34,6 +34,6 @@ export function getURLQueryParams(location: { search: string }): TransformQueryP
 
 export const renderTime = (time: number): string => {
   const momentTime = moment(time).local();
-  if (time && momentTime.isValid()) return momentTime.format("MM/DD/YY h:mm a");
+  if (time && momentTime.isValid()) return momentTime.format("MM/DD/YY h:mmA");
   return "-";
 };

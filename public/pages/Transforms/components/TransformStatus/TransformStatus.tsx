@@ -22,6 +22,7 @@ import { renderStatus } from "../../utils/metadataHelper";
 interface TransformStatusProps {
   metadata: TransformMetadata | undefined;
 }
+
 export default class TransformStatus extends Component<TransformStatusProps> {
   constructor(props: TransformStatusProps) {
     super(props);

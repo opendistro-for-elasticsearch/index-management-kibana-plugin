@@ -16,13 +16,16 @@
 import { RouteComponentProps } from "react-router-dom";
 import { TransformService } from "../../../../services";
 import { CoreServicesContext } from "../../../../components/core_services";
-import React, { Component } from "react";
+import React, { ChangeEvent, Component } from "react";
 import { EMPTY_TRANSFORM } from "../../utils/constants";
 import queryString from "query-string";
 import { BREADCRUMBS, ROUTES } from "../../../../utils/constants";
 import { getErrorMessage } from "../../../../utils/helpers";
 import { EuiFlexItem, EuiFlexGroup, EuiButton, EuiTitle, EuiSpacer, EuiButtonEmpty } from "@elastic/eui";
 import ConfigureTransform from "../../components/ConfigureTransform";
+import Schedule from "../../components/Schedule";
+import moment from "moment";
+import { Transform } from "../../../../../models/interfaces";
 
 interface EditTransformProps extends RouteComponentProps {
   transformService: TransformService;
@@ -37,7 +40,15 @@ interface EditTransformState {
   pageSize: number;
   enabled: boolean;
   transformJSON: any;
-  isLoading: boolean;
+  submitError: string;
+  isSubmitting: boolean;
+  hasSubmitted: boolean;
+  interval: number;
+  intervalError: string;
+  intervalTimeUnit: string;
+  cronExpression: string;
+  cronTimeZone: string;
+  schedule: string;
 }
 
 export default class EditTransform extends Component<EditTransformProps, EditTransformState> {
@@ -54,7 +65,15 @@ export default class EditTransform extends Component<EditTransformProps, EditTra
       pageSize: 1000,
       enabled: true,
       transformJSON: EMPTY_TRANSFORM,
-      isLoading: false,
+      isSubmitting: false,
+      interval: 2,
+      intervalError: "",
+      intervalTimeUnit: "MINUTES",
+      cronExpression: "",
+      cronTimeZone: "UTC",
+      schedule: "fixed",
+      submitError: "",
+      hasSubmitted: false,
     };
   }
 
@@ -98,7 +117,20 @@ export default class EditTransform extends Component<EditTransformProps, EditTra
   };
 
   render() {
-    const { id, error, description, isLoading } = this.state;
+    const {
+      id,
+      error,
+      pageSize,
+      description,
+      isSubmitting,
+      enabled,
+      interval,
+      intervalError,
+      intervalTimeUnit,
+      cronExpression,
+      cronTimeZone,
+      schedule,
+    } = this.state;
     return (
       <div style={{ padding: "25px 50px" }}>
         <EuiTitle size="l">
@@ -107,13 +139,32 @@ export default class EditTransform extends Component<EditTransformProps, EditTra
         <EuiSpacer />
         <ConfigureTransform
           inEdit={true}
-          id={id}
+          transformId={id}
           error={error}
-          onChangeName={this.onChangeName}
-          onChangeDescription={this.onChangeDescription}
+          onChangeName={this.onNameChange}
+          onChangeDescription={this.onDescriptionChange}
           description={description}
         />
         <EuiSpacer />
+        <Schedule
+          transformId={id}
+          pageSize={pageSize}
+          schedule={schedule}
+          error={error}
+          enabled={enabled}
+          interval={interval}
+          intervalError={intervalError}
+          intervalTimeUnit={intervalTimeUnit}
+          cronExpression={cronExpression}
+          cronTimeZone={cronTimeZone}
+          onEnabledChange={this.onEnabledChange}
+          onCronExpressionChange={this.onCronExpressionChange}
+          onIntervalChange={this.onIntervalChange}
+          onPageChange={this.onPageChange}
+          onScheduleChange={this.onScheduleChange}
+          onCronTimeZoneChange={this.onCronTimeZoneChange}
+          onIntervalTimeUnitChange={this.onIntervalTimeUnitChange}
+        />
 
         <EuiSpacer />
 
@@ -124,7 +175,7 @@ export default class EditTransform extends Component<EditTransformProps, EditTra
             </EuiButtonEmpty>
           </EuiFlexItem>
           <EuiFlexItem grow={false}>
-            <EuiButton fill onClick={this.onSubmit} isLoading={isLoading} data-test-subj="editTransformSaveButton">
+            <EuiButton fill onClick={this.onSubmit} isLoading={isSubmitting} data-test-subj="editTransformSaveButton">
               Save changes
             </EuiButton>
           </EuiFlexItem>
@@ -133,8 +184,109 @@ export default class EditTransform extends Component<EditTransformProps, EditTra
     );
   }
 
-  onCancel = () => {};
-  onSubmit = () => {};
-  onChangeName = () => {};
-  onChangeDescription = () => {};
+  onCancel = () => {
+    this.props.history.push(ROUTES.TRANSFORMS);
+  };
+
+  onSubmit = async (): Promise<void> => {
+    const { id, transformJSON } = this.state;
+    this.setState({ submitError: "", isSubmitting: true, hasSubmitted: true });
+    try {
+      this.updateSchedule();
+      await this.update(id, transformJSON);
+    } catch (err) {
+      this.context.notifications.toasts.addDanger("Invalid Transform JSON");
+      console.error(err);
+    }
+  };
+
+  updateSchedule = () => {
+    const { schedule, cronExpression, cronTimeZone, interval, intervalTimeUnit } = this.state;
+    let json = this.state.transformJSON;
+    if (schedule == "cron") {
+      json.transform.schedule.cron = { expression: `${cronExpression}`, timezone: `${cronTimeZone}` };
+      delete json.transform.schedule["interval"];
+    } else {
+      json.transform.schedule.interval = {
+        start_time: moment().unix(),
+        unit: intervalTimeUnit,
+        period: interval,
+      };
+      delete json.transform.schedule["cron"];
+    }
+
+    this.setState({ transformJSON: json });
+  };
+
+  update = async (transformId: string, transform: Transform): Promise<void> => {
+    try {
+      const { transformService } = this.props;
+      const { primaryTerm, seqNo } = this.state;
+      if (primaryTerm == null || seqNo == null) {
+        this.context.notifications.toasts.addDanger("Could not update transform without seqNo and primaryTerm");
+        return;
+      }
+      const response = await transformService.putTransform(transform, transformId, seqNo, primaryTerm);
+      if (response.ok) {
+        this.context.notifications.toasts.addSuccess(`Changes to transform saved`);
+        this.props.history.push(ROUTES.TRANSFORMS);
+      } else {
+        this.context.notifications.toasts.addDanger(`Couldn't update transform ${transformId}: ${response.error}`);
+        this.setState({ submitError: response.error });
+      }
+    } catch (err) {
+      this.setState({ submitError: getErrorMessage(err, `Couldn't update transform ${transformId}`) });
+    }
+  };
+
+  onNameChange = (e: ChangeEvent<HTMLInputElement>) => {
+    // DO NOTHING SINCE edit is disabled for this page
+  };
+
+  onDescriptionChange = (e: ChangeEvent<HTMLTextAreaElement>) => {
+    const description = e.target.value;
+    let json = this.state.transformJSON;
+    json.transform.description = description;
+    this.setState({ transformJSON: json, description: description });
+  };
+
+  onEnabledChange = () => {
+    const enabled = this.state.enabled;
+    let json = this.state.transformJSON;
+    json.transform.enabled = enabled;
+    this.setState({ transformJSON: json, enabled: !enabled });
+  };
+
+  onCronExpressionChange = (e: ChangeEvent<HTMLTextAreaElement>) => {
+    this.setState({ cronExpression: e.target.value });
+  };
+
+  onCronTimeZoneChange = (e: ChangeEvent<HTMLSelectElement>) => {
+    this.setState({ cronTimeZone: e.target.value });
+  };
+
+  onIntervalChange = (e: ChangeEvent<HTMLInputElement>) => {
+    this.setState({ interval: e.target.valueAsNumber });
+    if (e.target.value == "") {
+      const intervalError = "Interval value is required.";
+      this.setState({ intervalError: intervalError });
+    } else {
+      this.setState({ intervalError: "" });
+    }
+  };
+
+  onPageChange = (e: ChangeEvent<HTMLInputElement>) => {
+    const pageSize = e.target.valueAsNumber;
+    let json = this.state.transformJSON;
+    json.transform.pageSize = pageSize;
+    this.setState({ pageSize: pageSize, transformJSON: json });
+  };
+
+  onScheduleChange = (e: ChangeEvent<HTMLSelectElement>) => {
+    this.setState({ schedule: e.target.value });
+  };
+
+  onIntervalTimeUnitChange = (e: ChangeEvent<HTMLSelectElement>) => {
+    this.setState({ intervalTimeUnit: e.target.value });
+  };
 }

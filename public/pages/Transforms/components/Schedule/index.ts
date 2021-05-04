@@ -13,8 +13,6 @@
  * permissions and limitations under the License.
  */
 
-import EditTransform from "./EditTransform";
-import Transforms from "./Transforms";
-import TransformSettings from "./TransformSettings";
+import Schedule from "./Schedule";
 
-export { Transforms, EditTransform, TransformSettings };
+export default Schedule;

@@ -14,8 +14,9 @@
  */
 
 import React, { Component, Fragment } from "react";
-import { EuiSpacer, EuiFormRow, EuiComboBox, EuiCallOut } from "@elastic/eui";
+import { EuiSpacer, EuiFormRow, EuiComboBox, EuiCallOut, EuiFacetButton, EuiAvatar, EuiPopover } from "@elastic/eui";
 import { ContentPanel } from "../../../../components/ContentPanel";
+import IndexFilterPopover from "../IndexFilterPopover";
 import { EuiComboBoxOptionOption } from "@elastic/eui/src/components/combo_box/types";
 import { IndexItem } from "../../../../../models/interfaces";
 import IndexService from "../../../../services/IndexService";
@@ -37,6 +38,8 @@ interface TransformIndicesState {
   isLoading: boolean;
   indexOptions: { label: string; value?: IndexItem }[];
   targetIndexOptions: { label: string; value?: IndexItem }[];
+  isPopoverOpen: boolean;
+  selectFieldValue: string;
 }
 
 export default class TransformIndices extends Component<TransformIndicesProps, TransformIndicesState> {
@@ -47,6 +50,8 @@ export default class TransformIndices extends Component<TransformIndicesProps, T
       isLoading: true,
       indexOptions: [],
       targetIndexOptions: [],
+      isPopoverOpen: false,
+      selectFieldValue: "",
     };
 
     this.onIndexSearchChange = _.debounce(this.onIndexSearchChange, 500, { leading: true });
@@ -103,6 +108,17 @@ export default class TransformIndices extends Component<TransformIndicesProps, T
     onChangeTargetIndex([newOption]);
   };
 
+  onButtonClick = () => {
+    const { isPopoverOpen } = this.state;
+    if (isPopoverOpen) {
+      this.setState({ isPopoverOpen: false });
+    } else {
+      this.setState({ isPopoverOpen: true });
+    }
+  };
+
+  closePopover = () => this.setState({ isPopoverOpen: false });
+
   render() {
     const {
       sourceIndex,
@@ -113,7 +129,18 @@ export default class TransformIndices extends Component<TransformIndicesProps, T
       onChangeTargetIndex,
       hasAggregation,
     } = this.props;
-    const { isLoading, indexOptions, targetIndexOptions } = this.state;
+
+    const { isLoading, indexOptions, targetIndexOptions, isPopoverOpen } = this.state;
+
+    const filterButton = (
+      <EuiFacetButton
+        icon={<EuiAvatar size="s" name="Place Holder" />} // Should be filter icon per design doc
+        onClick={this.onButtonClick}
+      >
+        + Add data filter
+      </EuiFacetButton>
+    );
+
     return (
       <ContentPanel bodyStyles={{ padding: "initial" }} title="Indices" titleSize="m">
         <div style={{ paddingLeft: "10px" }}>
@@ -134,7 +161,8 @@ export default class TransformIndices extends Component<TransformIndicesProps, T
             label="Source index"
             error={sourceIndexError}
             isInvalid={sourceIndexError != ""}
-            helpText="The index pattern on which to perform the transform job. You can use * as a wildcard."
+            helpText="The index where this transform job is performed on. Type in * as wildcard for index pattern. \
+            Indices cannot be changed once the job is created. Please ensure that you select the right source index."
           >
             <EuiComboBox
               placeholder="Select source index"
@@ -147,6 +175,17 @@ export default class TransformIndices extends Component<TransformIndicesProps, T
               isInvalid={sourceIndexError != ""}
               data-test-subj="sourceIndexCombobox"
             />
+          </EuiFormRow>
+          <EuiSpacer size="m" />
+          <EuiFormRow
+            label="Source index filter"
+            error={sourceIndexError}
+            isInvalid={sourceIndexError != ""}
+            helpText="Choose a subset of source index to focus on to optimize for performance and computing resource. You can't change filter once the job is created"
+          >
+            <EuiPopover button={filterButton} isOpen={isPopoverOpen} closePopover={this.closePopover}>
+              <IndexFilterPopover {...this.props} />
+            </EuiPopover>
           </EuiFormRow>
 
           <EuiFormRow

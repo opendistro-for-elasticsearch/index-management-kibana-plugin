@@ -13,15 +13,9 @@
  * permissions and limitations under the License.
  */
 
-import { IClusterClient, IKibanaResponse, KibanaRequest, KibanaResponseFactory, RequestHandlerContext, ResponseError } from "kibana/server";
+import { IClusterClient, IKibanaResponse, KibanaRequest, KibanaResponseFactory, RequestHandlerContext } from "kibana/server";
 import { ServerResponse } from "../models/types";
-import {
-  GetTransformsResponse,
-  PutTransformParams,
-  PutTransformResponse,
-  SearchResponse,
-  SearchSampleDataResponse,
-} from "../models/interfaces";
+import { GetTransformsResponse, PutTransformParams, PutTransformResponse, SearchResponse } from "../models/interfaces";
 import { DocumentTransform, Transform } from "../../models/interfaces";
 import _ from "lodash";
 
@@ -128,7 +122,7 @@ export default class TransformService {
       const getResponse = await callWithRequest("ism.getTransform", params);
       const metadata = await callWithRequest("ism.explainTransform", params);
       const transform = _.get(getResponse, "transform", null);
-      const seqNo = _.get(getResponse, "_seg_no", null);
+      const seqNo = _.get(getResponse, "_seq_no", null);
       const primaryTerm = _.get(getResponse, "_primary_term", null);
 
       if (transform) {
@@ -270,14 +264,11 @@ export default class TransformService {
     }
   };
 
-  /**
-   * Calls backend Put Transform API
-   */
   putTransform = async (
     context: RequestHandlerContext,
     request: KibanaRequest,
     response: KibanaResponseFactory
-  ): Promise<IKibanaResponse<ServerResponse<PutTransformResponse> | ResponseError>> => {
+  ): Promise<IKibanaResponse<ServerResponse<PutTransformResponse>>> => {
     try {
       const { id } = request.params as { id: string };
       const { seqNo, primaryTerm } = request.query as { seqNo?: string; primaryTerm?: string };
