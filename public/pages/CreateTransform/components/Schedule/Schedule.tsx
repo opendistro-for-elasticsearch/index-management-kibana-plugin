@@ -43,8 +43,6 @@ interface ScheduleProps {
   interval: number;
   intervalTimeunit: string;
   intervalError: string;
-  pageSize: number;
-  onChangeJobEnabledByDefault: () => void;
   onChangeIntervalTime: (e: ChangeEvent<HTMLInputElement>) => void;
   onChangeIntervalTimeunit: (e: ChangeEvent<HTMLSelectElement>) => void;
   onChangePage: (e: ChangeEvent<HTMLInputElement>) => void;

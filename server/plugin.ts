@@ -32,7 +32,7 @@ export class IndexPatternManagementPlugin implements Plugin<IndexManagementPlugi
     const managedIndexService = new ManagedIndexService(esDriver);
     const rollupService = new RollupService(esDriver);
     const transformService = new TransformService(esDriver);
-    const services = { indexService, policyService, managedIndexService, rollupService, transformService};
+    const services = { indexService, policyService, managedIndexService, rollupService, transformService };
 
     // create router
     const router = core.http.createRouter();
