@@ -317,11 +317,15 @@ export default function DefineTransforms({
         }}
       />
       <EuiSpacer />
-      Group selection
+      <EuiText>
+        <h4>Group selection</h4>
+      </EuiText>
       {/*Debug use*/}
       {JSON.stringify(groupSelection)}
       <EuiSpacer />
-      Aggregation
+      <EuiText>
+        <h4>Aggregation</h4>
+      </EuiText>
       {JSON.stringify(aggSelection)}
     </ContentPanel>
   );
