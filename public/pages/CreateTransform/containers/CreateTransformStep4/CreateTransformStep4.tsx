@@ -18,9 +18,15 @@ import { EuiSpacer, EuiTitle, EuiFlexGroup, EuiFlexItem, EuiComboBoxOptionOption
 import { RouteComponentProps } from "react-router-dom";
 import { TransformService } from "../../../../services";
 import { BREADCRUMBS, ROUTES } from "../../../../utils/constants";
-import { DimensionItem, IndexItem, MetricItem } from "../../../../../models/interfaces";
+import { DimensionItem,
+  IndexItem,
+  MetricItem,
+  TransformAggItem,
+  TransformGroupItem,} from "../../../../../models/interfaces";
 import CreateTransformSteps from "../../components/CreateTransformSteps";
 import JobNameAndIndices from "../../components/JobNameAndIndices";
+import ReviewDefinition from "../../components/ReviewDefinition";
+import ReviewSchedule from "../../components/ReviewSchedule";
 import { CoreServicesContext } from "../../../../components/core_services";
 
 interface CreateTransformProps extends RouteComponentProps {
@@ -32,6 +38,10 @@ interface CreateTransformProps extends RouteComponentProps {
   description: string;
   sourceIndex: { label: string; value?: IndexItem }[];
   targetIndex: { label: string; value?: IndexItem }[];
+  sourceIndexFilter: {}[];
+
+  selectedGroupField: TransformGroupItem[];
+  selectedAggregations: any;
 
   timestamp: EuiComboBoxOptionOption<String>[];
   timezone: string;
@@ -71,6 +81,9 @@ export default class CreateTransformStep4 extends Component<CreateTransformProps
             <EuiSpacer />
             <JobNameAndIndices {...this.props} />
             <EuiSpacer />
+            <ReviewDefinition {...this.props} />
+            <EuiSpacer />
+            <ReviewSchedule {...this.props} />
             <EuiSpacer />
             <EuiCallOut color="warning">
               <p>You can't change aggregations or metrics after creating a job. Double-check your choices before proceeding.</p>

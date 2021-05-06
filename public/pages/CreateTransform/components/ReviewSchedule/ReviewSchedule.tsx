@@ -17,29 +17,31 @@ import React, { Component } from "react";
 import { EuiFlexGrid, EuiSpacer, EuiFlexItem, EuiText } from "@elastic/eui";
 import { ContentPanel, ContentPanelActions } from "../../../../components/ContentPanel";
 import { ModalConsumer } from "../../../../components/Modal";
-import { IndexItem } from "../../../../../models/interfaces";
 
-interface JobNameAndIndicesProps {
-  transformId: string;
-  description: string;
-  sourceIndex: { label: string; value?: IndexItem }[];
-  targetIndex: { label: string; value?: IndexItem }[];
-  sourceIndexFilter: {}[];
+interface ReviewScheduleProps {
+  jobEnabledByDefault: boolean;
+  interval: number;
+  intervalTimeunit: string;
+  pageSize: number;
   onChangeStep: (step: number) => void;
 }
 
-export default class JobNameAndIndices extends Component<JobNameAndIndicesProps> {
-  constructor(props: JobNameAndIndicesProps) {
+export default class ReviewSchedule extends Component<ReviewScheduleProps> {
+  constructor(props: ReviewScheduleProps) {
     super(props);
   }
 
   render() {
-    const { transformId,
-            description,
+    const { jobEnabledByDefault,
+            interval,
+            intervalTimeunit,
+            pageSize,
             onChangeStep,
-            sourceIndex,
-            targetIndex,
-            sourceIndexFilter } = this.props;
+     } = this.props;
+
+    const enabled = (jobEnabledByDefault) ? ("Yes") : ("No");
+
+    const schedule = "Every " + interval + " " + intervalTimeunit.toLowerCase();
 
     return (
       <ContentPanel
@@ -51,7 +53,7 @@ export default class JobNameAndIndices extends Component<JobNameAndIndicesProps>
                   {
                     text: "Edit",
                     buttonProps: {
-                      onClick: () => onChangeStep(1),
+                      onClick: () => onChangeStep(3)
                     },
                   },
                 ]}
@@ -60,46 +62,33 @@ export default class JobNameAndIndices extends Component<JobNameAndIndicesProps>
           </ModalConsumer>
         }
         bodyStyles={{ padding: "initial" }}
-        title="Set up indices"
+        title="Specify schedule"
         titleSize="m"
       >
         <div style={{ padding: "15px" }}>
           <EuiSpacer size="s" />
-          <EuiFlexGrid columns={3}>
+          <EuiFlexGrid columns={4}>
             <EuiFlexItem>
               <EuiText size="xs">
-                <dt>Name</dt>
-                <dd>{transformId}</dd>
+                <dt>Enabled by default</dt>
+                <dd>{enabled}</dd>
               </EuiText>
             </EuiFlexItem>
             <EuiFlexItem>
               <EuiText size="xs">
-                <dt>Source Index</dt>
-                <dd>{sourceIndex[0].label}</dd>
+                <dt>Schedule</dt>
+                <dd>{schedule}</dd>
               </EuiText>
             </EuiFlexItem>
             <EuiFlexItem>
               <EuiText size="xs">
-                <dt>Target index</dt>
-                <dd>{targetIndex[0].label}</dd>
-              </EuiText>
-            </EuiFlexItem>
-            <EuiFlexItem>
-              <EuiText size="xs">
-                <dt>Description</dt>
-                <dd>{description == "" ? "-" : description}</dd>
-              </EuiText>
-            </EuiFlexItem>
-            <EuiFlexItem>
-              <EuiText size="xs">
-                <dt>Source index filter</dt>
-                <dd>{sourceIndexFilter}</dd>
+                <dt>Pages per execution</dt>
+                <dd>{pageSize}</dd>
               </EuiText>
             </EuiFlexItem>
           </EuiFlexGrid>
-          <EuiSpacer size="s" />
         </div>
       </ContentPanel>
-    );
+    )
   }
 }

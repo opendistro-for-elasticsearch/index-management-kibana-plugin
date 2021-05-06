@@ -33,12 +33,16 @@ interface CreateTransformProps extends RouteComponentProps {
   hasSubmitted: boolean;
   description: string;
   sourceIndex: { label: string; value?: IndexItem }[];
+  //TODO: Uncomment the following line when multiple data filter is supported
+  // sourceIndexFilter: string[];
+  sourceIndexFilter: string;
   sourceIndexError: string;
   targetIndex: { label: string; value?: IndexItem }[];
   targetIndexError: string;
   onChangeName: (e: ChangeEvent<HTMLInputElement>) => void;
   onChangeDescription: (value: ChangeEvent<HTMLTextAreaElement>) => void;
   onChangeSourceIndex: (options: EuiComboBoxOptionOption<IndexItem>[]) => void;
+  onChangeSourceIndexFilter: (sourceIndexFilter: string) => void;
   onChangeTargetIndex: (options: EuiComboBoxOptionOption<IndexItem>[]) => void;
   currentStep: number;
   hasAggregation: boolean;
