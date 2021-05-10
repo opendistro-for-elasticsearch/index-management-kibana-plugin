@@ -159,6 +159,7 @@ export default class TransformIndices extends Component<TransformIndicesProps, T
       targetIndex,
       targetIndexError,
       onChangeSourceIndex,
+      onChangeSourceIndexFilter,
       onChangeTargetIndex,
       hasAggregation,
     } = this.props;
@@ -170,6 +171,10 @@ export default class TransformIndices extends Component<TransformIndicesProps, T
         + Add data filter
       </EuiButtonEmpty>
     );
+
+    const clearIndexFilter = () => {
+      onChangeSourceIndexFilter("{}");
+    }
 
     return (
       <ContentPanel bodyStyles={{ padding: "initial" }} title="Indices" titleSize="m">
@@ -228,7 +233,14 @@ export default class TransformIndices extends Component<TransformIndicesProps, T
           {/*{this.state.dataFilters.map((item) => (*/}
           {/*  <EuiBadge>{item}</EuiBadge>*/}
           {/*))}*/}
-          <EuiBadge>{sourceIndexFilter}</EuiBadge>
+          <EuiBadge
+            iconType="cross"
+            iconSide="right"
+            onClick={() => this.onButtonClick()}
+            onClickAriaLabel="Edit Source Index Filter"
+            iconOnClick={() => clearIndexFilter()}
+            iconOnClickAriaLabel="Clear Source Index Filter"
+          >{sourceIndexFilter}</EuiBadge>
           <EuiPopover
             button={
               <EuiButtonEmpty

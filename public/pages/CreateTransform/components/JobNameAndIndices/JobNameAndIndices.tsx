@@ -24,7 +24,7 @@ interface JobNameAndIndicesProps {
   description: string;
   sourceIndex: { label: string; value?: IndexItem }[];
   targetIndex: { label: string; value?: IndexItem }[];
-  sourceIndexFilter: {}[];
+  sourceIndexFilter: string;
   onChangeStep: (step: number) => void;
 }
 
@@ -93,7 +93,7 @@ export default class JobNameAndIndices extends Component<JobNameAndIndicesProps>
             <EuiFlexItem>
               <EuiText size="xs">
                 <dt>Source index filter</dt>
-                <dd>{sourceIndexFilter}</dd>
+                <dd>{sourceIndexFilter == "" ? "-" : sourceIndexFilter}</dd>
               </EuiText>
             </EuiFlexItem>
           </EuiFlexGrid>
