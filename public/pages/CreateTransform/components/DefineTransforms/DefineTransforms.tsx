@@ -52,14 +52,22 @@ export default function DefineTransforms({
   const [previewColumns, setPreviewColumns] = useState<EuiDataGridColumn[]>([]);
 
   const updatePreviewColumns = (): void => {
-    console.log(JSON.stringify(previewTransform));
+    setPreviewColumns([]);
     if (previewTransform.length) {
       for (const [key, value] of Object.entries(previewTransform[0])) {
         previewColumns.push({
           id: key,
           displayAsText: key,
+          actions: {
+            showHide: false,
+            showMoveLeft: false,
+            showMoveRight: false,
+            showSortAsc: false,
+            showSortDesc: false,
+          },
         });
       }
+      setVisiblePreviewColumns(previewColumns.map(({ id }) => id).slice(0, 5));
     }
     //Debug use
     console.log("Preview columns: " + JSON.stringify(previewColumns));
@@ -293,7 +301,7 @@ export default function DefineTransforms({
   };
 
   const renderPreviewCellValue = ({ rowIndex, columnId }) => {
-    if (!loading && previewTransform.hasOwnProperty(rowIndex)) {
+    if (previewTransform.hasOwnProperty(rowIndex)) {
       return previewTransform[rowIndex][columnId] ? data[rowIndex][columnId] : "-";
     }
     return "-";
@@ -355,17 +363,6 @@ export default function DefineTransforms({
       />
       <EuiSpacer />
       <EuiText>
-        <h4>Group selection</h4>
-      </EuiText>
-      {/*Debug use*/}
-      {JSON.stringify(selectedGroupField)}
-      <EuiSpacer />
-      <EuiText>
-        <h4>Aggregation</h4>
-      </EuiText>
-      {JSON.stringify(selectedAggregations)}
-      <EuiSpacer />
-      <EuiText>
         <h4>Transformed fields preview based on sample data</h4>
       </EuiText>
       {previewTransform.length ? (
@@ -375,13 +372,13 @@ export default function DefineTransforms({
           columnVisibility={{ visibleColumns: visiblePreviewColumns, setVisibleColumns: setVisiblePreviewColumns }}
           rowCount={previewColumns.length}
           renderCellValue={renderPreviewCellValue}
-          sorting={{ columns: sortingColumns, onSort }}
-          pagination={{
-            ...pagination,
-            pageSizeOptions: [5, 10, 20, 50],
-            onChangeItemsPerPage: onChangeItemsPerPage,
-            onChangePage: onChangePage,
-          }}
+          // sorting={{ columns: sortingColumns, onSort }}
+          // pagination={{
+          //   ...pagination,
+          //   pageSizeOptions: [5, 10, 20, 50],
+          //   onChangeItemsPerPage: onChangeItemsPerPage,
+          //   onChangePage: onChangePage,
+          // }}
           toolbarVisibility={{
             showColumnSelector: true,
             showStyleSelector: false,
@@ -395,6 +392,17 @@ export default function DefineTransforms({
           body={<p>From the table above, select a field you want to transform by clicking the “plus” button next to the field name</p>}
         />
       )}
+      <EuiSpacer />
+      <EuiText>
+        <h4>Group selection</h4>
+      </EuiText>
+      {/*Debug use*/}
+      {JSON.stringify(selectedGroupField)}
+      <EuiSpacer />
+      <EuiText>
+        <h4>Aggregation</h4>
+      </EuiText>
+      {JSON.stringify(selectedAggregations)}
     </ContentPanel>
   );
 }

@@ -294,12 +294,9 @@ export default class CreateTransformForm extends Component<CreateTransformFormPr
   };
 
   onAggregationSelectionChange = (selectedAggregations: any): void => {
-    const { transformService } = this.props;
     let newJSON = this.state.transformJSON;
 
     if (selectedAggregations.length) newJSON.transform.aggregations = selectedAggregations;
-    const previewResponse = transformService.previewTransform(newJSON);
-    console.log(JSON.stringify(previewResponse));
     this.setState({ selectedAggregations: selectedAggregations, transformJSON: newJSON });
     this.previewTransform();
   };
