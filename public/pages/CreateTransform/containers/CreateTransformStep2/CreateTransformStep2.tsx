@@ -29,9 +29,11 @@ interface CreateTransformStep2Props extends RouteComponentProps {
   currentStep: number;
   sourceIndex: string;
   fields: FieldItem[];
+  selectedGroupField: TransformGroupItem[];
   onGroupSelectionChange: (selectedFields: TransformGroupItem[]) => void;
   selectedAggregations: any;
   onAggregationSelectionChange: (selectedFields: any) => void;
+  previewTransform: any[];
 }
 
 export default class CreateTransformStep2 extends Component<CreateTransformStep2Props> {
@@ -73,6 +75,7 @@ export default class CreateTransformStep2 extends Component<CreateTransformStep2
             </EuiTitle>
             <EuiSpacer />
             <DefineTransforms
+              {...this.props}
               transformService={transformService}
               notifications={this.context.notifications}
               transformId={transformId}

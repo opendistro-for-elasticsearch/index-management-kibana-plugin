@@ -369,4 +369,12 @@ export default function ismPlugin(Client: any, config: any, components: any) {
     },
     method: "PUT",
   });
+
+  ism.previewTransform = ca({
+    url: {
+      fmt: `${API.TRANSFORM_BASE}/_preview`,
+    },
+    needBody: true,
+    method: "POST",
+  });
 }

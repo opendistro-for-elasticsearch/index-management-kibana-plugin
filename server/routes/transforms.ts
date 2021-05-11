@@ -113,4 +113,14 @@ export default function (services: NodeServices, router: IRouter) {
     },
     transformService.searchSampleData
   );
+
+  router.post(
+    {
+      path: `${NODE_API.TRANSFORMS}/_preview`,
+      validate: {
+        body: schema.any(),
+      },
+    },
+    transformService.previewTransform
+  );
 }

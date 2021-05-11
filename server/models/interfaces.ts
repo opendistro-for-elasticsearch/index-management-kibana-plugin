@@ -106,6 +106,10 @@ export interface PutTransformResponse {
   transform: { transform: Transform };
 }
 
+export interface PreviewTransformResponse {
+  documents: object[];
+}
+
 export interface IndexUpdateResponse {
   updatedIndices: number;
   failures: boolean;
