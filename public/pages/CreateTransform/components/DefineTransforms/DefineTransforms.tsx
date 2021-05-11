@@ -19,6 +19,7 @@ import React, { useCallback, useState } from "react";
 import { ContentPanel } from "../../../../components/ContentPanel";
 import { FieldItem, GROUP_TYPES, TransformGroupItem } from "../../../../../models/interfaces";
 import { TransformService } from "../../../../services";
+import { getErrorMessage } from "../../../../utils/helpers";
 import { isNumericMapping } from "../../utils/helpers";
 
 interface DefineTransformsProps {
@@ -56,9 +57,8 @@ export default function DefineTransforms({
       for (const [key, value] of Object.entries(previewTransform[0])) {
         previewColumns.push({
           id: key,
+          displayAsText: key,
         });
-        //debug use
-        // console.log(key);
       }
     }
     //Debug use
@@ -369,11 +369,6 @@ export default function DefineTransforms({
         <h4>Transformed fields preview based on sample data</h4>
       </EuiText>
       {previewTransform.length ? (
-        <EuiEmptyPrompt
-          title={<h3> No fields selected</h3>}
-          body={<p>From the table above, select a field you want to transform by clicking the “plus” button next to the field name</p>}
-        />
-      ) : (
         <EuiDataGrid
           aria-label="Preview transforms"
           columns={previewColumns}
@@ -393,6 +388,11 @@ export default function DefineTransforms({
             showSortSelector: false,
             showFullScreenSelector: false,
           }}
+        />
+      ) : (
+        <EuiEmptyPrompt
+          title={<h3> No fields selected</h3>}
+          body={<p>From the table above, select a field you want to transform by clicking the “plus” button next to the field name</p>}
         />
       )}
     </ContentPanel>
