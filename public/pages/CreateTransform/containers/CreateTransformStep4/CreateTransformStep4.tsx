@@ -38,7 +38,7 @@ interface CreateTransformProps extends RouteComponentProps {
   description: string;
   sourceIndex: { label: string; value?: IndexItem }[];
   targetIndex: { label: string; value?: IndexItem }[];
-  sourceIndexFilter: {}[];
+  sourceIndexFilter: string;
 
   selectedGroupField: TransformGroupItem[];
   selectedAggregations: any;

@@ -31,16 +31,17 @@ import { FieldItem, IndexItem } from "../../../../../models/interfaces";
 interface IndexFilterPopoverProps {
   sourceIndex: { label: string; value?: IndexItem }[];
   fields: FieldItem[];
+  sourceIndexFilter: string;
   onChangeSourceIndexFilter: (sourceIndexFilter: string) => void;
   closePopover: () => void;
 }
 
-export default function IndexFilterPopover({ sourceIndex, fields, onChangeSourceIndexFilter, closePopover }: IndexFilterPopoverProps) {
+export default function IndexFilterPopover({ sourceIndex, fields, sourceIndexFilter, onChangeSourceIndexFilter, closePopover }: IndexFilterPopoverProps) {
   const [selectedField, setSelectedField] = useState("");
   const [selectedOperator, setSelectedOperator] = useState("");
   const [selectedValue, setSelectedValue] = useState("");
   const [isCustomEditorOpen, setIsCustomEditorOpen] = useState(false);
-  const [queryDsl, setQueryDsl] = useState("");
+  const [queryDsl, setQueryDsl] = useState(sourceIndexFilter);
 
   const onChangeSelectedField = (e: ChangeEvent<HTMLSelectElement>): void => {
     setSelectedField(e.target.value);

@@ -249,7 +249,7 @@ export default class CreateTransformForm extends Component<CreateTransformFormPr
   onChangeSourceIndexFilter = (sourceIndexFilter: string): void => {
     let newJSON = this.state.transformJSON;
     try {
-      newJSON.dataSelectionQuery = JSON.parse(sourceIndexFilter);
+      newJSON.transform.data_selection_query = JSON.parse(sourceIndexFilter);
     } catch (err) {
       this.context.notifications.toasts.addDanger('Invalid source index filter JSON: "' + sourceIndexFilter + '"');
     }
@@ -336,6 +336,7 @@ export default class CreateTransformForm extends Component<CreateTransformFormPr
 
   onSubmit = async (): Promise<void> => {
     const { transformId, transformJSON } = this.state;
+    console.log(transformJSON);
     this.setState({ submitError: "", isSubmitting: true, hasSubmitted: true });
     try {
       if (!transformId) {
@@ -459,6 +460,7 @@ export default class CreateTransformForm extends Component<CreateTransformFormPr
           description={description}
           sourceIndex={sourceIndex}
           targetIndex={targetIndex}
+          sourceIndexFilter={sourceIndexFilter}
           selectedGroupField={selectedGroupField}
           selectedAggregations={selectedAggregations}
           jobEnabledByDefault={jobEnabledByDefault}
