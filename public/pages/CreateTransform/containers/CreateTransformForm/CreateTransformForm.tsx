@@ -167,11 +167,11 @@ export default class CreateTransformForm extends Component<CreateTransformFormPr
     }
   };
 
-  previewTransform = async (): Promise<void> => {
+  previewTransform = async (transform: any): Promise<void> => {
     try {
       const { transformService } = this.props;
-      const { selectedGroupField, transformJSON } = this.state;
-      const previewResponse = await transformService.previewTransform(transformJSON);
+      const { selectedGroupField } = this.state;
+      const previewResponse = await transformService.previewTransform(transform);
       if (previewResponse.ok) this.setState({ previewTransform: previewResponse.response.documents });
 
       //Debug use
@@ -285,20 +285,20 @@ export default class CreateTransformForm extends Component<CreateTransformFormPr
     this.setState({ targetIndex: options, transformJSON: newJSON, targetIndexError: targetIndexError });
   };
 
-  onGroupSelectionChange = (selectedGroupField: GroupItem[]): void => {
+  onGroupSelectionChange = async (selectedGroupField: GroupItem[]): Promise<void> => {
     let newJSON = this.state.transformJSON;
 
     if (selectedGroupField.length) newJSON.transform.groups = selectedGroupField;
     this.setState({ selectedGroupField, transformJSON: newJSON });
-    this.previewTransform();
+    await this.previewTransform(newJSON);
   };
 
-  onAggregationSelectionChange = (selectedAggregations: any): void => {
+  onAggregationSelectionChange = async (selectedAggregations: any): Promise<void> => {
     let newJSON = this.state.transformJSON;
 
     if (selectedAggregations.length) newJSON.transform.aggregations = selectedAggregations;
     this.setState({ selectedAggregations: selectedAggregations, transformJSON: newJSON });
-    this.previewTransform();
+    await this.previewTransform(newJSON);
   };
 
   onChangeJobEnabledByDefault = (): void => {
