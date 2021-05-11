@@ -52,10 +52,12 @@ export default function DefineTransforms({
   const [previewColumns, setPreviewColumns] = useState<EuiDataGridColumn[]>([]);
 
   const updatePreviewColumns = (): void => {
-    setPreviewColumns([]);
+    // setPreviewColumns([{id: "ex-col"}]);
+    // setPreviewColumns([]);
     if (previewTransform.length) {
+      let tempCol: EuiDataGridColumn[] = [];
       for (const [key, value] of Object.entries(previewTransform[0])) {
-        previewColumns.push({
+        tempCol.push({
           id: key,
           displayAsText: key,
           actions: {
@@ -67,7 +69,8 @@ export default function DefineTransforms({
           },
         });
       }
-      setVisiblePreviewColumns(previewColumns.map(({ id }) => id).slice(0, 5));
+      setPreviewColumns(tempCol);
+      setVisiblePreviewColumns(() => tempCol.map(({ id }) => id).slice(0, 5));
     }
     //Debug use
     console.log("Preview columns: " + JSON.stringify(previewColumns));
@@ -301,9 +304,9 @@ export default function DefineTransforms({
   };
 
   const renderPreviewCellValue = ({ rowIndex, columnId }) => {
-    if (previewTransform.hasOwnProperty(rowIndex)) {
-      return previewTransform[rowIndex][columnId] ? data[rowIndex][columnId] : "-";
-    }
+    // if (previewTransform.hasOwnProperty(rowIndex)) {
+    //   return previewTransform[rowIndex][columnId] ? data[rowIndex][columnId] : "-";
+    // }
     return "-";
   };
 
@@ -370,7 +373,7 @@ export default function DefineTransforms({
           aria-label="Preview transforms"
           columns={previewColumns}
           columnVisibility={{ visibleColumns: visiblePreviewColumns, setVisibleColumns: setVisiblePreviewColumns }}
-          rowCount={previewColumns.length}
+          rowCount={previewTransform.length}
           renderCellValue={renderPreviewCellValue}
           // sorting={{ columns: sortingColumns, onSort }}
           // pagination={{

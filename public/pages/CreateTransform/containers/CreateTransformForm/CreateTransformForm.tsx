@@ -170,7 +170,6 @@ export default class CreateTransformForm extends Component<CreateTransformFormPr
   previewTransform = async (transform: any): Promise<void> => {
     try {
       const { transformService } = this.props;
-      const { selectedGroupField } = this.state;
       const previewResponse = await transformService.previewTransform(transform);
       if (previewResponse.ok) this.setState({ previewTransform: previewResponse.response.documents });
 
