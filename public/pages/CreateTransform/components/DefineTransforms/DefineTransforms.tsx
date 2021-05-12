@@ -13,25 +13,13 @@
  * permissions and limitations under the License.
  */
 
-import {
-  EuiButton,
-  EuiButtonIcon,
-  EuiContextMenu,
-  EuiDataGrid,
-  EuiDataGridColumn,
-  EuiFlexGroup,
-  EuiFlexItem,
-  EuiPopover,
-  EuiSpacer,
-  EuiText,
-} from "@elastic/eui";
+import { EuiDataGrid, EuiDataGridColumn, EuiSpacer, EuiText } from "@elastic/eui";
 import { CoreStart } from "kibana/public";
 import React, { useCallback, useState } from "react";
 import { ContentPanel } from "../../../../components/ContentPanel";
-import { FieldItem, GROUP_TYPES, TransformGroupItem } from "../../../../../models/interfaces";
+import { FieldItem, TransformGroupItem } from "../../../../../models/interfaces";
 import { TransformService } from "../../../../services";
 import { getErrorMessage } from "../../../../utils/helpers";
-import { isNumericMapping } from "../../utils/helpers";
 import PreviewTransform from "../PreviewTransform";
 import TransformOptions from "../TransformOptions/TranformOptions";
 
@@ -63,9 +51,6 @@ export default function DefineTransforms({
   let columns: EuiDataGridColumn[] = [];
 
   fields.map((field: FieldItem) => {
-    const isNumeric = isNumericMapping(field.type);
-    const isDate = field.type == "date";
-
     // TODO: Handle the available options according to column types
     columns.push({
       id: field.label,

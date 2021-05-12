@@ -29,6 +29,7 @@ import {
 import { useState } from "react";
 import { isNumericMapping } from "../../utils/helpers";
 import { GROUP_TYPES, TransformGroupItem } from "../../../../../models/interfaces";
+import HistogramPanel from "./Panels/HistogramPanel";
 
 interface TransformOptionsProps {
   name: string;
@@ -54,6 +55,10 @@ export default function TransformOptions({
   const [histogramInterval, setHistogramInterval] = useState(5);
   const [groupSelection, setGroupSelection] = useState<TransformGroupItem[]>(selectedGroupField);
   const [aggSelection, setAggSelection] = useState(selectedAggregations);
+
+  const closePopover = () => {
+    setIsPopoverOpen(false);
+  };
 
   const panels: EuiContextMenuPanelDescriptor[] = [
     {
@@ -97,49 +102,15 @@ export default function TransformOptions({
       id: 1,
       title: "Back",
       content: (
-        <EuiPanel>
-          <EuiFlexGroup>
-            <EuiFlexItem grow={false}>
-              <EuiFormRow label="Histogram interval">
-                <EuiFieldNumber value={histogramInterval} onChange={(e) => setHistogramInterval(e.target.valueAsNumber)} />
-              </EuiFormRow>
-            </EuiFlexItem>
-            <EuiFlexItem grow={false}></EuiFlexItem>
-          </EuiFlexGroup>
-          <EuiFlexGroup>
-            <EuiFlexItem grow={false}>
-              <EuiButton fullWidth={false} onClick={() => closePopover()}>
-                Cancel
-              </EuiButton>
-            </EuiFlexItem>
-            <EuiFlexItem grow={false}>
-              <EuiButton
-                fill
-                fullWidth={false}
-                onClick={() => {
-                  const targetFieldName = `${name} _${GROUP_TYPES.histogram}`;
-                  groupSelection.push({
-                    histogram: {
-                      source_field: name,
-                      target_field: targetFieldName,
-                      interval: histogramInterval,
-                    },
-                  });
-                  onGroupSelectionChange(groupSelection);
-                }}
-              >
-                OK
-              </EuiButton>
-            </EuiFlexItem>
-          </EuiFlexGroup>
-        </EuiPanel>
+        <HistogramPanel
+          name={name}
+          groupSelection={groupSelection}
+          onGroupSelectionChange={onGroupSelectionChange}
+          closePopover={closePopover}
+        />
       ),
     },
   ];
-
-  const closePopover = () => {
-    setIsPopoverOpen(false);
-  };
 
   const button = <EuiButtonIcon iconType="plusInCircleFilled" onClick={() => setIsPopoverOpen(!isPopoverOpen)} />;
 
