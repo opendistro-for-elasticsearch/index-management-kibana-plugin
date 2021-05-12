@@ -13,7 +13,18 @@
  * permissions and limitations under the License.
  */
 
-import { EuiDataGrid, EuiDataGridColumn, EuiSpacer, EuiText } from "@elastic/eui";
+import {
+  EuiButton,
+  EuiButtonIcon,
+  EuiContextMenu,
+  EuiDataGrid,
+  EuiDataGridColumn,
+  EuiFlexGroup,
+  EuiFlexItem,
+  EuiPopover,
+  EuiSpacer,
+  EuiText,
+} from "@elastic/eui";
 import { CoreStart } from "kibana/public";
 import React, { useCallback, useState } from "react";
 import { ContentPanel } from "../../../../components/ContentPanel";
@@ -57,7 +68,17 @@ export default function DefineTransforms({
     // TODO: Handle the available options according to column types
     columns.push({
       id: field.label,
-      displayAsText: field.label + " type: " + field.type,
+      display: (
+        <div>
+          <EuiFlexGroup justifyContent="spaceBetween">
+            <EuiFlexItem grow={false}>{field.label}</EuiFlexItem>
+            <EuiFlexItem grow={false}>
+              <EuiButtonIcon iconType="plusInCircleFilled" />
+            </EuiFlexItem>
+          </EuiFlexGroup>
+        </div>
+      ),
+      // displayAsText: field.label + " type: " + field.type,
       schema: field.type,
       actions: {
         showHide: false,
@@ -65,135 +86,135 @@ export default function DefineTransforms({
         showMoveRight: false,
         showSortAsc: false,
         showSortDesc: false,
-        additional: [
-          {
-            label: "Group by histogram ",
-            onClick: () => {
-              const targetFieldName = `${field.label}_${GROUP_TYPES.histogram}`;
-              groupSelection.push({
-                histogram: {
-                  source_field: field.label,
-                  target_field: targetFieldName,
-                  interval: 5,
-                },
-              });
-              onGroupSelectionChange(groupSelection);
-            },
-            size: "xs",
-            color: isNumeric ? "text" : "subdued",
-          },
-          {
-            label: "Group by date histogram ",
-            onClick: () => {
-              groupSelection.push({
-                date_histogram: {
-                  source_field: field.label,
-                  target_field: `${field.label}_${GROUP_TYPES.dateHistogram}`,
-                  calendar_interval: "1d",
-                },
-              });
-              onGroupSelectionChange(groupSelection);
-            },
-            size: "xs",
-            color: isDate ? "text" : "subdued",
-          },
-          {
-            label: "Group by terms ",
-            onClick: () => {
-              groupSelection.push({
-                terms: {
-                  source_field: field.label,
-                  target_field: `${field.label}_${GROUP_TYPES.terms}`,
-                },
-              });
-              onGroupSelectionChange(groupSelection);
-            },
-            size: "xs",
-            color: "text",
-          },
-          {
-            label: "Aggregate by sum ",
-            onClick: () => {
-              aggSelection[`sum_${field.label}`] = {
-                sum: { field: field.label },
-              };
-              onAggregationSelectionChange(aggSelection);
-            },
-            size: "xs",
-            color: "text",
-          },
-          {
-            label: "Aggregate by max ",
-            onClick: () => {
-              aggSelection[`max_${field.label}`] = {
-                max: { field: field.label },
-              };
-              onAggregationSelectionChange(aggSelection);
-            },
-            size: "xs",
-            color: "text",
-          },
-          {
-            label: "Aggregate by min ",
-            onClick: () => {
-              aggSelection[`min_${field.label}`] = {
-                min: { field: field.label },
-              };
-              onAggregationSelectionChange(aggSelection);
-            },
-            size: "xs",
-            color: "text",
-          },
-          {
-            label: "Aggregate by avg ",
-            onClick: () => {
-              aggSelection[`avg_${field.label}`] = {
-                avg: { field: field.label },
-              };
-              onAggregationSelectionChange(aggSelection);
-            },
-            size: "xs",
-            color: "text",
-          },
-          {
-            label: "Aggregate by count ",
-            onClick: () => {
-              aggSelection[`count_${field.label}`] = {
-                value_count: { field: field.label },
-              };
-              onAggregationSelectionChange(aggSelection);
-            },
-            size: "xs",
-            color: "text",
-          },
-          {
-            label: "Aggregate by percentile",
-            onClick: () => {
-              aggSelection[`percentiles_${field.label}`] = {
-                percentiles: { field: field.label, percents: [1, 5, 25, 99] },
-              };
-              onAggregationSelectionChange(aggSelection);
-            },
-            size: "xs",
-            color: "text",
-          },
-          {
-            label: "Aggregate by scripted metrics ",
-            onClick: () => {
-              aggSelection[`scripted_metric_${field.label}`] = {
-                scripted_metric: {
-                  init_script: "",
-                  map_script: "",
-                  combine_script: "",
-                  reduce_script: "",
-                },
-              };
-              onAggregationSelectionChange(aggSelection);
-            },
-            size: "xs",
-            color: "text",
-          },
-        ],
+        // additional: [
+        //   {
+        //     label: "Group by histogram ",
+        //     onClick: () => {
+        //       const targetFieldName = `${field.label}_${GROUP_TYPES.histogram}`;
+        //       groupSelection.push({
+        //         histogram: {
+        //           source_field: field.label,
+        //           target_field: targetFieldName,
+        //           interval: 5,
+        //         },
+        //       });
+        //       onGroupSelectionChange(groupSelection);
+        //     },
+        //     size: "xs",
+        //     color: isNumeric ? "text" : "subdued",
+        //   },
+        //   {
+        //     label: "Group by date histogram ",
+        //     onClick: () => {
+        //       groupSelection.push({
+        //         date_histogram: {
+        //           source_field: field.label,
+        //           target_field: `${field.label}_${GROUP_TYPES.dateHistogram}`,
+        //           calendar_interval: "1d",
+        //         },
+        //       });
+        //       onGroupSelectionChange(groupSelection);
+        //     },
+        //     size: "xs",
+        //     color: isDate ? "text" : "subdued",
+        //   },
+        //   {
+        //     label: "Group by terms ",
+        //     onClick: () => {
+        //       groupSelection.push({
+        //         terms: {
+        //           source_field: field.label,
+        //           target_field: `${field.label}_${GROUP_TYPES.terms}`,
+        //         },
+        //       });
+        //       onGroupSelectionChange(groupSelection);
+        //     },
+        //     size: "xs",
+        //     color: "text",
+        //   },
+        //   {
+        //     label: "Aggregate by sum ",
+        //     onClick: () => {
+        //       aggSelection[`sum_${field.label}`] = {
+        //         sum: { field: field.label },
+        //       };
+        //       onAggregationSelectionChange(aggSelection);
+        //     },
+        //     size: "xs",
+        //     color: "text",
+        //   },
+        //   {
+        //     label: "Aggregate by max ",
+        //     onClick: () => {
+        //       aggSelection[`max_${field.label}`] = {
+        //         max: { field: field.label },
+        //       };
+        //       onAggregationSelectionChange(aggSelection);
+        //     },
+        //     size: "xs",
+        //     color: "text",
+        //   },
+        //   {
+        //     label: "Aggregate by min ",
+        //     onClick: () => {
+        //       aggSelection[`min_${field.label}`] = {
+        //         min: { field: field.label },
+        //       };
+        //       onAggregationSelectionChange(aggSelection);
+        //     },
+        //     size: "xs",
+        //     color: "text",
+        //   },
+        //   {
+        //     label: "Aggregate by avg ",
+        //     onClick: () => {
+        //       aggSelection[`avg_${field.label}`] = {
+        //         avg: { field: field.label },
+        //       };
+        //       onAggregationSelectionChange(aggSelection);
+        //     },
+        //     size: "xs",
+        //     color: "text",
+        //   },
+        //   {
+        //     label: "Aggregate by count ",
+        //     onClick: () => {
+        //       aggSelection[`count_${field.label}`] = {
+        //         value_count: { field: field.label },
+        //       };
+        //       onAggregationSelectionChange(aggSelection);
+        //     },
+        //     size: "xs",
+        //     color: "text",
+        //   },
+        //   {
+        //     label: "Aggregate by percentile",
+        //     onClick: () => {
+        //       aggSelection[`percentiles_${field.label}`] = {
+        //         percentiles: { field: field.label, percents: [1, 5, 25, 99] },
+        //       };
+        //       onAggregationSelectionChange(aggSelection);
+        //     },
+        //     size: "xs",
+        //     color: "text",
+        //   },
+        //   {
+        //     label: "Aggregate by scripted metrics ",
+        //     onClick: () => {
+        //       aggSelection[`scripted_metric_${field.label}`] = {
+        //         scripted_metric: {
+        //           init_script: "",
+        //           map_script: "",
+        //           combine_script: "",
+        //           reduce_script: "",
+        //         },
+        //       };
+        //       onAggregationSelectionChange(aggSelection);
+        //     },
+        //     size: "xs",
+        //     color: "text",
+        //   },
+        // ],
       },
     });
   });
@@ -301,7 +322,6 @@ export default function DefineTransforms({
         <p>{`Viewing sample data from index ${sourceIndex}`}</p>
       </EuiText>
       <EuiSpacer size="s" />
-      {/*TODO: add rowCount*/}
       <EuiDataGrid
         aria-label="Define transforms"
         columns={columns}
@@ -320,6 +340,76 @@ export default function DefineTransforms({
           showStyleSelector: false,
           showSortSelector: false,
           showFullScreenSelector: false,
+        }}
+        popoverContents={{
+          date: ({ children, cellContentsElement }) => {
+            const panels = [
+              {
+                id: 0,
+                title: "This is a context menu",
+                items: [
+                  {
+                    name: "Handle an onClick",
+                    icon: "search",
+                  },
+                  {
+                    name: "Go to a link",
+                    icon: "user",
+                    href: "http://elastic.co",
+                    target: "_blank",
+                  },
+                  {
+                    name: "Nest panels",
+                    icon: "wrench",
+                    panel: 1,
+                  },
+                  {
+                    name: "Add a tooltip",
+                    icon: "document",
+                    toolTipTitle: "Optional tooltip",
+                    toolTipContent: "Optional content for a tooltip",
+                    toolTipPosition: "right",
+                  },
+                  {
+                    name: "Use an app icon",
+                    icon: "visualizeApp",
+                  },
+                ],
+              },
+              {
+                id: 1,
+                initialFocusedItemIndex: 1,
+                title: "Nest panels",
+                items: [
+                  {
+                    name: "PDF reports",
+                    icon: "user",
+                  },
+                  {
+                    name: "Embed code",
+                    icon: "user",
+                    panel: 2,
+                  },
+                  {
+                    name: "Permalinks",
+                    icon: "user",
+                  },
+                ],
+              },
+            ];
+            // extract the groups-of-three digits that are right-aligned
+            return (
+              // <EuiPopover
+              //   id="numericMenu"
+              //   button={button}
+              //   isOpen={isPopoverOpen}
+              //   closePopover={closePopover}
+              //   panelPaddingSize="none"
+              //   anchorPosition="downLeft">
+              <EuiContextMenu initialPanelId={0} panels={panels} />
+              // </ EuiPopover>
+            );
+          },
         }}
       />
       <EuiSpacer />
