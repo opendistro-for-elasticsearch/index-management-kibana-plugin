@@ -15,7 +15,13 @@
 
 import { IClusterClient, IKibanaResponse, KibanaRequest, KibanaResponseFactory, RequestHandlerContext } from "kibana/server";
 import { ServerResponse } from "../models/types";
-import { GetTransformsResponse, PutTransformParams, PutTransformResponse, SearchResponse } from "../models/interfaces";
+import {
+  GetTransformsResponse,
+  PreviewTransformResponse,
+  PutTransformParams,
+  PutTransformResponse,
+  SearchResponse,
+} from "../models/interfaces";
 import { DocumentTransform, Transform } from "../../models/interfaces";
 import _ from "lodash";
 
@@ -75,7 +81,10 @@ export default class TransformService {
 
           return response.custom({
             statusCode: 200,
-            body: { ok: true, response: { transforms: transforms, totalTransforms: totalTransforms, metadata: explainResponse } },
+            body: {
+              ok: true,
+              response: { transforms: transforms, totalTransforms: totalTransforms, metadata: explainResponse },
+            },
           });
         } else {
           return response.custom({
@@ -347,6 +356,38 @@ export default class TransformService {
         });
       }
       console.error("Index Management - TransformService - searchSampleData", err);
+      return response.custom({
+        statusCode: 200,
+        body: {
+          ok: false,
+          error: err.message,
+        },
+      });
+    }
+  };
+
+  previewTransform = async (
+    context: RequestHandlerContext,
+    request: KibanaRequest,
+    response: KibanaResponseFactory
+  ): Promise<IKibanaResponse<ServerResponse<PreviewTransformResponse>>> => {
+    try {
+      //Debug use
+      console.log(JSON.stringify(request.body));
+      let params = {
+        body: JSON.stringify(request.body),
+      };
+      const { callAsCurrentUser: callWithRequest } = this.esDriver.asScoped(request);
+      const previewResponse: PreviewTransformResponse = await callWithRequest("ism.previewTransform", params);
+      return response.custom({
+        statusCode: 200,
+        body: {
+          ok: true,
+          response: previewResponse,
+        },
+      });
+    } catch (err) {
+      console.error("Index Management - TransformService - previewTransform", err);
       return response.custom({
         statusCode: 200,
         body: {
