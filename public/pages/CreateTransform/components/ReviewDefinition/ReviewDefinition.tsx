@@ -14,13 +14,13 @@
  */
 
 import React, { Component } from "react";
-import { EuiFlexGrid, EuiSpacer, EuiFlexItem, EuiText } from "@elastic/eui";
+import { EuiFlexGrid, EuiSpacer, EuiFlexItem, EuiText, EuiAccordion } from "@elastic/eui";
 import { ContentPanel, ContentPanelActions } from "../../../../components/ContentPanel";
 import { ModalConsumer } from "../../../../components/Modal";
 import { TransformGroupItem } from "../../../../../models/interfaces";
+import DefineTransforms from "../DefineTransforms";
 
 interface ReviewDefinitionProps {
-
   selectedGroupField: TransformGroupItem[];
   selectedAggregations: any;
   onChangeStep: (step: number) => void;
@@ -32,35 +32,33 @@ export default class ReviewDefinition extends Component<ReviewDefinitionProps> {
   }
 
   render() {
-    const { selectedGroupField,
-            selectedAggregations,
-            onChangeStep } = this.props;
+    const { selectedGroupField, selectedAggregations, onChangeStep } = this.props;
 
     const groupItems = () => {
-      return (selectedGroupField.map((group) => {
-        return(
+      return selectedGroupField.map((group) => {
+        return (
           <EuiFlexItem>
             <EuiText size="xs">
               <dt>Group</dt>
               <dd>{JSON.stringify(group)}</dd>
             </EuiText>
           </EuiFlexItem>
-      )
-      }));
+        );
+      });
     };
 
     const aggItems = () => {
-      return (Object.keys(selectedAggregations).map((key) => {
-        return(
-        <EuiFlexItem>
-          <EuiText size="xs">
-            <dt>{key}</dt>
-            <dd>{JSON.stringify(selectedAggregations[key])}</dd>
-          </EuiText>
-        </EuiFlexItem>
-      )
-    }));
-    }
+      return Object.keys(selectedAggregations).map((key) => {
+        return (
+          <EuiFlexItem>
+            <EuiText size="xs">
+              <dt>{key}</dt>
+              <dd>{JSON.stringify(selectedAggregations[key])}</dd>
+            </EuiText>
+          </EuiFlexItem>
+        );
+      });
+    };
 
     return (
       <ContentPanel
@@ -87,12 +85,13 @@ export default class ReviewDefinition extends Component<ReviewDefinitionProps> {
         <div style={{ padding: "15px" }}>
           <EuiSpacer size="s" />
           <EuiFlexGrid columns={1}>
-          {groupItems()}
-          {aggItems()}
+            {groupItems()}
+            {aggItems()}
           </EuiFlexGrid>
+          <EuiSpacer />
+          <EuiAccordion id="" buttonContent="Sample source index and transform result"></EuiAccordion>
         </div>
-
       </ContentPanel>
-    )
+    );
   }
 }

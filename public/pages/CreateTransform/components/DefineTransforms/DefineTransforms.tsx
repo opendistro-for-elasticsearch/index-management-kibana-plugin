@@ -13,7 +13,7 @@
  * permissions and limitations under the License.
  */
 
-import { EuiDataGrid, EuiDataGridColumn, EuiEmptyPrompt, EuiPanel, EuiSpacer, EuiText } from "@elastic/eui";
+import { EuiDataGrid, EuiDataGridColumn, EuiSpacer, EuiText } from "@elastic/eui";
 import { CoreStart } from "kibana/public";
 import React, { useCallback, useState } from "react";
 import { ContentPanel } from "../../../../components/ContentPanel";

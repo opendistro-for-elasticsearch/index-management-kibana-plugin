@@ -6,7 +6,7 @@ interface PreviewTransformsProps {
   previewTransform: any[];
 }
 
-export default function DefineTransforms({ previewTransform }: PreviewTransformsProps) {
+export default function PreviewTransforms({ previewTransform }: PreviewTransformsProps) {
   const [previewColumns, setPreviewColumns] = useState<EuiDataGridColumn[]>([]);
   const [visiblePreviewColumns, setVisiblePreviewColumns] = useState(() => previewColumns.map(({ id }) => id).slice(0, 5));
   const [previewPagination, setPreviewPagination] = useState({ pageIndex: 0, pageSize: 10 });
