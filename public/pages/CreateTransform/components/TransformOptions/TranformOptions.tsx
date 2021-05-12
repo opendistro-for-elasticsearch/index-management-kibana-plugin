@@ -71,6 +71,7 @@ export default function TransformOptions({
         },
         {
           name: "Group by date histogram",
+          panel: 2,
         },
         {
           name: "Group by terms",
@@ -109,6 +110,39 @@ export default function TransformOptions({
           closePopover={closePopover}
         />
       ),
+    },
+    {
+      id: 2,
+      title: "Back",
+      items: [
+        {
+          name: "Millisecond",
+        },
+        {
+          name: "Second",
+        },
+        {
+          name: "Minute",
+        },
+        {
+          name: "Hour",
+        },
+        {
+          name: "Day",
+        },
+        {
+          name: "Week",
+        },
+        {
+          name: "Month",
+        },
+        {
+          name: "Quarter",
+        },
+        {
+          name: "Year",
+        },
+      ],
     },
   ];
 
