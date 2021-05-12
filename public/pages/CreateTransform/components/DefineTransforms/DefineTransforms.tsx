@@ -188,7 +188,7 @@ export default function DefineTransforms({
             label: "Aggregate by count ",
             onClick: () => {
               aggSelection[`count_${field.label}`] = {
-                count: { field: field.label },
+                value_count: { field: field.label },
               };
               onAggregationSelectionChange(aggSelection);
             },
