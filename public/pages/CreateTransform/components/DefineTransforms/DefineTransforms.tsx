@@ -13,7 +13,7 @@
  * permissions and limitations under the License.
  */
 
-import { EuiDataGrid, EuiDataGridColumn, EuiSpacer, EuiText } from "@elastic/eui";
+import { EuiDataGrid, EuiDataGridColumn, EuiEmptyPrompt, EuiPanel, EuiSpacer, EuiText } from "@elastic/eui";
 import { CoreStart } from "kibana/public";
 import React, { useCallback, useState } from "react";
 import { ContentPanel } from "../../../../components/ContentPanel";
@@ -28,9 +28,11 @@ interface DefineTransformsProps {
   transformId: string;
   sourceIndex: string;
   fields: FieldItem[];
+  selectedGroupField: TransformGroupItem[];
   onGroupSelectionChange: (selectedFields: TransformGroupItem[]) => void;
   selectedAggregations: any;
   onAggregationSelectionChange: (selectedFields: any) => void;
+  previewTransform: any[];
 }
 
 export default function DefineTransforms({
@@ -39,15 +41,44 @@ export default function DefineTransforms({
   transfromId,
   sourceIndex,
   fields,
+  selectedGroupField,
   onGroupSelectionChange,
   selectedAggregations,
   onAggregationSelectionChange,
+  previewTransform,
 }: DefineTransformsProps) {
   let columns: EuiDataGridColumn[] = [];
+
+  const [previewColumns, setPreviewColumns] = useState<EuiDataGridColumn[]>([]);
+
+  const updatePreviewColumns = (): void => {
+    // setPreviewColumns([{id: "ex-col"}]);
+    // setPreviewColumns([]);
+    if (previewTransform.length) {
+      let tempCol: EuiDataGridColumn[] = [];
+      for (const [key, value] of Object.entries(previewTransform[0])) {
+        tempCol.push({
+          id: key,
+          actions: {
+            showHide: false,
+            showMoveLeft: false,
+            showMoveRight: false,
+            showSortAsc: false,
+            showSortDesc: false,
+          },
+        });
+      }
+      setPreviewColumns(tempCol);
+      setVisiblePreviewColumns(() => tempCol.map(({ id }) => id).slice(0, 5));
+    }
+    //Debug use
+    console.log("Preview columns: " + JSON.stringify(previewColumns));
+  };
 
   fields.map((field: FieldItem) => {
     const isNumeric = isNumericMapping(field.type);
     const isDate = field.type == "date";
+
     // TODO: Handle the available options according to column types
     columns.push({
       id: field.label,
@@ -63,14 +94,18 @@ export default function DefineTransforms({
           {
             label: "Group by histogram ",
             onClick: () => {
+              const targetFieldName = `${field.label}_${GROUP_TYPES.histogram}`;
               groupSelection.push({
                 histogram: {
                   source_field: field.label,
-                  target_field: `${field.label}_${GROUP_TYPES.histogram}`,
+                  target_field: targetFieldName,
                   interval: 5,
                 },
               });
               onGroupSelectionChange(groupSelection);
+              previewColumns.push({
+                id: targetFieldName,
+              });
             },
             size: "xs",
             color: isNumeric ? "text" : "subdued",
@@ -111,6 +146,7 @@ export default function DefineTransforms({
                 sum: { field: field.label },
               };
               onAggregationSelectionChange(aggSelection);
+              console.log(Object.entries(selectedAggregations));
             },
             size: "xs",
             color: "text",
@@ -152,7 +188,7 @@ export default function DefineTransforms({
             label: "Aggregate by count ",
             onClick: () => {
               aggSelection[`count_${field.label}`] = {
-                count: { field: field.label },
+                value_count: { field: field.label },
               };
               onAggregationSelectionChange(aggSelection);
             },
@@ -192,15 +228,16 @@ export default function DefineTransforms({
   });
 
   const [loading, setLoading] = useState<boolean>(true);
-
   const [pagination, setPagination] = useState({ pageIndex: 0, pageSize: 10 });
+  const [previewPagination, setPreviewPagination] = useState({ pageIndex: 0, pageSize: 10 });
   const [from, setFrom] = useState<number>(0);
   const [size, setSize] = useState<number>(10);
   const [sortingColumns, setSortingColumns] = useState([]);
   const [visibleColumns, setVisibleColumns] = useState(() => columns.map(({ id }) => id).slice(0, 5));
+  const [visiblePreviewColumns, setVisiblePreviewColumns] = useState(() => previewColumns.map(({ id }) => id).slice(0, 5));
   const [data, setData] = useState([]);
   const [dataCount, setDataCount] = useState<number>(0);
-  const [groupSelection, setGroupSelection] = useState<TransformGroupItem[]>([]);
+  const [groupSelection, setGroupSelection] = useState<TransformGroupItem[]>(selectedGroupField);
   const [aggSelection, setAggSelection] = useState(selectedAggregations);
 
   const fetchData = useCallback(async () => {
@@ -220,7 +257,11 @@ export default function DefineTransforms({
 
   React.useEffect(() => {
     fetchData();
-  }, [fetchData]);
+  }, []);
+
+  React.useEffect(() => {
+    updatePreviewColumns();
+  }, [previewTransform]);
 
   const onChangeItemsPerPage = useCallback(
     (pageSize) => {
@@ -242,6 +283,23 @@ export default function DefineTransforms({
     [setPagination]
   );
 
+  const onChangePreviewPerPage = useCallback(
+    (pageSize) => {
+      setPreviewPagination((previewPagination) => ({
+        ...previewPagination,
+        pageSize,
+        pageIndex: 0,
+      }));
+    },
+    [setPreviewPagination]
+  );
+  const onChangePreviewPage = useCallback(
+    (pageIndex) => {
+      setPreviewPagination((previewPagination) => ({ ...previewPagination, pageIndex }));
+    },
+    [setPreviewPagination]
+  );
+
   const onSort = useCallback(
     (sortingColumns) => {
       setSortingColumns(sortingColumns);
@@ -258,6 +316,13 @@ export default function DefineTransforms({
         return data[rowIndex]._source[correspondingTextColumnId] ? data[rowIndex]._source[correspondingTextColumnId] : "-";
       }
       return data[rowIndex]._source[columnId] ? data[rowIndex]._source[columnId] : "-";
+    }
+    return "-";
+  };
+
+  const renderPreviewCellValue = ({ rowIndex, columnId }) => {
+    if (previewTransform.hasOwnProperty(rowIndex)) {
+      return previewTransform[rowIndex][columnId] ? previewTransform[rowIndex][columnId] : "-";
     }
     return "-";
   };
@@ -300,7 +365,7 @@ export default function DefineTransforms({
         aria-label="Define transforms"
         columns={columns}
         columnVisibility={{ visibleColumns, setVisibleColumns }}
-        rowCount={dataCount}
+        rowCount={Math.min(dataCount, 200)}
         renderCellValue={renderCellValue}
         sorting={{ columns: sortingColumns, onSort }}
         pagination={{
@@ -318,15 +383,38 @@ export default function DefineTransforms({
       />
       <EuiSpacer />
       <EuiText>
-        <h4>Group selection</h4>
+        <h4>Transformed fields preview based on sample data</h4>
       </EuiText>
-      {/*Debug use*/}
-      {JSON.stringify(groupSelection)}
-      <EuiSpacer />
-      <EuiText>
-        <h4>Aggregation</h4>
-      </EuiText>
-      {JSON.stringify(aggSelection)}
+      <EuiSpacer size="s" />
+      {previewTransform.length ? (
+        <EuiDataGrid
+          aria-label="Preview transforms"
+          columns={previewColumns}
+          columnVisibility={{ visibleColumns: visiblePreviewColumns, setVisibleColumns: setVisiblePreviewColumns }}
+          rowCount={previewTransform.length}
+          renderCellValue={renderPreviewCellValue}
+          // sorting={{ columns: sortingColumns, onSort }}
+          pagination={{
+            ...previewPagination,
+            pageSizeOptions: [5, 10, 20, 50],
+            onChangeItemsPerPage: onChangePreviewPerPage,
+            onChangePage: onChangePreviewPage,
+          }}
+          toolbarVisibility={{
+            showColumnSelector: true,
+            showStyleSelector: false,
+            showSortSelector: false,
+            showFullScreenSelector: false,
+          }}
+        />
+      ) : (
+        <EuiPanel>
+          <EuiEmptyPrompt
+            title={<h4> No fields selected</h4>}
+            body={<p>From the table above, select a field you want to transform by clicking the “plus” button next to the field name</p>}
+          />
+        </EuiPanel>
+      )}
     </ContentPanel>
   );
 }

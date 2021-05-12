@@ -15,7 +15,7 @@
 
 import { HttpSetup } from "kibana/public";
 import { ServerResponse } from "../../server/models/types";
-import { GetTransformsResponse, PutTransformResponse } from "../../server/models/interfaces";
+import { GetTransformsResponse, PreviewTransformResponse, PutTransformResponse } from "../../server/models/interfaces";
 import { NODE_API } from "../../utils/constants";
 import { DocumentTransform, Transform } from "../../models/interfaces";
 
@@ -64,9 +64,10 @@ export default class TransformService {
     return (await this.httpClient.post(url)) as ServerResponse<boolean>;
   };
 
-  previewTransform = async (transform: Map<String, any>): Promise<ServerResponse<Map<String, []>>> => {
+  previewTransform = async (transform: any): Promise<ServerResponse<PreviewTransformResponse>> => {
     const url = `..${NODE_API.TRANSFORMS}/_preview`;
-    return (await this.httpClient.post(url, { body: JSON.stringify(transform) })) as ServerResponse<Map<String, []>>;
+    // @ts-ignore
+    return (await this.httpClient.post(url, { body: JSON.stringify(transform) })) as ServerResponse<PreviewTransformResponse>;
   };
 
   //Function to search for fields from a source index using GET /${source_index}/_mapping
