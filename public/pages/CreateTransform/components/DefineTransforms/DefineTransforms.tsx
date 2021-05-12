@@ -33,6 +33,7 @@ import { TransformService } from "../../../../services";
 import { getErrorMessage } from "../../../../utils/helpers";
 import { isNumericMapping } from "../../utils/helpers";
 import PreviewTransform from "../PreviewTransform";
+import TransformOptions from "../TransformOptions/TranformOptions";
 
 interface DefineTransformsProps {
   transformService: TransformService;
@@ -68,17 +69,8 @@ export default function DefineTransforms({
     // TODO: Handle the available options according to column types
     columns.push({
       id: field.label,
-      display: (
-        <div>
-          <EuiFlexGroup justifyContent="spaceBetween">
-            <EuiFlexItem grow={false}>{field.label}</EuiFlexItem>
-            <EuiFlexItem grow={false}>
-              <EuiButtonIcon iconType="plusInCircleFilled" />
-            </EuiFlexItem>
-          </EuiFlexGroup>
-        </div>
-      ),
-      // displayAsText: field.label + " type: " + field.type,
+      display: <TransformOptions name={field.label} type={field.type} />,
+      displayAsText: field.label + " type: " + field.type,
       schema: field.type,
       actions: {
         showHide: false,
