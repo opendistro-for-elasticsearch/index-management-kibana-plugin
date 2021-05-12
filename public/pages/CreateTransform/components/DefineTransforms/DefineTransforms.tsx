@@ -13,7 +13,7 @@
  * permissions and limitations under the License.
  */
 
-import { EuiDataGrid, EuiDataGridColumn, EuiEmptyPrompt, EuiSpacer, EuiText } from "@elastic/eui";
+import { EuiDataGrid, EuiDataGridColumn, EuiEmptyPrompt, EuiPanel, EuiSpacer, EuiText } from "@elastic/eui";
 import { CoreStart } from "kibana/public";
 import React, { useCallback, useState } from "react";
 import { ContentPanel } from "../../../../components/ContentPanel";
@@ -59,7 +59,6 @@ export default function DefineTransforms({
       for (const [key, value] of Object.entries(previewTransform[0])) {
         tempCol.push({
           id: key,
-          displayAsText: key,
           actions: {
             showHide: false,
             showMoveLeft: false,
@@ -230,6 +229,7 @@ export default function DefineTransforms({
 
   const [loading, setLoading] = useState<boolean>(true);
   const [pagination, setPagination] = useState({ pageIndex: 0, pageSize: 10 });
+  const [previewPagination, setPreviewPagination] = useState({ pageIndex: 0, pageSize: 10 });
   const [from, setFrom] = useState<number>(0);
   const [size, setSize] = useState<number>(10);
   const [sortingColumns, setSortingColumns] = useState([]);
@@ -281,6 +281,23 @@ export default function DefineTransforms({
       setFrom(pageIndex * size);
     },
     [setPagination]
+  );
+
+  const onChangePreviewPerPage = useCallback(
+    (pageSize) => {
+      setPreviewPagination((previewPagination) => ({
+        ...previewPagination,
+        pageSize,
+        pageIndex: 0,
+      }));
+    },
+    [setPreviewPagination]
+  );
+  const onChangePreviewPage = useCallback(
+    (pageIndex) => {
+      setPreviewPagination((previewPagination) => ({ ...previewPagination, pageIndex }));
+    },
+    [setPreviewPagination]
   );
 
   const onSort = useCallback(
@@ -368,6 +385,7 @@ export default function DefineTransforms({
       <EuiText>
         <h4>Transformed fields preview based on sample data</h4>
       </EuiText>
+      <EuiSpacer size="s" />
       {previewTransform.length ? (
         <EuiDataGrid
           aria-label="Preview transforms"
@@ -376,12 +394,12 @@ export default function DefineTransforms({
           rowCount={previewTransform.length}
           renderCellValue={renderPreviewCellValue}
           // sorting={{ columns: sortingColumns, onSort }}
-          // pagination={{
-          //   ...pagination,
-          //   pageSizeOptions: [5, 10, 20, 50],
-          //   onChangeItemsPerPage: onChangeItemsPerPage,
-          //   onChangePage: onChangePage,
-          // }}
+          pagination={{
+            ...previewPagination,
+            pageSizeOptions: [5, 10, 20, 50],
+            onChangeItemsPerPage: onChangePreviewPerPage,
+            onChangePage: onChangePreviewPage,
+          }}
           toolbarVisibility={{
             showColumnSelector: true,
             showStyleSelector: false,
@@ -390,10 +408,12 @@ export default function DefineTransforms({
           }}
         />
       ) : (
-        <EuiEmptyPrompt
-          title={<h3> No fields selected</h3>}
-          body={<p>From the table above, select a field you want to transform by clicking the “plus” button next to the field name</p>}
-        />
+        <EuiPanel>
+          <EuiEmptyPrompt
+            title={<h4> No fields selected</h4>}
+            body={<p>From the table above, select a field you want to transform by clicking the “plus” button next to the field name</p>}
+          />
+        </EuiPanel>
       )}
     </ContentPanel>
   );
