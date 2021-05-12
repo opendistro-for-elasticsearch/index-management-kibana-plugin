@@ -172,9 +172,7 @@ export default class CreateTransformForm extends Component<CreateTransformFormPr
       const { transformService } = this.props;
       const previewResponse = await transformService.previewTransform(transform);
       if (previewResponse.ok) this.setState({ previewTransform: previewResponse.response.documents });
-
-      //Debug use
-      console.log("Documents: " + JSON.stringify(previewResponse.response.documents));
+      else this.context.notifications.toasts.addDanger(`Could not preview transform: ${previewResponse.error}`);
     } catch (err) {
       this.context.notifications.toasts.addDanger(getErrorMessage(err, "Could not load preview transform"));
     }
