@@ -23,8 +23,10 @@ interface GeneralInformationProps {
   description: string;
   sourceIndex: string;
   targetIndex: string;
+  sourceIndexFilter: string;
   scheduledText: string;
   pageSize: number;
+  enabledAt: number;
   updatedAt: number;
   onEdit: () => void;
 }
@@ -35,15 +37,30 @@ export default class GenerationInformation extends Component<GeneralInformationP
   }
 
   render() {
-    const { id, description, sourceIndex, targetIndex, scheduledText, pageSize, updatedAt, onEdit } = this.props;
+    const { id,
+      description,
+      sourceIndex,
+      targetIndex,
+      sourceIndexFilter,
+      scheduledText,
+      pageSize,
+      updatedAt,
+      onEdit } = this.props;
+
+    const enableDate = new Date(updatedAt);
+
     const infoItems = [
       { term: "Name", value: id },
+      { term: "State", value: "Enabled on " + enableDate.toLocaleString() }, // show disabled state, make a const
       { term: "Source index", value: sourceIndex },
-      { term: "Target index", value: targetIndex },
       { term: "Schedule", value: scheduledText },
       { term: "Description", value: description || "-" },
-      { term: "UpdatedAt", value: updatedAt },
+      {},
+      { term: "Source index filter", value: sourceIndexFilter },
       { term: "Pages per execution", value: pageSize },
+      {},
+      {},
+      { term: "Target index", value: targetIndex },
     ];
 
     return (

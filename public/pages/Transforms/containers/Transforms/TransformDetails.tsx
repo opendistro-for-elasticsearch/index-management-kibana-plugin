@@ -61,7 +61,8 @@ interface TransformDetailsState {
   transformJson: any;
   sourceIndex: string;
   targetIndex: string;
-  aggregationsShown: MetricItem[];
+  sourceIndexFilter: string;
+  aggregationsShown: any;
   groupsShown: DimensionItem[];
   metadata: TransformMetadata | undefined;
   interval: number;
@@ -87,7 +88,8 @@ export default class TransformDetails extends Component<TransformDetailsProps, T
       transformJson: EMPTY_TRANSFORM,
       sourceIndex: "",
       targetIndex: "",
-      aggregationsShown: [],
+      sourceIndexFilter: "",
+      aggregationsShown: {},
       groupsShown: [],
       metadata: undefined,
       interval: 2,
@@ -120,7 +122,7 @@ export default class TransformDetails extends Component<TransformDetailsProps, T
 
       if (response.ok) {
         let json = response.response;
-        // let aggregations = this.parseAggregations(response.response.transform.aggregations);
+        let aggregations = this.parseAggregations(response.response.transform.aggregations);
         let groups = this.parseGroups(response.response.transform.groups);
         this.setState({
           id: response.response._id,
@@ -132,7 +134,8 @@ export default class TransformDetails extends Component<TransformDetailsProps, T
           transformJson: json,
           sourceIndex: response.response.transform.source_index,
           targetIndex: response.response.transform.target_index,
-          aggregationsShown: [],
+          sourceIndexFilter: JSON.stringify(response.response.transform.data_selection_query),
+          aggregationsShown: aggregations,
           groupsShown: groups.slice(0, 10),
         });
 
@@ -158,10 +161,9 @@ export default class TransformDetails extends Component<TransformDetailsProps, T
   };
 
   parseGroups = (groups: RollupDimensionItem[]): DimensionItem[] => {
-    const sourceArray = groups.slice(1, groups.length);
-    if (sourceArray.length == 0) return [];
+    if (groups.length == 0) return [];
     // @ts-ignore
-    return sourceArray.map((group: RollupDimensionItem) => {
+    return groups.map((group: RollupDimensionItem) => {
       let sequence = groups.indexOf(group);
       switch (true) {
         case group.date_histogram != null:
@@ -195,6 +197,12 @@ export default class TransformDetails extends Component<TransformDetailsProps, T
     });
   };
 
+  parseAggregations = (aggregations: any): any => {
+    if (aggregations.size == 0) return {};
+    // @ts-ignore
+    return aggregations;
+  }
+
   render() {
     const {
       id,
@@ -203,9 +211,12 @@ export default class TransformDetails extends Component<TransformDetailsProps, T
       description,
       sourceIndex,
       targetIndex,
+      sourceIndexFilter,
       pageSize,
       metadata,
       transformJson,
+      groupsShown,
+      aggregationsShown,
       isDeleteModalOpen,
       isModalOpen,
       isPopOverOpen,
@@ -289,9 +300,6 @@ export default class TransformDetails extends Component<TransformDetailsProps, T
               <h2>{id}</h2>
             </EuiTitle>
           </EuiFlexItem>
-          <EuiFlexItem>
-            {enabled ? <EuiHealth color="success">{"Enabled on " + updatedAt}</EuiHealth> : <EuiHealth color="danger">Disabled</EuiHealth>}
-          </EuiFlexItem>
 
           <EuiFlexItem grow={false}>
             <EuiFlexGroup alignItems="center" gutterSize="s">
@@ -323,6 +331,7 @@ export default class TransformDetails extends Component<TransformDetailsProps, T
           description={description}
           sourceIndex={sourceIndex}
           targetIndex={targetIndex}
+          sourceIndexFilter={sourceIndexFilter}
           scheduledText={scheduleText}
           pageSize={pageSize}
           updatedAt={updatedAt}
@@ -332,8 +341,12 @@ export default class TransformDetails extends Component<TransformDetailsProps, T
         <TransformStatus metadata={metadata} />
         <EuiSpacer />
         <EuiSpacer />
-
-        <TransformSettings transformService={this.props.transformService} transformJson={transformJson} />
+        <TransformSettings
+          transformService={this.props.transformService}
+          transformJson={transformJson}
+          groupsShown={groupsShown}
+          aggregationsShown={aggregationsShown}
+          />
 
         {isModalOpen && (
           <EuiOverlayMask>

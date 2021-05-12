@@ -14,15 +14,18 @@
  */
 
 import React, { Component } from "react";
-import { EuiSpacer, EuiText, EuiAccordion } from "@elastic/eui";
+import { EuiSpacer, EuiText, EuiAccordion, EuiFlexGrid, EuiFlexItem } from "@elastic/eui";
 // @ts-ignore
 import { htmlIdGenerator } from "@elastic/eui/lib/services";
 import { ContentPanel } from "../../../../components/ContentPanel";
 import { TransformService } from "../../../../services";
+import { DimensionItem, MetricItem } from "../../../../../models/interfaces";
 
 interface TransformSettingsProps {
   transformService: TransformService;
   transformJson: Map<string, any>;
+  groupsShown: DimensionItem[];
+  aggregationsShown: any;
 }
 
 interface TransformSettingsState {}
@@ -34,13 +37,47 @@ export default class TransformSettings extends Component<TransformSettingsProps,
   }
 
   render() {
+    const { groupsShown,
+            aggregationsShown,
+          } = this.props;
+
+    const groupItems = () => {
+      console.log(groupsShown);
+      return (groupsShown.map((group) => {
+        return(
+          <EuiFlexItem>
+            <EuiText size="xs">
+              <dt>Group by {group.aggregationMethod}</dt>
+              <dd>{group.field.label}</dd>
+            </EuiText>
+          </EuiFlexItem>
+      )
+      }));
+    };
+
+    const aggItems = () => {
+      console.log(aggregationsShown);
+      return (Object.keys(aggregationsShown).map((key) => {
+        return(
+        <EuiFlexItem>
+          <EuiText size="xs">
+            <dt>{key}</dt>
+            <dd>{JSON.stringify(aggregationsShown[key])}</dd>
+          </EuiText>
+        </EuiFlexItem>
+      )
+    }));
+    }
+
     return (
       <ContentPanel bodyStyles={{ padding: "initial" }} title="Transform settings" titleSize="m">
         <div style={{ paddingLeft: "10px" }}>
-          <EuiSpacer size="s" />
-          <EuiText>
-            <h3>Groups</h3>
-          </EuiText>
+          <EuiSpacer size="m" />
+          <EuiFlexGrid columns={4}>
+          {groupItems()}
+          {aggItems()}
+          </EuiFlexGrid>
+          <EuiSpacer size="m" />
         </div>
         <EuiAccordion id={htmlIdGenerator()()} buttonContent={"Sample source index and transform result"} onClick={this.onClick}>
           <div>

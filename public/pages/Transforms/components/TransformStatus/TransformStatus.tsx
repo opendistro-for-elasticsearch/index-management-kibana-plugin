@@ -51,16 +51,6 @@ export default class TransformStatus extends Component<TransformStatusProps> {
             </EuiFlexItem>
             <EuiFlexItem>
               <EuiText size="xs">
-                <dt>Indexed time (ms)</dt>
-                <dd>
-                  {metadata == null || metadata.transform_metadata == null ? "-" : metadata.transform_metadata.stats.index_time_in_millis}
-                </dd>
-              </EuiText>
-            </EuiFlexItem>
-            <EuiFlexItem></EuiFlexItem>
-            <EuiFlexItem></EuiFlexItem>
-            <EuiFlexItem>
-              <EuiText size="xs">
                 <dt>Document processed</dt>
                 <dd>
                   {metadata == null || metadata.transform_metadata == null ? "-" : metadata.transform_metadata.stats.documents_processed}
@@ -69,9 +59,9 @@ export default class TransformStatus extends Component<TransformStatusProps> {
             </EuiFlexItem>
             <EuiFlexItem>
               <EuiText size="xs">
-                <dt>Search time (ms)</dt>
+                <dt>Indexed time (ms)</dt>
                 <dd>
-                  {metadata == null || metadata.transform_metadata == null ? "-" : metadata.transform_metadata.stats.search_time_in_millis}
+                  {metadata == null || metadata.transform_metadata == null ? "-" : metadata.transform_metadata.stats.index_time_in_millis}
                 </dd>
               </EuiText>
             </EuiFlexItem>
@@ -83,6 +73,14 @@ export default class TransformStatus extends Component<TransformStatusProps> {
                 <dd>{metadata == null || metadata.transform_metadata == null ? "-" : metadata.transform_metadata.stats.pages_processed}</dd>
               </EuiText>
             </EuiFlexItem>
+            <EuiFlexItem>
+              <EuiText size="xs">
+                <dt>Search time (ms)</dt>
+                <dd>
+                  {metadata == null || metadata.transform_metadata == null ? "-" : metadata.transform_metadata.stats.search_time_in_millis}
+                </dd>
+              </EuiText>
+            </EuiFlexItem>            
           </EuiFlexGrid>
           <EuiSpacer size="s" />
         </div>
