@@ -14,18 +14,7 @@
  */
 
 import React from "react";
-import {
-  EuiButton,
-  EuiButtonIcon,
-  EuiContextMenu,
-  EuiContextMenuPanelDescriptor,
-  EuiFieldNumber,
-  EuiFlexGroup,
-  EuiFlexItem,
-  EuiFormRow,
-  EuiPanel,
-  EuiPopover,
-} from "@elastic/eui";
+import { EuiButtonIcon, EuiContextMenu, EuiContextMenuPanelDescriptor, EuiFlexGroup, EuiFlexItem, EuiPopover } from "@elastic/eui";
 import { useState } from "react";
 import { isNumericMapping } from "../../utils/helpers";
 import { GROUP_TYPES, TransformGroupItem } from "../../../../../models/interfaces";
@@ -75,27 +64,68 @@ export default function TransformOptions({
         },
         {
           name: "Group by terms",
+          onClick: () => {
+            groupSelection.push({
+              terms: {
+                source_field: name,
+                target_field: `${name}_${GROUP_TYPES.terms}`,
+              },
+            });
+            onGroupSelectionChange(groupSelection);
+          },
         },
         {
           name: "Aggregate by sum",
+          onClick: () => {
+            aggSelection[`sum_${name}`] = {
+              sum: { field: name },
+            };
+            onAggregationSelectionChange(aggSelection);
+          },
         },
         {
           name: "Aggregate by max",
+          onClick: () => {
+            aggSelection[`max_${name}`] = {
+              max: { field: name },
+            };
+            onAggregationSelectionChange(aggSelection);
+          },
         },
         {
           name: "Aggregate by min",
+          onClick: () => {
+            aggSelection[`min_${name}`] = {
+              min: { field: name },
+            };
+            onAggregationSelectionChange(aggSelection);
+          },
         },
         {
           name: "Aggregate by avg",
+          onClick: () => {
+            aggSelection[`avg_${name}`] = {
+              avg: { field: name },
+            };
+            onAggregationSelectionChange(aggSelection);
+          },
         },
         {
           name: "Aggregate by count",
+          onClick: () => {
+            aggSelection[`count_${name}`] = {
+              value_count: { field: name },
+            };
+            onAggregationSelectionChange(aggSelection);
+          },
         },
         {
           name: "Aggregate by percentile",
+          panel: 3,
         },
         {
           name: "Aggregate by scripted metrics",
+          panel: 4,
         },
       ],
     },
@@ -144,6 +174,14 @@ export default function TransformOptions({
         },
       ],
     },
+    {
+      id: 3,
+      title: "Back",
+    },
+    {
+      id: 4,
+      title: "Back",
+    },
   ];
 
   const button = <EuiButtonIcon iconType="plusInCircleFilled" onClick={() => setIsPopoverOpen(!isPopoverOpen)} />;
@@ -161,7 +199,7 @@ export default function TransformOptions({
             panelPaddingSize="none"
             anchorPosition="rightCenter"
           >
-            <EuiContextMenu initialPanelId={0} panels={panels} size="s" />
+            <EuiContextMenu initialPanelId={0} panels={panels} />
           </EuiPopover>
         </EuiFlexItem>
       </EuiFlexGroup>
