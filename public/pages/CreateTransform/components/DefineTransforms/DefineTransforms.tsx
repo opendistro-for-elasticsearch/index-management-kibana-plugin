@@ -348,7 +348,7 @@ export default function DefineTransforms({
         aria-label="Define transforms"
         columns={columns}
         columnVisibility={{ visibleColumns, setVisibleColumns }}
-        rowCount={dataCount}
+        rowCount={Math.min(dataCount, 200)}
         renderCellValue={renderCellValue}
         sorting={{ columns: sortingColumns, onSort }}
         pagination={{
@@ -395,17 +395,6 @@ export default function DefineTransforms({
           body={<p>From the table above, select a field you want to transform by clicking the “plus” button next to the field name</p>}
         />
       )}
-      <EuiSpacer />
-      <EuiText>
-        <h4>Group selection</h4>
-      </EuiText>
-      {/*Debug use*/}
-      {JSON.stringify(selectedGroupField)}
-      <EuiSpacer />
-      <EuiText>
-        <h4>Aggregation</h4>
-      </EuiText>
-      {JSON.stringify(selectedAggregations)}
     </ContentPanel>
   );
 }
