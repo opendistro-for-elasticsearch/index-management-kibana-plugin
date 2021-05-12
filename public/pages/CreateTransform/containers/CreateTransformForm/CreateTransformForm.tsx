@@ -293,7 +293,7 @@ export default class CreateTransformForm extends Component<CreateTransformFormPr
   onAggregationSelectionChange = async (selectedAggregations: any): Promise<void> => {
     let newJSON = this.state.transformJSON;
 
-    if (selectedAggregations.length) newJSON.transform.aggregations = selectedAggregations;
+    newJSON.transform.aggregations = selectedAggregations;
     this.setState({ selectedAggregations: selectedAggregations, transformJSON: newJSON });
     await this.previewTransform(newJSON);
   };
