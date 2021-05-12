@@ -69,7 +69,16 @@ export default function DefineTransforms({
     // TODO: Handle the available options according to column types
     columns.push({
       id: field.label,
-      display: <TransformOptions name={field.label} type={field.type} />,
+      display: (
+        <TransformOptions
+          name={field.label}
+          type={field.type}
+          selectedGroupField={selectedGroupField}
+          onGroupSelectionChange={onGroupSelectionChange}
+          selectedAggregations={selectedAggregations}
+          onAggregationSelectionChange={onAggregationSelectionChange}
+        />
+      ),
       displayAsText: field.label + " type: " + field.type,
       schema: field.type,
       actions: {

@@ -14,20 +14,46 @@
  */
 
 import React from "react";
-import { EuiButtonIcon, EuiContextMenu, EuiContextMenuPanelDescriptor, EuiFlexGroup, EuiFlexItem, EuiPopover } from "@elastic/eui";
+import {
+  EuiButton,
+  EuiButtonIcon,
+  EuiContextMenu,
+  EuiContextMenuPanelDescriptor,
+  EuiFieldNumber,
+  EuiFlexGroup,
+  EuiFlexItem,
+  EuiFormRow,
+  EuiPanel,
+  EuiPopover,
+} from "@elastic/eui";
 import { useState } from "react";
 import { isNumericMapping } from "../../utils/helpers";
+import { GROUP_TYPES, TransformGroupItem } from "../../../../../models/interfaces";
 
 interface TransformOptionsProps {
   name: string;
   type?: string;
+  selectedGroupField: TransformGroupItem[];
+  onGroupSelectionChange: (selectedFields: TransformGroupItem[]) => void;
+  selectedAggregations: any;
+  onAggregationSelectionChange: (selectedFields: any) => void;
 }
 
-export default function TransformOptions({ name, type }: TransformOptionsProps) {
+export default function TransformOptions({
+  name,
+  type,
+  selectedGroupField,
+  onGroupSelectionChange,
+  selectedAggregations,
+  onAggregationSelectionChange,
+}: TransformOptionsProps) {
   const isNumeric = isNumericMapping(type);
   const isDate = type == "date";
 
   const [isPopoverOpen, setIsPopoverOpen] = useState(false);
+  const [histogramInterval, setHistogramInterval] = useState(5);
+  const [groupSelection, setGroupSelection] = useState<TransformGroupItem[]>(selectedGroupField);
+  const [aggSelection, setAggSelection] = useState(selectedAggregations);
 
   const panels: EuiContextMenuPanelDescriptor[] = [
     {
@@ -36,7 +62,7 @@ export default function TransformOptions({ name, type }: TransformOptionsProps) 
       items: [
         {
           name: "Group by histogram",
-          // panel:1,
+          panel: 1,
         },
         {
           name: "Group by date histogram",
@@ -66,6 +92,48 @@ export default function TransformOptions({ name, type }: TransformOptionsProps) 
           name: "Aggregate by scripted metrics",
         },
       ],
+    },
+    {
+      id: 1,
+      title: "Back",
+      content: (
+        <EuiPanel>
+          <EuiFlexGroup>
+            <EuiFlexItem grow={false}>
+              <EuiFormRow label="Histogram interval">
+                <EuiFieldNumber value={histogramInterval} onChange={(e) => setHistogramInterval(e.target.valueAsNumber)} />
+              </EuiFormRow>
+            </EuiFlexItem>
+            <EuiFlexItem grow={false}></EuiFlexItem>
+          </EuiFlexGroup>
+          <EuiFlexGroup>
+            <EuiFlexItem grow={false}>
+              <EuiButton fullWidth={false} onClick={() => closePopover()}>
+                Cancel
+              </EuiButton>
+            </EuiFlexItem>
+            <EuiFlexItem grow={false}>
+              <EuiButton
+                fill
+                fullWidth={false}
+                onClick={() => {
+                  const targetFieldName = `${name} _${GROUP_TYPES.histogram}`;
+                  groupSelection.push({
+                    histogram: {
+                      source_field: name,
+                      target_field: targetFieldName,
+                      interval: histogramInterval,
+                    },
+                  });
+                  onGroupSelectionChange(groupSelection);
+                }}
+              >
+                OK
+              </EuiButton>
+            </EuiFlexItem>
+          </EuiFlexGroup>
+        </EuiPanel>
+      ),
     },
   ];
 
