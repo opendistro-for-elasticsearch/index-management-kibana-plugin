@@ -304,9 +304,9 @@ export default function DefineTransforms({
   };
 
   const renderPreviewCellValue = ({ rowIndex, columnId }) => {
-    // if (previewTransform.hasOwnProperty(rowIndex)) {
-    //   return previewTransform[rowIndex][columnId] ? data[rowIndex][columnId] : "-";
-    // }
+    if (previewTransform.hasOwnProperty(rowIndex)) {
+      return previewTransform[rowIndex][columnId] ? previewTransform[rowIndex][columnId] : "-";
+    }
     return "-";
   };
 
