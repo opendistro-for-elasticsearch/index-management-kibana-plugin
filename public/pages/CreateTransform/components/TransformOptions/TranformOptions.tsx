@@ -14,7 +14,7 @@
  */
 
 import React from "react";
-import { EuiButtonIcon, EuiContextMenu, EuiFlexGroup, EuiFlexItem, EuiPopover } from "@elastic/eui";
+import { EuiButtonIcon, EuiContextMenu, EuiContextMenuPanelDescriptor, EuiFlexGroup, EuiFlexItem, EuiPopover } from "@elastic/eui";
 import { useState } from "react";
 import { isNumericMapping } from "../../utils/helpers";
 
@@ -29,56 +29,41 @@ export default function TransformOptions({ name, type }: TransformOptionsProps) 
 
   const [isPopoverOpen, setIsPopoverOpen] = useState(false);
 
-  const panels = [
+  const panels: EuiContextMenuPanelDescriptor[] = [
     {
       id: 0,
-      title: "This is a context menu",
+      title: "Transform options",
       items: [
         {
-          name: "Handle an onClick",
-          icon: "search",
+          name: "Group by histogram",
+          // panel:1,
         },
         {
-          name: "Go to a link",
-          icon: "user",
-          href: "http://elastic.co",
-          target: "_blank",
+          name: "Group by date histogram",
         },
         {
-          name: "Nest panels",
-          icon: "wrench",
-          panel: 1,
+          name: "Group by terms",
         },
         {
-          name: "Add a tooltip",
-          icon: "document",
-          toolTipTitle: "Optional tooltip",
-          toolTipContent: "Optional content for a tooltip",
-          toolTipPosition: "right",
+          name: "Aggregate by sum",
         },
         {
-          name: "Use an app icon",
-          icon: "visualizeApp",
-        },
-      ],
-    },
-    {
-      id: 1,
-      initialFocusedItemIndex: 1,
-      title: "Nest panels",
-      items: [
-        {
-          name: "PDF reports",
-          icon: "user",
+          name: "Aggregate by max",
         },
         {
-          name: "Embed code",
-          icon: "user",
-          panel: 2,
+          name: "Aggregate by min",
         },
         {
-          name: "Permalinks",
-          icon: "user",
+          name: "Aggregate by avg",
+        },
+        {
+          name: "Aggregate by count",
+        },
+        {
+          name: "Aggregate by percentile",
+        },
+        {
+          name: "Aggregate by scripted metrics",
         },
       ],
     },
@@ -101,9 +86,9 @@ export default function TransformOptions({ name, type }: TransformOptionsProps) 
             isOpen={isPopoverOpen}
             closePopover={closePopover}
             panelPaddingSize="none"
-            anchorPosition="downLeft"
+            anchorPosition="rightCenter"
           >
-            <EuiContextMenu initialPanelId={0} panels={panels} />
+            <EuiContextMenu initialPanelId={0} panels={panels} size="s" />
           </EuiPopover>
         </EuiFlexItem>
       </EuiFlexGroup>
