@@ -327,16 +327,7 @@ export default function DefineTransforms({
         <h4>Transformed fields preview based on sample data</h4>
       </EuiText>
       <EuiSpacer size="s" />
-      {previewTransform.length ? (
-        <PreviewTransform previewTransform={previewTransform} />
-      ) : (
-        <EuiPanel>
-          <EuiEmptyPrompt
-            title={<h4> No fields selected</h4>}
-            body={<p>From the table above, select a field you want to transform by clicking the “plus” button next to the field name</p>}
-          />
-        </EuiPanel>
-      )}
+      <PreviewTransform previewTransform={previewTransform} />
     </ContentPanel>
   );
 }

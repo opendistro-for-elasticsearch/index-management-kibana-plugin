@@ -1,5 +1,6 @@
 import React, { useCallback, useState } from "react";
 import { EuiDataGrid, EuiDataGridColumn } from "@elastic/eui";
+import PreviewEmptyPrompt from "../PreviewEmptyPrompt";
 
 interface PreviewTransformsProps {
   previewTransform: any[];
@@ -58,7 +59,7 @@ export default function DefineTransforms({ previewTransform }: PreviewTransforms
     updatePreviewColumns();
   }, [previewTransform]);
 
-  return (
+  return previewTransform.length ? (
     <EuiDataGrid
       aria-label="Preview transforms"
       columns={previewColumns}
@@ -78,5 +79,7 @@ export default function DefineTransforms({ previewTransform }: PreviewTransforms
         showFullScreenSelector: false,
       }}
     />
+  ) : (
+    <PreviewEmptyPrompt />
   );
 }
