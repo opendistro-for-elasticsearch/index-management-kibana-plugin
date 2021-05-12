@@ -41,7 +41,6 @@ export default function TransformOptions({
   const isDate = type == "date";
 
   const [isPopoverOpen, setIsPopoverOpen] = useState(false);
-  const [histogramInterval, setHistogramInterval] = useState(5);
   const [groupSelection, setGroupSelection] = useState<TransformGroupItem[]>(selectedGroupField);
   const [aggSelection, setAggSelection] = useState(selectedAggregations);
 
@@ -147,30 +146,120 @@ export default function TransformOptions({
       items: [
         {
           name: "Millisecond",
+          onClick: () => {
+            groupSelection.push({
+              date_histogram: {
+                source_field: name,
+                target_field: `${name}_${GROUP_TYPES.dateHistogram}`,
+                fixed_interval: "1ms",
+              },
+            });
+            onGroupSelectionChange(groupSelection);
+          },
         },
         {
           name: "Second",
+          onClick: () => {
+            groupSelection.push({
+              date_histogram: {
+                source_field: name,
+                target_field: `${name}_${GROUP_TYPES.dateHistogram}`,
+                fixed_interval: "1s",
+              },
+            });
+            onGroupSelectionChange(groupSelection);
+          },
         },
         {
           name: "Minute",
+          onClick: () => {
+            groupSelection.push({
+              date_histogram: {
+                source_field: name,
+                target_field: `${name}_${GROUP_TYPES.dateHistogram}`,
+                fixed_interval: "1m",
+              },
+            });
+            onGroupSelectionChange(groupSelection);
+          },
         },
         {
           name: "Hour",
+          onClick: () => {
+            groupSelection.push({
+              date_histogram: {
+                source_field: name,
+                target_field: `${name}_${GROUP_TYPES.dateHistogram}`,
+                fixed_interval: "1h",
+              },
+            });
+            onGroupSelectionChange(groupSelection);
+          },
         },
         {
           name: "Day",
+          onClick: () => {
+            groupSelection.push({
+              date_histogram: {
+                source_field: name,
+                target_field: `${name}_${GROUP_TYPES.dateHistogram}`,
+                calendar_interval: "1d",
+              },
+            });
+            onGroupSelectionChange(groupSelection);
+          },
         },
         {
           name: "Week",
+          onClick: () => {
+            groupSelection.push({
+              date_histogram: {
+                source_field: name,
+                target_field: `${name}_${GROUP_TYPES.dateHistogram}`,
+                calendar_interval: "1w",
+              },
+            });
+            onGroupSelectionChange(groupSelection);
+          },
         },
         {
           name: "Month",
+          onClick: () => {
+            groupSelection.push({
+              date_histogram: {
+                source_field: name,
+                target_field: `${name}_${GROUP_TYPES.dateHistogram}`,
+                calendar_interval: "1M",
+              },
+            });
+            onGroupSelectionChange(groupSelection);
+          },
         },
         {
           name: "Quarter",
+          onClick: () => {
+            groupSelection.push({
+              date_histogram: {
+                source_field: name,
+                target_field: `${name}_${GROUP_TYPES.dateHistogram}`,
+                calendar_interval: "1q",
+              },
+            });
+            onGroupSelectionChange(groupSelection);
+          },
         },
         {
           name: "Year",
+          onClick: () => {
+            groupSelection.push({
+              date_histogram: {
+                source_field: name,
+                target_field: `${name}_${GROUP_TYPES.dateHistogram}`,
+                calendar_interval: "1y",
+              },
+            });
+            onGroupSelectionChange(groupSelection);
+          },
         },
       ],
     },
