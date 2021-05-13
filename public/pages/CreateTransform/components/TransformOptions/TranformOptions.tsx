@@ -19,6 +19,7 @@ import { useState } from "react";
 import { isNumericMapping } from "../../utils/helpers";
 import { GROUP_TYPES, TransformGroupItem } from "../../../../../models/interfaces";
 import HistogramPanel from "./Panels/HistogramPanel";
+import PercentilePanel from "./Panels/PercentilePanel";
 
 interface TransformOptionsProps {
   name: string;
@@ -259,6 +260,7 @@ export default function TransformOptions({
     {
       id: 3,
       title: "Back",
+      content: <PercentilePanel name={name} handleAggSelectionChange={handleAggSelectionChange} closePopover={closePopover} />,
     },
     {
       id: 4,
