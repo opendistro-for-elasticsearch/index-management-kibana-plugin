@@ -260,7 +260,14 @@ export default function TransformOptions({
     {
       id: 3,
       title: "Back",
-      content: <PercentilePanel name={name} handleAggSelectionChange={handleAggSelectionChange} closePopover={closePopover} />,
+      content: (
+        <PercentilePanel
+          name={name}
+          aggSelection={aggSelection}
+          handleAggSelectionChange={handleAggSelectionChange}
+          closePopover={closePopover}
+        />
+      ),
     },
     {
       id: 4,

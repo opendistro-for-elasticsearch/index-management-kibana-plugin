@@ -13,17 +13,17 @@
  * permissions and limitations under the License.
  */
 
-import { GROUP_TYPES, TransformGroupItem } from "../../../../../../../models/interfaces";
 import React, { useState } from "react";
 import { EuiButton, EuiComboBox, EuiFlexGroup, EuiFlexItem, EuiFormRow, EuiPanel } from "@elastic/eui";
 
 interface PercentilePanelProps {
   name: string;
+  aggSelection: any;
   handleAggSelectionChange: () => void;
   closePopover: () => void;
 }
 
-export default function PercentilePanel({ name, handleAggSelectionChange, closePopover }: PercentilePanelProps) {
+export default function PercentilePanel({ name, aggSelection, handleAggSelectionChange, closePopover }: PercentilePanelProps) {
   const [percents, setPercents] = useState<{ label: string }[]>([]);
   const [isInvalid, setInvalid] = useState(false);
 
@@ -32,7 +32,7 @@ export default function PercentilePanel({ name, handleAggSelectionChange, closeP
     setInvalid(false);
   };
 
-  const isValidPercent = (value) => {
+  const isValidPercent = (value: string) => {
     // Only numbers between 0-100 including decimals. No spaces, numbers, or special characters.
     const numericValue = parseFloat(value);
     return numericValue >= 0.0 && numericValue <= 100.0;
@@ -52,7 +52,7 @@ export default function PercentilePanel({ name, handleAggSelectionChange, closeP
     setPercents([...percents, newOption]);
   };
 
-  const onSearchChange = (searchValue) => {
+  const onSearchChange = (searchValue: string) => {
     if (!searchValue) {
       setInvalid(false);
 
@@ -94,16 +94,15 @@ export default function PercentilePanel({ name, handleAggSelectionChange, closeP
           <EuiButton
             fill
             fullWidth={false}
-            // onClick={() => {
-            //   const targetFieldName = `${name} _${GROUP_TYPES.histogram}`;
-            //   handleGroupSelectionChange({
-            //     histogram: {
-            //       source_field: name,
-            //       target_field: targetFieldName,
-            //       interval: histogramInterval,
-            //     },
-            //   });
-            // }}
+            onClick={() => {
+              aggSelection[`percentiles_${name}`] = {
+                percentiles: {
+                  field: name,
+                  percents: percents.map((value) => parseFloat(value.label)),
+                },
+              };
+              handleAggSelectionChange();
+            }}
           >
             OK
           </EuiButton>
