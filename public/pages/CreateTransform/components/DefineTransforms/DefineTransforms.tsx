@@ -39,7 +39,7 @@ interface DefineTransformsProps {
 export default function DefineTransforms({
   transformService,
   notifications,
-  transfromId,
+  transformId,
   sourceIndex,
   fields,
   selectedGroupField,
@@ -226,7 +226,7 @@ export default function DefineTransforms({
         setDataCount(response.response.total.value);
       }
     } catch (err) {
-      notifications.toasts.addDanger(getErrorMessage(err, "There was a problem loading the rollups"));
+      notifications.toasts.addDanger(getErrorMessage(err, "There was a problem loading the transforms"));
     }
     setLoading(false);
   }, [sourceIndex]);

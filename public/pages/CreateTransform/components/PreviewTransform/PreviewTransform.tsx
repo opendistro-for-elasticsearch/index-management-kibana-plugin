@@ -16,6 +16,7 @@
 import React, { useCallback, useState } from "react";
 import { EuiDataGrid, EuiDataGridColumn } from "@elastic/eui";
 import PreviewEmptyPrompt from "../PreviewEmptyPrompt";
+import PreviewOptions from "../PreviewOptions/PreviewOptions";
 
 interface PreviewTransformProps {
   previewTransform: any[];
@@ -54,8 +55,13 @@ export default function PreviewTransform({ previewTransform }: PreviewTransformP
     if (previewTransform.length) {
       let tempCol: EuiDataGridColumn[] = [];
       for (const [key, value] of Object.entries(previewTransform[0])) {
+        console.log(value);
         tempCol.push({
           id: key,
+          display: (
+            <PreviewOptions
+              name={key}
+            />),
           actions: {
             showHide: false,
             showMoveLeft: false,
