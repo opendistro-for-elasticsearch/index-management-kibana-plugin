@@ -18,7 +18,6 @@ import { EuiFlexGrid, EuiSpacer, EuiFlexItem, EuiText, EuiAccordion } from "@ela
 import { ContentPanel, ContentPanelActions } from "../../../../components/ContentPanel";
 import { ModalConsumer } from "../../../../components/Modal";
 import { TransformGroupItem } from "../../../../../models/interfaces";
-import DefineTransforms from "../DefineTransforms";
 
 interface ReviewDefinitionProps {
   selectedGroupField: TransformGroupItem[];

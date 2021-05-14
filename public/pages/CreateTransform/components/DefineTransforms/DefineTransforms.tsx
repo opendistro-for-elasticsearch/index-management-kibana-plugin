@@ -17,11 +17,11 @@ import { EuiDataGrid, EuiDataGridColumn, EuiSpacer, EuiText } from "@elastic/eui
 import { CoreStart } from "kibana/public";
 import React, { useCallback, useState } from "react";
 import { ContentPanel } from "../../../../components/ContentPanel";
-import { FieldItem, GROUP_TYPES, TransformGroupItem } from "../../../../../models/interfaces";
+import { FieldItem, TransformGroupItem } from "../../../../../models/interfaces";
 import { TransformService } from "../../../../services";
 import { getErrorMessage } from "../../../../utils/helpers";
-import { isNumericMapping } from "../../utils/helpers";
 import PreviewTransform from "../PreviewTransform";
+import TransformOptions from "../TransformOptions/TranformOptions";
 
 interface DefineTransformsProps {
   transformService: TransformService;
@@ -53,12 +53,20 @@ export default function DefineTransforms({
   let columns: EuiDataGridColumn[] = [];
 
   fields.map((field: FieldItem) => {
-    const isNumeric = isNumericMapping(field.type);
-    const isDate = field.type == "date";
-
+    const isText = field.type == "text";
     // TODO: Handle the available options according to column types
     columns.push({
       id: field.label,
+      display: !isText && (
+        <TransformOptions
+          name={field.label}
+          type={field.type}
+          selectedGroupField={selectedGroupField}
+          onGroupSelectionChange={onGroupSelectionChange}
+          selectedAggregations={selectedAggregations}
+          onAggregationSelectionChange={onAggregationSelectionChange}
+        />
+      ),
       displayAsText: field.label + " type: " + field.type,
       schema: field.type,
       actions: {
@@ -67,135 +75,135 @@ export default function DefineTransforms({
         showMoveRight: false,
         showSortAsc: false,
         showSortDesc: false,
-        additional: [
-          {
-            label: "Group by histogram ",
-            onClick: () => {
-              const targetFieldName = `${field.label}_${GROUP_TYPES.histogram}`;
-              groupSelection.push({
-                histogram: {
-                  source_field: field.label,
-                  target_field: targetFieldName,
-                  interval: 5,
-                },
-              });
-              onGroupSelectionChange(groupSelection);
-            },
-            size: "xs",
-            color: isNumeric ? "text" : "subdued",
-          },
-          {
-            label: "Group by date histogram ",
-            onClick: () => {
-              groupSelection.push({
-                date_histogram: {
-                  source_field: field.label,
-                  target_field: `${field.label}_${GROUP_TYPES.dateHistogram}`,
-                  calendar_interval: "1d",
-                },
-              });
-              onGroupSelectionChange(groupSelection);
-            },
-            size: "xs",
-            color: isDate ? "text" : "subdued",
-          },
-          {
-            label: "Group by terms ",
-            onClick: () => {
-              groupSelection.push({
-                terms: {
-                  source_field: field.label,
-                  target_field: `${field.label}_${GROUP_TYPES.terms}`,
-                },
-              });
-              onGroupSelectionChange(groupSelection);
-            },
-            size: "xs",
-            color: "text",
-          },
-          {
-            label: "Aggregate by sum ",
-            onClick: () => {
-              aggSelection[`sum_${field.label}`] = {
-                sum: { field: field.label },
-              };
-              onAggregationSelectionChange(aggSelection);
-            },
-            size: "xs",
-            color: "text",
-          },
-          {
-            label: "Aggregate by max ",
-            onClick: () => {
-              aggSelection[`max_${field.label}`] = {
-                max: { field: field.label },
-              };
-              onAggregationSelectionChange(aggSelection);
-            },
-            size: "xs",
-            color: "text",
-          },
-          {
-            label: "Aggregate by min ",
-            onClick: () => {
-              aggSelection[`min_${field.label}`] = {
-                min: { field: field.label },
-              };
-              onAggregationSelectionChange(aggSelection);
-            },
-            size: "xs",
-            color: "text",
-          },
-          {
-            label: "Aggregate by avg ",
-            onClick: () => {
-              aggSelection[`avg_${field.label}`] = {
-                avg: { field: field.label },
-              };
-              onAggregationSelectionChange(aggSelection);
-            },
-            size: "xs",
-            color: "text",
-          },
-          {
-            label: "Aggregate by count ",
-            onClick: () => {
-              aggSelection[`count_${field.label}`] = {
-                value_count: { field: field.label },
-              };
-              onAggregationSelectionChange(aggSelection);
-            },
-            size: "xs",
-            color: "text",
-          },
-          {
-            label: "Aggregate by percentile",
-            onClick: () => {
-              aggSelection[`percentiles_${field.label}`] = {
-                percentiles: { field: field.label, percents: [1, 5, 25, 99] },
-              };
-              onAggregationSelectionChange(aggSelection);
-            },
-            size: "xs",
-            color: "text",
-          },
-          {
-            label: "Aggregate by scripted metrics ",
-            onClick: () => {
-              aggSelection[`scripted_metric_${field.label}`] = {
-                scripted_metric: {
-                  init_script: "",
-                  map_script: "",
-                  combine_script: "",
-                  reduce_script: "",
-                },
-              };
-              onAggregationSelectionChange(aggSelection);
-            },
-            size: "xs",
-            color: "text",
-          },
-        ],
+        // additional: [
+        //   {
+        //     label: "Group by histogram ",
+        //     onClick: () => {
+        //       const targetFieldName = `${field.label}_${GROUP_TYPES.histogram}`;
+        //       groupSelection.push({
+        //         histogram: {
+        //           source_field: field.label,
+        //           target_field: targetFieldName,
+        //           interval: 5,
+        //         },
+        //       });
+        //       onGroupSelectionChange(groupSelection);
+        //     },
+        //     size: "xs",
+        //     color: isNumeric ? "text" : "subdued",
+        //   },
+        //   {
+        //     label: "Group by date histogram ",
+        //     onClick: () => {
+        //       groupSelection.push({
+        //         date_histogram: {
+        //           source_field: field.label,
+        //           target_field: `${field.label}_${GROUP_TYPES.dateHistogram}`,
+        //           calendar_interval: "1d",
+        //         },
+        //       });
+        //       onGroupSelectionChange(groupSelection);
+        //     },
+        //     size: "xs",
+        //     color: isDate ? "text" : "subdued",
+        //   },
+        //   {
+        //     label: "Group by terms ",
+        //     onClick: () => {
+        //       groupSelection.push({
+        //         terms: {
+        //           source_field: field.label,
+        //           target_field: `${field.label}_${GROUP_TYPES.terms}`,
+        //         },
+        //       });
+        //       onGroupSelectionChange(groupSelection);
+        //     },
+        //     size: "xs",
+        //     color: "text",
+        //   },
+        //   {
+        //     label: "Aggregate by sum ",
+        //     onClick: () => {
+        //       aggSelection[`sum_${field.label}`] = {
+        //         sum: { field: field.label },
+        //       };
+        //       onAggregationSelectionChange(aggSelection);
+        //     },
+        //     size: "xs",
+        //     color: "text",
+        //   },
+        //   {
+        //     label: "Aggregate by max ",
+        //     onClick: () => {
+        //       aggSelection[`max_${field.label}`] = {
+        //         max: { field: field.label },
+        //       };
+        //       onAggregationSelectionChange(aggSelection);
+        //     },
+        //     size: "xs",
+        //     color: "text",
+        //   },
+        //   {
+        //     label: "Aggregate by min ",
+        //     onClick: () => {
+        //       aggSelection[`min_${field.label}`] = {
+        //         min: { field: field.label },
+        //       };
+        //       onAggregationSelectionChange(aggSelection);
+        //     },
+        //     size: "xs",
+        //     color: "text",
+        //   },
+        //   {
+        //     label: "Aggregate by avg ",
+        //     onClick: () => {
+        //       aggSelection[`avg_${field.label}`] = {
+        //         avg: { field: field.label },
+        //       };
+        //       onAggregationSelectionChange(aggSelection);
+        //     },
+        //     size: "xs",
+        //     color: "text",
+        //   },
+        //   {
+        //     label: "Aggregate by count ",
+        //     onClick: () => {
+        //       aggSelection[`count_${field.label}`] = {
+        //         value_count: { field: field.label },
+        //       };
+        //       onAggregationSelectionChange(aggSelection);
+        //     },
+        //     size: "xs",
+        //     color: "text",
+        //   },
+        //   {
+        //     label: "Aggregate by percentile",
+        //     onClick: () => {
+        //       aggSelection[`percentiles_${field.label}`] = {
+        //         percentiles: { field: field.label, percents: [1, 5, 25, 99] },
+        //       };
+        //       onAggregationSelectionChange(aggSelection);
+        //     },
+        //     size: "xs",
+        //     color: "text",
+        //   },
+        //   {
+        //     label: "Aggregate by scripted metrics ",
+        //     onClick: () => {
+        //       aggSelection[`scripted_metric_${field.label}`] = {
+        //         scripted_metric: {
+        //           init_script: "",
+        //           map_script: "",
+        //           combine_script: "",
+        //           reduce_script: "",
+        //         },
+        //       };
+        //       onAggregationSelectionChange(aggSelection);
+        //     },
+        //     size: "xs",
+        //     color: "text",
+        //   },
+        // ],
       },
     });
   });
@@ -303,7 +311,6 @@ export default function DefineTransforms({
         <p>{`Viewing sample data from index ${sourceIndex}`}</p>
       </EuiText>
       <EuiSpacer size="s" />
-      {/*TODO: add rowCount*/}
       <EuiDataGrid
         aria-label="Define transforms"
         columns={columns}
