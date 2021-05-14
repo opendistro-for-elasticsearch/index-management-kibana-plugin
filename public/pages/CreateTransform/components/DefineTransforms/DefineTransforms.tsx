@@ -34,6 +34,7 @@ interface DefineTransformsProps {
   selectedAggregations: any;
   onAggregationSelectionChange: (selectedFields: any) => void;
   previewTransform: any[];
+  isReadOnly: boolean;
 }
 
 export default function DefineTransforms({
@@ -47,6 +48,7 @@ export default function DefineTransforms({
   selectedAggregations,
   onAggregationSelectionChange,
   previewTransform,
+  isReadOnly,
 }: DefineTransformsProps) {
   let columns: EuiDataGridColumn[] = [];
 
