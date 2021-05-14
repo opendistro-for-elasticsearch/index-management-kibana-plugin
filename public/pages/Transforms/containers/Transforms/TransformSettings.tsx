@@ -128,11 +128,9 @@ export default class TransformSettings extends Component<TransformSettingsProps,
           <EuiSpacer size="m" />
         </div>
         <EuiAccordion id={htmlIdGenerator()()} buttonContent={"Sample source index and transform result"} onClick={this.onClick}>
-          <div>
-            <EuiSpacer />
-            <EuiText>
-              <h4>Preview result based on sample data</h4>
-            </EuiText>
+          <div style={{ paddingLeft: "10px" }}>
+            <EuiSpacer size={"s"} />
+
             {/*// TODO: Use the source data preview table from create workflow */}
             {/*<DefineTransforms*/}
             {/*  {...this.props}*/}
@@ -145,7 +143,10 @@ export default class TransformSettings extends Component<TransformSettingsProps,
             {/*  onAggregationSelectionChange={()=> ()}*/}
             {/*  previewTransform={[]}*/}
             {/*/>*/}
-            {/*// TODO: Use the transformed preview table from create workflow*/}
+            <EuiText>
+              <h4>Preview result based on sample data</h4>
+            </EuiText>
+            <EuiSpacer size={"s"} />
             <PreviewTransforms previewTransform={this.state.previewTransform} />
           </div>
         </EuiAccordion>
