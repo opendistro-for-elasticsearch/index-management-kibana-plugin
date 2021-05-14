@@ -118,10 +118,10 @@ export default function TransformOptions({
           name: "Aggregate by percentile",
           panel: 2,
         },
-        {
-          name: "Aggregate by scripted metrics",
-          panel: 3,
-        },
+        // {
+        //   name: "Aggregate by scripted metrics",
+        //   panel: 3,
+        // },
       ],
     },
     {
@@ -141,10 +141,10 @@ export default function TransformOptions({
         />
       ),
     },
-    {
-      id: 3,
-      title: "Back",
-    },
+    // {
+    //   id: 3,
+    //   title: "Back",
+    // },
   ];
   const datePanels: EuiContextMenuPanelDescriptor[] = [
     {
