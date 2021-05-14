@@ -24,6 +24,7 @@ import { getErrorMessage } from "../../../../utils/helpers";
 import { EuiFlexItem, EuiFlexGroup, EuiButton, EuiTitle, EuiSpacer, EuiButtonEmpty } from "@elastic/eui";
 import ConfigureTransform from "../../components/ConfigureTransform";
 import Schedule from "../../components/Schedule";
+import Indices from "../../components/Indices";
 import moment from "moment";
 import { Transform } from "../../../../../models/interfaces";
 
@@ -37,6 +38,9 @@ interface EditTransformState {
   seqNo: number | null;
   primaryTerm: number | null;
   description: string;
+  sourceIndex: string;
+  targetIndex: string;
+  sourceIndexFilter: string;
   pageSize: number;
   enabled: boolean;
   transformJSON: any;
@@ -62,6 +66,9 @@ export default class EditTransform extends Component<EditTransformProps, EditTra
       seqNo: null,
       primaryTerm: null,
       description: "",
+      sourceIndex: "",
+      targetIndex: "",
+      sourceIndexFilter: "",
       pageSize: 1000,
       enabled: true,
       transformJSON: EMPTY_TRANSFORM,
@@ -102,6 +109,9 @@ export default class EditTransform extends Component<EditTransformProps, EditTra
           primaryTerm: response.response._primaryTerm,
           id: response.response._id,
           description: response.response.transform.description,
+          sourceIndex: response.response.transform.source_index,
+          targetIndex: response.response.transform.target_index,
+          sourceIndexFilter: JSON.stringify(response.response.transform.data_selection_query),
           enabled: response.response.transform.enabled,
           pageSize: response.response.transform.page_size,
           transformJSON: json,
@@ -122,6 +132,9 @@ export default class EditTransform extends Component<EditTransformProps, EditTra
       error,
       pageSize,
       description,
+      sourceIndex,
+      targetIndex,
+      sourceIndexFilter,
       isSubmitting,
       enabled,
       interval,
@@ -144,6 +157,12 @@ export default class EditTransform extends Component<EditTransformProps, EditTra
           onChangeName={this.onNameChange}
           onChangeDescription={this.onDescriptionChange}
           description={description}
+        />
+        <EuiSpacer />
+        <Indices
+          sourceIndex={sourceIndex}
+          targetIndex={targetIndex}
+          sourceIndexFilter={sourceIndexFilter}
         />
         <EuiSpacer />
         <Schedule

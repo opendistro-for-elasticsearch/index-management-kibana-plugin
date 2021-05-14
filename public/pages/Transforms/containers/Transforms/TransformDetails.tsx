@@ -212,6 +212,8 @@ export default class TransformDetails extends Component<TransformDetailsProps, T
       sourceIndex,
       targetIndex,
       sourceIndexFilter,
+      interval,
+      intervalTimeUnit,
       pageSize,
       metadata,
       transformJson,
@@ -222,7 +224,7 @@ export default class TransformDetails extends Component<TransformDetailsProps, T
       isPopOverOpen,
     } = this.state;
 
-    let scheduleText = "At some time";
+    let scheduleText = "Every " + interval + " " + intervalTimeUnit.toLowerCase();
     const actionButton = (
       <EuiButton iconType="arrowDown" iconSide="right" disabled={false} onClick={this.onActionButtonClick} data-test-subj="actionButton">
         Actions
