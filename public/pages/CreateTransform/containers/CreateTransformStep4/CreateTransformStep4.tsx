@@ -18,11 +18,7 @@ import { EuiSpacer, EuiTitle, EuiFlexGroup, EuiFlexItem, EuiComboBoxOptionOption
 import { RouteComponentProps } from "react-router-dom";
 import { TransformService } from "../../../../services";
 import { BREADCRUMBS, ROUTES } from "../../../../utils/constants";
-import { DimensionItem,
-  IndexItem,
-  MetricItem,
-  TransformAggItem,
-  TransformGroupItem,} from "../../../../../models/interfaces";
+import { IndexItem, TransformGroupItem } from "../../../../../models/interfaces";
 import CreateTransformSteps from "../../components/CreateTransformSteps";
 import JobNameAndIndices from "../../components/JobNameAndIndices";
 import ReviewDefinition from "../../components/ReviewDefinition";

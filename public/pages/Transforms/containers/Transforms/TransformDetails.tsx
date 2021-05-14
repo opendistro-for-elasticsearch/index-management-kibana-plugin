@@ -201,7 +201,7 @@ export default class TransformDetails extends Component<TransformDetailsProps, T
     if (aggregations.size == 0) return {};
     // @ts-ignore
     return aggregations;
-  }
+  };
 
   render() {
     const {
@@ -342,11 +342,14 @@ export default class TransformDetails extends Component<TransformDetailsProps, T
         <EuiSpacer />
         <EuiSpacer />
         <TransformSettings
+          {...this.props}
           transformService={this.props.transformService}
+          transformId={id}
+          sourceIndex={sourceIndex}
           transformJson={transformJson}
           groupsShown={groupsShown}
           aggregationsShown={aggregationsShown}
-          />
+        />
 
         {isModalOpen && (
           <EuiOverlayMask>
