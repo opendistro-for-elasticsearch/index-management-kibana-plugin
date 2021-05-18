@@ -25,11 +25,13 @@ import {
   EuiFlexGroup,
   EuiFlexItem,
   EuiTextArea,
+  EuiText,
 } from "@elastic/eui";
 // @ts-ignore
 import { htmlIdGenerator } from "@elastic/eui/lib/services";
 import { ScheduleIntervalTimeunitOptions } from "../../utils/constants";
 import { ContentPanel } from "../../../../components/ContentPanel";
+import { selectCronExpression, selectInterval } from "../../utils/metadataHelper";
 
 interface ScheduleProps {
   transformId: string;
@@ -50,37 +52,6 @@ interface ScheduleProps {
   onIntervalChange: (e: ChangeEvent<HTMLInputElement>) => void;
   onIntervalTimeUnitChange: (e: ChangeEvent<HTMLSelectElement>) => void;
 }
-
-const selectInterval = (
-  interval: number,
-  intervalTimeunit: string,
-  intervalError: string,
-  onIntervalChange: (e: ChangeEvent<HTMLInputElement>) => void,
-  onIntervalTimeUnitChange: (value: ChangeEvent<HTMLSelectElement>) => void
-) => (
-  <React.Fragment>
-    <EuiFlexGroup style={{ maxWidth: 400 }}>
-      <EuiFlexItem grow={false} style={{ width: 200 }}>
-        <EuiFormRow label="Transform interval" error={intervalError} isInvalid={intervalError != ""}>
-          <EuiFieldNumber value={interval} onChange={onIntervalChange} isInvalid={intervalError != ""} />
-        </EuiFormRow>
-      </EuiFlexItem>
-      <EuiFlexItem>
-        <EuiFormRow hasEmptyLabelSpace={true}>
-          <EuiSelect
-            id="selectIntervalTimeunit"
-            options={ScheduleIntervalTimeunitOptions}
-            value={intervalTimeunit}
-            onChange={onIntervalTimeUnitChange}
-            isInvalid={interval == undefined || interval <= 0}
-          />
-        </EuiFormRow>
-      </EuiFlexItem>
-    </EuiFlexGroup>
-  </React.Fragment>
-);
-
-const timezones = moment.tz.names().map((tz) => ({ label: tz, text: tz }));
 
 // TODO: Check wording for page size form with UX team
 export default class Schedule extends Component<ScheduleProps> {
@@ -131,22 +102,20 @@ export default class Schedule extends Component<ScheduleProps> {
           </EuiFormRow>
           <EuiSpacer size="m" />
 
-          {schedule == "fixed" ? (
-            selectInterval(interval, intervalTimeUnit, intervalError, onIntervalChange, onIntervalTimeUnitChange)
-          ) : (
-            <React.Fragment>
-              <EuiFormRow label="Define by cron expression">
-                <EuiTextArea value={cronExpression} onChange={onCronExpressionChange} compressed={true} />
-              </EuiFormRow>
-              <EuiFormRow label="Timezone" helpText="A day starts from 00:00:00 in the specified timezone.">
-                <EuiSelect id="timezone" options={timezones} value={cronTimeZone} onChange={onCronTimeZoneChange} />
-              </EuiFormRow>
-            </React.Fragment>
-          )}
+          {schedule == "fixed"
+            ? selectInterval(interval, intervalTimeUnit, intervalError, onIntervalChange, onIntervalTimeUnitChange)
+            : selectCronExpression(cronExpression, onCronExpressionChange, cronTimeZone, onCronTimeZoneChange)}
 
           <EuiSpacer size="m" />
 
-          <EuiAccordion id={htmlIdGenerator()()} buttonContent={"Advanced"}>
+          <EuiAccordion
+            id={htmlIdGenerator()()}
+            buttonContent={
+              <EuiText>
+                <h3>Advanced</h3>
+              </EuiText>
+            }
+          >
             <EuiFormRow
               label={"Pages per execution"}
               helpText={
