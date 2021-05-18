@@ -30,8 +30,9 @@ import {
   EuiAccordion,
   EuiHorizontalRule,
 } from "@elastic/eui";
-import { DelayTimeunitOptions, ScheduleIntervalTimeunitOptions } from "../../utils/constants";
+import { DelayTimeunitOptions, ExecutionFrequencyDefinitionOptions, ScheduleIntervalTimeunitOptions } from "../../utils/constants";
 import { ContentPanel } from "../../../../components/ContentPanel";
+import { selectInterval } from "../../../Transforms/utils/metadataHelper";
 
 interface ScheduleProps {
   isEdit: boolean;
@@ -58,37 +59,6 @@ const radios = [
     label: "Yes",
   },
 ];
-
-const selectInterval = (
-  interval: number,
-  intervalTimeunit: string,
-  intervalError: string,
-  onChangeInterval: (e: ChangeEvent<HTMLInputElement>) => void,
-  onChangeTimeunit: (value: ChangeEvent<HTMLSelectElement>) => void
-) => (
-  <React.Fragment>
-    <EuiFlexGroup style={{ maxWidth: 400 }}>
-      <EuiFlexItem grow={false} style={{ width: 200 }}>
-        <EuiFormRow label="Transform interval" error={intervalError} isInvalid={intervalError != ""}>
-          <EuiFieldNumber value={interval} onChange={onChangeInterval} isInvalid={intervalError != ""} />
-        </EuiFormRow>
-      </EuiFlexItem>
-      <EuiFlexItem>
-        <EuiFormRow hasEmptyLabelSpace={true}>
-          <EuiSelect
-            id="selectIntervalTimeunit"
-            options={ScheduleIntervalTimeunitOptions}
-            value={intervalTimeunit}
-            onChange={onChangeTimeunit}
-            isInvalid={interval == undefined || interval <= 0}
-          />
-        </EuiFormRow>
-      </EuiFlexItem>
-    </EuiFlexGroup>
-  </React.Fragment>
-);
-
-const timezones = moment.tz.names().map((tz) => ({ label: tz, text: tz }));
 
 export default class Schedule extends Component<ScheduleProps> {
   constructor(props: ScheduleProps) {
@@ -124,15 +94,24 @@ export default class Schedule extends Component<ScheduleProps> {
 
           {!isEdit}
 
-          <EuiFormRow label="Transform execution frequency">
-            <EuiSelect id="continuousDefinition" options={[{ value: "fixed", text: "Define by fixed interval" }]} />
-          </EuiFormRow>
-          <EuiSpacer size="m" />
+          {/* TODO: Removing transform execution frequency dropdown menu as only fix interval will be supported in P0. */}
+          {/*<EuiFormRow label="Transform execution frequency">*/}
+          {/*  <EuiSelect id="continuousDefinition" options={ExecutionFrequencyDefinitionOptions} />*/}
+          {/*</EuiFormRow>*/}
+          {/*<EuiSpacer size="m" />*/}
 
+          {/* TODO: Replace with switch block when define by cron expressions is supported. */}
           {selectInterval(interval, intervalTimeunit, intervalError, onChangeIntervalTime, onChangeIntervalTimeunit)}
 
           <EuiHorizontalRule />
-          <EuiAccordion id="pagePerExecution" buttonContent="Advanced">
+          <EuiAccordion
+            id="pagePerExecution"
+            buttonContent={
+              <EuiText>
+                <h3>Advanced</h3>
+              </EuiText>
+            }
+          >
             <EuiFormRow
               label="Page per execution"
               helpText="The number of pages every execution processes. A larger number means faster execution and higher costs on memory."

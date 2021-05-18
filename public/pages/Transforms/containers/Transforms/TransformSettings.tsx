@@ -127,7 +127,15 @@ export default class TransformSettings extends Component<TransformSettingsProps,
           </EuiFlexGrid>
           <EuiSpacer size="m" />
         </div>
-        <EuiAccordion id={htmlIdGenerator()()} buttonContent={"Sample source index and transform result"} onClick={this.onClick}>
+        <EuiAccordion
+          id={htmlIdGenerator()()}
+          buttonContent={
+            <EuiText>
+              <h3>Sample source index and transform result</h3>
+            </EuiText>
+          }
+          onClick={this.onClick}
+        >
           <div style={{ paddingLeft: "10px" }}>
             <EuiSpacer size={"s"} />
 

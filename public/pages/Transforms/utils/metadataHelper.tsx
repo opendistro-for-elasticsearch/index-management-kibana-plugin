@@ -13,9 +13,11 @@
  * permissions and limitations under the License.
  */
 
-import {TransformMetadata} from "../../../../models/interfaces";
-import React from "react";
-import { EuiFlexGroup, EuiFlexItem, EuiIcon, EuiText } from "@elastic/eui";
+import { TransformMetadata } from "../../../../models/interfaces";
+import React, { ChangeEvent } from "react";
+import moment from "moment-timezone";
+import { EuiFieldNumber, EuiFlexGroup, EuiFlexItem, EuiIcon, EuiFormRow, EuiSelect, EuiTextArea, EuiText } from "@elastic/eui";
+import { ScheduleIntervalTimeunitOptions } from "../../CreateTransform/utils/constants";
 
 // TODO: merge with rollup helper to have a common helper
 export const renderStatus = (metadata: TransformMetadata | undefined): JSX.Element => {
@@ -39,7 +41,7 @@ export const renderStatus = (metadata: TransformMetadata | undefined): JSX.Eleme
       break;
     case "init":
       return (
-        <EuiFlexGroup gutterSize="xs">
+        <EuiFlexGroup gutterSize="xs" alignItems={"center"}>
           <EuiFlexItem grow={false}>
             <EuiIcon size="s" type="clock" color="primary" />
           </EuiFlexItem>
@@ -67,7 +69,7 @@ export const renderStatus = (metadata: TransformMetadata | undefined): JSX.Eleme
   }
 
   return (
-    <EuiFlexGroup gutterSize="xs">
+    <EuiFlexGroup gutterSize="xs" alignItems={"center"}>
       <EuiFlexItem grow={false}>
         <EuiIcon size="s" type={icon} color={iconColor} />
       </EuiFlexItem>
@@ -83,3 +85,50 @@ export const renderStatus = (metadata: TransformMetadata | undefined): JSX.Eleme
 export const renderEnabled = (isEnabled: boolean): string => {
   return isEnabled ? "Enabled" : "Disabled";
 };
+
+export const selectInterval = (
+  interval: number,
+  intervalTimeunit: string,
+  intervalError: string,
+  onChangeInterval: (e: ChangeEvent<HTMLInputElement>) => void,
+  onChangeTimeunit: (value: ChangeEvent<HTMLSelectElement>) => void
+) => (
+  <React.Fragment>
+    <EuiFlexGroup style={{ maxWidth: 400 }}>
+      <EuiFlexItem grow={false} style={{ width: 200 }}>
+        <EuiFormRow label="Transform execution interval" error={intervalError} isInvalid={intervalError != ""}>
+          <EuiFieldNumber value={interval} onChange={onChangeInterval} isInvalid={intervalError != ""} />
+        </EuiFormRow>
+      </EuiFlexItem>
+      <EuiFlexItem>
+        <EuiFormRow hasEmptyLabelSpace={true}>
+          <EuiSelect
+            id="selectIntervalTimeunit"
+            options={ScheduleIntervalTimeunitOptions}
+            value={intervalTimeunit}
+            onChange={onChangeTimeunit}
+            isInvalid={interval == undefined || interval <= 0}
+          />
+        </EuiFormRow>
+      </EuiFlexItem>
+    </EuiFlexGroup>
+  </React.Fragment>
+);
+
+export const selectCronExpression = (
+  cronExpression: string,
+  onCronExpressionChange: (e: ChangeEvent<HTMLTextAreaElement>) => void,
+  cronTimeZone: string,
+  onCronTimeZoneChange: (e: ChangeEvent<HTMLSelectElement>) => void
+) => (
+  <React.Fragment>
+    <EuiFormRow label="Define by cron expression">
+      <EuiTextArea value={cronExpression} onChange={onCronExpressionChange} compressed={true} />
+    </EuiFormRow>
+    <EuiFormRow label="Timezone" helpText="A day starts from 00:00:00 in the specified timezone.">
+      <EuiSelect id="timezone" options={timezones} value={cronTimeZone} onChange={onCronTimeZoneChange} />
+    </EuiFormRow>
+  </React.Fragment>
+);
+
+export const timezones = moment.tz.names().map((tz) => ({ label: tz, text: tz }));
