@@ -40,6 +40,7 @@ export default function TransformOptions({
 }: TransformOptionsProps) {
   const isNumeric = isNumericMapping(type);
   const isDate = type == "date";
+  const isText = type == "text";
 
   const [isPopoverOpen, setIsPopoverOpen] = useState(false);
   const [groupSelection, setGroupSelection] = useState<TransformGroupItem[]>(selectedGroupField);
@@ -67,21 +68,6 @@ export default function TransformOptions({
         {
           name: "Group by histogram",
           panel: 1,
-        },
-        {
-          name: "Group by date histogram",
-          panel: 2,
-        },
-        {
-          name: "Group by terms",
-          onClick: () => {
-            handleGroupSelectionChange({
-              terms: {
-                source_field: name,
-                target_field: `${name}_${GROUP_TYPES.terms}`,
-              },
-            });
-          },
         },
         {
           name: "Aggregate by sum",
@@ -130,12 +116,12 @@ export default function TransformOptions({
         },
         {
           name: "Aggregate by percentile",
-          panel: 3,
+          panel: 2,
         },
-        {
-          name: "Aggregate by scripted metrics",
-          panel: 4,
-        },
+        // {
+        //   name: "Aggregate by scripted metrics",
+        //   panel: 3,
+        // },
       ],
     },
     {
@@ -145,6 +131,43 @@ export default function TransformOptions({
     },
     {
       id: 2,
+      title: "Back",
+      content: (
+        <PercentilePanel
+          name={name}
+          aggSelection={aggSelection}
+          handleAggSelectionChange={handleAggSelectionChange}
+          closePopover={closePopover}
+        />
+      ),
+    },
+    // {
+    //   id: 3,
+    //   title: "Back",
+    // },
+  ];
+  const datePanels: EuiContextMenuPanelDescriptor[] = [
+    {
+      id: 0,
+      title: "Transform options",
+      items: [
+        {
+          name: "Group by date histogram",
+          panel: 1,
+        },
+        {
+          name: "Aggregate by count",
+          onClick: () => {
+            aggSelection[`count_${name}`] = {
+              value_count: { field: name },
+            };
+            handleAggSelectionChange();
+          },
+        },
+      ],
+    },
+    {
+      id: 1,
       title: "Back",
       items: [
         {
@@ -257,21 +280,44 @@ export default function TransformOptions({
         },
       ],
     },
+  ];
+  const textPanels: EuiContextMenuPanelDescriptor[] = [
     {
-      id: 3,
-      title: "Back",
-      content: (
-        <PercentilePanel
-          name={name}
-          aggSelection={aggSelection}
-          handleAggSelectionChange={handleAggSelectionChange}
-          closePopover={closePopover}
-        />
-      ),
+      id: 0,
+      title: "Transform options",
+      items: [
+        {
+          name: "No options available for text fields",
+        },
+      ],
     },
+  ];
+  const keywordPanels: EuiContextMenuPanelDescriptor[] = [
     {
-      id: 4,
-      title: "Back",
+      id: 0,
+      title: "Transform options",
+      items: [
+        {
+          name: "Group by terms",
+          onClick: () => {
+            handleGroupSelectionChange({
+              terms: {
+                source_field: name,
+                target_field: `${name}_${GROUP_TYPES.terms}`,
+              },
+            });
+          },
+        },
+        {
+          name: "Aggregate by count",
+          onClick: () => {
+            aggSelection[`count_${name}`] = {
+              value_count: { field: name },
+            };
+            handleAggSelectionChange();
+          },
+        },
+      ],
     },
   ];
 
@@ -290,7 +336,7 @@ export default function TransformOptions({
             panelPaddingSize="none"
             anchorPosition="rightCenter"
           >
-            <EuiContextMenu initialPanelId={0} panels={panels} />
+            <EuiContextMenu initialPanelId={0} panels={isNumeric ? panels : isText ? textPanels : isDate ? datePanels : keywordPanels} />
           </EuiPopover>
         </EuiFlexItem>
       </EuiFlexGroup>

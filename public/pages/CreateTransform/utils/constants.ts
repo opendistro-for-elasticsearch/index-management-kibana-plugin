@@ -75,3 +75,5 @@ export const AddFieldsColumns = [
     render: (type: string | undefined) => (type == null || type == undefined ? "-" : type),
   },
 ];
+
+export const DefaultSampleDataSize = 50;

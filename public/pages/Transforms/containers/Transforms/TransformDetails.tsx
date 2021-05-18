@@ -201,7 +201,7 @@ export default class TransformDetails extends Component<TransformDetailsProps, T
     if (aggregations.size == 0) return {};
     // @ts-ignore
     return aggregations;
-  }
+  };
 
   render() {
     const {
@@ -212,6 +212,8 @@ export default class TransformDetails extends Component<TransformDetailsProps, T
       sourceIndex,
       targetIndex,
       sourceIndexFilter,
+      interval,
+      intervalTimeUnit,
       pageSize,
       metadata,
       transformJson,
@@ -222,7 +224,7 @@ export default class TransformDetails extends Component<TransformDetailsProps, T
       isPopOverOpen,
     } = this.state;
 
-    let scheduleText = "At some time";
+    let scheduleText = "Every " + interval + " " + intervalTimeUnit.toLowerCase();
     const actionButton = (
       <EuiButton iconType="arrowDown" iconSide="right" disabled={false} onClick={this.onActionButtonClick} data-test-subj="actionButton">
         Actions
@@ -342,11 +344,14 @@ export default class TransformDetails extends Component<TransformDetailsProps, T
         <EuiSpacer />
         <EuiSpacer />
         <TransformSettings
+          {...this.props}
           transformService={this.props.transformService}
+          transformId={id}
+          sourceIndex={sourceIndex}
           transformJson={transformJson}
           groupsShown={groupsShown}
           aggregationsShown={aggregationsShown}
-          />
+        />
 
         {isModalOpen && (
           <EuiOverlayMask>

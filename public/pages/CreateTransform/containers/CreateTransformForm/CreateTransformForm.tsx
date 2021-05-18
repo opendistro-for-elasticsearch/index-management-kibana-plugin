@@ -23,16 +23,7 @@ import IndexService from "../../../../services/IndexService";
 import { ManagedCatIndex, PreviewTransformResponse } from "../../../../../server/models/interfaces";
 import CreateTransform from "../CreateTransform";
 import CreateTransformStep2 from "../CreateTransformStep2";
-import {
-  DimensionItem,
-  FieldItem,
-  GroupItem,
-  IndexItem,
-  MetricItem,
-  Transform,
-  TransformAggItem,
-  TransformGroupItem,
-} from "../../../../../models/interfaces";
+import { FieldItem, GroupItem, IndexItem, Transform, TransformGroupItem } from "../../../../../models/interfaces";
 import { getErrorMessage } from "../../../../utils/helpers";
 import { EMPTY_TRANSFORM } from "../../utils/constants";
 import CreateTransformStep3 from "../CreateTransformStep3";
