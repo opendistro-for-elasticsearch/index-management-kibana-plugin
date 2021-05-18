@@ -22,6 +22,7 @@ import { TransformService } from "../../../../services";
 import { getErrorMessage } from "../../../../utils/helpers";
 import PreviewTransform from "../PreviewTransform";
 import TransformOptions from "../TransformOptions/TranformOptions";
+import { DefaultSampleDataSize } from "../../utils/constants";
 
 interface DefineTransformsProps {
   transformService: TransformService;
@@ -53,11 +54,9 @@ export default function DefineTransforms({
   let columns: EuiDataGridColumn[] = [];
 
   fields.map((field: FieldItem) => {
-    const isText = field.type == "text";
-    // TODO: Handle the available options according to column types
     columns.push({
       id: field.label,
-      display: !isText && (
+      display: (
         <TransformOptions
           name={field.label}
           type={field.type}
@@ -67,7 +66,6 @@ export default function DefineTransforms({
           onAggregationSelectionChange={onAggregationSelectionChange}
         />
       ),
-      displayAsText: field.label + " type: " + field.type,
       schema: field.type,
       actions: {
         showHide: false,
@@ -222,7 +220,7 @@ export default function DefineTransforms({
   const fetchData = useCallback(async () => {
     setLoading(true);
     try {
-      const response = await transformService.searchSampleData(sourceIndex, { from, size });
+      const response = await transformService.searchSampleData(sourceIndex, { from: 0, size: DefaultSampleDataSize });
 
       if (response.ok) {
         setData(response.response.data);
@@ -269,7 +267,7 @@ export default function DefineTransforms({
     if (!loading && data.hasOwnProperty(rowIndex)) {
       // TODO: work on truncating the value to certain length defined by the keyword field
       if (columns?.find((column) => column.id == columnId).schema == "keyword") {
-        // Strip off the keyword postfix
+        // Remove the keyword postfix for getting correct data from array
         const correspondingTextColumnId = columnId.replace(".keyword", "");
         return data[rowIndex]._source[correspondingTextColumnId] ? data[rowIndex]._source[correspondingTextColumnId] : "-";
       }
@@ -315,7 +313,7 @@ export default function DefineTransforms({
         aria-label="Define transforms"
         columns={columns}
         columnVisibility={{ visibleColumns, setVisibleColumns }}
-        rowCount={Math.min(dataCount, 200)}
+        rowCount={Math.min(dataCount, DefaultSampleDataSize)}
         renderCellValue={renderCellValue}
         sorting={{ columns: sortingColumns, onSort }}
         pagination={{

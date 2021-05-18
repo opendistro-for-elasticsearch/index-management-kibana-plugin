@@ -109,6 +109,10 @@ export default function (services: NodeServices, router: IRouter) {
         params: schema.object({
           index: schema.string(),
         }),
+        query: schema.object({
+          from: schema.number(),
+          size: schema.number(),
+        }),
       },
     },
     transformService.searchSampleData
