@@ -35,6 +35,7 @@ interface CreateTransformFormProps extends RouteComponentProps {
   rollupService: RollupService;
   transformService: TransformService;
   indexService: IndexService;
+  beenWarned: boolean;
 }
 
 interface CreateTransformFormState {
@@ -77,6 +78,8 @@ interface CreateTransformFormState {
   intervalTimeunit: string;
   pageSize: number;
   transformJSON: any;
+
+  beenWarned: boolean;
 }
 
 export default class CreateTransformForm extends Component<CreateTransformFormProps, CreateTransformFormState> {
@@ -124,6 +127,8 @@ export default class CreateTransformForm extends Component<CreateTransformFormPr
       intervalTimeunit: "MINUTES",
       pageSize: 1000,
       transformJSON: JSON.parse(EMPTY_TRANSFORM),
+
+      beenWarned: false,
     };
     this._next = this._next.bind(this);
     this._prev = this._prev.bind(this);
@@ -171,6 +176,7 @@ export default class CreateTransformForm extends Component<CreateTransformFormPr
 
   _next() {
     let currentStep = this.state.currentStep;
+    let warned = this.state.beenWarned;
     let error = false;
     //Verification here
     if (currentStep == 1) {
@@ -197,11 +203,15 @@ export default class CreateTransformForm extends Component<CreateTransformFormPr
 
     if (error) return;
 
-    currentStep = currentStep >= 3 ? 4 : currentStep + 1;
+    if (warned) {
+      currentStep = currentStep >= 3 ? 4 : currentStep + 1;
+    }
+    warned = true;
 
     this.setState({
       submitError: "",
       currentStep: currentStep,
+      beenWarned: warned,
     });
   }
 
@@ -417,6 +427,8 @@ export default class CreateTransformForm extends Component<CreateTransformFormPr
       intervalTimeunit,
       intervalError,
       pageSize,
+
+      beenWarned,
     } = this.state;
     return (
       <div>
@@ -441,6 +453,7 @@ export default class CreateTransformForm extends Component<CreateTransformFormPr
           currentStep={this.state.currentStep}
           hasAggregation={selectedGroupField.length != 0 || selectedAggregations.length != 0}
           fields={fields}
+          beenWarned={beenWarned}
         />
         <CreateTransformStep2
           {...this.props}
