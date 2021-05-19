@@ -95,8 +95,6 @@ export default function PreviewTransform({
     //
     if (aggList.length) {
       let tempCol: EuiDataGridColumn[] = [];
-      //Debug use
-      console.log(aggList);
       aggList.map((aggItem) => {
         tempCol.push({
           id: aggItem.name,

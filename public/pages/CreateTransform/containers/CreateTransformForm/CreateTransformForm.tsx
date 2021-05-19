@@ -313,9 +313,6 @@ export default class CreateTransformForm extends Component<CreateTransformFormPr
     aggList.splice(toRemoveIndex, 1);
     this.setState({ aggList });
 
-    //Debug use
-    console.log("removing " + name + " aggList: " + aggList);
-
     this.updateGroup();
     this.updateAggregation();
     await this.previewTransform(this.state.transformJSON);
