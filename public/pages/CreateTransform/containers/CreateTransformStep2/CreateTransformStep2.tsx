@@ -21,7 +21,7 @@ import { BREADCRUMBS, ROUTES } from "../../../../utils/constants";
 import CreateTransformSteps from "../../components/CreateTransformSteps";
 import { CoreServicesContext } from "../../../../components/core_services";
 import DefineTransforms from "../../components/DefineTransforms";
-import { FieldItem, TransformGroupItem } from "../../../../../models/interfaces";
+import { FieldItem, TransformAggItem, TransformGroupItem } from "../../../../../models/interfaces";
 
 interface CreateTransformStep2Props extends RouteComponentProps {
   transformService: TransformService;
@@ -30,9 +30,11 @@ interface CreateTransformStep2Props extends RouteComponentProps {
   sourceIndex: string;
   fields: FieldItem[];
   selectedGroupField: TransformGroupItem[];
-  onGroupSelectionChange: (selectedFields: TransformGroupItem[]) => void;
+  onGroupSelectionChange: (selectedFields: TransformGroupItem[], aggItem: TransformAggItem) => void;
   selectedAggregations: any;
-  onAggregationSelectionChange: (selectedFields: any) => void;
+  aggList: TransformAggItem[];
+  onAggregationSelectionChange: (selectedFields: any, aggItem: TransformAggItem) => void;
+  onRemoveTransformation: (name: string) => void;
   previewTransform: any[];
 }
 
@@ -60,6 +62,7 @@ export default class CreateTransformStep2 extends Component<CreateTransformStep2
       onGroupSelectionChange,
       selectedAggregations,
       onAggregationSelectionChange,
+      onRemoveTransformation,
     } = this.props;
     if (currentStep !== 2) return null;
 
@@ -84,6 +87,8 @@ export default class CreateTransformStep2 extends Component<CreateTransformStep2
               onGroupSelectionChange={onGroupSelectionChange}
               selectedAggregations={selectedAggregations}
               onAggregationSelectionChange={onAggregationSelectionChange}
+              onRemoveTransformation={onRemoveTransformation}
+              isReadOnly={false}
             />
           </EuiFlexItem>
         </EuiFlexGroup>

@@ -155,7 +155,7 @@ export default class TransformSettings extends Component<TransformSettingsProps,
               <h4>Preview result based on sample data</h4>
             </EuiText>
             <EuiSpacer size={"s"} />
-            <PreviewTransforms previewTransform={this.state.previewTransform} />
+            <PreviewTransforms previewTransform={this.state.previewTransform} aggList={[]} isReadOnly={true} />
           </div>
         </EuiAccordion>
       </ContentPanel>

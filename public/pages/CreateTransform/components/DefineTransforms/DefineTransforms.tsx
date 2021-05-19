@@ -17,11 +17,11 @@ import { EuiDataGrid, EuiDataGridColumn, EuiSpacer, EuiText } from "@elastic/eui
 import { CoreStart } from "kibana/public";
 import React, { useCallback, useState } from "react";
 import { ContentPanel } from "../../../../components/ContentPanel";
-import { FieldItem, TransformGroupItem } from "../../../../../models/interfaces";
+import { FieldItem, TransformAggItem, TransformGroupItem } from "../../../../../models/interfaces";
 import { TransformService } from "../../../../services";
 import { getErrorMessage } from "../../../../utils/helpers";
 import PreviewTransform from "../PreviewTransform";
-import TransformOptions from "../TransformOptions/TranformOptions";
+import TransformOptions from "../TransformOptions";
 import { DefaultSampleDataSize } from "../../utils/constants";
 
 interface DefineTransformsProps {
@@ -31,9 +31,11 @@ interface DefineTransformsProps {
   sourceIndex: string;
   fields: FieldItem[];
   selectedGroupField: TransformGroupItem[];
-  onGroupSelectionChange: (selectedFields: TransformGroupItem[]) => void;
+  onGroupSelectionChange: (selectedFields: TransformGroupItem[], aggItem: TransformAggItem) => void;
   selectedAggregations: any;
-  onAggregationSelectionChange: (selectedFields: any) => void;
+  aggList: TransformAggItem[];
+  onAggregationSelectionChange: (selectedFields: any, aggItem: TransformAggItem) => void;
+  onRemoveTransformation: (name: string) => void;
   previewTransform: any[];
   isReadOnly: boolean;
 }
@@ -41,13 +43,15 @@ interface DefineTransformsProps {
 export default function DefineTransforms({
   transformService,
   notifications,
-  transfromId,
+  transformId,
   sourceIndex,
   fields,
   selectedGroupField,
   onGroupSelectionChange,
   selectedAggregations,
+  aggList,
   onAggregationSelectionChange,
+  onRemoveTransformation,
   previewTransform,
   isReadOnly,
 }: DefineTransformsProps) {
@@ -56,12 +60,13 @@ export default function DefineTransforms({
   fields.map((field: FieldItem) => {
     columns.push({
       id: field.label,
-      display: (
+      display: !isReadOnly && (
         <TransformOptions
           name={field.label}
           type={field.type}
           selectedGroupField={selectedGroupField}
           onGroupSelectionChange={onGroupSelectionChange}
+          aggList={aggList}
           selectedAggregations={selectedAggregations}
           onAggregationSelectionChange={onAggregationSelectionChange}
         />
@@ -227,7 +232,7 @@ export default function DefineTransforms({
         setDataCount(response.response.total.value);
       }
     } catch (err) {
-      notifications.toasts.addDanger(getErrorMessage(err, "There was a problem loading the rollups"));
+      notifications.toasts.addDanger(getErrorMessage(err, "There was a problem loading the transforms"));
     }
     setLoading(false);
   }, [sourceIndex]);
@@ -275,6 +280,52 @@ export default function DefineTransforms({
     }
     return "-";
   };
+
+  //TODO: remove duplicate code here after extracting the first table as separate component
+  if (isReadOnly)
+    return (
+      <div>
+        <EuiText>
+          <h4>Original fields with sample data</h4>
+        </EuiText>
+        <EuiSpacer size="s" />
+        <EuiDataGrid
+          aria-label="Define transforms"
+          columns={columns}
+          columnVisibility={{ visibleColumns, setVisibleColumns }}
+          rowCount={Math.min(dataCount, DefaultSampleDataSize)}
+          renderCellValue={renderCellValue}
+          sorting={{ columns: sortingColumns, onSort }}
+          pagination={{
+            ...pagination,
+            pageSizeOptions: [5, 10, 20, 50],
+            onChangeItemsPerPage: onChangeItemsPerPage,
+            onChangePage: onChangePage,
+          }}
+          toolbarVisibility={{
+            showColumnSelector: true,
+            showStyleSelector: false,
+            showSortSelector: false,
+            showFullScreenSelector: false,
+          }}
+        />
+        <EuiSpacer />
+        <EuiText>
+          <h4>Transformed fields preview based on sample data</h4>
+        </EuiText>
+        <EuiSpacer size="s" />
+        <PreviewTransform
+          previewTransform={previewTransform}
+          selectedGroupField={selectedGroupField}
+          onGroupSelectionChange={onGroupSelectionChange}
+          aggList={aggList}
+          selectedAggregations={selectedAggregations}
+          onAggregationSelectionChange={onAggregationSelectionChange}
+          onRemoveTransformation={onRemoveTransformation}
+          isReadOnly={isReadOnly}
+        />
+      </div>
+    );
 
   return (
     <ContentPanel
@@ -334,7 +385,16 @@ export default function DefineTransforms({
         <h4>Transformed fields preview based on sample data</h4>
       </EuiText>
       <EuiSpacer size="s" />
-      <PreviewTransform previewTransform={previewTransform} />
+      <PreviewTransform
+        previewTransform={previewTransform}
+        selectedGroupField={selectedGroupField}
+        onGroupSelectionChange={onGroupSelectionChange}
+        aggList={aggList}
+        selectedAggregations={selectedAggregations}
+        onAggregationSelectionChange={onAggregationSelectionChange}
+        onRemoveTransformation={onRemoveTransformation}
+        isReadOnly={isReadOnly}
+      />
     </ContentPanel>
   );
 }

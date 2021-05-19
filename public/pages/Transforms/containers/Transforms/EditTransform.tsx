@@ -159,11 +159,7 @@ export default class EditTransform extends Component<EditTransformProps, EditTra
           description={description}
         />
         <EuiSpacer />
-        <Indices
-          sourceIndex={sourceIndex}
-          targetIndex={targetIndex}
-          sourceIndexFilter={sourceIndexFilter}
-        />
+        <Indices sourceIndex={sourceIndex} targetIndex={targetIndex} sourceIndexFilter={sourceIndexFilter} />
         <EuiSpacer />
         <Schedule
           transformId={id}

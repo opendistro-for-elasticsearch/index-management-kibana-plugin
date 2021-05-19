@@ -49,17 +49,6 @@ interface ScheduleProps {
   onChangePage: (e: ChangeEvent<HTMLInputElement>) => void;
 }
 
-const radios = [
-  {
-    id: "no",
-    label: "No",
-  },
-  {
-    id: "yes",
-    label: "Yes",
-  },
-];
-
 export default class Schedule extends Component<ScheduleProps> {
   constructor(props: ScheduleProps) {
     super(props);
@@ -79,7 +68,7 @@ export default class Schedule extends Component<ScheduleProps> {
       onChangePage,
     } = this.props;
     return (
-      <ContentPanel bodyStyles={{ padding: "initial" }} title="Schedule" titleSize="s">
+      <ContentPanel bodyStyles={{ padding: "initial" }} title="Schedule" titleSize="m">
         <div style={{ paddingLeft: "10px" }}>
           {!isEdit && (
             <EuiCheckbox
