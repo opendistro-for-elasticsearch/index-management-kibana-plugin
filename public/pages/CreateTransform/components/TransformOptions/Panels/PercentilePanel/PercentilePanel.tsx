@@ -14,7 +14,7 @@
  */
 
 import React, { useState } from "react";
-import { EuiButton, EuiComboBox, EuiFlexGroup, EuiFlexItem, EuiFormRow, EuiPanel } from "@elastic/eui";
+import { EuiButton, EuiComboBox, EuiFlexGroup, EuiFlexItem, EuiFormRow, EuiPanel, EuiSpacer } from "@elastic/eui";
 
 interface PercentilePanelProps {
   name: string;
@@ -64,15 +64,17 @@ export default function PercentilePanel({ name, aggSelection, handleAggSelection
 
   return (
     <EuiPanel>
-      <EuiFlexGroup>
-        <EuiFlexItem grow={false}>
+      <EuiFlexGroup gutterSize={"none"}>
+        <EuiFlexItem grow={false} style={{ width: 230 }}>
           <EuiFormRow
+            fullWidth={true}
             label="Percents"
             helpText="Only numbers between 0-100 allowed."
             isInvalid={isInvalid}
             error={isInvalid ? "Invalid input" : undefined}
           >
             <EuiComboBox
+              fullWidth={true}
               noSuggestions
               selectedOptions={percents}
               onChange={onChangePercents}
@@ -81,12 +83,13 @@ export default function PercentilePanel({ name, aggSelection, handleAggSelection
               onSearchChange={onSearchChange}
             />
           </EuiFormRow>
+          <EuiSpacer size="m" />
         </EuiFlexItem>
         <EuiFlexItem grow={false}></EuiFlexItem>
       </EuiFlexGroup>
-      <EuiFlexGroup>
+      <EuiFlexGroup justifyContent={"flexEnd"} gutterSize={"m"}>
         <EuiFlexItem grow={false}>
-          <EuiButton fullWidth={false} onClick={() => closePopover()}>
+          <EuiButton fullWidth={false} onClick={() => closePopover()} style={{ minWidth: 84 }}>
             Cancel
           </EuiButton>
         </EuiFlexItem>
@@ -103,6 +106,7 @@ export default function PercentilePanel({ name, aggSelection, handleAggSelection
               };
               handleAggSelectionChange();
             }}
+            style={{ minWidth: 55 }}
           >
             OK
           </EuiButton>

@@ -49,6 +49,7 @@ interface CreateTransformProps extends RouteComponentProps {
   fields: FieldItem[];
   fieldSelectedOption: string;
   onFieldChange: () => void;
+  beenWarned: boolean;
 }
 
 export default class CreateTransform extends Component<CreateTransformProps> {
