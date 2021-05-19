@@ -511,7 +511,6 @@ export default class CreateTransformForm extends Component<CreateTransformFormPr
           currentStep={this.state.currentStep}
           sourceIndex={sourceIndex[0] ? sourceIndex[0].label : ""}
           fields={fields}
-          selectedTerms={selectedTerms}
           aggList={aggList}
           selectedGroupField={selectedGroupField}
           selectedAggregations={selectedAggregations}
@@ -541,8 +540,14 @@ export default class CreateTransformForm extends Component<CreateTransformFormPr
           sourceIndex={sourceIndex}
           targetIndex={targetIndex}
           sourceIndexFilter={sourceIndexFilter}
+          fields={fields}
           selectedGroupField={selectedGroupField}
+          onGroupSelectionChange={this.onGroupSelectionChange}
           selectedAggregations={selectedAggregations}
+          aggList={aggList}
+          onAggregationSelectionChange={this.onAggregationSelectionChange}
+          onRemoveTransformation={this.onRemoveTransformation}
+          previewTransform={previewTransform}
           jobEnabledByDefault={jobEnabledByDefault}
           interval={interval}
           intervalTimeunit={intervalTimeunit}

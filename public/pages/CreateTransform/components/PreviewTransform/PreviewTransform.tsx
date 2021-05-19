@@ -27,6 +27,7 @@ interface PreviewTransformProps {
   selectedAggregations: any;
   onAggregationSelectionChange: (selectedFields: any, aggItem: TransformAggItem) => void;
   onRemoveTransformation: (name: string) => void;
+  isReadOnly: boolean;
 }
 
 export default function PreviewTransform({
@@ -37,6 +38,7 @@ export default function PreviewTransform({
   aggList,
   onAggregationSelectionChange,
   onRemoveTransformation,
+  isReadOnly,
 }: PreviewTransformProps) {
   const [previewColumns, setPreviewColumns] = useState<EuiDataGridColumn[]>([]);
   const [visiblePreviewColumns, setVisiblePreviewColumns] = useState(() => previewColumns.map(({ id }) => id).slice(0, 5));
@@ -77,7 +79,7 @@ export default function PreviewTransform({
       aggList.map((aggItem) => {
         tempCol.push({
           id: aggItem.name,
-          display: (
+          display: !isReadOnly && (
             <PreviewOptions
               name={aggItem.name}
               selectedGroupField={selectedGroupField}

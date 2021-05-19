@@ -17,11 +17,25 @@ import React, { Component } from "react";
 import { EuiFlexGrid, EuiSpacer, EuiFlexItem, EuiText, EuiAccordion } from "@elastic/eui";
 import { ContentPanel, ContentPanelActions } from "../../../../components/ContentPanel";
 import { ModalConsumer } from "../../../../components/Modal";
-import { TransformGroupItem, DimensionItem } from "../../../../../models/interfaces";
+import { TransformGroupItem, DimensionItem, FieldItem, TransformAggItem } from "../../../../../models/interfaces";
+import DefineTransforms from "../DefineTransforms";
+import { TransformService } from "../../../../services";
+import { CoreStart } from "kibana/public";
 
 interface ReviewDefinitionProps {
+  transformService: TransformService;
+  notifications: CoreStart["notifications"];
+  transformId: string;
+  sourceIndex: string;
+  fields: FieldItem[];
+  z;
   selectedGroupField: TransformGroupItem[];
+  onGroupSelectionChange: (selectedFields: TransformGroupItem[], aggItem: TransformAggItem) => void;
   selectedAggregations: any;
+  aggList: TransformAggItem[];
+  onAggregationSelectionChange: (selectedFields: any, aggItem: TransformAggItem) => void;
+  onRemoveTransformation: (name: string) => void;
+  previewTransform: any[];
   onChangeStep: (step: number) => void;
 }
 
@@ -30,10 +44,22 @@ export default class ReviewDefinition extends Component<ReviewDefinitionProps> {
     super(props);
   }
 
-
-
   render() {
-    const { selectedGroupField, selectedAggregations, onChangeStep } = this.props;
+    const {
+      transformService,
+      notifications,
+      transformId,
+      sourceIndex,
+      fields,
+      selectedGroupField,
+      onGroupSelectionChange,
+      selectedAggregations,
+      aggList,
+      onAggregationSelectionChange,
+      onRemoveTransformation,
+      previewTransform,
+      onChangeStep,
+    } = this.props;
 
     const groupItems = () => {
       return selectedGroupField.map((group) => {
@@ -79,7 +105,7 @@ export default class ReviewDefinition extends Component<ReviewDefinitionProps> {
             interval: null,
           };
       }
-    }
+    };
 
     const aggItems = () => {
       return Object.keys(selectedAggregations).map((key) => {
@@ -133,7 +159,21 @@ export default class ReviewDefinition extends Component<ReviewDefinitionProps> {
                 <h3>Sample source index and transform result</h3>
               </EuiText>
             }
-          ></EuiAccordion>
+          >
+            <DefineTransforms
+              {...this.props}
+              transformService={transformService}
+              notifications={this.context.notifications}
+              transformId={transformId}
+              sourceIndex={sourceIndex}
+              fields={fields}
+              onGroupSelectionChange={onGroupSelectionChange}
+              selectedAggregations={selectedAggregations}
+              onAggregationSelectionChange={onAggregationSelectionChange}
+              onRemoveTransformation={onRemoveTransformation}
+              isReadOnly={true}
+            />
+          </EuiAccordion>
         </div>
       </ContentPanel>
     );

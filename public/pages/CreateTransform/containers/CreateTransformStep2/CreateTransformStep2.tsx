@@ -88,6 +88,7 @@ export default class CreateTransformStep2 extends Component<CreateTransformStep2
               selectedAggregations={selectedAggregations}
               onAggregationSelectionChange={onAggregationSelectionChange}
               onRemoveTransformation={onRemoveTransformation}
+              isReadOnly={false}
             />
           </EuiFlexItem>
         </EuiFlexGroup>
