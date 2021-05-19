@@ -288,10 +288,10 @@ export default class CreateTransformForm extends Component<CreateTransformFormPr
     aggList.push(aggItem);
     this.updateGroup();
 
-    let newJSON = this.state.transformJSON;
-    if (selectedGroupField.length) newJSON.transform.groups = selectedGroupField;
-    let previewResponse = await this.previewTransform(newJSON);
-    this.setState({ selectedGroupField, transformJSON: newJSON });
+    // let newJSON = this.state.transformJSON;
+    // if (selectedGroupField.length) newJSON.transform.groups = selectedGroupField;
+    let previewResponse = await this.previewTransform(this.state.transformJSON);
+    this.setState({ selectedGroupField });
   };
 
   onAggregationSelectionChange = async (selectedAggregations: any, aggItem: TransformAggItem): Promise<void> => {
@@ -299,14 +299,26 @@ export default class CreateTransformForm extends Component<CreateTransformFormPr
     aggList.push(aggItem);
     this.updateAggregation();
 
-    let newJSON = this.state.transformJSON;
-    newJSON.transform.aggregations = selectedAggregations;
-    let previewResponse = await this.previewTransform(newJSON);
-    this.setState({ selectedAggregations: selectedAggregations, transformJSON: newJSON });
+    // let newJSON = this.state.transformJSON;
+    // newJSON.transform.aggregations = selectedAggregations;
+    let previewResponse = await this.previewTransform(this.state.transformJSON);
+    this.setState({ selectedAggregations: selectedAggregations });
   };
 
-  onRemoveTransformation = (name: string): void => {
-    // const {aggList} = this.state;
+  onRemoveTransformation = async (name: string): Promise<void> => {
+    const { aggList } = this.state;
+    const toRemoveIndex = aggList.findIndex((item) => {
+      return item.name === name;
+    });
+    aggList.splice(toRemoveIndex, 1);
+    this.setState({ aggList });
+
+    //Debug use
+    console.log("removing " + name + " aggList: " + aggList);
+
+    this.updateGroup();
+    this.updateAggregation();
+    await this.previewTransform(this.state.transformJSON);
   };
 
   onChangeJobEnabledByDefault = (): void => {
@@ -355,15 +367,17 @@ export default class CreateTransformForm extends Component<CreateTransformFormPr
     let newJSON = transformJSON;
     let tempGroupSelect: GroupItem[] = [];
     aggList.map((aggItem) => {
-      if (aggItem.type !== (TRANSFORM_AGG_TYPE.histogram || TRANSFORM_AGG_TYPE.terms || TRANSFORM_AGG_TYPE.date_histogram)) {
+      if (
+        aggItem.type == TRANSFORM_AGG_TYPE.histogram ||
+        aggItem.type == TRANSFORM_AGG_TYPE.terms ||
+        aggItem.type == TRANSFORM_AGG_TYPE.date_histogram
+      )
         tempGroupSelect.push(aggItem.item);
-      }
     });
     if (tempGroupSelect.length) newJSON.transform.groups = tempGroupSelect;
     this.setState({ transformJSON: newJSON });
   };
 
-  //TODO: Parse the final aggregation JSON object using aggList
   updateAggregation = (): void => {
     const { transformJSON, aggList } = this.state;
     let newJSON = transformJSON;
@@ -490,6 +504,7 @@ export default class CreateTransformForm extends Component<CreateTransformFormPr
           aggregationsError={aggregationsError}
           onGroupSelectionChange={this.onGroupSelectionChange}
           onAggregationSelectionChange={this.onAggregationSelectionChange}
+          onRemoveTransformation={this.onRemoveTransformation}
           previewTransform={previewTransform}
         />
         <CreateTransformStep3

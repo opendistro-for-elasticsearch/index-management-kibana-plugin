@@ -35,6 +35,7 @@ interface DefineTransformsProps {
   selectedAggregations: any;
   aggList: TransformAggItem[];
   onAggregationSelectionChange: (selectedFields: any, aggItem: TransformAggItem) => void;
+  onRemoveTransformation: (name: string) => void;
   previewTransform: any[];
   isReadOnly: boolean;
 }
@@ -50,6 +51,7 @@ export default function DefineTransforms({
   selectedAggregations,
   aggList,
   onAggregationSelectionChange,
+  onRemoveTransformation,
   previewTransform,
   isReadOnly,
 }: DefineTransformsProps) {
@@ -344,6 +346,7 @@ export default function DefineTransforms({
         aggList={aggList}
         selectedAggregations={selectedAggregations}
         onAggregationSelectionChange={onAggregationSelectionChange}
+        onRemoveTransformation={onRemoveTransformation}
       />
     </ContentPanel>
   );

@@ -21,10 +21,11 @@ import { TransformAggItem, TransformGroupItem } from "../../../../../models/inte
 interface PreviewOptionsProps {
   name: string;
   selectedGroupField: TransformGroupItem[];
-  onGroupSelectionChange: (selectedFields: TransformGroupItem[]) => void;
+  onGroupSelectionChange: (selectedFields: TransformGroupItem[], aggItem: TransformAggItem) => void;
   aggList: TransformAggItem[];
   selectedAggregations: any;
   onAggregationSelectionChange: (selectedFields: any, aggItem: TransformAggItem) => void;
+  onRemoveTransformation: (name: string) => void;
 }
 
 export default function PreviewOptions({
@@ -34,6 +35,7 @@ export default function PreviewOptions({
   selectedAggregations,
   aggList,
   onAggregationSelectionChange,
+  onRemoveTransformation,
 }: PreviewOptionsProps) {
   const [isPopoverOpen, setIsPopoverOpen] = useState(false);
 
@@ -52,6 +54,7 @@ export default function PreviewOptions({
           name: "Remove transformation",
           onClick: () => {
             // Remove this transform
+            onRemoveTransformation(name);
           },
         },
       ],

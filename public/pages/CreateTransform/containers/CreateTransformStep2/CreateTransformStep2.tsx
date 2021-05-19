@@ -34,6 +34,7 @@ interface CreateTransformStep2Props extends RouteComponentProps {
   selectedAggregations: any;
   aggList: TransformAggItem[];
   onAggregationSelectionChange: (selectedFields: any, aggItem: TransformAggItem) => void;
+  onRemoveTransformation: (name: string) => void;
   previewTransform: any[];
 }
 
@@ -61,6 +62,7 @@ export default class CreateTransformStep2 extends Component<CreateTransformStep2
       onGroupSelectionChange,
       selectedAggregations,
       onAggregationSelectionChange,
+      onRemoveTransformation,
     } = this.props;
     if (currentStep !== 2) return null;
 
@@ -85,6 +87,7 @@ export default class CreateTransformStep2 extends Component<CreateTransformStep2
               onGroupSelectionChange={onGroupSelectionChange}
               selectedAggregations={selectedAggregations}
               onAggregationSelectionChange={onAggregationSelectionChange}
+              onRemoveTransformation={onRemoveTransformation}
             />
           </EuiFlexItem>
         </EuiFlexGroup>
