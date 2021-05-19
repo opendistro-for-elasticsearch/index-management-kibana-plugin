@@ -260,11 +260,28 @@ export enum GROUP_TYPES {
 }
 
 export interface TransformAggItem {
+  type: TRANSFORM_AGG_TYPE;
+  name: string;
+  item: any | DateHistogramItem | TermsItem | HistogramItem;
+  percents?: number[];
   sum?: { field: string };
   max?: { field: string };
   min?: { field: string };
   avg?: { field: string };
-  count?: { field: string };
+  value_count?: { field: string };
   percentiles?: { field: string; percents: number[] };
   scripted_metric?: object;
+}
+
+export enum TRANSFORM_AGG_TYPE {
+  sum = "sum",
+  max = "max",
+  min = "min",
+  avg = "avg",
+  value_count = "value_count",
+  percentiles = "percentiles",
+  scripted_metric = "scripted_metric",
+  terms = "terms",
+  histogram = "histogram",
+  date_histogram = "date_histogram",
 }

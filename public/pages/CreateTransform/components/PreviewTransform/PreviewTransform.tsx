@@ -16,12 +16,28 @@
 import React, { useCallback, useState } from "react";
 import { EuiDataGrid, EuiDataGridColumn } from "@elastic/eui";
 import PreviewEmptyPrompt from "../PreviewEmptyPrompt";
+import PreviewOptions from "../PreviewOptions";
+import { TransformAggItem, TransformGroupItem } from "../../../../../models/interfaces";
 
 interface PreviewTransformProps {
   previewTransform: any[];
+  selectedGroupField: TransformGroupItem[];
+  onGroupSelectionChange: (selectedFields: TransformGroupItem[], aggItem: TransformAggItem) => void;
+  aggList: TransformAggItem[];
+  selectedAggregations: any;
+  onAggregationSelectionChange: (selectedFields: any, aggItem: TransformAggItem) => void;
+  onRemoveTransformation: (name: string) => void;
 }
 
-export default function PreviewTransform({ previewTransform }: PreviewTransformProps) {
+export default function PreviewTransform({
+  previewTransform,
+  selectedGroupField,
+  onGroupSelectionChange,
+  selectedAggregations,
+  aggList,
+  onAggregationSelectionChange,
+  onRemoveTransformation,
+}: PreviewTransformProps) {
   const [previewColumns, setPreviewColumns] = useState<EuiDataGridColumn[]>([]);
   const [visiblePreviewColumns, setVisiblePreviewColumns] = useState(() => previewColumns.map(({ id }) => id).slice(0, 5));
   const [previewPagination, setPreviewPagination] = useState({ pageIndex: 0, pageSize: 10 });
@@ -56,11 +72,22 @@ export default function PreviewTransform({ previewTransform }: PreviewTransformP
   );
 
   const updatePreviewColumns = (): void => {
-    if (previewTransform.length) {
+    if (aggList.length) {
       let tempCol: EuiDataGridColumn[] = [];
-      for (const [key, value] of Object.entries(previewTransform[0])) {
+      aggList.map((aggItem) => {
         tempCol.push({
-          id: key,
+          id: aggItem.name,
+          display: (
+            <PreviewOptions
+              name={aggItem.name}
+              selectedGroupField={selectedGroupField}
+              onGroupSelectionChange={onGroupSelectionChange}
+              aggList={aggList}
+              selectedAggregations={selectedAggregations}
+              onAggregationSelectionChange={onAggregationSelectionChange}
+              onRemoveTransformation={onRemoveTransformation}
+            />
+          ),
           actions: {
             showHide: false,
             showMoveLeft: false,
@@ -69,7 +96,8 @@ export default function PreviewTransform({ previewTransform }: PreviewTransformP
             showSortDesc: false,
           },
         });
-      }
+      });
+
       setPreviewColumns(tempCol);
       setVisiblePreviewColumns(() => tempCol.map(({ id }) => id).slice(0, 5));
     }
@@ -77,21 +105,21 @@ export default function PreviewTransform({ previewTransform }: PreviewTransformP
 
   React.useEffect(() => {
     updatePreviewColumns();
-  }, [previewTransform]);
+  }, [previewTransform, aggList]);
 
-  return previewTransform.length ? (
+  return aggList.length ? (
     <EuiDataGrid
       aria-label="Preview transforms"
       columns={previewColumns}
       columnVisibility={{ visibleColumns: visiblePreviewColumns, setVisibleColumns: setVisiblePreviewColumns }}
       rowCount={previewTransform.length}
       renderCellValue={renderPreviewCellValue}
-      pagination={{
-        ...previewPagination,
-        pageSizeOptions: [5, 10, 20, 50],
-        onChangeItemsPerPage: onChangePreviewPerPage,
-        onChangePage: onChangePreviewPage,
-      }}
+      // pagination={{
+      //   ...previewPagination,
+      //   pageSizeOptions: [5, 10, 20, 50],
+      //   onChangeItemsPerPage: onChangePreviewPerPage,
+      //   onChangePage: onChangePreviewPage,
+      // }}
       toolbarVisibility={{
         showColumnSelector: true,
         showStyleSelector: false,
