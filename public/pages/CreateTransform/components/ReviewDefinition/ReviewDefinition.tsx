@@ -43,8 +43,6 @@ export default class ReviewDefinition extends Component<ReviewDefinitionProps> {
     super(props);
   }
 
-
-
   render() {
     const {
       transformService,
