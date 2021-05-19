@@ -174,14 +174,22 @@ export default class CreateTransformForm extends Component<CreateTransformFormPr
     }
   };
 
-  _next() {
+  _next = async () => {
     let currentStep = this.state.currentStep;
     let warned = this.state.beenWarned;
     let error = false;
     //Verification here
     if (currentStep == 1) {
       const { transformId, sourceIndex, targetIndex } = this.state;
+      const response = await this.props.transformService.getTransform(transformId);
 
+      if (response.ok && response.response._id == transformId) {
+        this.setState({
+          submitError: `There is already a job named "${transformId}". Please provide a different name.`,
+          transformIdError: `There is already a job named "${transformId}". Please provide a different name.`,
+        });
+        error = true;
+      }
       if (!transformId) {
         this.setState({ submitError: "Job name is required.", transformIdError: "Job name is required." });
         error = true;
@@ -213,7 +221,7 @@ export default class CreateTransformForm extends Component<CreateTransformFormPr
       currentStep: currentStep,
       beenWarned: warned,
     });
-  }
+  };
 
   _prev() {
     let currentStep = this.state.currentStep;
