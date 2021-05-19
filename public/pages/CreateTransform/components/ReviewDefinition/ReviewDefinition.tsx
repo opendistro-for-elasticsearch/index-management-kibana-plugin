@@ -88,7 +88,14 @@ export default class ReviewDefinition extends Component<ReviewDefinitionProps> {
             {aggItems()}
           </EuiFlexGrid>
           <EuiSpacer />
-          <EuiAccordion id="" buttonContent="Sample source index and transform result"></EuiAccordion>
+          <EuiAccordion
+            id=""
+            buttonContent={
+              <EuiText>
+                <h3>Sample source index and transform result</h3>
+              </EuiText>
+            }
+          ></EuiAccordion>
         </div>
       </ContentPanel>
     );
