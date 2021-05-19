@@ -17,7 +17,7 @@ import { EuiDataGrid, EuiDataGridColumn, EuiSpacer, EuiText } from "@elastic/eui
 import { CoreStart } from "kibana/public";
 import React, { useCallback, useState } from "react";
 import { ContentPanel } from "../../../../components/ContentPanel";
-import { FieldItem, TransformGroupItem } from "../../../../../models/interfaces";
+import { FieldItem, TransformAggItem, TransformGroupItem } from "../../../../../models/interfaces";
 import { TransformService } from "../../../../services";
 import { getErrorMessage } from "../../../../utils/helpers";
 import PreviewTransform from "../PreviewTransform";
@@ -31,9 +31,10 @@ interface DefineTransformsProps {
   sourceIndex: string;
   fields: FieldItem[];
   selectedGroupField: TransformGroupItem[];
-  onGroupSelectionChange: (selectedFields: TransformGroupItem[]) => void;
+  onGroupSelectionChange: (selectedFields: TransformGroupItem[], aggItem: TransformAggItem) => void;
   selectedAggregations: any;
-  onAggregationSelectionChange: (selectedFields: any) => void;
+  aggList: TransformAggItem[];
+  onAggregationSelectionChange: (selectedFields: any, aggItem: TransformAggItem) => void;
   previewTransform: any[];
   isReadOnly: boolean;
 }
@@ -47,6 +48,7 @@ export default function DefineTransforms({
   selectedGroupField,
   onGroupSelectionChange,
   selectedAggregations,
+  aggList,
   onAggregationSelectionChange,
   previewTransform,
   isReadOnly,
@@ -62,6 +64,7 @@ export default function DefineTransforms({
           type={field.type}
           selectedGroupField={selectedGroupField}
           onGroupSelectionChange={onGroupSelectionChange}
+          aggList={aggList}
           selectedAggregations={selectedAggregations}
           onAggregationSelectionChange={onAggregationSelectionChange}
         />
@@ -334,7 +337,14 @@ export default function DefineTransforms({
         <h4>Transformed fields preview based on sample data</h4>
       </EuiText>
       <EuiSpacer size="s" />
-      <PreviewTransform previewTransform={previewTransform} />
+      <PreviewTransform
+        previewTransform={previewTransform}
+        selectedGroupField={selectedGroupField}
+        onGroupSelectionChange={onGroupSelectionChange}
+        aggList={aggList}
+        selectedAggregations={selectedAggregations}
+        onAggregationSelectionChange={onAggregationSelectionChange}
+      />
     </ContentPanel>
   );
 }

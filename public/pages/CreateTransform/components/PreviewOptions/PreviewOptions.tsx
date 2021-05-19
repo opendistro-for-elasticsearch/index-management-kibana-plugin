@@ -13,43 +13,53 @@
  * permissions and limitations under the License.
  */
 
- import React from "react";
- import { EuiButtonIcon, EuiContextMenu, EuiContextMenuPanelDescriptor, EuiFlexGroup, EuiFlexItem, EuiPopover } from "@elastic/eui";
- import { useState } from "react";
+import React from "react";
+import { EuiButtonIcon, EuiContextMenu, EuiContextMenuPanelDescriptor, EuiFlexGroup, EuiFlexItem, EuiPopover } from "@elastic/eui";
+import { useState } from "react";
+import { TransformAggItem, TransformGroupItem } from "../../../../../models/interfaces";
 
- interface PreviewOptionsProps {
-   name: string;
- }
+interface PreviewOptionsProps {
+  name: string;
+  selectedGroupField: TransformGroupItem[];
+  onGroupSelectionChange: (selectedFields: TransformGroupItem[]) => void;
+  aggList: TransformAggItem[];
+  selectedAggregations: any;
+  onAggregationSelectionChange: (selectedFields: any, aggItem: TransformAggItem) => void;
+}
 
- export default function PreviewOptions({
-   name,
- }: PreviewOptionsProps) {
+export default function PreviewOptions({
+  name,
+  selectedGroupField,
+  onGroupSelectionChange,
+  selectedAggregations,
+  aggList,
+  onAggregationSelectionChange,
+}: PreviewOptionsProps) {
+  const [isPopoverOpen, setIsPopoverOpen] = useState(false);
 
-   const [isPopoverOpen, setIsPopoverOpen] = useState(false);
+  const closePopover = () => {
+    setIsPopoverOpen(false);
+  };
 
-   const closePopover = () => {
-     setIsPopoverOpen(false);
-   }
+  const button = <EuiButtonIcon iconType="pencil" onClick={() => setIsPopoverOpen(!isPopoverOpen)} />;
 
-   const button = <EuiButtonIcon iconType="pencil" onClick={() => setIsPopoverOpen(!isPopoverOpen)} />;
+  const panels: EuiContextMenuPanelDescriptor[] = [
+    {
+      id: 0,
+      title: "",
+      items: [
+        {
+          name: "Remove transformation",
+          onClick: () => {
+            // Remove this transform
+          },
+        },
+      ],
+    },
+  ];
 
-   const panels: EuiContextMenuPanelDescriptor[] = [
-     {
-       id: 0,
-       title: "",
-       items: [
-         {
-           name: "Remove transformation",
-           onClick: () => {
-             // Remove this transform
-           }
-         }
-       ]
-     }
-   ]
-
-   return (
-     <div>
+  return (
+    <div>
       <EuiFlexGroup justifyContent="spaceBetween">
         <EuiFlexItem grow={false}>{name}</EuiFlexItem>
         <EuiFlexItem grow={false}>
@@ -65,6 +75,6 @@
           </EuiPopover>
         </EuiFlexItem>
       </EuiFlexGroup>
-     </div>
-   )
- }
+    </div>
+  );
+}
