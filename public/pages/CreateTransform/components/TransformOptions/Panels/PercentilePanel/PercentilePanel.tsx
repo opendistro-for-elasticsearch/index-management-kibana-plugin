@@ -15,11 +15,12 @@
 
 import React, { useState } from "react";
 import { EuiButton, EuiComboBox, EuiFlexGroup, EuiFlexItem, EuiFormRow, EuiPanel, EuiSpacer } from "@elastic/eui";
+import { TRANSFORM_AGG_TYPE, TransformAggItem } from "../../../../../../../models/interfaces";
 
 interface PercentilePanelProps {
   name: string;
   aggSelection: any;
-  handleAggSelectionChange: () => void;
+  handleAggSelectionChange: (aggItem: TransformAggItem) => void;
   closePopover: () => void;
 }
 
@@ -98,13 +99,21 @@ export default function PercentilePanel({ name, aggSelection, handleAggSelection
             fill
             fullWidth={false}
             onClick={() => {
+              const aggItem: TransformAggItem = {
+                type: TRANSFORM_AGG_TYPE.percentiles,
+                name: `percentiles_${name}`,
+                percentiles: {
+                  field: name,
+                  percents: percents.map((value) => parseFloat(value.label)),
+                },
+              };
               aggSelection[`percentiles_${name}`] = {
                 percentiles: {
                   field: name,
                   percents: percents.map((value) => parseFloat(value.label)),
                 },
               };
-              handleAggSelectionChange();
+              handleAggSelectionChange(aggItem);
             }}
             style={{ minWidth: 55 }}
           >

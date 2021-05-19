@@ -20,10 +20,18 @@ import moment from "moment";
 import { RollupService, TransformService } from "../../../../services";
 import { BREADCRUMBS, ROUTES } from "../../../../utils/constants";
 import IndexService from "../../../../services/IndexService";
-import { ManagedCatIndex, PreviewTransformResponse } from "../../../../../server/models/interfaces";
+import { ManagedCatIndex } from "../../../../../server/models/interfaces";
 import CreateTransform from "../CreateTransform";
 import CreateTransformStep2 from "../CreateTransformStep2";
-import { FieldItem, GroupItem, IndexItem, Transform, TransformGroupItem } from "../../../../../models/interfaces";
+import {
+  FieldItem,
+  GroupItem,
+  IndexItem,
+  Transform,
+  TRANSFORM_AGG_TYPE,
+  TransformAggItem,
+  TransformGroupItem,
+} from "../../../../../models/interfaces";
 import { getErrorMessage } from "../../../../utils/helpers";
 import { EMPTY_TRANSFORM } from "../../utils/constants";
 import CreateTransformStep3 from "../CreateTransformStep3";
@@ -69,6 +77,7 @@ interface CreateTransformFormState {
 
   selectedGroupField: TransformGroupItem[];
   selectedAggregations: any;
+  aggList: TransformAggItem[];
   aggregationsError: string;
   selectedFields: FieldItem[];
   jobEnabledByDefault: boolean;
@@ -109,6 +118,7 @@ export default class CreateTransformForm extends Component<CreateTransformFormPr
       selectedTerms: [],
       selectedGroupField: [],
       selectedAggregations: {},
+      aggList: [],
       aggregationsError: "",
       description: "",
 
@@ -291,20 +301,35 @@ export default class CreateTransformForm extends Component<CreateTransformFormPr
     this.setState({ targetIndex: options, transformJSON: newJSON, targetIndexError: targetIndexError });
   };
 
-  onGroupSelectionChange = async (selectedGroupField: GroupItem[]): Promise<void> => {
-    let newJSON = this.state.transformJSON;
+  onGroupSelectionChange = async (selectedGroupField: GroupItem[], aggItem: TransformAggItem): Promise<void> => {
+    const { aggList } = this.state;
+    aggList.push(aggItem);
+    this.updateGroup();
 
-    if (selectedGroupField.length) newJSON.transform.groups = selectedGroupField;
-    this.setState({ selectedGroupField, transformJSON: newJSON });
-    await this.previewTransform(newJSON);
+    let previewResponse = await this.previewTransform(this.state.transformJSON);
+    this.setState({ selectedGroupField });
   };
 
-  onAggregationSelectionChange = async (selectedAggregations: any): Promise<void> => {
-    let newJSON = this.state.transformJSON;
+  onAggregationSelectionChange = async (selectedAggregations: any, aggItem: TransformAggItem): Promise<void> => {
+    const { aggList } = this.state;
+    aggList.push(aggItem);
+    this.updateAggregation();
 
-    newJSON.transform.aggregations = selectedAggregations;
-    this.setState({ selectedAggregations: selectedAggregations, transformJSON: newJSON });
-    await this.previewTransform(newJSON);
+    let previewResponse = await this.previewTransform(this.state.transformJSON);
+    this.setState({ selectedAggregations: selectedAggregations });
+  };
+
+  onRemoveTransformation = async (name: string): Promise<void> => {
+    const { aggList } = this.state;
+    const toRemoveIndex = aggList.findIndex((item) => {
+      return item.name === name;
+    });
+    aggList.splice(toRemoveIndex, 1);
+    this.setState({ aggList });
+
+    this.updateGroup();
+    this.updateAggregation();
+    await this.previewTransform(this.state.transformJSON);
   };
 
   onChangeJobEnabledByDefault = (): void => {
@@ -349,18 +374,35 @@ export default class CreateTransformForm extends Component<CreateTransformFormPr
   };
 
   updateGroup = (): void => {
-    const { transformJSON, selectedGroupField } = this.state;
+    const { transformJSON, aggList } = this.state;
     let newJSON = transformJSON;
-
-    if (selectedGroupField.length) newJSON.transform.groups = selectedGroupField;
-
+    let tempGroupSelect: GroupItem[] = [];
+    aggList.map((aggItem) => {
+      if (
+        aggItem.type == TRANSFORM_AGG_TYPE.histogram ||
+        aggItem.type == TRANSFORM_AGG_TYPE.terms ||
+        aggItem.type == TRANSFORM_AGG_TYPE.date_histogram
+      )
+        tempGroupSelect.push(aggItem.item);
+    });
+    if (tempGroupSelect.length) newJSON.transform.groups = tempGroupSelect;
     this.setState({ transformJSON: newJSON });
   };
 
   updateAggregation = (): void => {
-    const { transformJSON, selectedAggregations } = this.state;
+    const { transformJSON, aggList } = this.state;
     let newJSON = transformJSON;
-    newJSON.transform.aggregations = selectedAggregations;
+    let aggJSON: any = {};
+    aggList.map((aggItem) => {
+      // Form the final aggregation object with items with correct types from aggList
+      if (
+        aggItem.type !== TRANSFORM_AGG_TYPE.histogram &&
+        aggItem.type !== TRANSFORM_AGG_TYPE.terms &&
+        aggItem.type !== TRANSFORM_AGG_TYPE.date_histogram
+      )
+        aggJSON[aggItem.name] = aggItem.item;
+    });
+    newJSON.transform.aggregations = aggJSON;
     this.setState({ transformJSON: newJSON });
   };
 
@@ -428,6 +470,7 @@ export default class CreateTransformForm extends Component<CreateTransformFormPr
       selectedTerms,
       selectedGroupField,
       selectedAggregations,
+      aggList,
       aggregationsError,
 
       jobEnabledByDefault,
@@ -469,11 +512,13 @@ export default class CreateTransformForm extends Component<CreateTransformFormPr
           sourceIndex={sourceIndex[0] ? sourceIndex[0].label : ""}
           fields={fields}
           selectedTerms={selectedTerms}
+          aggList={aggList}
           selectedGroupField={selectedGroupField}
           selectedAggregations={selectedAggregations}
           aggregationsError={aggregationsError}
           onGroupSelectionChange={this.onGroupSelectionChange}
           onAggregationSelectionChange={this.onAggregationSelectionChange}
+          onRemoveTransformation={this.onRemoveTransformation}
           previewTransform={previewTransform}
         />
         <CreateTransformStep3
