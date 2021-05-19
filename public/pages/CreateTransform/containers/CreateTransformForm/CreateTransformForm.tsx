@@ -288,8 +288,6 @@ export default class CreateTransformForm extends Component<CreateTransformFormPr
     aggList.push(aggItem);
     this.updateGroup();
 
-    // let newJSON = this.state.transformJSON;
-    // if (selectedGroupField.length) newJSON.transform.groups = selectedGroupField;
     let previewResponse = await this.previewTransform(this.state.transformJSON);
     this.setState({ selectedGroupField });
   };
@@ -299,8 +297,6 @@ export default class CreateTransformForm extends Component<CreateTransformFormPr
     aggList.push(aggItem);
     this.updateAggregation();
 
-    // let newJSON = this.state.transformJSON;
-    // newJSON.transform.aggregations = selectedAggregations;
     let previewResponse = await this.previewTransform(this.state.transformJSON);
     this.setState({ selectedAggregations: selectedAggregations });
   };
