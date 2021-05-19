@@ -72,27 +72,6 @@ export default function PreviewTransform({
   );
 
   const updatePreviewColumns = (): void => {
-    // if (previewTransform.length) {
-    //   let tempCol: EuiDataGridColumn[] = [];
-    //   for (const [key, value] of Object.entries(previewTransform[0])) {
-    //     console.log(value);
-    //     tempCol.push({
-    //       id: key,
-    //       display: <PreviewOptions name={key} selectedGroupField={selectedGroupField}
-    //                                onGroupSelectionChange={onGroupSelectionChange}
-    //                                aggList={aggList}
-    //                                selectedAggregations={selectedAggregations}
-    //                                onAggregationSelectionChange={onAggregationSelectionChange} />,
-    //       actions: {
-    //         showHide: false,
-    //         showMoveLeft: false,
-    //         showMoveRight: false,
-    //         showSortAsc: false,
-    //         showSortDesc: false,
-    //       },
-    //     });
-    //   }
-    //
     if (aggList.length) {
       let tempCol: EuiDataGridColumn[] = [];
       aggList.map((aggItem) => {
@@ -135,12 +114,12 @@ export default function PreviewTransform({
       columnVisibility={{ visibleColumns: visiblePreviewColumns, setVisibleColumns: setVisiblePreviewColumns }}
       rowCount={previewTransform.length}
       renderCellValue={renderPreviewCellValue}
-      pagination={{
-        ...previewPagination,
-        pageSizeOptions: [5, 10, 20, 50],
-        onChangeItemsPerPage: onChangePreviewPerPage,
-        onChangePage: onChangePreviewPage,
-      }}
+      // pagination={{
+      //   ...previewPagination,
+      //   pageSizeOptions: [5, 10, 20, 50],
+      //   onChangeItemsPerPage: onChangePreviewPerPage,
+      //   onChangePage: onChangePreviewPage,
+      // }}
       toolbarVisibility={{
         showColumnSelector: true,
         showStyleSelector: false,
