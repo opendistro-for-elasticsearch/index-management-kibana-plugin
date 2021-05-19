@@ -18,7 +18,7 @@ import { EuiSpacer, EuiTitle, EuiFlexGroup, EuiFlexItem, EuiComboBoxOptionOption
 import { RouteComponentProps } from "react-router-dom";
 import { TransformService } from "../../../../services";
 import { BREADCRUMBS, ROUTES } from "../../../../utils/constants";
-import { IndexItem, TransformGroupItem } from "../../../../../models/interfaces";
+import { FieldItem, IndexItem, TransformAggItem, TransformGroupItem } from "../../../../../models/interfaces";
 import CreateTransformSteps from "../../components/CreateTransformSteps";
 import JobNameAndIndices from "../../components/JobNameAndIndices";
 import ReviewDefinition from "../../components/ReviewDefinition";
@@ -36,15 +36,20 @@ interface CreateTransformProps extends RouteComponentProps {
   targetIndex: { label: string; value?: IndexItem }[];
   sourceIndexFilter: string;
 
+  jobEnabledByDefault: boolean;
+  pageSize: number;
+  fields: FieldItem[];
   selectedGroupField: TransformGroupItem[];
+  onGroupSelectionChange: (selectedFields: TransformGroupItem[], aggItem: TransformAggItem) => void;
   selectedAggregations: any;
+  aggList: TransformAggItem[];
+  onAggregationSelectionChange: (selectedFields: any, aggItem: TransformAggItem) => void;
+  onRemoveTransformation: (name: string) => void;
+  previewTransform: any[];
 
   timestamp: EuiComboBoxOptionOption<String>[];
   timezone: string;
   timeunit: string;
-
-  jobEnabledByDefault: boolean;
-  pageSize: number;
 }
 
 export default class CreateTransformStep4 extends Component<CreateTransformProps> {
@@ -77,7 +82,7 @@ export default class CreateTransformStep4 extends Component<CreateTransformProps
             <EuiSpacer />
             <JobNameAndIndices {...this.props} />
             <EuiSpacer />
-            <ReviewDefinition {...this.props} />
+            <ReviewDefinition {...this.props} notifications={this.context.notifications} sourceIndex={this.props.sourceIndex[0].label} />
             <EuiSpacer />
             <ReviewSchedule {...this.props} />
             <EuiSpacer />
