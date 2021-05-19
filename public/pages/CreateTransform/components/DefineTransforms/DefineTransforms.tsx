@@ -60,7 +60,7 @@ export default function DefineTransforms({
   fields.map((field: FieldItem) => {
     columns.push({
       id: field.label,
-      display: (
+      display: !isReadOnly && (
         <TransformOptions
           name={field.label}
           type={field.type}
@@ -281,6 +281,52 @@ export default function DefineTransforms({
     return "-";
   };
 
+  //TODO: remove duplicate code here after extracting the first table as separate component
+  if (isReadOnly)
+    return (
+      <div>
+        <EuiText>
+          <h4>Original fields with sample data</h4>
+        </EuiText>
+        <EuiSpacer size="s" />
+        <EuiDataGrid
+          aria-label="Define transforms"
+          columns={columns}
+          columnVisibility={{ visibleColumns, setVisibleColumns }}
+          rowCount={Math.min(dataCount, DefaultSampleDataSize)}
+          renderCellValue={renderCellValue}
+          sorting={{ columns: sortingColumns, onSort }}
+          pagination={{
+            ...pagination,
+            pageSizeOptions: [5, 10, 20, 50],
+            onChangeItemsPerPage: onChangeItemsPerPage,
+            onChangePage: onChangePage,
+          }}
+          toolbarVisibility={{
+            showColumnSelector: true,
+            showStyleSelector: false,
+            showSortSelector: false,
+            showFullScreenSelector: false,
+          }}
+        />
+        <EuiSpacer />
+        <EuiText>
+          <h4>Transformed fields preview based on sample data</h4>
+        </EuiText>
+        <EuiSpacer size="s" />
+        <PreviewTransform
+          previewTransform={previewTransform}
+          selectedGroupField={selectedGroupField}
+          onGroupSelectionChange={onGroupSelectionChange}
+          aggList={aggList}
+          selectedAggregations={selectedAggregations}
+          onAggregationSelectionChange={onAggregationSelectionChange}
+          onRemoveTransformation={onRemoveTransformation}
+          isReadOnly={isReadOnly}
+        />
+      </div>
+    );
+
   return (
     <ContentPanel
       //TODO: Add action to enter full screen view
@@ -347,6 +393,7 @@ export default function DefineTransforms({
         selectedAggregations={selectedAggregations}
         onAggregationSelectionChange={onAggregationSelectionChange}
         onRemoveTransformation={onRemoveTransformation}
+        isReadOnly={isReadOnly}
       />
     </ContentPanel>
   );
