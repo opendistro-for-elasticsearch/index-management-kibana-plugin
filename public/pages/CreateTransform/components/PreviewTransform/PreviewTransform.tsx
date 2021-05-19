@@ -74,34 +74,54 @@ export default function PreviewTransform({
   );
 
   const updatePreviewColumns = (): void => {
-    if (aggList.length) {
-      let tempCol: EuiDataGridColumn[] = [];
-      aggList.map((aggItem) => {
-        tempCol.push({
-          id: aggItem.name,
-          display: !isReadOnly && (
-            <PreviewOptions
-              name={aggItem.name}
-              selectedGroupField={selectedGroupField}
-              onGroupSelectionChange={onGroupSelectionChange}
-              aggList={aggList}
-              selectedAggregations={selectedAggregations}
-              onAggregationSelectionChange={onAggregationSelectionChange}
-              onRemoveTransformation={onRemoveTransformation}
-            />
-          ),
-          actions: {
-            showHide: false,
-            showMoveLeft: false,
-            showMoveRight: false,
-            showSortAsc: false,
-            showSortDesc: false,
-          },
+    if (isReadOnly) {
+      if (previewTransform.length) {
+        let tempCol: EuiDataGridColumn[] = [];
+        for (const [key, value] of Object.entries(previewTransform[0])) {
+          tempCol.push({
+            id: key,
+            actions: {
+              showHide: false,
+              showMoveLeft: false,
+              showMoveRight: false,
+              showSortAsc: false,
+              showSortDesc: false,
+            },
+          });
+        }
+        setPreviewColumns(tempCol);
+        setVisiblePreviewColumns(() => tempCol.map(({ id }) => id).slice(0, 5));
+      }
+    } else {
+      if (aggList.length) {
+        let tempCol: EuiDataGridColumn[] = [];
+        aggList.map((aggItem) => {
+          tempCol.push({
+            id: aggItem.name,
+            display: !isReadOnly && (
+              <PreviewOptions
+                name={aggItem.name}
+                selectedGroupField={selectedGroupField}
+                onGroupSelectionChange={onGroupSelectionChange}
+                aggList={aggList}
+                selectedAggregations={selectedAggregations}
+                onAggregationSelectionChange={onAggregationSelectionChange}
+                onRemoveTransformation={onRemoveTransformation}
+              />
+            ),
+            actions: {
+              showHide: false,
+              showMoveLeft: false,
+              showMoveRight: false,
+              showSortAsc: false,
+              showSortDesc: false,
+            },
+          });
         });
-      });
 
-      setPreviewColumns(tempCol);
-      setVisiblePreviewColumns(() => tempCol.map(({ id }) => id).slice(0, 5));
+        setPreviewColumns(tempCol);
+        setVisiblePreviewColumns(() => tempCol.map(({ id }) => id).slice(0, 5));
+      }
     }
   };
 
@@ -109,7 +129,7 @@ export default function PreviewTransform({
     updatePreviewColumns();
   }, [previewTransform, aggList]);
 
-  return aggList.length ? (
+  return (!isReadOnly && aggList.length) || (isReadOnly && previewTransform.length) ? (
     <EuiDataGrid
       aria-label="Preview transforms"
       columns={previewColumns}
