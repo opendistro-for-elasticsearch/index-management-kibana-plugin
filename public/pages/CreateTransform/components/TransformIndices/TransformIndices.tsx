@@ -51,6 +51,7 @@ interface TransformIndicesProps {
   onChangeTargetIndex: (options: EuiComboBoxOptionOption<IndexItem>[]) => void;
   hasAggregation: boolean;
   fields: FieldItem[];
+  beenWarned: boolean;
 }
 
 interface TransformIndicesState {
@@ -162,6 +163,7 @@ export default class TransformIndices extends Component<TransformIndicesProps, T
       onChangeSourceIndexFilter,
       onChangeTargetIndex,
       hasAggregation,
+      beenWarned,
     } = this.props;
 
     const { isLoading, indexOptions, targetIndexOptions, isPopoverOpen } = this.state;
@@ -174,112 +176,120 @@ export default class TransformIndices extends Component<TransformIndicesProps, T
 
     const clearIndexFilter = () => {
       onChangeSourceIndexFilter("{}");
-    }
+    };
 
     return (
-      <ContentPanel bodyStyles={{ padding: "initial" }} title="Indices" titleSize="m">
-        <div style={{ paddingLeft: "10px" }}>
-          <EuiSpacer size="s" />
-          <EuiCallOut color="warning">
-            <p>You can't change indices after creating a job. Double-check the source and target index names before proceeding.</p>
-          </EuiCallOut>
+      <div>
+        <ContentPanel bodyStyles={{ padding: "initial" }} title="Indices" titleSize="m">
           {hasAggregation && (
             <Fragment>
-              <EuiSpacer />
+              <EuiSpacer size="s" />
               <EuiCallOut color="warning">
                 <p>Note: changing source index will erase all existing definitions about aggregations and metrics.</p>
               </EuiCallOut>
             </Fragment>
           )}
-          <EuiSpacer size="m" />
-          <EuiFormRow
-            label="Source index"
-            error={sourceIndexError}
-            isInvalid={sourceIndexError != ""}
-            helpText="The index where this transform job is performed on. Type in * as wildcard for index pattern.
-            Indices cannot be changed once the job is created. Please ensure that you select the right source index."
-          >
-            <EuiComboBox
-              placeholder="Select source index"
-              options={indexOptions}
-              selectedOptions={sourceIndex}
-              onChange={onChangeSourceIndex}
-              singleSelection={{ asPlainText: true }}
-              onSearchChange={this.onIndexSearchChange}
-              isLoading={isLoading}
+          <div style={{ paddingLeft: "10px" }}>
+            <EuiSpacer size="m" />
+            <EuiFormRow
+              label="Source index"
+              error={sourceIndexError}
               isInvalid={sourceIndexError != ""}
-              data-test-subj="sourceIndexCombobox"
-            />
-          </EuiFormRow>
-          <EuiSpacer size="m" />
-          <EuiFlexGroup gutterSize="xs">
-            <EuiFlexItem grow={false}>
-              <EuiText size="xs">
-                <h4>Source index filter</h4>
-              </EuiText>
-            </EuiFlexItem>
-            <EuiFlexItem>
-              <EuiText size="xs" color="subdued">
-                <i> - optional</i>
-              </EuiText>
-            </EuiFlexItem>
-          </EuiFlexGroup>
+              helpText="The index where this transform job is performed on. Type in * as wildcard for index pattern.
+            Indices cannot be changed once the job is created. Please ensure that you select the right source index."
+            >
+              <EuiComboBox
+                placeholder="Select source index"
+                options={indexOptions}
+                selectedOptions={sourceIndex}
+                onChange={onChangeSourceIndex}
+                singleSelection={{ asPlainText: true }}
+                onSearchChange={this.onIndexSearchChange}
+                isLoading={isLoading}
+                isInvalid={sourceIndexError != ""}
+                data-test-subj="sourceIndexCombobox"
+              />
+            </EuiFormRow>
+            <EuiSpacer size="m" />
+            <EuiFlexGroup gutterSize="xs">
+              <EuiFlexItem grow={false}>
+                <EuiText size="xs">
+                  <h4>Source index filter</h4>
+                </EuiText>
+              </EuiFlexItem>
+              <EuiFlexItem>
+                <EuiText size="xs" color="subdued">
+                  <i> - optional</i>
+                </EuiText>
+              </EuiFlexItem>
+            </EuiFlexGroup>
 
-          <EuiText size="xs" color="subdued" style={{ width: "420px" }}>
-            Choose a subset of source index to focus on to optimize for performance and computing resource. You can’t change filter once the
-            job is created.
-          </EuiText>
+            <EuiText size="xs" color="subdued" style={{ width: "420px" }}>
+              Choose a subset of source index to focus on to optimize for performance and computing resource. You can’t change filter once
+              the job is created.
+            </EuiText>
 
-          {/*{this.state.dataFilters.map((item) => (*/}
-          {/*  <EuiBadge>{item}</EuiBadge>*/}
-          {/*))}*/}
-          <EuiBadge
-            iconType="cross"
-            iconSide="right"
-            onClick={() => this.onButtonClick()}
-            onClickAriaLabel="Edit Source Index Filter"
-            iconOnClick={() => clearIndexFilter()}
-            iconOnClickAriaLabel="Clear Source Index Filter"
-          >{sourceIndexFilter}</EuiBadge>
-          <EuiPopover
-            button={
-              <EuiButtonEmpty
-                size="xs"
-                onClick={() => this.onButtonClick()}
-                data-test-subj="addFilter"
-                className="globalFilterBar__addButton"
-              >
-                + Add data filter
-              </EuiButtonEmpty>
-            }
-            isOpen={isPopoverOpen}
-            closePopover={this.closePopover}
-          >
-            <IndexFilterPopover {...this.props} closePopover={this.closePopover} />
-          </EuiPopover>
-          <EuiSpacer />
-          <EuiHorizontalRule margin="xs" />
-          <EuiFormRow
-            label="Target index"
-            error={targetIndexError}
-            isInvalid={targetIndexError != ""}
-            helpText="The index stores transform results. You can look up an existing index to reuse or type to create a new index."
-          >
-            <EuiComboBox
-              placeholder="Select or create target index"
-              options={targetIndexOptions}
-              selectedOptions={targetIndex}
-              onChange={onChangeTargetIndex}
-              onCreateOption={this.onCreateOption}
-              singleSelection={{ asPlainText: true }}
-              onSearchChange={this.onIndexSearchChange}
-              isLoading={isLoading}
+            {/*{this.state.dataFilters.map((item) => (*/}
+            {/*  <EuiBadge>{item}</EuiBadge>*/}
+            {/*))}*/}
+            <EuiBadge
+              iconType="cross"
+              iconSide="right"
+              onClick={() => this.onButtonClick()}
+              onClickAriaLabel="Edit Source Index Filter"
+              iconOnClick={() => clearIndexFilter()}
+              iconOnClickAriaLabel="Clear Source Index Filter"
+            >
+              {sourceIndexFilter}
+            </EuiBadge>
+            <EuiPopover
+              button={
+                <EuiButtonEmpty
+                  size="xs"
+                  onClick={() => this.onButtonClick()}
+                  data-test-subj="addFilter"
+                  className="globalFilterBar__addButton"
+                >
+                  + Add data filter
+                </EuiButtonEmpty>
+              }
+              isOpen={isPopoverOpen}
+              closePopover={this.closePopover}
+            >
+              <IndexFilterPopover {...this.props} closePopover={this.closePopover} />
+            </EuiPopover>
+            <EuiSpacer />
+            <EuiHorizontalRule margin="xs" />
+            <EuiFormRow
+              label="Target index"
+              error={targetIndexError}
               isInvalid={targetIndexError != ""}
-              data-test-subj="targetIndexCombobox"
-            />
-          </EuiFormRow>
-        </div>
-      </ContentPanel>
+              helpText="The index stores transform results. You can look up an existing index to reuse or type to create a new index."
+            >
+              <EuiComboBox
+                placeholder="Select or create target index"
+                options={targetIndexOptions}
+                selectedOptions={targetIndex}
+                onChange={onChangeTargetIndex}
+                onCreateOption={this.onCreateOption}
+                singleSelection={{ asPlainText: true }}
+                onSearchChange={this.onIndexSearchChange}
+                isLoading={isLoading}
+                isInvalid={targetIndexError != ""}
+                data-test-subj="targetIndexCombobox"
+              />
+            </EuiFormRow>
+          </div>
+        </ContentPanel>
+        {beenWarned && (
+          <Fragment>
+            <EuiSpacer />
+            <EuiCallOut color="warning">
+              <p>You can't change indices after creating a job. Double-check the source and target index names before proceeding.</p>
+            </EuiCallOut>
+          </Fragment>
+        )}
+      </div>
     );
   }
 }

@@ -14,7 +14,7 @@
  */
 
 import React, { Component } from "react";
-import { EuiFlexGrid, EuiSpacer, EuiFlexItem, EuiText } from "@elastic/eui";
+import { EuiCodeEditor, EuiFlexGrid, EuiSpacer, EuiFlexItem, EuiText } from "@elastic/eui";
 import { ContentPanel } from "../../../../components/ContentPanel";
 
 interface IndicesProps {
@@ -41,7 +41,7 @@ export default class Indices extends Component<IndicesProps> {
           <EuiSpacer size="m" />
           <EuiText size="xs">
             <dt>Source index filter</dt>
-            <dd>{sourceIndexFilter}</dd>
+            <EuiCodeEditor mode="json" theme="github" width="400px" height="100px" value={sourceIndexFilter} readOnly />
           </EuiText>
           <EuiSpacer size="m" />
           <EuiText size="xs">

@@ -76,4 +76,9 @@ export const AddFieldsColumns = [
   },
 ];
 
+export const ExecutionFrequencyDefinitionOptions = [
+  { value: "fixed", text: "Define by fixed interval" },
+  { value: "cron", text: "Define by cron expression" },
+];
+
 export const DefaultSampleDataSize = 50;
