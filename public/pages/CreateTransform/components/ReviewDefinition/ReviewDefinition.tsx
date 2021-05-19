@@ -28,7 +28,6 @@ interface ReviewDefinitionProps {
   transformId: string;
   sourceIndex: string;
   fields: FieldItem[];
-  z;
   selectedGroupField: TransformGroupItem[];
   onGroupSelectionChange: (selectedFields: TransformGroupItem[], aggItem: TransformAggItem) => void;
   selectedAggregations: any;
