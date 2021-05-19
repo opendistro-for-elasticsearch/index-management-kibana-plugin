@@ -21,7 +21,7 @@ import { FieldItem, TransformAggItem, TransformGroupItem } from "../../../../../
 import { TransformService } from "../../../../services";
 import { getErrorMessage } from "../../../../utils/helpers";
 import PreviewTransform from "../PreviewTransform";
-import TransformOptions from "../TransformOptions/TranformOptions";
+import TransformOptions from "../TransformOptions";
 import { DefaultSampleDataSize } from "../../utils/constants";
 
 interface DefineTransformsProps {
