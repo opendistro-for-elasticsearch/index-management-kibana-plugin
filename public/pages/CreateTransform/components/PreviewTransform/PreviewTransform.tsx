@@ -121,6 +121,7 @@ export default function PreviewTransform({
 
   return (!isReadOnly && aggList.length) || (isReadOnly && previewTransform.length) ? (
     <EuiDataGrid
+      style={{ overflow: "scroll", width: "100%" }}
       aria-label="Preview transforms"
       columns={previewColumns}
       columnVisibility={{ visibleColumns: visiblePreviewColumns, setVisibleColumns: setVisiblePreviewColumns }}
