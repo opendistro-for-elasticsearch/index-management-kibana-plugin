@@ -110,7 +110,7 @@ export default function PreviewTransform({
         });
 
         setPreviewColumns(tempCol);
-        setVisiblePreviewColumns(() => tempCol.map(({ id }) => id).slice(0, 5));
+        setVisiblePreviewColumns(() => tempCol.map(({ id }) => id));
       }
     }
   };
