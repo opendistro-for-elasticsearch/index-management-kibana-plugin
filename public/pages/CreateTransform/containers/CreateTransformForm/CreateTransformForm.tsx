@@ -503,7 +503,9 @@ export default class CreateTransformForm extends Component<CreateTransformFormPr
           onChangeSourceIndexFilter={this.onChangeSourceIndexFilter}
           onChangeTargetIndex={this.onChangeTargetIndex}
           currentStep={this.state.currentStep}
-          hasAggregation={selectedGroupField.length != 0 || Object.keys(selectedAggregations).length != 0}
+          hasAggregation={selectedGroupField.length != 0 ||
+            Object.keys(selectedAggregations).length != 0 ||
+            aggList.length != 0}
           fields={fields}
           beenWarned={beenWarned}
         />
