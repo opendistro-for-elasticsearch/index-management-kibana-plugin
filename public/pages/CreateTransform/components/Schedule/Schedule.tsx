@@ -70,6 +70,7 @@ export default class Schedule extends Component<ScheduleProps> {
     return (
       <ContentPanel bodyStyles={{ padding: "initial" }} title="Schedule" titleSize="m">
         <div style={{ paddingLeft: "10px" }}>
+          <EuiSpacer size="m" />
           {!isEdit && (
             <EuiCheckbox
               id="jobEnabledByDefault"
@@ -91,8 +92,8 @@ export default class Schedule extends Component<ScheduleProps> {
 
           {/* TODO: Replace with switch block when define by cron expressions is supported. */}
           {selectInterval(interval, intervalTimeunit, intervalError, onChangeIntervalTime, onChangeIntervalTimeunit)}
-
-          <EuiHorizontalRule />
+          <EuiSpacer size="m" />
+          <EuiHorizontalRule margin="xs" />
           <EuiAccordion
             id="pagePerExecution"
             buttonContent={
