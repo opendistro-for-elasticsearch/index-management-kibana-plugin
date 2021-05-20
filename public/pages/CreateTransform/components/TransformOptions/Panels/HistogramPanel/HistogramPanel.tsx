@@ -48,7 +48,7 @@ export default function HistogramPanel({ name, handleGroupSelectionChange, aggLi
             fill
             fullWidth={false}
             onClick={() => {
-              const targetFieldName = `${name} _${GROUP_TYPES.histogram}`;
+              const targetFieldName = `${name} _${GROUP_TYPES.histogram}_${histogramInterval}`;
               handleGroupSelectionChange(
                 {
                   histogram: {

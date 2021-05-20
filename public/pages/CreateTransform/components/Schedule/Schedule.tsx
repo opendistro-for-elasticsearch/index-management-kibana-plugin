@@ -70,6 +70,7 @@ export default class Schedule extends Component<ScheduleProps> {
     return (
       <ContentPanel bodyStyles={{ padding: "initial" }} title="Schedule" titleSize="m">
         <div style={{ paddingLeft: "10px" }}>
+          <EuiSpacer size="m" />
           {!isEdit && (
             <EuiCheckbox
               id="jobEnabledByDefault"
@@ -91,8 +92,8 @@ export default class Schedule extends Component<ScheduleProps> {
 
           {/* TODO: Replace with switch block when define by cron expressions is supported. */}
           {selectInterval(interval, intervalTimeunit, intervalError, onChangeIntervalTime, onChangeIntervalTimeunit)}
-
-          <EuiHorizontalRule />
+          <EuiSpacer size="m" />
+          <EuiHorizontalRule margin="xs" />
           <EuiAccordion
             id="pagePerExecution"
             buttonContent={
@@ -103,8 +104,14 @@ export default class Schedule extends Component<ScheduleProps> {
           >
             <EuiSpacer size="m" />
             <EuiFormRow
-              label="Page per execution"
-              helpText="The number of pages every execution processes. A larger number means faster execution and higher costs on memory."
+              label="Pages per execution"
+              helpText={`Determines the number of transformed buckets that are
+                        computed and indexed at a time. A larger number means
+                        better throughput for each search request, but costs
+                        more memory and incurs higher latency. An exception
+                        occurs when memory limits are exceeded. We recommend
+                        you to start with the default value, and adjust based
+                        on your use case and shard size.`}
             >
               <EuiFieldNumber min={1} placeholder="1000" value={pageSize} onChange={onChangePage} />
             </EuiFormRow>
