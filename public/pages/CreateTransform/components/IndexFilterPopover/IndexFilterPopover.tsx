@@ -111,7 +111,7 @@ export default function IndexFilterPopover({
     <div>
       <EuiPopoverTitle>
         <EuiFlexGroup alignItems="baseline" responsive={false}>
-          <EuiFlexItem>Add data filter</EuiFlexItem>
+          <EuiFlexItem>Edit data filter</EuiFlexItem>
           {/*<EuiFlexItem grow={false}>*/}
           {/*  <EuiButtonEmpty size="xs" onClick={() => setIsCustomEditorOpen(!isCustomEditorOpen)}>*/}
           {/*    {isCustomEditorOpen ? "Edit filter values" : "Custom expression"}*/}

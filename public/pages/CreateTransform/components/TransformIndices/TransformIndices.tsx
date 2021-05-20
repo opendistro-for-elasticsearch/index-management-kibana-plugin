@@ -170,7 +170,7 @@ export default class TransformIndices extends Component<TransformIndicesProps, T
 
     const filterButton = (
       <EuiButtonEmpty size="xs" onClick={() => this.onButtonClick()} data-test-subj="addFilter">
-        + Add data filter
+        Edit data filter
       </EuiButtonEmpty>
     );
 
@@ -250,7 +250,7 @@ export default class TransformIndices extends Component<TransformIndicesProps, T
                   data-test-subj="addFilter"
                   className="globalFilterBar__addButton"
                 >
-                  + Add data filter
+                  Edit data filter
                 </EuiButtonEmpty>
               }
               isOpen={isPopoverOpen}

@@ -23,6 +23,7 @@ import { Transform } from "../../../../../models/interfaces";
 import CreateTransformSteps from "../../components/CreateTransformSteps";
 import Schedule from "../../components/Schedule";
 import { CoreServicesContext } from "../../../../components/core_services";
+import { createdTransformToastMessage } from "../../utils/helpers";
 
 interface CreateTransformProps extends RouteComponentProps {
   transformService: TransformService;
@@ -73,7 +74,7 @@ export default class CreateTransformStep3 extends Component<CreateTransformProps
     try {
       const response = await transformService.putTransform(transform, transformId);
       if (response.ok) {
-        this.context.notifications.toasts.addSuccess(`Created transform: ${response.response._id}`);
+        this.context.notifications.toasts.addSuccess(createdTransformToastMessage(response.response._id));
         this.props.history.push(ROUTES.TRANSFORMS);
       } else {
         this.setState({ submitError: response.error });
