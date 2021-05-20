@@ -16,52 +16,49 @@
 import { TransformMetadata } from "../../../../models/interfaces";
 import React, { ChangeEvent } from "react";
 import moment from "moment-timezone";
-import { EuiFieldNumber, EuiFlexGroup, EuiFlexItem, EuiIcon, EuiFormRow, EuiSelect, EuiTextArea, EuiText } from "@elastic/eui";
+import { EuiFieldNumber, EuiFlexGroup, EuiFlexItem, EuiIcon, EuiFormRow, EuiLink, EuiSelect, EuiTextArea, EuiText } from "@elastic/eui";
 import { ScheduleIntervalTimeunitOptions } from "../../CreateTransform/utils/constants";
+import ErrorModal from "../components/ErrorModal";
+import { ModalConsumer } from "../../../components/Modal";
 
 // TODO: merge with rollup helper to have a common helper
 export const renderStatus = (metadata: TransformMetadata | undefined): JSX.Element => {
   if (metadata == null || metadata.transform_metadata == null) return <dd>-</dd>;
-  let icon;
-  let iconColor;
-  let textColor: "default" | "subdued" | "secondary" | "ghost" | "accent" | "warning" | "danger" | undefined;
+
+  // Notes regarding color options:
+  //    'subdued' = a shade of black
+  //    'success' = a shade of green
+  //    'danger' = a shade of red
+  //    '#DDDDDD' = a shade of grey
+  let iconColor: "subdued" | "success" | "danger" | "#DDDDDD" | undefined;
   let text;
+
   switch (metadata.transform_metadata.status) {
     case "failed":
-      icon = "alert";
       iconColor = "danger";
-      textColor = "danger";
-      text = "Failed: " + metadata.transform_metadata.failure_reason;
-      break;
-    case "finished":
-      icon = "check";
-      iconColor = "success";
-      textColor = "secondary";
-      text = "Complete";
-      break;
-    case "init":
+      text = "Error";
       return (
         <EuiFlexGroup gutterSize="xs" alignItems="center">
           <EuiFlexItem grow={false}>
-            <EuiIcon size="s" type="clock" color="primary" />
+            <EuiIcon size={"s"} type={"dot"} color={iconColor} />
           </EuiFlexItem>
           <EuiFlexItem grow={false}>
-            <EuiText size="xs" style={{ color: "#006BB4" }}>
-              Initializing
+            <EuiText size={"xs"}>
+              <ModalConsumer>{({ onShow }) => <EuiLink onClick={() => onShow(ErrorModal, { metadata })}>{text}</EuiLink>}</ModalConsumer>
             </EuiText>
           </EuiFlexItem>
         </EuiFlexGroup>
       );
-    case "started":
-      icon = "play";
+    case "finished":
       iconColor = "success";
-      textColor = "secondary";
-      text = "Started";
+      text = "Complete";
+      break;
+    case "init" || "started":
+      iconColor = "subdued";
+      text = "Initializing...";
       break;
     case "stopped":
-      icon = "stop";
-      iconColor = "subdued";
-      textColor = "subdued";
+      iconColor = "#DDDDDD";
       text = "Stopped";
       break;
     default:
@@ -71,12 +68,10 @@ export const renderStatus = (metadata: TransformMetadata | undefined): JSX.Eleme
   return (
     <EuiFlexGroup gutterSize="xs" alignItems="center">
       <EuiFlexItem grow={false}>
-        <EuiIcon size="s" type={icon} color={iconColor} />
+        <EuiIcon size={"s"} type={"dot"} color={iconColor} />
       </EuiFlexItem>
       <EuiFlexItem grow={false}>
-        <EuiText size="xs" color={textColor}>
-          {text}
-        </EuiText>
+        <EuiText size={"xs"}>{text}</EuiText>
       </EuiFlexItem>
     </EuiFlexGroup>
   );

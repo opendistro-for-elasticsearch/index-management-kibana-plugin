@@ -180,7 +180,7 @@ export default class Transforms extends Component<TransformProps, TransformState
       },
       {
         field: "metadata",
-        name: "transform job status",
+        name: "Transform job status",
         sortable: false,
         textOnly: true,
         render: (metadata) => renderStatus(metadata),

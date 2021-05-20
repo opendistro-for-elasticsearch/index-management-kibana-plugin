@@ -159,6 +159,7 @@ export default class ReviewDefinition extends Component<ReviewDefinitionProps> {
               </EuiText>
             }
           >
+            <EuiSpacer size="m" />
             <DefineTransforms
               {...this.props}
               transformService={transformService}

@@ -137,7 +137,7 @@ export default class TransformSettings extends Component<TransformSettingsProps,
           onClick={this.onClick}
         >
           <div style={{ paddingLeft: "10px" }}>
-            <EuiSpacer size={"s"} />
+            <EuiSpacer size={"m"} />
 
             {/*// TODO: Use the source data preview table from create workflow */}
             {/*<DefineTransforms*/}

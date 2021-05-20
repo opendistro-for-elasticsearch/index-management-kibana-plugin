@@ -61,3 +61,7 @@ export const parseFieldOptions = (prefix: string, mappings: any): FieldItem[] =>
   }
   return fieldsOption;
 };
+
+export const createdTransformToastMessage = (transformId: string): string => {
+  return `Transform job, ${transformId}, successfully created.`;
+};

@@ -117,6 +117,7 @@ export default class Schedule extends Component<ScheduleProps> {
               </EuiText>
             }
           >
+            <EuiSpacer size="m" />
             <EuiFormRow
               label={"Pages per execution"}
               helpText={
