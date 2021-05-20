@@ -78,135 +78,6 @@ export default function DefineTransforms({
         showMoveRight: false,
         showSortAsc: false,
         showSortDesc: false,
-        // additional: [
-        //   {
-        //     label: "Group by histogram ",
-        //     onClick: () => {
-        //       const targetFieldName = `${field.label}_${GROUP_TYPES.histogram}`;
-        //       groupSelection.push({
-        //         histogram: {
-        //           source_field: field.label,
-        //           target_field: targetFieldName,
-        //           interval: 5,
-        //         },
-        //       });
-        //       onGroupSelectionChange(groupSelection);
-        //     },
-        //     size: "xs",
-        //     color: isNumeric ? "text" : "subdued",
-        //   },
-        //   {
-        //     label: "Group by date histogram ",
-        //     onClick: () => {
-        //       groupSelection.push({
-        //         date_histogram: {
-        //           source_field: field.label,
-        //           target_field: `${field.label}_${GROUP_TYPES.dateHistogram}`,
-        //           calendar_interval: "1d",
-        //         },
-        //       });
-        //       onGroupSelectionChange(groupSelection);
-        //     },
-        //     size: "xs",
-        //     color: isDate ? "text" : "subdued",
-        //   },
-        //   {
-        //     label: "Group by terms ",
-        //     onClick: () => {
-        //       groupSelection.push({
-        //         terms: {
-        //           source_field: field.label,
-        //           target_field: `${field.label}_${GROUP_TYPES.terms}`,
-        //         },
-        //       });
-        //       onGroupSelectionChange(groupSelection);
-        //     },
-        //     size: "xs",
-        //     color: "text",
-        //   },
-        //   {
-        //     label: "Aggregate by sum ",
-        //     onClick: () => {
-        //       aggSelection[`sum_${field.label}`] = {
-        //         sum: { field: field.label },
-        //       };
-        //       onAggregationSelectionChange(aggSelection);
-        //     },
-        //     size: "xs",
-        //     color: "text",
-        //   },
-        //   {
-        //     label: "Aggregate by max ",
-        //     onClick: () => {
-        //       aggSelection[`max_${field.label}`] = {
-        //         max: { field: field.label },
-        //       };
-        //       onAggregationSelectionChange(aggSelection);
-        //     },
-        //     size: "xs",
-        //     color: "text",
-        //   },
-        //   {
-        //     label: "Aggregate by min ",
-        //     onClick: () => {
-        //       aggSelection[`min_${field.label}`] = {
-        //         min: { field: field.label },
-        //       };
-        //       onAggregationSelectionChange(aggSelection);
-        //     },
-        //     size: "xs",
-        //     color: "text",
-        //   },
-        //   {
-        //     label: "Aggregate by avg ",
-        //     onClick: () => {
-        //       aggSelection[`avg_${field.label}`] = {
-        //         avg: { field: field.label },
-        //       };
-        //       onAggregationSelectionChange(aggSelection);
-        //     },
-        //     size: "xs",
-        //     color: "text",
-        //   },
-        //   {
-        //     label: "Aggregate by count ",
-        //     onClick: () => {
-        //       aggSelection[`count_${field.label}`] = {
-        //         value_count: { field: field.label },
-        //       };
-        //       onAggregationSelectionChange(aggSelection);
-        //     },
-        //     size: "xs",
-        //     color: "text",
-        //   },
-        //   {
-        //     label: "Aggregate by percentile",
-        //     onClick: () => {
-        //       aggSelection[`percentiles_${field.label}`] = {
-        //         percentiles: { field: field.label, percents: [1, 5, 25, 99] },
-        //       };
-        //       onAggregationSelectionChange(aggSelection);
-        //     },
-        //     size: "xs",
-        //     color: "text",
-        //   },
-        //   {
-        //     label: "Aggregate by scripted metrics ",
-        //     onClick: () => {
-        //       aggSelection[`scripted_metric_${field.label}`] = {
-        //         scripted_metric: {
-        //           init_script: "",
-        //           map_script: "",
-        //           combine_script: "",
-        //           reduce_script: "",
-        //         },
-        //       };
-        //       onAggregationSelectionChange(aggSelection);
-        //     },
-        //     size: "xs",
-        //     color: "text",
-        //   },
-        // ],
       },
     });
   });
@@ -309,7 +180,7 @@ export default function DefineTransforms({
             showFullScreenSelector: false,
           }}
         />
-        <EuiSpacer />
+        <EuiSpacer size="s" />
         <EuiText>
           <h4>Transformed fields preview based on sample data</h4>
         </EuiText>
@@ -380,9 +251,13 @@ export default function DefineTransforms({
           showFullScreenSelector: false,
         }}
       />
-      <EuiSpacer />
+      <EuiSpacer size="s" />
       <EuiText>
         <h4>Transformed fields preview based on sample data</h4>
+      </EuiText>
+      <EuiSpacer size="s" />
+      <EuiText color="subdued" size="xs">
+        <p>This fields preview displays only the first 10 results of your transform job.</p>
       </EuiText>
       <EuiSpacer size="s" />
       <PreviewTransform

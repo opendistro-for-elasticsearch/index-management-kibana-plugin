@@ -55,23 +55,6 @@ export default function PreviewTransform({
     }
     return "-";
   };
-  const onChangePreviewPerPage = useCallback(
-    (pageSize) => {
-      setPreviewPagination((previewPagination) => ({
-        ...previewPagination,
-        pageSize,
-        pageIndex: 0,
-      }));
-    },
-    [setPreviewPagination]
-  );
-
-  const onChangePreviewPage = useCallback(
-    (pageIndex) => {
-      setPreviewPagination((previewPagination) => ({ ...previewPagination, pageIndex }));
-    },
-    [setPreviewPagination]
-  );
 
   const updatePreviewColumns = (): void => {
     if (isReadOnly) {
@@ -136,12 +119,6 @@ export default function PreviewTransform({
       columnVisibility={{ visibleColumns: visiblePreviewColumns, setVisibleColumns: setVisiblePreviewColumns }}
       rowCount={previewTransform.length}
       renderCellValue={renderPreviewCellValue}
-      // pagination={{
-      //   ...previewPagination,
-      //   pageSizeOptions: [5, 10, 20, 50],
-      //   onChangeItemsPerPage: onChangePreviewPerPage,
-      //   onChangePage: onChangePreviewPage,
-      // }}
       toolbarVisibility={{
         showColumnSelector: true,
         showStyleSelector: false,
