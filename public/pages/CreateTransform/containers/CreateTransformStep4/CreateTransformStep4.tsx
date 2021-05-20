@@ -87,7 +87,7 @@ export default class CreateTransformStep4 extends Component<CreateTransformProps
             <ReviewSchedule {...this.props} />
             <EuiSpacer />
             <EuiCallOut color="warning">
-              <p>You can't change aggregations or metrics after creating a job. Double-check your choices before proceeding.</p>
+              <p>You can only change the description and schedule after creating a job. Double-check your choices before proceeding.</p>
             </EuiCallOut>
           </EuiFlexItem>
         </EuiFlexGroup>

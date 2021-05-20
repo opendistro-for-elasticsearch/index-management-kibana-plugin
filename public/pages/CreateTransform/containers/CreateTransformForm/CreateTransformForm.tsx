@@ -36,7 +36,7 @@ import { getErrorMessage } from "../../../../utils/helpers";
 import { EMPTY_TRANSFORM } from "../../utils/constants";
 import CreateTransformStep3 from "../CreateTransformStep3";
 import CreateTransformStep4 from "../CreateTransformStep4";
-import { compareFieldItem, parseFieldOptions } from "../../utils/helpers";
+import { compareFieldItem, createdTransformToastMessage, parseFieldOptions } from "../../utils/helpers";
 import { CoreServicesContext } from "../../../../components/core_services";
 
 interface CreateTransformFormProps extends RouteComponentProps {
@@ -436,7 +436,7 @@ export default class CreateTransformForm extends Component<CreateTransformFormPr
     try {
       const response = await transformService.putTransform(transform, transformId);
       if (response.ok) {
-        this.context.notifications.toasts.addSuccess(`Created transform: ${response.response._id}`);
+        this.context.notifications.toasts.addSuccess(createdTransformToastMessage(response.response._id));
         this.props.history.push(ROUTES.TRANSFORMS);
       } else {
         this.setState({ submitError: response.error });
