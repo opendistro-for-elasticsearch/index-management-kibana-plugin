@@ -43,7 +43,7 @@ export default function PreviewOptions({
     setIsPopoverOpen(false);
   };
 
-  const button = <EuiButtonIcon iconType="pencil" onClick={() => setIsPopoverOpen(!isPopoverOpen)} />;
+  const button = <EuiButtonIcon color="danger" iconType="crossInACircleFilled" onClick={() => setIsPopoverOpen(!isPopoverOpen)} />;
 
   const panels: EuiContextMenuPanelDescriptor[] = [
     {
