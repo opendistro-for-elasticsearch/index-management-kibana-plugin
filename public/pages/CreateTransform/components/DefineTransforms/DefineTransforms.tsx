@@ -23,6 +23,7 @@ import { getErrorMessage } from "../../../../utils/helpers";
 import PreviewTransform from "../PreviewTransform";
 import TransformOptions from "../TransformOptions";
 import { DefaultSampleDataSize } from "../../utils/constants";
+import { renderTime } from "../../../Transforms/utils/helpers";
 
 interface DefineTransformsProps {
   transformService: TransformService;
@@ -141,11 +142,12 @@ export default function DefineTransforms({
 
   const renderCellValue = ({ rowIndex, columnId }) => {
     if (!loading && data.hasOwnProperty(rowIndex)) {
-      // TODO: work on truncating the value to certain length defined by the keyword field
       if (columns?.find((column) => column.id == columnId).schema == "keyword") {
         // Remove the keyword postfix for getting correct data from array
         const correspondingTextColumnId = columnId.replace(".keyword", "");
         return data[rowIndex]._source[correspondingTextColumnId] ? data[rowIndex]._source[correspondingTextColumnId] : "-";
+      } else if (columns?.find((column) => column.id == columnId).schema == "date") {
+        return data[rowIndex]._source[columnId] ? renderTime(data[rowIndex]._source[columnId]) : "-";
       }
       return data[rowIndex]._source[columnId] ? data[rowIndex]._source[columnId] : "-";
     }

@@ -18,6 +18,7 @@ import { EuiDataGrid, EuiDataGridColumn } from "@elastic/eui";
 import PreviewEmptyPrompt from "../PreviewEmptyPrompt";
 import PreviewOptions from "../PreviewOptions";
 import { TransformAggItem, TransformGroupItem } from "../../../../../models/interfaces";
+import { renderTime } from "../../../Transforms/utils/helpers";
 
 interface PreviewTransformProps {
   previewTransform: any[];
@@ -47,6 +48,12 @@ export default function PreviewTransform({
   const renderPreviewCellValue = ({ rowIndex, columnId }) => {
     if (previewTransform.hasOwnProperty(rowIndex)) {
       if (previewTransform[rowIndex][columnId]) {
+        // Case for date histogram type
+        //TODO: Check if there's a better way to check for date histogram types
+        if (columnId.includes("date_histogram")) {
+          return renderTime(previewTransform[rowIndex][columnId]);
+        }
+
         // Case for percentile
         return typeof previewTransform[rowIndex][columnId] !== ("string" || "number")
           ? JSON.stringify(previewTransform[rowIndex][columnId])
