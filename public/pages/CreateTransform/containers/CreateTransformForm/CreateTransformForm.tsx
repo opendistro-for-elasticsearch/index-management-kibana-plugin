@@ -273,6 +273,7 @@ export default class CreateTransformForm extends Component<CreateTransformFormPr
     this.setState({
       selectedGroupField: [],
       selectedAggregations: {},
+      aggList: [],
     });
     await this.getMappings(srcIndexText);
   };
