@@ -101,6 +101,7 @@ export default class Schedule extends Component<ScheduleProps> {
               </EuiText>
             }
           >
+            <EuiSpacer size="m" />
             <EuiFormRow
               label="Page per execution"
               helpText="The number of pages every execution processes. A larger number means faster execution and higher costs on memory."
