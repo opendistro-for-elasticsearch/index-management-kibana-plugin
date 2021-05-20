@@ -132,6 +132,7 @@ export default function PreviewTransform({
         showSortSelector: false,
         showFullScreenSelector: false,
       }}
+      gridStyle={{ rowHover: isReadOnly ? "none" : "highlight" }}
     />
   ) : (
     <PreviewEmptyPrompt />
