@@ -36,7 +36,13 @@ interface IndexFilterPopoverProps {
   closePopover: () => void;
 }
 
-export default function IndexFilterPopover({ sourceIndex, fields, sourceIndexFilter, onChangeSourceIndexFilter, closePopover }: IndexFilterPopoverProps) {
+export default function IndexFilterPopover({
+  sourceIndex,
+  fields,
+  sourceIndexFilter,
+  onChangeSourceIndexFilter,
+  closePopover,
+}: IndexFilterPopoverProps) {
   const [selectedField, setSelectedField] = useState("");
   const [selectedOperator, setSelectedOperator] = useState("");
   const [selectedValue, setSelectedValue] = useState("");
@@ -95,7 +101,7 @@ export default function IndexFilterPopover({ sourceIndex, fields, sourceIndexFil
 
   function customEditor() {
     return (
-      <EuiFormRow label="Elasticsearch Query DSL">
+      <EuiFormRow label="Custom query DSL">
         <EuiCodeEditor value={queryDsl} onChange={(string) => setQueryDsl(string)} mode="json" width="100%" height="250px" />
       </EuiFormRow>
     );
