@@ -163,6 +163,7 @@ export default function DefineTransforms({
         </EuiText>
         <EuiSpacer size="s" />
         <EuiDataGrid
+          style={{ overflow: "scroll", width: "100%" }}
           aria-label="Define transforms"
           columns={columns}
           columnVisibility={{ visibleColumns, setVisibleColumns }}
@@ -181,6 +182,7 @@ export default function DefineTransforms({
             showSortSelector: false,
             showFullScreenSelector: false,
           }}
+          gridStyle={{ rowHover: "none" }}
         />
         <EuiSpacer size="s" />
         <EuiText>
@@ -220,7 +222,8 @@ export default function DefineTransforms({
       //     ]}
       //   />
       // }
-      bodyStyles={{ padding: "10px 10px" }}
+      panelStyles={{ paddingSize: "m", grow: false }}
+      bodyStyles={{ padding: "10px 10px", width: "100%" }}
       title="Select fields to transform"
       titleSize="m"
     >
@@ -233,6 +236,7 @@ export default function DefineTransforms({
         <p>{`Viewing sample data from index ${sourceIndex}`}</p>
       </EuiText>
       <EuiSpacer size="s" />
+
       <EuiDataGrid
         aria-label="Define transforms"
         columns={columns}
