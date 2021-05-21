@@ -73,7 +73,7 @@ export default function PreviewOptions({
   return (
     <div>
       <EuiFlexGroup justifyContent="spaceBetween">
-        <EuiFlexItem style={{ textOverflow: "ellipsis" }} className="eui-textTruncate" grow={false}>
+        <EuiFlexItem className="eui-textTruncate" grow={false}>
           <EuiToolTip content={name}>
             <EuiText size="s">
               <b>{name}</b>

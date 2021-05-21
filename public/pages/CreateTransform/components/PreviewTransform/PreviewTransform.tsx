@@ -14,7 +14,7 @@
  */
 
 import React, { useCallback, useState } from "react";
-import { EuiDataGrid, EuiDataGridColumn } from "@elastic/eui";
+import { EuiDataGrid, EuiDataGridColumn, EuiText, EuiToolTip } from "@elastic/eui";
 import PreviewEmptyPrompt from "../PreviewEmptyPrompt";
 import PreviewOptions from "../PreviewOptions";
 import { TransformAggItem, TransformGroupItem } from "../../../../../models/interfaces";
@@ -70,6 +70,15 @@ export default function PreviewTransform({
         for (const [key, value] of Object.entries(previewTransform[0])) {
           tempCol.push({
             id: key,
+            display: (
+              <div>
+                <EuiToolTip content={key}>
+                  <EuiText size="s">
+                    <b>{key}</b>
+                  </EuiText>
+                </EuiToolTip>
+              </div>
+            ),
             actions: {
               showHide: false,
               showMoveLeft: false,
@@ -88,7 +97,7 @@ export default function PreviewTransform({
         aggList.map((aggItem) => {
           tempCol.push({
             id: aggItem.name,
-            display: !isReadOnly && (
+            display: (
               <PreviewOptions
                 name={aggItem.name}
                 selectedGroupField={selectedGroupField}
