@@ -46,17 +46,13 @@ export default class ReviewDefinition extends Component<ReviewDefinitionProps> {
   render() {
     const {
       transformService,
-      notifications,
-      transformId,
       sourceIndex,
       fields,
       selectedGroupField,
       onGroupSelectionChange,
       selectedAggregations,
-      aggList,
       onAggregationSelectionChange,
       onRemoveTransformation,
-      previewTransform,
       onChangeStep,
     } = this.props;
 
@@ -158,7 +154,6 @@ export default class ReviewDefinition extends Component<ReviewDefinitionProps> {
                 {...this.props}
                 transformService={transformService}
                 notifications={this.context.notifications}
-                transformId={transformId}
                 sourceIndex={sourceIndex}
                 fields={fields}
                 onGroupSelectionChange={onGroupSelectionChange}

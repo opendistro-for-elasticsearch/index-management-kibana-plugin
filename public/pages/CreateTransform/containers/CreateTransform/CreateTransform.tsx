@@ -33,8 +33,6 @@ interface CreateTransformProps extends RouteComponentProps {
   hasSubmitted: boolean;
   description: string;
   sourceIndex: { label: string; value?: IndexItem }[];
-  //TODO: Uncomment the following line when multiple data filter is supported
-  // sourceIndexFilter: string[];
   sourceIndexFilter: string;
   sourceIndexError: string;
   targetIndex: { label: string; value?: IndexItem }[];
@@ -48,7 +46,6 @@ interface CreateTransformProps extends RouteComponentProps {
   hasAggregation: boolean;
   fields: FieldItem[];
   fieldSelectedOption: string;
-  onFieldChange: () => void;
   beenWarned: boolean;
 }
 

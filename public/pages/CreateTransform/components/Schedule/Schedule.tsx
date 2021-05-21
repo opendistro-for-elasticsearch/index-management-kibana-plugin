@@ -14,23 +14,14 @@
  */
 
 import React, { ChangeEvent, Component } from "react";
-import moment from "moment-timezone";
 import {
   EuiSpacer,
   EuiCheckbox,
-  EuiRadioGroup,
   EuiFormRow,
-  EuiSelect,
   EuiFieldNumber,
-  EuiFlexGroup,
-  EuiFlexItem,
-  EuiTextArea,
-  EuiFormHelpText,
-  EuiText,
   EuiAccordion,
   EuiHorizontalRule,
 } from "@elastic/eui";
-import { DelayTimeunitOptions, ExecutionFrequencyDefinitionOptions, ScheduleIntervalTimeunitOptions } from "../../utils/constants";
 import { ContentPanel } from "../../../../components/ContentPanel";
 import { selectInterval } from "../../../Transforms/utils/metadataHelper";
 

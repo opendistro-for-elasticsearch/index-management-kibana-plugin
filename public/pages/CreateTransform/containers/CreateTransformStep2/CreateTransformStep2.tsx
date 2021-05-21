@@ -25,7 +25,6 @@ import { FieldItem, TransformAggItem, TransformGroupItem } from "../../../../../
 
 interface CreateTransformStep2Props extends RouteComponentProps {
   transformService: TransformService;
-  transformId: string;
   currentStep: number;
   sourceIndex: string;
   fields: FieldItem[];
@@ -55,7 +54,6 @@ export default class CreateTransformStep2 extends Component<CreateTransformStep2
   render() {
     const {
       transformService,
-      transformId,
       currentStep,
       sourceIndex,
       fields,
@@ -81,7 +79,6 @@ export default class CreateTransformStep2 extends Component<CreateTransformStep2
               {...this.props}
               transformService={transformService}
               notifications={this.context.notifications}
-              transformId={transformId}
               sourceIndex={sourceIndex}
               fields={fields}
               onGroupSelectionChange={onGroupSelectionChange}

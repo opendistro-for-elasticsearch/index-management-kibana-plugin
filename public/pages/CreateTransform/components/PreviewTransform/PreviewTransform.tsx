@@ -13,37 +13,28 @@
  * permissions and limitations under the License.
  */
 
-import React, { useCallback, useState } from "react";
+import React, { useState } from "react";
 import { EuiDataGrid, EuiDataGridColumn, EuiText, EuiToolTip } from "@elastic/eui";
 import PreviewEmptyPrompt from "../PreviewEmptyPrompt";
 import PreviewOptions from "../PreviewOptions";
-import { TransformAggItem, TransformGroupItem } from "../../../../../models/interfaces";
+import { TransformAggItem } from "../../../../../models/interfaces";
 import { renderTime } from "../../../Transforms/utils/helpers";
 
 interface PreviewTransformProps {
   previewTransform: any[];
-  selectedGroupField: TransformGroupItem[];
-  onGroupSelectionChange: (selectedFields: TransformGroupItem[], aggItem: TransformAggItem) => void;
   aggList: TransformAggItem[];
-  selectedAggregations: any;
-  onAggregationSelectionChange: (selectedFields: any, aggItem: TransformAggItem) => void;
   onRemoveTransformation: (name: string) => void;
   isReadOnly: boolean;
 }
 
 export default function PreviewTransform({
   previewTransform,
-  selectedGroupField,
-  onGroupSelectionChange,
-  selectedAggregations,
   aggList,
-  onAggregationSelectionChange,
   onRemoveTransformation,
   isReadOnly,
 }: PreviewTransformProps) {
   const [previewColumns, setPreviewColumns] = useState<EuiDataGridColumn[]>([]);
   const [visiblePreviewColumns, setVisiblePreviewColumns] = useState(() => previewColumns.map(({ id }) => id).slice(0, 5));
-  const [previewPagination, setPreviewPagination] = useState({ pageIndex: 0, pageSize: 10 });
 
   const renderPreviewCellValue = ({ rowIndex, columnId }) => {
     if (previewTransform.hasOwnProperty(rowIndex)) {
@@ -100,11 +91,6 @@ export default function PreviewTransform({
             display: (
               <PreviewOptions
                 name={aggItem.name}
-                selectedGroupField={selectedGroupField}
-                onGroupSelectionChange={onGroupSelectionChange}
-                aggList={aggList}
-                selectedAggregations={selectedAggregations}
-                onAggregationSelectionChange={onAggregationSelectionChange}
                 onRemoveTransformation={onRemoveTransformation}
               />
             ),

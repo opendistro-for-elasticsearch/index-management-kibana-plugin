@@ -28,7 +28,6 @@ import { renderTime } from "../../../Transforms/utils/helpers";
 interface DefineTransformsProps {
   transformService: TransformService;
   notifications: CoreStart["notifications"];
-  transformId: string;
   sourceIndex: string;
   fields: FieldItem[];
   selectedGroupField: TransformGroupItem[];
@@ -44,7 +43,6 @@ interface DefineTransformsProps {
 export default function DefineTransforms({
   transformService,
   notifications,
-  transformId,
   sourceIndex,
   fields,
   selectedGroupField,
@@ -99,8 +97,6 @@ export default function DefineTransforms({
   const [visibleColumns, setVisibleColumns] = useState(() => columns.map(({ id }) => id).slice(0, 5));
   const [data, setData] = useState([]);
   const [dataCount, setDataCount] = useState<number>(0);
-  const [groupSelection, setGroupSelection] = useState<TransformGroupItem[]>(selectedGroupField);
-  const [aggSelection, setAggSelection] = useState(selectedAggregations);
 
   const fetchData = useCallback(async () => {
     setLoading(true);
@@ -199,11 +195,7 @@ export default function DefineTransforms({
         <EuiSpacer size="s" />
         <PreviewTransform
           previewTransform={previewTransform}
-          selectedGroupField={selectedGroupField}
-          onGroupSelectionChange={onGroupSelectionChange}
           aggList={aggList}
-          selectedAggregations={selectedAggregations}
-          onAggregationSelectionChange={onAggregationSelectionChange}
           onRemoveTransformation={onRemoveTransformation}
           isReadOnly={isReadOnly}
         />
@@ -276,11 +268,7 @@ export default function DefineTransforms({
       <EuiSpacer size="s" />
       <PreviewTransform
         previewTransform={previewTransform}
-        selectedGroupField={selectedGroupField}
-        onGroupSelectionChange={onGroupSelectionChange}
         aggList={aggList}
-        selectedAggregations={selectedAggregations}
-        onAggregationSelectionChange={onAggregationSelectionChange}
         onRemoveTransformation={onRemoveTransformation}
         isReadOnly={isReadOnly}
       />

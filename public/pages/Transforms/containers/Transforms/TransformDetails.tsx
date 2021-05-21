@@ -27,7 +27,6 @@ import {
   EuiModalHeaderTitle,
   EuiModalBody,
   EuiCodeBlock,
-  EuiHealth,
   EuiContextMenuItem,
   EuiContextMenuPanel,
   EuiTextColor,
@@ -40,7 +39,7 @@ import { CoreServicesContext } from "../../../../components/core_services";
 import { BREADCRUMBS, ROUTES } from "../../../../utils/constants";
 import queryString from "query-string";
 import { getErrorMessage } from "../../../../utils/helpers";
-import { DimensionItem, MetricItem, RollupDimensionItem, TransformMetadata } from "../../../../../models/interfaces";
+import { DimensionItem, RollupDimensionItem, TransformMetadata } from "../../../../../models/interfaces";
 import DeleteModal from "../../components/DeleteModal";
 import GenerationInformation from "../../components/GeneralInformation";
 import TransformStatus from "../../components/TransformStatus";

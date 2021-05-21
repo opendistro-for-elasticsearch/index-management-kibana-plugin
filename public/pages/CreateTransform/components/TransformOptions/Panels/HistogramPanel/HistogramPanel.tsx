@@ -23,7 +23,7 @@ interface HistogramPanelProps {
   closePopover: () => void;
 }
 
-export default function HistogramPanel({ name, handleGroupSelectionChange, aggList, closePopover }: HistogramPanelProps) {
+export default function HistogramPanel({ name, handleGroupSelectionChange, closePopover }: HistogramPanelProps) {
   const [histogramInterval, setHistogramInterval] = useState(5);
 
   return (

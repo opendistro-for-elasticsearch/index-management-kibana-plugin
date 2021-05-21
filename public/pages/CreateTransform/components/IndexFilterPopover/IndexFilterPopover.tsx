@@ -37,7 +37,6 @@ interface IndexFilterPopoverProps {
 }
 
 export default function IndexFilterPopover({
-  sourceIndex,
   fields,
   sourceIndexFilter,
   onChangeSourceIndexFilter,

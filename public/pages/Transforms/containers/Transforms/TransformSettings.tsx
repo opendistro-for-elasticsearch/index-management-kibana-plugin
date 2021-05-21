@@ -158,7 +158,5 @@ export default class TransformSettings extends Component<TransformSettingsProps,
 
   onClick = async () => {
     const response = await this.previewTransform({ transform: this.props.transformJson.transform });
-    console.log(response);
-    console.log("tada");
   };
 }

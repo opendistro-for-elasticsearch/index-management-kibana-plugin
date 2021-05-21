@@ -19,8 +19,6 @@ import {
   EuiFormRow,
   EuiComboBox,
   EuiCallOut,
-  EuiFacetButton,
-  EuiAvatar,
   EuiPopover,
   EuiFlexGroup,
   EuiFlexItem,
@@ -41,8 +39,6 @@ import { CoreServicesContext } from "../../../../components/core_services";
 interface TransformIndicesProps {
   indexService: IndexService;
   sourceIndex: { label: string; value?: IndexItem }[];
-  //TODO: Uncomment the following line when multiple data filter is supported
-  // sourceIndexFilter: string[];
   sourceIndexFilter: string;
   sourceIndexError: string;
   targetIndex: { label: string; value?: IndexItem }[];
@@ -61,7 +57,6 @@ interface TransformIndicesState {
   targetIndexOptions: { label: string; value?: IndexItem }[];
   isPopoverOpen: boolean;
   selectFieldValue: string;
-  // dataFilters: string[];
   dataFilters: string;
 }
 
@@ -75,7 +70,6 @@ export default class TransformIndices extends Component<TransformIndicesProps, T
       targetIndexOptions: [],
       isPopoverOpen: false,
       selectFieldValue: "",
-      // dataFilters: [],
       dataFilters: "",
     };
 
@@ -168,12 +162,6 @@ export default class TransformIndices extends Component<TransformIndicesProps, T
     } = this.props;
 
     const { isLoading, indexOptions, targetIndexOptions, isPopoverOpen } = this.state;
-
-    const filterButton = (
-      <EuiButtonEmpty size="xs" onClick={() => this.onButtonClick()} data-test-subj="addFilter">
-        Edit data filter
-      </EuiButtonEmpty>
-    );
 
     const clearIndexFilter = () => {
       onChangeSourceIndexFilter("");

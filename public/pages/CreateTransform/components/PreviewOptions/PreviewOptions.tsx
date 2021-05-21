@@ -25,25 +25,14 @@ import {
   EuiToolTip,
 } from "@elastic/eui";
 import { useState } from "react";
-import { TransformAggItem, TransformGroupItem } from "../../../../../models/interfaces";
 
 interface PreviewOptionsProps {
   name: string;
-  selectedGroupField: TransformGroupItem[];
-  onGroupSelectionChange: (selectedFields: TransformGroupItem[], aggItem: TransformAggItem) => void;
-  aggList: TransformAggItem[];
-  selectedAggregations: any;
-  onAggregationSelectionChange: (selectedFields: any, aggItem: TransformAggItem) => void;
   onRemoveTransformation: (name: string) => void;
 }
 
 export default function PreviewOptions({
   name,
-  selectedGroupField,
-  onGroupSelectionChange,
-  selectedAggregations,
-  aggList,
-  onAggregationSelectionChange,
   onRemoveTransformation,
 }: PreviewOptionsProps) {
   const [isPopoverOpen, setIsPopoverOpen] = useState(false);

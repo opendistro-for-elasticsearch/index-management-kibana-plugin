@@ -14,7 +14,7 @@
  */
 
 import React, { Component } from "react";
-import { EuiCodeEditor, EuiFlexGrid, EuiSpacer, EuiFlexItem, EuiText } from "@elastic/eui";
+import { EuiCodeEditor, EuiSpacer, EuiText } from "@elastic/eui";
 import { ContentPanel } from "../../../../components/ContentPanel";
 
 interface IndicesProps {

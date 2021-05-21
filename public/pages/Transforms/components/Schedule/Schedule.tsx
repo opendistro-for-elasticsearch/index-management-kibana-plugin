@@ -14,25 +14,17 @@
  */
 
 import React, { ChangeEvent, Component } from "react";
-import moment from "moment-timezone";
 import {
   EuiSpacer,
   EuiCheckbox,
   EuiAccordion,
   EuiFormRow,
-  EuiSelect,
   EuiFieldNumber,
-  EuiFlexGroup,
-  EuiFlexItem,
-  EuiTextArea,
-  EuiText,
 } from "@elastic/eui";
 // @ts-ignore
 import { htmlIdGenerator } from "@elastic/eui/lib/services";
-import { ScheduleIntervalTimeunitOptions } from "../../utils/constants";
 import { ContentPanel } from "../../../../components/ContentPanel";
-import { selectCronExpression, selectInterval } from "../../utils/metadataHelper";
-import { ExecutionFrequencyDefinitionOptions } from "../../../CreateTransform/utils/constants";
+import { selectInterval } from "../../utils/metadataHelper";
 
 interface ScheduleProps {
   transformId: string;
@@ -66,17 +58,11 @@ export default class Schedule extends Component<ScheduleProps> {
       pageSize,
       onEnabledChange,
       onPageChange,
-      schedule,
-      onScheduleChange,
       interval,
       intervalError,
       intervalTimeUnit,
       onIntervalChange,
       onIntervalTimeUnitChange,
-      cronExpression,
-      cronTimeZone,
-      onCronExpressionChange,
-      onCronTimeZoneChange,
     } = this.props;
     return (
       <ContentPanel bodyStyles={{ padding: "initial" }} title="Schedule" titleSize="m">

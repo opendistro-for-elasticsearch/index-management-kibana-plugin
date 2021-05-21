@@ -25,7 +25,6 @@ import CreateTransform from "../CreateTransform";
 import CreateTransformStep2 from "../CreateTransformStep2";
 import {
   FieldItem,
-  GroupItem,
   IndexItem,
   Transform,
   TRANSFORM_AGG_TYPE,
@@ -73,12 +72,10 @@ interface CreateTransformFormState {
   allMappings: FieldItem[][];
   fields: FieldItem[];
   fieldSelectedOption: string;
-  selectedTerms: FieldItem[];
 
   selectedGroupField: TransformGroupItem[];
   selectedAggregations: any;
   aggList: TransformAggItem[];
-  aggregationsError: string;
   selectedFields: FieldItem[];
   jobEnabledByDefault: boolean;
 
@@ -114,12 +111,11 @@ export default class CreateTransformForm extends Component<CreateTransformFormPr
       mappings: "",
       allMappings: [],
       fields: [],
+      fieldSelectedOption: "",
       selectedFields: [],
-      selectedTerms: [],
       selectedGroupField: [],
       selectedAggregations: {},
       aggList: [],
-      aggregationsError: "",
       description: "",
 
       sourceIndex: [],
@@ -306,12 +302,12 @@ export default class CreateTransformForm extends Component<CreateTransformFormPr
     this.setState({ targetIndex: options, transformJSON: newJSON, targetIndexError: targetIndexError });
   };
 
-  onGroupSelectionChange = async (selectedGroupField: GroupItem[], aggItem: TransformAggItem): Promise<void> => {
+  onGroupSelectionChange = async (selectedGroupField: TransformGroupItem[], aggItem: TransformAggItem): Promise<void> => {
     const { aggList } = this.state;
     aggList.push(aggItem);
     this.updateGroup();
 
-    let previewResponse = await this.previewTransform(this.state.transformJSON);
+    await this.previewTransform(this.state.transformJSON);
     this.setState({ selectedGroupField });
   };
 
@@ -320,7 +316,7 @@ export default class CreateTransformForm extends Component<CreateTransformFormPr
     aggList.push(aggItem);
     this.updateAggregation();
 
-    let previewResponse = await this.previewTransform(this.state.transformJSON);
+    await this.previewTransform(this.state.transformJSON);
     this.setState({ selectedAggregations: selectedAggregations });
   };
 
@@ -381,7 +377,7 @@ export default class CreateTransformForm extends Component<CreateTransformFormPr
   updateGroup = (): void => {
     const { transformJSON, aggList } = this.state;
     let newJSON = transformJSON;
-    let tempGroupSelect: GroupItem[] = [];
+    let tempGroupSelect: TransformGroupItem[] = [];
     aggList.map((aggItem) => {
       if (
         aggItem.type == TRANSFORM_AGG_TYPE.histogram ||
@@ -470,14 +466,11 @@ export default class CreateTransformForm extends Component<CreateTransformFormPr
       targetIndexError,
       currentStep,
       previewTransform,
-
       fields,
-      selectedTerms,
+      fieldSelectedOption,
       selectedGroupField,
       selectedAggregations,
       aggList,
-      aggregationsError,
-
       jobEnabledByDefault,
       interval,
       intervalTimeunit,
@@ -511,6 +504,7 @@ export default class CreateTransformForm extends Component<CreateTransformFormPr
             Object.keys(selectedAggregations).length != 0 ||
             aggList.length != 0}
           fields={fields}
+          fieldSelectedOption={fieldSelectedOption}
           beenWarned={beenWarned}
         />
         <CreateTransformStep2
@@ -521,7 +515,6 @@ export default class CreateTransformForm extends Component<CreateTransformFormPr
           aggList={aggList}
           selectedGroupField={selectedGroupField}
           selectedAggregations={selectedAggregations}
-          aggregationsError={aggregationsError}
           onGroupSelectionChange={this.onGroupSelectionChange}
           onAggregationSelectionChange={this.onAggregationSelectionChange}
           onRemoveTransformation={this.onRemoveTransformation}
