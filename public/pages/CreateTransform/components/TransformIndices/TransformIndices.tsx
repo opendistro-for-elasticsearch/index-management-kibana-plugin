@@ -175,7 +175,7 @@ export default class TransformIndices extends Component<TransformIndicesProps, T
     );
 
     const clearIndexFilter = () => {
-      onChangeSourceIndexFilter("{}");
+      onChangeSourceIndexFilter("");
     };
 
     return (
