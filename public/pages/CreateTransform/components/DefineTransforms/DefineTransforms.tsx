@@ -230,8 +230,7 @@ export default function DefineTransforms({
       //     ]}
       //   />
       // }
-      panelStyles={{ paddingSize: "m", grow: false }}
-      bodyStyles={{ padding: "10px 10px", width: "100%" }}
+      bodyStyles={{ padding: "10px 10px" }}
       title="Select fields to transform"
       titleSize="m"
     >
