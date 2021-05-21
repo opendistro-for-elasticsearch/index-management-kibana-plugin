@@ -14,7 +14,16 @@
  */
 
 import React from "react";
-import { EuiButtonIcon, EuiContextMenu, EuiContextMenuPanelDescriptor, EuiFlexGroup, EuiFlexItem, EuiPopover } from "@elastic/eui";
+import {
+  EuiButtonIcon,
+  EuiContextMenu,
+  EuiContextMenuPanelDescriptor,
+  EuiFlexGroup,
+  EuiFlexItem,
+  EuiPopover,
+  EuiText,
+  EuiToolTip,
+} from "@elastic/eui";
 import { useState } from "react";
 import { TransformAggItem, TransformGroupItem } from "../../../../../models/interfaces";
 
@@ -43,7 +52,7 @@ export default function PreviewOptions({
     setIsPopoverOpen(false);
   };
 
-  const button = <EuiButtonIcon iconType="pencil" onClick={() => setIsPopoverOpen(!isPopoverOpen)} />;
+  const button = <EuiButtonIcon color="danger" iconType="crossInACircleFilled" onClick={() => setIsPopoverOpen(!isPopoverOpen)} />;
 
   const panels: EuiContextMenuPanelDescriptor[] = [
     {
@@ -64,7 +73,13 @@ export default function PreviewOptions({
   return (
     <div>
       <EuiFlexGroup justifyContent="spaceBetween">
-        <EuiFlexItem grow={false}>{name}</EuiFlexItem>
+        <EuiFlexItem className="eui-textTruncate" grow={false}>
+          <EuiToolTip content={name}>
+            <EuiText size="s">
+              <b>{name}</b>
+            </EuiText>
+          </EuiToolTip>
+        </EuiFlexItem>
         <EuiFlexItem grow={false}>
           <EuiPopover
             id="previewColumnPopover"

@@ -72,7 +72,7 @@ export default class CreateTransformStep2 extends Component<CreateTransformStep2
           <EuiFlexItem style={{ maxWidth: 300 }} grow={false}>
             <CreateTransformSteps step={2} />
           </EuiFlexItem>
-          <EuiFlexItem>
+          <EuiFlexItem style={{ maxWidth: "80%" }} grow={false}>
             <EuiTitle size="l">
               <h1>Define transform</h1>
             </EuiTitle>

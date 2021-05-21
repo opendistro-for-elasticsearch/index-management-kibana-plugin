@@ -14,7 +14,16 @@
  */
 
 import React, { useState } from "react";
-import { EuiButtonIcon, EuiContextMenu, EuiContextMenuPanelDescriptor, EuiFlexGroup, EuiFlexItem, EuiPopover } from "@elastic/eui";
+import {
+  EuiButtonIcon,
+  EuiContextMenu,
+  EuiContextMenuPanelDescriptor,
+  EuiFlexGroup,
+  EuiFlexItem,
+  EuiPopover,
+  EuiText,
+  EuiToolTip,
+} from "@elastic/eui";
 import { isNumericMapping } from "../../utils/helpers";
 import { GROUP_TYPES, TRANSFORM_AGG_TYPE, TransformAggItem, TransformGroupItem } from "../../../../../models/interfaces";
 import HistogramPanel from "./Panels/HistogramPanel";
@@ -418,7 +427,13 @@ export default function TransformOptions({
   return (
     <div>
       <EuiFlexGroup justifyContent="spaceBetween">
-        <EuiFlexItem grow={false}>{name}</EuiFlexItem>
+        <EuiFlexItem className="eui-textTruncate" grow={false}>
+          <EuiToolTip content={name}>
+            <EuiText size="s">
+              <b>{name}</b>
+            </EuiText>
+          </EuiToolTip>
+        </EuiFlexItem>
         <EuiFlexItem grow={false}>
           <EuiPopover
             id="contextMenuExample"

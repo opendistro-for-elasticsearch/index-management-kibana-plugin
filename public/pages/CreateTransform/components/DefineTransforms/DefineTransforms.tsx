@@ -13,7 +13,7 @@
  * permissions and limitations under the License.
  */
 
-import { EuiDataGrid, EuiDataGridColumn, EuiSpacer, EuiText } from "@elastic/eui";
+import { EuiDataGrid, EuiDataGridColumn, EuiSpacer, EuiText, EuiToolTip } from "@elastic/eui";
 import { CoreStart } from "kibana/public";
 import React, { useCallback, useState } from "react";
 import { ContentPanel } from "../../../../components/ContentPanel";
@@ -61,7 +61,15 @@ export default function DefineTransforms({
   fields.map((field: FieldItem) => {
     columns.push({
       id: field.label,
-      display: !isReadOnly && (
+      display: isReadOnly ? (
+        <div>
+          <EuiToolTip content={field.label}>
+            <EuiText size="s">
+              <b>{field.label}</b>
+            </EuiText>
+          </EuiToolTip>
+        </div>
+      ) : (
         <TransformOptions
           name={field.label}
           type={field.type}
@@ -163,6 +171,7 @@ export default function DefineTransforms({
         </EuiText>
         <EuiSpacer size="s" />
         <EuiDataGrid
+          style={{ overflow: "scroll", width: "100%" }}
           aria-label="Define transforms"
           columns={columns}
           columnVisibility={{ visibleColumns, setVisibleColumns }}
@@ -181,6 +190,7 @@ export default function DefineTransforms({
             showSortSelector: false,
             showFullScreenSelector: false,
           }}
+          gridStyle={{ rowHover: "none" }}
         />
         <EuiSpacer size="l" />
         <EuiText>
@@ -233,6 +243,7 @@ export default function DefineTransforms({
         <p>{`Viewing sample data from index ${sourceIndex}`}</p>
       </EuiText>
       <EuiSpacer size="s" />
+
       <EuiDataGrid
         aria-label="Define transforms"
         columns={columns}

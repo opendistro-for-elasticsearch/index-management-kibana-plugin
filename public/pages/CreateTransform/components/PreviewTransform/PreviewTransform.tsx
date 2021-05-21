@@ -14,7 +14,7 @@
  */
 
 import React, { useCallback, useState } from "react";
-import { EuiDataGrid, EuiDataGridColumn } from "@elastic/eui";
+import { EuiDataGrid, EuiDataGridColumn, EuiText, EuiToolTip } from "@elastic/eui";
 import PreviewEmptyPrompt from "../PreviewEmptyPrompt";
 import PreviewOptions from "../PreviewOptions";
 import { TransformAggItem, TransformGroupItem } from "../../../../../models/interfaces";
@@ -70,6 +70,15 @@ export default function PreviewTransform({
         for (const [key, value] of Object.entries(previewTransform[0])) {
           tempCol.push({
             id: key,
+            display: (
+              <div>
+                <EuiToolTip content={key}>
+                  <EuiText size="s">
+                    <b>{key}</b>
+                  </EuiText>
+                </EuiToolTip>
+              </div>
+            ),
             actions: {
               showHide: false,
               showMoveLeft: false,
@@ -88,7 +97,7 @@ export default function PreviewTransform({
         aggList.map((aggItem) => {
           tempCol.push({
             id: aggItem.name,
-            display: !isReadOnly && (
+            display: (
               <PreviewOptions
                 name={aggItem.name}
                 selectedGroupField={selectedGroupField}
@@ -110,7 +119,7 @@ export default function PreviewTransform({
         });
 
         setPreviewColumns(tempCol);
-        setVisiblePreviewColumns(() => tempCol.map(({ id }) => id).slice(0, 5));
+        setVisiblePreviewColumns(() => tempCol.map(({ id }) => id));
       }
     }
   };
@@ -121,6 +130,7 @@ export default function PreviewTransform({
 
   return (!isReadOnly && aggList.length) || (isReadOnly && previewTransform.length) ? (
     <EuiDataGrid
+      style={{ overflow: "scroll", width: "100%" }}
       aria-label="Preview transforms"
       columns={previewColumns}
       columnVisibility={{ visibleColumns: visiblePreviewColumns, setVisibleColumns: setVisiblePreviewColumns }}
@@ -132,6 +142,7 @@ export default function PreviewTransform({
         showSortSelector: false,
         showFullScreenSelector: false,
       }}
+      gridStyle={{ rowHover: isReadOnly ? "none" : "highlight" }}
     />
   ) : (
     <PreviewEmptyPrompt />
