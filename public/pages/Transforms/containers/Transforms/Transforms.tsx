@@ -390,7 +390,7 @@ export default class Transforms extends Component<TransformProps, TransformState
           this.closeDeleteModal();
           this.context.notification.toasts.addSuccess(`"${transformId}" successfully deleted!`);
         } else {
-          this.context.notifications.toasts.addDanger(`could not delete transform job "${transformId}" :  ${response.error}`);
+          this.context.notifications.toasts.addDanger(`Could not delete transform job "${transformId}" :  ${response.error}`);
         }
       } catch (err) {
         this.context.notification.toasts.addDanger(getErrorMessage(err, "Could not delete the transform job"));
@@ -428,7 +428,7 @@ export default class Transforms extends Component<TransformProps, TransformState
         const response = await transformService.startTransform(transformId);
 
         if (response.ok) {
-          this.context.notifications.toasts.addSuccess(`${transformId} is enabled`);
+          this.context.notifications.toasts.addSuccess(`"${transformId}" is enabled`);
         } else {
           this.context.notifications.toasts.addDanger(`Could not start transform job "${transformId}": ${response.error}`);
         }
@@ -450,12 +450,12 @@ export default class Transforms extends Component<TransformProps, TransformState
         const response = await transformService.stopTransform(transformId);
 
         if (response.ok) {
-          this.context.notifications.toasts.addSuccess(`${transformId} is disabled`);
+          this.context.notifications.toasts.addSuccess(`"${transformId}" is disabled`);
         } else {
           this.context.notifications.toasts.addDanger(`Could not stop transform job "${transformId}": ${response.error}`);
         }
       } catch (err) {
-        this.context.notifications.toasts.addDanger(getErrorMessage(err, `Could not stop transform job ${transformId}`));
+        this.context.notifications.toasts.addDanger(getErrorMessage(err, `Could not stop transform job "${transformId}"`));
       }
     }
 

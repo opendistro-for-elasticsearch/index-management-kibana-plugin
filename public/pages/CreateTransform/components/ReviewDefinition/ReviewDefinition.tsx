@@ -144,35 +144,30 @@ export default class ReviewDefinition extends Component<ReviewDefinitionProps> {
         title="Define transforms"
         titleSize="m"
       >
-        <div style={{ padding: "15px" }}>
+        <div style={{ padding: "10px" }}>
           <EuiSpacer size="s" />
           <EuiFlexGrid columns={4}>
             {groupItems()}
             {aggItems()}
           </EuiFlexGrid>
           <EuiSpacer />
-          <EuiAccordion
-            id=""
-            buttonContent={
-              <EuiText>
-                <h3>Sample source index and transform result</h3>
-              </EuiText>
-            }
-          >
-            <EuiSpacer size="m" />
-            <DefineTransforms
-              {...this.props}
-              transformService={transformService}
-              notifications={this.context.notifications}
-              transformId={transformId}
-              sourceIndex={sourceIndex}
-              fields={fields}
-              onGroupSelectionChange={onGroupSelectionChange}
-              selectedAggregations={selectedAggregations}
-              onAggregationSelectionChange={onAggregationSelectionChange}
-              onRemoveTransformation={onRemoveTransformation}
-              isReadOnly={true}
-            />
+          <EuiAccordion id="" buttonContent="Sample source index and transform result">
+            <div style={{ padding: "10px" }}>
+              <EuiSpacer size="m" />
+              <DefineTransforms
+                {...this.props}
+                transformService={transformService}
+                notifications={this.context.notifications}
+                transformId={transformId}
+                sourceIndex={sourceIndex}
+                fields={fields}
+                onGroupSelectionChange={onGroupSelectionChange}
+                selectedAggregations={selectedAggregations}
+                onAggregationSelectionChange={onAggregationSelectionChange}
+                onRemoveTransformation={onRemoveTransformation}
+                isReadOnly={true}
+              />
+            </div>
           </EuiAccordion>
         </div>
       </ContentPanel>

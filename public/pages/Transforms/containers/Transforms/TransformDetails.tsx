@@ -388,7 +388,7 @@ export default class TransformDetails extends Component<TransformDetailsProps, T
         this.context.notification.toasts.addSuccess(`"${id}" successfully deleted!`);
         this.props.history.push(ROUTES.TRANSFORMS);
       } else {
-        this.context.notifications.toasts.addDanger(`could not delete transform job "${id}" :  ${response.error}`);
+        this.context.notifications.toasts.addDanger(`Could not delete transform job "${id}" :  ${response.error}`);
       }
     } catch (err) {
       this.context.notification.toasts.addDanger(getErrorMessage(err, "Could not delete the transform job"));
@@ -409,12 +409,12 @@ export default class TransformDetails extends Component<TransformDetailsProps, T
         this.setState({ enabled: true });
         await this.getTransform(id);
         this.forceUpdate();
-        this.context.notifications.toasts.addSuccess(`${id} is enabled`);
+        this.context.notifications.toasts.addSuccess(`"${id}" is enabled`);
       } else {
         this.context.notifications.toasts.addDanger(`Could not enable transform job "${id}": ${response.error}`);
       }
     } catch (err) {
-      this.context.notifications.toasts.addDanger(getErrorMessage(err, `Could not enable transform job ${id}`));
+      this.context.notifications.toasts.addDanger(getErrorMessage(err, `Could not enable transform job "${id}"`));
     }
   };
 
@@ -427,12 +427,12 @@ export default class TransformDetails extends Component<TransformDetailsProps, T
         this.setState({ enabled: false });
         await this.getTransform(id);
         this.forceUpdate();
-        this.context.notifications.toasts.addSuccess(`${id} is disabled`);
+        this.context.notifications.toasts.addSuccess(`"${id}" is disabled`);
       } else {
         this.context.notifications.toasts.addDanger(`Could not disable transform job "${id}": ${response.error}`);
       }
     } catch (err) {
-      this.context.notifications.toasts.addDanger(getErrorMessage(err, `Could not disable transform job ${id}`));
+      this.context.notifications.toasts.addDanger(getErrorMessage(err, `Could not disable transform job "${id}"`));
     }
   };
 

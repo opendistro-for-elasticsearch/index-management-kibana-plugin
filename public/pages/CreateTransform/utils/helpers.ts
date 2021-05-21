@@ -63,5 +63,18 @@ export const parseFieldOptions = (prefix: string, mappings: any): FieldItem[] =>
 };
 
 export const createdTransformToastMessage = (transformId: string): string => {
-  return `Transform job, ${transformId}, successfully created.`;
+  return `Transform job "${transformId}" successfully created.`;
+};
+
+/**
+ * Searches the stringToSearch for all occurrences of the transformId,
+ * and wraps each occurrence with opening and closing quotation marks.
+ * @param transformId The string that serves as the transform's job name.
+ * @param stringToSearch The string to search.
+ * @return The stringToSearch but with any occurrences of transformId wrapped in quotation marks.
+ */
+export const wrapQuotesAroundTransformId = (transformId: string, stringToSearch: string): string => {
+  const regex = new RegExp(transformId, "g");
+  const idWrappedWithQuotes = `"${transformId}"`;
+  return stringToSearch.replace(regex, idWrappedWithQuotes);
 };

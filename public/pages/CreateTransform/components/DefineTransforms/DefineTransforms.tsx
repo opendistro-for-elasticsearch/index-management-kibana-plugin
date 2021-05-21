@@ -159,7 +159,7 @@ export default function DefineTransforms({
     return (
       <div>
         <EuiText>
-          <h4>Original fields with sample data</h4>
+          <h5>Original fields with sample data</h5>
         </EuiText>
         <EuiSpacer size="s" />
         <EuiDataGrid
@@ -182,9 +182,9 @@ export default function DefineTransforms({
             showFullScreenSelector: false,
           }}
         />
-        <EuiSpacer size="s" />
+        <EuiSpacer size="l" />
         <EuiText>
-          <h4>Transformed fields preview based on sample data</h4>
+          <h5>Transformed fields preview based on sample data</h5>
         </EuiText>
         <EuiSpacer size="s" />
         <PreviewTransform
@@ -220,12 +220,12 @@ export default function DefineTransforms({
       //     ]}
       //   />
       // }
-      bodyStyles={{ padding: "10px 10px" }}
+      bodyStyles={{ padding: "20px 20px" }}
       title="Select fields to transform"
       titleSize="m"
     >
       <EuiText>
-        <h4>Original fields with sample data</h4>
+        <h5>Original fields with sample data</h5>
       </EuiText>
       <EuiSpacer size="s" />
       {/*TODO: Substitute "source index", and "filtered by" fields with actual values*/}
@@ -253,9 +253,9 @@ export default function DefineTransforms({
           showFullScreenSelector: false,
         }}
       />
-      <EuiSpacer size="s" />
+      <EuiSpacer size="l" />
       <EuiText>
-        <h4>Transformed fields preview based on sample data</h4>
+        <h5>Transformed fields preview based on sample data</h5>
       </EuiText>
       <EuiSpacer size="s" />
       <EuiText color="subdued" size="xs">

@@ -67,7 +67,7 @@ export default class CreateTransformStep2 extends Component<CreateTransformStep2
     if (currentStep !== 2) return null;
 
     return (
-      <div style={{ padding: "5px 50px" }}>
+      <div style={{ padding: "20px 50px" }}>
         <EuiFlexGroup>
           <EuiFlexItem style={{ maxWidth: 300 }} grow={false}>
             <CreateTransformSteps step={2} />
