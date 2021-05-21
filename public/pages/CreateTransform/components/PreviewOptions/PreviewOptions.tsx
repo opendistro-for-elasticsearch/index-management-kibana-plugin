@@ -64,7 +64,9 @@ export default function PreviewOptions({
   return (
     <div>
       <EuiFlexGroup justifyContent="spaceBetween">
-        <EuiFlexItem grow={false}>{name}</EuiFlexItem>
+        <EuiFlexItem className="eui-textTruncate" grow={false}>
+          {name}
+        </EuiFlexItem>
         <EuiFlexItem grow={false}>
           <EuiPopover
             id="previewColumnPopover"

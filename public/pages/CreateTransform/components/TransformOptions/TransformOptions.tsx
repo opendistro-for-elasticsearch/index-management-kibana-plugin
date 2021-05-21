@@ -432,7 +432,7 @@ export default function TransformOptions({
             <b>{name}</b>
           </EuiText>
         </EuiFlexItem>
-        <EuiFlexItem grow={false} component="span">
+        <EuiFlexItem grow={false}>
           <EuiPopover
             id="contextMenuExample"
             button={button}
