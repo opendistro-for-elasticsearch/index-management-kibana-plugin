@@ -29,6 +29,7 @@ import {
   EuiHorizontalRule,
   EuiComboBoxOptionOption,
   EuiBadge,
+  EuiLink,
 } from "@elastic/eui";
 import _ from "lodash";
 import { ContentPanel } from "../../../../components/ContentPanel";
@@ -222,11 +223,18 @@ export default class TransformIndices extends Component<TransformIndicesProps, T
               </EuiFlexItem>
             </EuiFlexGroup>
 
-            <EuiText size="xs" color="subdued" style={{ width: "420px" }}>
-              Choose a subset of source index to focus on to optimize for performance and computing resource. You can’t change filter once
-              the job is created.
+            <EuiText size="xs" color="subdued" style={{ width: "400px" }}>
+              You can use the custom DSL to filter a subset of the source index to use in the transform job, which optimizes the job for
+              performance and computing resources. You cannot change these filters once the job is created.
             </EuiText>
 
+            <EuiText size="xs">
+              <EuiLink external={true} href="">
+                {" "}
+                Learn more
+              </EuiLink>
+            </EuiText>
+            <EuiSpacer size="s" />
             {/*{this.state.dataFilters.map((item) => (*/}
             {/*  <EuiBadge>{item}</EuiBadge>*/}
             {/*))}*/}
