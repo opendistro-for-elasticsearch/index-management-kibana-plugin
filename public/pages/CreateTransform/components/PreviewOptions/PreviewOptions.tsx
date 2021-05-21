@@ -14,7 +14,16 @@
  */
 
 import React from "react";
-import { EuiButtonIcon, EuiContextMenu, EuiContextMenuPanelDescriptor, EuiFlexGroup, EuiFlexItem, EuiPopover } from "@elastic/eui";
+import {
+  EuiButtonIcon,
+  EuiContextMenu,
+  EuiContextMenuPanelDescriptor,
+  EuiFlexGroup,
+  EuiFlexItem,
+  EuiPopover,
+  EuiText,
+  EuiToolTip,
+} from "@elastic/eui";
 import { useState } from "react";
 import { TransformAggItem, TransformGroupItem } from "../../../../../models/interfaces";
 
@@ -64,8 +73,12 @@ export default function PreviewOptions({
   return (
     <div>
       <EuiFlexGroup justifyContent="spaceBetween">
-        <EuiFlexItem className="eui-textTruncate" grow={false}>
-          {name}
+        <EuiFlexItem style={{ textOverflow: "ellipsis" }} className="eui-textTruncate" grow={false}>
+          <EuiToolTip content={name}>
+            <EuiText size="s">
+              <b>{name}</b>
+            </EuiText>
+          </EuiToolTip>
         </EuiFlexItem>
         <EuiFlexItem grow={false}>
           <EuiPopover

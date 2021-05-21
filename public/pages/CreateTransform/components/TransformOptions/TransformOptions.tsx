@@ -18,11 +18,11 @@ import {
   EuiButtonIcon,
   EuiContextMenu,
   EuiContextMenuPanelDescriptor,
-  EuiFlexGrid,
   EuiFlexGroup,
   EuiFlexItem,
   EuiPopover,
   EuiText,
+  EuiToolTip,
 } from "@elastic/eui";
 import { isNumericMapping } from "../../utils/helpers";
 import { GROUP_TYPES, TRANSFORM_AGG_TYPE, TransformAggItem, TransformGroupItem } from "../../../../../models/interfaces";
@@ -427,10 +427,12 @@ export default function TransformOptions({
   return (
     <div>
       <EuiFlexGroup justifyContent="spaceBetween">
-        <EuiFlexItem className="eui-textTruncate" grow={false}>
-          <EuiText size="s">
-            <b>{name}</b>
-          </EuiText>
+        <EuiFlexItem style={{ textOverflow: "ellipsis" }} className="eui-textTruncate" grow={false}>
+          <EuiToolTip content={name}>
+            <EuiText size="s">
+              <b>{name}</b>
+            </EuiText>
+          </EuiToolTip>
         </EuiFlexItem>
         <EuiFlexItem grow={false}>
           <EuiPopover
