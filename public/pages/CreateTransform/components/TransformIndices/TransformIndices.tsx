@@ -181,6 +181,7 @@ export default class TransformIndices extends Component<TransformIndicesProps, T
     return (
       <div>
         <ContentPanel bodyStyles={{ padding: "initial" }} title="Indices" titleSize="m">
+        <div style={{ paddingLeft: "10px", paddingRight: "64px" }}>
           {hasAggregation && (
             <Fragment>
               <EuiSpacer size="s" />
@@ -189,8 +190,7 @@ export default class TransformIndices extends Component<TransformIndicesProps, T
               </EuiCallOut>
             </Fragment>
           )}
-          <div style={{ paddingLeft: "10px" }}>
-            <EuiSpacer size="m" />
+            <EuiSpacer size="s" />
             <EuiFormRow
               label="Source index"
               error={sourceIndexError}
