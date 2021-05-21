@@ -109,14 +109,7 @@ export default class Schedule extends Component<ScheduleProps> {
 
           <EuiSpacer size="m" />
 
-          <EuiAccordion
-            id={htmlIdGenerator()()}
-            buttonContent={
-              <EuiText>
-                <h3>Advanced</h3>
-              </EuiText>
-            }
-          >
+          <EuiAccordion id={htmlIdGenerator()()} buttonContent="Advanced">
             <EuiSpacer size="m" />
             <EuiFormRow
               label={"Pages per execution"}

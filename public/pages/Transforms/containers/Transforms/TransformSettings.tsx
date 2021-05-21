@@ -127,37 +127,31 @@ export default class TransformSettings extends Component<TransformSettingsProps,
           </EuiFlexGrid>
           <EuiSpacer size="m" />
         </div>
-        <EuiAccordion
-          id={htmlIdGenerator()()}
-          buttonContent={
-            <EuiText>
-              <h3>Sample source index and transform result</h3>
-            </EuiText>
-          }
-          onClick={this.onClick}
-        >
-          <div style={{ paddingLeft: "10px" }}>
-            <EuiSpacer size={"m"} />
+        <div style={{ padding: "10px" }}>
+          <EuiAccordion id={htmlIdGenerator()()} buttonContent="Sample source index and transform result" onClick={this.onClick}>
+            <div style={{ padding: "10px" }}>
+              <EuiSpacer size={"m"} />
 
-            {/*// TODO: Use the source data preview table from create workflow */}
-            {/*<DefineTransforms*/}
-            {/*  {...this.props}*/}
-            {/*  isReadOnly={true}*/}
-            {/*  notifications={this.context.notifications}*/}
-            {/*  fields={[]}*/}
-            {/*  selectedGroupField={[]}*/}
-            {/*  onGroupSelectionChange={()=>()}*/}
-            {/*  selectedAggregations={{}}*/}
-            {/*  onAggregationSelectionChange={()=> ()}*/}
-            {/*  previewTransform={[]}*/}
-            {/*/>*/}
-            <EuiText>
-              <h4>Preview result based on sample data</h4>
-            </EuiText>
-            <EuiSpacer size={"s"} />
-            <PreviewTransforms previewTransform={this.state.previewTransform} aggList={[]} isReadOnly={true} />
-          </div>
-        </EuiAccordion>
+              {/*// TODO: Use the source data preview table from create workflow */}
+              {/*<DefineTransforms*/}
+              {/*  {...this.props}*/}
+              {/*  isReadOnly={true}*/}
+              {/*  notifications={this.context.notifications}*/}
+              {/*  fields={[]}*/}
+              {/*  selectedGroupField={[]}*/}
+              {/*  onGroupSelectionChange={()=>()}*/}
+              {/*  selectedAggregations={{}}*/}
+              {/*  onAggregationSelectionChange={()=> ()}*/}
+              {/*  previewTransform={[]}*/}
+              {/*/>*/}
+              <EuiText>
+                <h5>Preview result based on sample data</h5>
+              </EuiText>
+              <EuiSpacer size={"s"} />
+              <PreviewTransforms previewTransform={this.state.previewTransform} aggList={[]} isReadOnly={true} />
+            </div>
+          </EuiAccordion>
+        </div>
       </ContentPanel>
     );
   }

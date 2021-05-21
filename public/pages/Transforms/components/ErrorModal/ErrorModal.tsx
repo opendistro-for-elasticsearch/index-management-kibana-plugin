@@ -24,6 +24,7 @@ import {
   EuiOverlayMask,
   EuiText,
 } from "@elastic/eui";
+import { wrapQuotesAroundTransformId } from "../../../CreateTransform/utils/helpers";
 
 interface ErrorModalProps {
   metadata: object;
@@ -40,7 +41,9 @@ const ErrorModal = ({ metadata, onClose }: ErrorModalProps) => (
       </EuiModalHeader>
 
       <EuiModalBody>
-        <EuiText>{metadata.transform_metadata.failure_reason}</EuiText>
+        <EuiText>
+          {wrapQuotesAroundTransformId(metadata.transform_metadata.transform_id, metadata.transform_metadata.failure_reason)}
+        </EuiText>
       </EuiModalBody>
 
       <EuiModalFooter>

@@ -94,14 +94,7 @@ export default class Schedule extends Component<ScheduleProps> {
           {selectInterval(interval, intervalTimeunit, intervalError, onChangeIntervalTime, onChangeIntervalTimeunit)}
           <EuiSpacer size="m" />
           <EuiHorizontalRule margin="xs" />
-          <EuiAccordion
-            id="pagePerExecution"
-            buttonContent={
-              <EuiText>
-                <h3>Advanced</h3>
-              </EuiText>
-            }
-          >
+          <EuiAccordion id="pagePerExecution" buttonContent="Advanced">
             <EuiSpacer size="m" />
             <EuiFormRow
               label="Pages per execution"
