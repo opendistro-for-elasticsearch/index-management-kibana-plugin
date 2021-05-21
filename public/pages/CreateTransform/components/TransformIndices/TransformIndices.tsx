@@ -180,17 +180,15 @@ export default class TransformIndices extends Component<TransformIndicesProps, T
 
     return (
       <div>
-        <ContentPanel bodyStyles={{ padding: "initial" }} title="Indices" titleSize="m">
-        <div style={{ paddingLeft: "10px", paddingRight: "64px" }}>
-          {hasAggregation && (
-            <Fragment>
-              <EuiSpacer size="s" />
-              <EuiCallOut color="warning">
-                <p>Note: changing source index will erase all existing definitions about aggregations and metrics.</p>
-              </EuiCallOut>
-            </Fragment>
-          )}
-            <EuiSpacer size="s" />
+        <ContentPanel panelStyles={{ padding: "20px 20px" }} bodyStyles={{ padding: "10px" }} title="Indices" titleSize="m">
+          <div>
+            {hasAggregation && (
+              <Fragment>
+                <EuiCallOut color="warning">
+                  <p>Note: changing source index will erase all existing definitions about aggregations and metrics.</p>
+                </EuiCallOut>
+              </Fragment>
+            )}
             <EuiFormRow
               label="Source index"
               error={sourceIndexError}
@@ -210,7 +208,7 @@ export default class TransformIndices extends Component<TransformIndicesProps, T
                 data-test-subj="sourceIndexCombobox"
               />
             </EuiFormRow>
-            <EuiSpacer size="m" />
+            <EuiSpacer size="s" />
             <EuiFlexGroup gutterSize="xs">
               <EuiFlexItem grow={false}>
                 <EuiText size="xs">
@@ -258,7 +256,7 @@ export default class TransformIndices extends Component<TransformIndicesProps, T
             >
               <IndexFilterPopover {...this.props} closePopover={this.closePopover} />
             </EuiPopover>
-            <EuiSpacer />
+            <EuiSpacer size="s" />
             <EuiHorizontalRule margin="xs" />
             <EuiFormRow
               label="Target index"

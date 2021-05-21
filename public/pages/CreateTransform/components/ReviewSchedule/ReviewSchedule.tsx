@@ -32,14 +32,9 @@ export default class ReviewSchedule extends Component<ReviewScheduleProps> {
   }
 
   render() {
-    const { jobEnabledByDefault,
-            interval,
-            intervalTimeunit,
-            pageSize,
-            onChangeStep,
-     } = this.props;
+    const { jobEnabledByDefault, interval, intervalTimeunit, pageSize, onChangeStep } = this.props;
 
-    const enabled = (jobEnabledByDefault) ? ("Yes") : ("No");
+    const enabled = jobEnabledByDefault ? "Yes" : "No";
 
     const schedule = "Every " + interval + " " + intervalTimeunit.toLowerCase();
 
@@ -53,7 +48,7 @@ export default class ReviewSchedule extends Component<ReviewScheduleProps> {
                   {
                     text: "Edit",
                     buttonProps: {
-                      onClick: () => onChangeStep(3)
+                      onClick: () => onChangeStep(3),
                     },
                   },
                 ]}
@@ -61,12 +56,12 @@ export default class ReviewSchedule extends Component<ReviewScheduleProps> {
             )}
           </ModalConsumer>
         }
-        bodyStyles={{ padding: "initial" }}
+        panelStyles={{ padding: "20px 20px" }}
+        bodyStyles={{ padding: "10px" }}
         title="Specify schedule"
         titleSize="m"
       >
         <div style={{ padding: "15px" }}>
-          <EuiSpacer size="s" />
           <EuiFlexGrid columns={4}>
             <EuiFlexItem>
               <EuiText size="xs">
@@ -89,6 +84,6 @@ export default class ReviewSchedule extends Component<ReviewScheduleProps> {
           </EuiFlexGrid>
         </div>
       </ContentPanel>
-    )
+    );
   }
 }

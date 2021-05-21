@@ -34,12 +34,7 @@ export default class JobNameAndIndices extends Component<JobNameAndIndicesProps>
   }
 
   render() {
-    const { transformId,
-            description,
-            onChangeStep,
-            sourceIndex,
-            targetIndex,
-            sourceIndexFilter } = this.props;
+    const { transformId, description, onChangeStep, sourceIndex, targetIndex, sourceIndexFilter } = this.props;
 
     return (
       <ContentPanel
@@ -59,12 +54,12 @@ export default class JobNameAndIndices extends Component<JobNameAndIndicesProps>
             )}
           </ModalConsumer>
         }
-        bodyStyles={{ padding: "initial" }}
+        panelStyles={{ padding: "20px 20px" }}
+        bodyStyles={{ padding: "10px" }}
         title="Set up indices"
         titleSize="m"
       >
-        <div style={{ padding: "15px" }}>
-          <EuiSpacer size="s" />
+        <div>
           <EuiFlexGrid columns={3}>
             <EuiFlexItem>
               <EuiText size="xs">

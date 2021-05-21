@@ -140,12 +140,12 @@ export default class ReviewDefinition extends Component<ReviewDefinitionProps> {
             )}
           </ModalConsumer>
         }
-        bodyStyles={{ padding: "initial" }}
+        panelStyles={{ padding: "20px 20px" }}
+        bodyStyles={{ padding: "10px" }}
         title="Define transforms"
         titleSize="m"
       >
         <div style={{ padding: "10px" }}>
-          <EuiSpacer size="s" />
           <EuiFlexGrid columns={4}>
             {groupItems()}
             {aggItems()}

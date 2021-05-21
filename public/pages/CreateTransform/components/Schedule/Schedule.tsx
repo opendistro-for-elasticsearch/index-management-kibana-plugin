@@ -68,9 +68,8 @@ export default class Schedule extends Component<ScheduleProps> {
       onChangePage,
     } = this.props;
     return (
-      <ContentPanel bodyStyles={{ padding: "initial" }} title="Schedule" titleSize="m">
-        <div style={{ paddingLeft: "10px" }}>
-          <EuiSpacer size="m" />
+      <ContentPanel panelStyles={{ padding: "20px 20px" }} bodyStyles={{ padding: "10px" }} title="Schedule" titleSize="m">
+        <div>
           {!isEdit && (
             <EuiCheckbox
               id="jobEnabledByDefault"
@@ -94,6 +93,7 @@ export default class Schedule extends Component<ScheduleProps> {
           {selectInterval(interval, intervalTimeunit, intervalError, onChangeIntervalTime, onChangeIntervalTimeunit)}
           <EuiSpacer size="m" />
           <EuiHorizontalRule margin="xs" />
+          <EuiSpacer size="m" />
           <EuiAccordion id="pagePerExecution" buttonContent="Advanced">
             <EuiSpacer size="m" />
             <EuiFormRow
@@ -109,7 +109,6 @@ export default class Schedule extends Component<ScheduleProps> {
               <EuiFieldNumber min={1} placeholder="1000" value={pageSize} onChange={onChangePage} />
             </EuiFormRow>
           </EuiAccordion>
-          <EuiSpacer size="m" />
         </div>
       </ContentPanel>
     );

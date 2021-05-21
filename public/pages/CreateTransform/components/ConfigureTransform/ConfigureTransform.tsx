@@ -34,9 +34,8 @@ const ConfigureTransform = ({
   onChangeDescription,
   description,
 }: ConfigureTransformProps) => (
-  <ContentPanel bodyStyles={{ padding: "initial" }} title="Job name and description" titleSize="m">
-    <div style={{ paddingLeft: "10px" }}>
-      <EuiSpacer size="s" />
+  <ContentPanel panelStyles={{ padding: "20px 20px" }} bodyStyles={{ padding: "10px" }} title="Job name and description" titleSize="m">
+    <div>
       <EuiFormRow label="Name" helpText="Specify a unique, descriptive name." isInvalid={!!transformIdError} error={transformIdError}>
         <EuiFieldText
           isInvalid={!!transformIdError}
