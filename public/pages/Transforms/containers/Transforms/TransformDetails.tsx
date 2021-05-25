@@ -268,18 +268,6 @@ export default class TransformDetails extends Component<TransformDetailsProps, T
         View JSON
       </EuiContextMenuItem>,
       <EuiContextMenuItem
-        key="duplicate"
-        icon="empty"
-        disabled={false}
-        data-test-subj="duplicateButton"
-        onClick={() => {
-          this.closePopover();
-          this.showDeleteModal();
-        }}
-      >
-        Duplicate job
-      </EuiContextMenuItem>,
-      <EuiContextMenuItem
         key="delete"
         icon="empty"
         disabled={false}
@@ -316,11 +304,6 @@ export default class TransformDetails extends Component<TransformDetailsProps, T
                 >
                   <EuiContextMenuPanel items={actionItems} />
                 </EuiPopover>
-              </EuiFlexItem>
-              <EuiFlexItem grow={false}>
-                <EuiButton fill={true} onClick={this.showJsonModal}>
-                  View target index in Discover
-                </EuiButton>
               </EuiFlexItem>
             </EuiFlexGroup>
           </EuiFlexItem>

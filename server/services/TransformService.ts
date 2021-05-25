@@ -252,8 +252,7 @@ export default class TransformService {
       const params = { transformId: id };
       const { callAsCurrentUser: callWithRequest } = this.esDriver.asScoped(request);
       const deleteResponse = await callWithRequest("ism.deleteTransform", params);
-      const acknowledged = _.get(deleteResponse, "acknowledged");
-      if (acknowledged) {
+      if (!deleteResponse.errors) {
         return response.custom({
           statusCode: 200,
           body: { ok: true, response: true },

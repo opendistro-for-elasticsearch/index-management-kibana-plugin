@@ -52,7 +52,7 @@ export default class DeleteModal extends Component<DeleteModalProps, DeleteModal
         >
           <EuiForm>
             <Fragment>
-              By deleting "<strong>{item}</strong>", all future scheduled executions will be canceled. However, your target index
+              By deleting <strong>{item}</strong>, all future scheduled executions will be canceled. However, your target index
               and data in it will remain intact.
             </Fragment>
             <EuiSpacer size="s" />

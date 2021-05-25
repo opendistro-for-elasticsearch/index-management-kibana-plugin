@@ -104,13 +104,15 @@ export default class TransformSettings extends Component<TransformSettingsProps,
     };
 
     const aggItems = () => {
-      console.log(aggregationsShown);
       return Object.keys(aggregationsShown).map((key) => {
+        let aggregationType = Object.keys(aggregationsShown[key])[0];
+        let sourceField = aggregationsShown[key][aggregationType].field;
+
         return (
           <EuiFlexItem>
             <EuiText size="xs">
-              <dt>{key}</dt>
-              <dd>{JSON.stringify(aggregationsShown[key])}</dd>
+              <dt>{aggregationType}()</dt>
+              <dd>{sourceField}</dd>
             </EuiText>
           </EuiFlexItem>
         );

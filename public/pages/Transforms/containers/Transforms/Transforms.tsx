@@ -351,8 +351,7 @@ export default class Transforms extends Component<TransformProps, TransformState
   };
 
   getSelectedTransformIds = () => {
-    return "asd";
-    // this.state.selectedItems.map((item: DocumentTransform) => { return item._id }).join(", ");
+    return this.state.selectedItems.map((item: DocumentTransform) => { return item._id }).join(", ");
   };
 
   onSelectionChange = (selectedItems: DocumentTransform[]): void => {
@@ -387,8 +386,7 @@ export default class Transforms extends Component<TransformProps, TransformState
         const response = await transformService.deleteTransform(transformId);
 
         if (response.ok) {
-          this.closeDeleteModal();
-          this.context.notification.toasts.addSuccess(`"${transformId}" successfully deleted!`);
+          this.context.notifications.toasts.addSuccess(`"${transformId}" successfully deleted!`);
         } else {
           this.context.notifications.toasts.addDanger(`Could not delete transform job "${transformId}" :  ${response.error}`);
         }
@@ -397,6 +395,7 @@ export default class Transforms extends Component<TransformProps, TransformState
       }
     }
 
+    this.closeDeleteModal();
     await this.getTransforms();
   };
 
