@@ -248,6 +248,11 @@ export default class Transforms extends Component<TransformProps, TransformState
           <EuiFlexItem grow={false}>
             <EuiFlexGroup alignItems="center" gutterSize="s">
               <EuiFlexItem grow={false}>
+                <EuiButton iconType="refresh" onClick={this.getTransforms} data-test-subj="refreshButton">
+                  Refresh
+                </EuiButton>
+              </EuiFlexItem>
+              <EuiFlexItem grow={false}>
                 <EuiButton disabled={!selectedItems.length} onClick={this.onDisable} data-test-subj="disableButton">
                   Disable
                 </EuiButton>
@@ -351,7 +356,11 @@ export default class Transforms extends Component<TransformProps, TransformState
   };
 
   getSelectedTransformIds = () => {
-    return this.state.selectedItems.map((item: DocumentTransform) => { return item._id }).join(", ");
+    return this.state.selectedItems
+      .map((item: DocumentTransform) => {
+        return item._id;
+      })
+      .join(", ");
   };
 
   onSelectionChange = (selectedItems: DocumentTransform[]): void => {
