@@ -102,9 +102,11 @@ export default function PercentilePanel({ name, aggSelection, handleAggSelection
               const aggItem: TransformAggItem = {
                 type: TRANSFORM_AGG_TYPE.percentiles,
                 name: `percentiles_${name}`,
-                percentiles: {
-                  field: name,
-                  percents: percents.map((value) => parseFloat(value.label)),
+                item: {
+                  percentiles: {
+                    field: name,
+                    percents: percents.map((value) => parseFloat(value.label)),
+                  },
                 },
               };
               aggSelection[`percentiles_${name}`] = {
