@@ -78,6 +78,9 @@ export default class ReviewDefinition extends Component<ReviewDefinitionProps> {
         // is a group
         title = "Group by " + item.type;
         field = item.item[item.type].source_field;
+      } else if (item.type == TRANSFORM_AGG_TYPE.scripted_metric) {
+        title = item.type + "()";
+        field = item.name;
       } else {
         // is an agg
         title = item.type + "()";
