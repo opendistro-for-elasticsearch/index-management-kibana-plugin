@@ -15,8 +15,13 @@
 
 import { EuiEmptyPrompt, EuiPanel, EuiText } from "@elastic/eui";
 import React from "react";
+import { TransformAggItem } from "../../../../../models/interfaces";
 
-export default function PreviewEmptyPrompt() {
+interface PreviewEmptyPromptProps {
+  isReadOnly: boolean;
+}
+
+export default function PreviewEmptyPrompt({ isReadOnly }: PreviewEmptyPromptProps) {
   return (
     <EuiPanel>
       <EuiEmptyPrompt
@@ -25,7 +30,13 @@ export default function PreviewEmptyPrompt() {
             <h4> No fields selected</h4>
           </EuiText>
         }
-        body={<p>From the table above, select a field you want to transform by clicking the “plus” button next to the field name</p>}
+        body={
+          isReadOnly ? (
+            <p>No preview available</p>
+          ) : (
+            <p>From the table above, select a field you want to transform by clicking the “plus” button next to the field name</p>
+          )
+        }
       />
     </EuiPanel>
   );

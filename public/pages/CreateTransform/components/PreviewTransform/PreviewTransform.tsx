@@ -27,12 +27,7 @@ interface PreviewTransformProps {
   isReadOnly: boolean;
 }
 
-export default function PreviewTransform({
-  previewTransform,
-  aggList,
-  onRemoveTransformation,
-  isReadOnly,
-}: PreviewTransformProps) {
+export default function PreviewTransform({ previewTransform, aggList, onRemoveTransformation, isReadOnly }: PreviewTransformProps) {
   const [previewColumns, setPreviewColumns] = useState<EuiDataGridColumn[]>([]);
   const [visiblePreviewColumns, setVisiblePreviewColumns] = useState(() => previewColumns.map(({ id }) => id).slice(0, 5));
 
@@ -80,7 +75,7 @@ export default function PreviewTransform({
           });
         }
         setPreviewColumns(tempCol);
-        setVisiblePreviewColumns(() => tempCol.map(({ id }) => id).slice(0, 5));
+        setVisiblePreviewColumns(() => tempCol.map(({ id }) => id));
       }
     } else {
       if (aggList.length) {
@@ -88,12 +83,7 @@ export default function PreviewTransform({
         aggList.map((aggItem) => {
           tempCol.push({
             id: aggItem.name,
-            display: (
-              <PreviewOptions
-                name={aggItem.name}
-                onRemoveTransformation={onRemoveTransformation}
-              />
-            ),
+            display: <PreviewOptions name={aggItem.name} onRemoveTransformation={onRemoveTransformation} />,
             actions: {
               showHide: false,
               showMoveLeft: false,
@@ -131,6 +121,6 @@ export default function PreviewTransform({
       gridStyle={{ rowHover: isReadOnly ? "none" : "highlight" }}
     />
   ) : (
-    <PreviewEmptyPrompt />
+    <PreviewEmptyPrompt isReadOnly={isReadOnly} />
   );
 }
