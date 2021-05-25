@@ -34,6 +34,7 @@ interface CreateTransformProps extends RouteComponentProps {
   description: string;
   sourceIndex: { label: string; value?: IndexItem }[];
   sourceIndexFilter: string;
+  sourceIndexFilterError: string;
   sourceIndexError: string;
   targetIndex: { label: string; value?: IndexItem }[];
   targetIndexError: string;

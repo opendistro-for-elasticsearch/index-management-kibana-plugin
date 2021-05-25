@@ -65,6 +65,7 @@ interface CreateTransformFormState {
   //TODO: Uncomment the following line when multiple data filter is supported
   // sourceIndexFilter: string[];
   sourceIndexFilter: string;
+  sourceIndexFilterError: string;
   targetIndex: { label: string; value?: IndexItem }[];
   targetIndexError: string;
 
@@ -123,6 +124,7 @@ export default class CreateTransformForm extends Component<CreateTransformFormPr
       //TODO: Uncomment the following line when multiple data filter is supported
       // sourceIndexFilter: [],
       sourceIndexFilter: "",
+      sourceIndexFilterError: "",
       targetIndex: [],
       targetIndexError: "",
 
@@ -186,9 +188,8 @@ export default class CreateTransformForm extends Component<CreateTransformFormPr
     let error = false;
     //Verification here
     if (currentStep == 1) {
-      const { transformId, sourceIndex, targetIndex } = this.state;
+      const { transformId, sourceIndex, targetIndex, sourceIndexFilterError } = this.state;
       const response = await this.props.transformService.getTransform(transformId);
-
       if (response.ok && response.response._id == transformId) {
         this.setState({
           submitError: `There is already a job named "${transformId}". Please provide a different name.`,
@@ -208,13 +209,13 @@ export default class CreateTransformForm extends Component<CreateTransformFormPr
         this.setState({ submitError: "Target index is required.", targetIndexError: "Target index is required." });
         error = true;
       }
+      if (sourceIndexFilterError !== "") {
+        this.setState({ submitError: "Source index filter is invalid" });
+        error = true;
+      }
     } else if (currentStep == 2) {
       //TODO: Add checking to see if grouping is defined
-    } else if (currentStep == 3) {
-      //Check if interval is a valid value and is specified.
-      const { intervalError } = this.state;
     }
-
     if (error) return;
 
     if (warned) {
@@ -278,12 +279,14 @@ export default class CreateTransformForm extends Component<CreateTransformFormPr
   onChangeSourceIndexFilter = (newFilter: string): void => {
     let newJSON = this.state.transformJSON;
     if (newFilter == "") {
-      newJSON.transform.hasOwnProperty("data_selection_query") && delete newJSON.transform.data_selection_query
+      newJSON.transform.hasOwnProperty("data_selection_query") && delete newJSON.transform.data_selection_query;
+      this.setState({ sourceIndexFilterError: "" });
     } else {
       try {
         newJSON.transform.data_selection_query = JSON.parse(newFilter);
+        this.setState({ sourceIndexFilterError: "" });
       } catch (err) {
-        this.context.notifications.toasts.addDanger('Invalid source index filter JSON: "' + newFilter + '"');
+        this.setState({ sourceIndexFilterError: "Invalid source index filter JSON" });
       }
     }
     this.setState({ sourceIndexFilter: newFilter, transformJSON: newJSON });
@@ -462,6 +465,7 @@ export default class CreateTransformForm extends Component<CreateTransformFormPr
       sourceIndex,
       sourceIndexError,
       sourceIndexFilter,
+      sourceIndexFilterError,
       targetIndex,
       targetIndexError,
       currentStep,
@@ -490,6 +494,7 @@ export default class CreateTransformForm extends Component<CreateTransformFormPr
           hasSubmitted={hasSubmitted}
           description={description}
           sourceIndexFilter={sourceIndexFilter}
+          sourceIndexFilterError={sourceIndexFilterError}
           sourceIndex={sourceIndex}
           sourceIndexError={sourceIndexError}
           targetIndex={targetIndex}
@@ -500,9 +505,7 @@ export default class CreateTransformForm extends Component<CreateTransformFormPr
           onChangeSourceIndexFilter={this.onChangeSourceIndexFilter}
           onChangeTargetIndex={this.onChangeTargetIndex}
           currentStep={this.state.currentStep}
-          hasAggregation={selectedGroupField.length != 0 ||
-            Object.keys(selectedAggregations).length != 0 ||
-            aggList.length != 0}
+          hasAggregation={selectedGroupField.length != 0 || Object.keys(selectedAggregations).length != 0 || aggList.length != 0}
           fields={fields}
           fieldSelectedOption={fieldSelectedOption}
           beenWarned={beenWarned}
