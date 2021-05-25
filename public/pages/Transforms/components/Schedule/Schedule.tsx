@@ -14,13 +14,7 @@
  */
 
 import React, { ChangeEvent, Component } from "react";
-import {
-  EuiSpacer,
-  EuiCheckbox,
-  EuiAccordion,
-  EuiFormRow,
-  EuiFieldNumber,
-} from "@elastic/eui";
+import { EuiSpacer, EuiCheckbox, EuiAccordion, EuiFormRow, EuiFieldNumber } from "@elastic/eui";
 // @ts-ignore
 import { htmlIdGenerator } from "@elastic/eui/lib/services";
 import { ContentPanel } from "../../../../components/ContentPanel";
@@ -46,7 +40,6 @@ interface ScheduleProps {
   onIntervalTimeUnitChange: (e: ChangeEvent<HTMLSelectElement>) => void;
 }
 
-// TODO: Check wording for page size form with UX team
 export default class Schedule extends Component<ScheduleProps> {
   constructor(props: ScheduleProps) {
     super(props);

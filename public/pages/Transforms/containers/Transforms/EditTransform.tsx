@@ -115,6 +115,8 @@ export default class EditTransform extends Component<EditTransformProps, EditTra
           enabled: response.response.transform.enabled,
           pageSize: response.response.transform.page_size,
           transformJSON: json,
+          interval: response.response.transform.schedule.interval.period,
+          intervalTimeUnit: response.response.transform.schedule.interval.unit,
         });
       } else {
         this.context.notifications.toasts.addDanger(`Could not load transform job ${transformId}: ${response.error}`);
@@ -293,7 +295,7 @@ export default class EditTransform extends Component<EditTransformProps, EditTra
   onPageChange = (e: ChangeEvent<HTMLInputElement>) => {
     const pageSize = e.target.valueAsNumber;
     let json = this.state.transformJSON;
-    json.transform.pageSize = pageSize;
+    json.transform.page_size = pageSize;
     this.setState({ pageSize: pageSize, transformJSON: json });
   };
 

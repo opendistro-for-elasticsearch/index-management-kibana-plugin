@@ -41,10 +41,10 @@ import queryString from "query-string";
 import { getErrorMessage } from "../../../../utils/helpers";
 import { DimensionItem, RollupDimensionItem, TransformMetadata } from "../../../../../models/interfaces";
 import DeleteModal from "../../components/DeleteModal";
-import GenerationInformation from "../../components/GeneralInformation";
 import TransformStatus from "../../components/TransformStatus";
 import { EMPTY_TRANSFORM } from "../../utils/constants";
 import TransformSettings from "./TransformSettings";
+import GeneralInformation from "../../components/GeneralInformation";
 
 interface TransformDetailsProps extends RouteComponentProps {
   transformService: TransformService;
@@ -206,6 +206,7 @@ export default class TransformDetails extends Component<TransformDetailsProps, T
     const {
       id,
       enabled,
+      enabledAt,
       updatedAt,
       description,
       sourceIndex,
@@ -310,7 +311,7 @@ export default class TransformDetails extends Component<TransformDetailsProps, T
         </EuiFlexGroup>
 
         <EuiSpacer />
-        <GenerationInformation
+        <GeneralInformation
           id={id}
           description={description}
           sourceIndex={sourceIndex}
@@ -318,6 +319,7 @@ export default class TransformDetails extends Component<TransformDetailsProps, T
           sourceIndexFilter={sourceIndexFilter}
           scheduledText={scheduleText}
           pageSize={pageSize}
+          enabledAt={enabledAt}
           updatedAt={updatedAt}
           onEdit={this.onEdit}
         />

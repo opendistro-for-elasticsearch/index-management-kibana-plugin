@@ -57,9 +57,9 @@ export const CalendarTimeunitOptions = [
 ];
 
 export const ScheduleIntervalTimeunitOptions = [
-  { value: "MINUTES", text: "Minute(s)" },
-  { value: "HOURS", text: "Hour(s)" },
-  { value: "DAYS", text: "Day(s)" },
+  { value: "Minutes", text: "Minute(s)" },
+  { value: "Hours", text: "Hour(s)" },
+  { value: "Days", text: "Day(s)" },
 ];
 
 export const AddFieldsColumns = [
