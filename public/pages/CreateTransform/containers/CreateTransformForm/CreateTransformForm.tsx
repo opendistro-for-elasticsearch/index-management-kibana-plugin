@@ -171,14 +171,20 @@ export default class CreateTransformForm extends Component<CreateTransformFormPr
     }
   };
 
-  previewTransform = async (transform: any): Promise<void> => {
+  previewTransform = async (transform: any): Promise<boolean> => {
     try {
       const { transformService } = this.props;
       const previewResponse = await transformService.previewTransform(transform);
-      if (previewResponse.ok) this.setState({ previewTransform: previewResponse.response.documents });
-      else this.context.notifications.toasts.addDanger(`Could not preview transform: ${previewResponse.error}`);
+      if (previewResponse.ok) {
+        this.setState({ previewTransform: previewResponse.response.documents });
+        return true;
+      } else {
+        this.context.notifications.toasts.addDanger(`Could not preview transform: ${previewResponse.error}`);
+        return false;
+      }
     } catch (err) {
       this.context.notifications.toasts.addDanger(getErrorMessage(err, "Could not load preview transform"));
+      return false;
     }
   };
 
@@ -310,8 +316,9 @@ export default class CreateTransformForm extends Component<CreateTransformFormPr
     aggList.push(aggItem);
     this.updateGroup();
 
-    await this.previewTransform(this.state.transformJSON);
-    this.setState({ selectedGroupField });
+    const previewResponse = await this.previewTransform(this.state.transformJSON);
+    if (!previewResponse) await this.onRemoveTransformation(aggItem.name);
+    else this.setState({ selectedGroupField });
   };
 
   onAggregationSelectionChange = async (selectedAggregations: any, aggItem: TransformAggItem): Promise<void> => {
@@ -319,8 +326,9 @@ export default class CreateTransformForm extends Component<CreateTransformFormPr
     aggList.push(aggItem);
     this.updateAggregation();
 
-    await this.previewTransform(this.state.transformJSON);
-    this.setState({ selectedAggregations: selectedAggregations });
+    const previewResponse = await this.previewTransform(this.state.transformJSON);
+    if (!previewResponse) await this.onRemoveTransformation(aggItem.name);
+    else this.setState({ selectedAggregations: selectedAggregations });
   };
 
   onRemoveTransformation = async (name: string): Promise<void> => {
